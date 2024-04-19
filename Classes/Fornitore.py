@@ -1,5 +1,12 @@
 class Fornitore:
-    def __init__(self , cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
+
+    def __init__(self):
+        self.cittaSede = ""
+        self.denominazione = ""
+        self.indirizzoSede = ""
+        self.partitaIva = ""
+        self.tipoProfessione = ""
+    def aggiungiFornitore(self , cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
         self.cittaSede = cittaSede
         self.denominazione = denominazione
         self.indirizzoSede = indirizzoSede

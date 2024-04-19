@@ -1,6 +1,16 @@
 class Condomino:
 
-    def __init__(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare):
+    def __init__(self):
+        self.nome = ""
+        self.cognome = ""
+        self.residenza = ""
+        self.codice = 0
+        self.dataDiNascita = datetime.datetime(year=1970, month=1, day=1)
+        self.codiceFiscale = ""
+        self.luogoDiNascita = ""
+        self.unitaImmobiliare = None
+
+    def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare):
         self.nome = nome
         self.cognome = cognome
         self.residenza = residenza
@@ -21,3 +31,7 @@ class Condomino:
             "luogoDiNascita": self.luogoDiNascita,
             "unitaImmobiliare": self.unitaImmobiliare
         }
+
+    def inserisciCondomino(self):
+        pass
+

@@ -11,7 +11,7 @@ class UnitaImmobiliare:
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
 
     def getUnitaImmobiliare(self):
-        return {
+        return{
             "numUnitaImmobiliare": self.numUnitaImmobiliare,
             "codice": self.codice,
             "foglio": self.foglio,
@@ -21,3 +21,6 @@ class UnitaImmobiliare:
             "particella": self.particella,
             "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare
         }
+
+    def inserisciUnitaImmobiliare(self):
+        pass
