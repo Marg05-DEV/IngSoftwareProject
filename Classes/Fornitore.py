@@ -5,3 +5,12 @@ class Fornitore:
         self.indirizzoSede = indirizzoSede
         self.partitaIva = partitaIva
         self.tipoProfessione = tipoProfessione
+
+    def getFornitore(self):
+        return {
+            "cittaSede": self.cittaSede,
+            "denominazione": self.denominazione,
+            "indirizzoSede": self.indirizzoSede,
+            "partitaIva": self.partitaIva,
+            "tipoProfessione": self.tipoProfessione
+        }

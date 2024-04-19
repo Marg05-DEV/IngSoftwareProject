@@ -10,3 +10,14 @@ class UnitaImmobiliare:
         self.particella = particella
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
 
+    def getUnitaImmobiliare(self):
+        return {
+            "numUnitaImmobiliare": self.numUnitaImmobiliare,
+            "codice": self.codice,
+            "foglio": self.foglio,
+            "subalterno": self.subalterno,
+            "condomini": self.condomini,
+            "milleismi": self.millesimi,
+            "particella": self.particella,
+            "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare
+        }
