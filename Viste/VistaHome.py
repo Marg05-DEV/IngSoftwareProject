@@ -26,13 +26,14 @@ class VistaHome(QWidget):
     def getButton(self, testo, sottotesto, on_click):
         button = QPushButton(testo)
         button.setText(button.text() + "\n" + sottotesto)
+        button.setFixedSize(580, 75)
         button.setCheckable(True)
         button.clicked.connect(on_click)
         return button
 
     def goImmobile(self):
-        vista_immobile = VistaGestioneImmobile()
-        vista_immobile.show()
+        self.vista_immobile = VistaGestioneImmobile()
+        self.vista_immobile.show()
 
     def goRegistroAnagrafe(self):
         pass
