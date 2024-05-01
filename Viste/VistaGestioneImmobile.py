@@ -16,6 +16,7 @@ class VistaGestioneImmobile(QWidget):
 
         self.setLayout(v_layout)
         self.setWindowTitle("Gestione Immobile")
+        self.resize(600, 400)
 
     def stato(self, testo):
         print(testo)
