@@ -13,7 +13,6 @@ class VistaGestioneImmobile(QWidget):
         find_layout.addWidget(searchbar, 0, 0)
 
         v_layout.addLayout(find_layout)
-
         self.setLayout(v_layout)
         self.setWindowTitle("Gestione Immobile")
         self.resize(600, 400)
