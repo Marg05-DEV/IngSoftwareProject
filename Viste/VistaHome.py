@@ -36,8 +36,7 @@ class VistaHome(QWidget):
         self.vista_immobile.show()
 
     def goRegistroAnagrafe(self):
-        self.vista_registro_anagrafe = VistaRegistroAnagrafeCondominiale()
-        self.vista_registro_anagrafe.show()
+        pass
 
     def goContabilita(self):
         pass
