@@ -1,6 +1,7 @@
 import os.path
 import pickle
 
+file_name = 'Dati/Immobile.pickle'
 
 class Immobile:
 
@@ -26,13 +27,15 @@ class Immobile:
         self.via = via
 
         immobili = {}
-        file_name = "../../Dati/Immobile.pickle"
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
-                immobili = pickle.load(f)
+                immobili = dict(pickle.load(f))
+        print(immobili)
         immobili[codice] = self
         with open(file_name, 'wb') as f:
-            pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+                pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+
+        print(immobili)
 
     def getInfoImmobile(self):
         return {
@@ -45,6 +48,17 @@ class Immobile:
             "cap": self.cap,
             "via": self.via
         }
+
+    @staticmethod
+    def getAllImmobili():
+        dict_immobili = {}
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
+                print("2.1.2")
+                dict_immobili = dict(pickle.load(f))
+                print("2.1.3")
+                return list(dict_immobili.values())
+        return []
 
     def ricercaImmobileByDenominazione(self, denominazione):
         file_name = "../../Dati/Immobile.pickle"
@@ -63,7 +77,6 @@ class Immobile:
 
     @staticmethod
     def ricercaImmobileBySigla(sigla):
-        file_name = "../../Dati/Immobile.pickle"
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = list(pickle.load(f))
@@ -100,15 +113,28 @@ class Immobile:
             return "File non esistente"
 
 
-immo = Immobile()
-immo.aggiungiImmobile(45, "thg", "hvn", "irn", "rgvjh", "63073", "63073", 'jbnt')
 
-file_name = "../../Dati/Immobile.pickle"
+
+    def stampa(self):
+        if type(self) == str:
+            print(self)
+        else:
+            print(self.getInfoImmobile())
+
+
+"""
+immo1 = Immobile()
+immo2 = Immobile()
+immo3 = Immobile()
+immo1.aggiungiImmobile(1, "ou", "fac", "jnknnf", "Ascoli", "Ascoli", "63073", 'Tesiono')
+immo2.aggiungiImmobile(2, "bu", "mic", "sdfasdf", "Offida", "Ascoli", "687120", 'Cozza')
+immo3.aggiungiImmobile(7, "ad", "bcc", "jvnak", "ASTI", "aSTI", "98745", 'Azzi')
+
 if os.path.isfile(file_name):
     with open(file_name, 'rb') as f:
-        immobili_list = list(pickle.load(f))
+        immobili_list1 = list(pickle.load(f))
 
-print(immobili_list)
+print(immobili_list1)
 
 immobile1 = Immobile.ricercaImmobileByCodice(45)
 print(immobile1.getInfoImmobile())
