@@ -1,8 +1,21 @@
+import os
+import pickle
+
+
 class UnitaImmobiliare:
-    numUnitaImmobiliare = 0
-    def __init__(self, foglio, subalterno, condomini, millesimi, particella, tipoUnitaImmobiliare):
-        self.numUnitaImmobiliare += 1
-        self.codice = self.numUnitaImmobiliare
+
+    def __init__(self, foglio, subalterno, condomini, millesimi, particella, tipoUnitaImmobiliare, interno):
+        self.interno = 0
+        self.foglio = ""
+        self.subalterno = ""
+        self.condomini = ""
+        self.millesimi = 0
+        self.particella = 0
+        self.tipoUnitaImmobiliare = ""
+
+
+    def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, millesimi, particella, interno, tipoUnitaImmobiliare):
+        self.interno = interno
         self.foglio = foglio
         self.subalterno = subalterno
         self.condomini = condomini
@@ -10,10 +23,18 @@ class UnitaImmobiliare:
         self.particella = particella
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
 
-    def getUnitaImmobiliare(self):
+        unitaImmobiliari = {}
+        if os.path.isFile('Dati/unitaImmobiliari.pickle'):
+            with open('Dati/unitaImmobiliari.pickle', 'rb' ) as f:
+                unitaImmobiliari = pickle.load(f)
+        unitaImmobiliari[interno] = self
+        with open('Dati/unitaImmobiliari.pickle', 'wb') as f:
+            pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
+
+
+    def getInfoUnitaImmobiliare(self):
         return{
-            "numUnitaImmobiliare": self.numUnitaImmobiliare,
-            "codice": self.codice,
+            "interno": self.interno,
             "foglio": self.foglio,
             "subalterno": self.subalterno,
             "condomini": self.condomini,
@@ -22,5 +43,17 @@ class UnitaImmobiliare:
             "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare
         }
 
-    def inserisciUnitaImmobiliare(self):
-        pass
+    def ricercaUnitaImmobiliareInterno(self,interno):
+        if os.path.isfile('Dati/unitaImmobiliari.pickle'):
+            with open('Dati/unitaImmobiliari.pickle', 'rb') as f:
+                unitaImmobiliari = dict(pickle.loaf(f))
+                for unitaImmobiliare in unitaImmobiliari.values():
+                    if unitaImmobiliari.interno == interno:
+                        return unitaImmobiliare
+            return "L'unita' immobiliare cercata non e' presente"
+        else:
+            return "File non esistente"
+
+
+
+
