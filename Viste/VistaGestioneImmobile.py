@@ -16,7 +16,7 @@ class VistaGestioneImmobile(QWidget):
         searchType = QComboBox()
         sortLabel = QLabel("Ordina per:")
         sortType = QComboBox()
-        find_layout.addWidget(searchbar, 0, 0, 2, 1)
+        find_layout.addWidget(searchbar, 0, 0, 1, 2)
         find_layout.addWidget(searchType, 0, 2)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(sortType, 1, 1)
