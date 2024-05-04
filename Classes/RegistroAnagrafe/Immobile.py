@@ -29,10 +29,10 @@ class Immobile:
         file_name = "../../Dati/Immobile.pickle"
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
-                immobile = pickle.load(f)
-        immobile[codice] = self
+                immobili = pickle.load(f)
+        immobili[codice] = self
         with open(file_name, 'wb') as f:
-            pickle.dump(immobile, f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
 
     def getInfoImmobile(self):
         return {
