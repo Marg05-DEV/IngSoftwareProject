@@ -60,18 +60,15 @@ class Immobile:
                 return list(dict_immobili.values())
         return []
 
-    def ricercaImmobileByDenominazione(self, denominazione):
-        file_name = "../../Dati/Immobile.pickle"
-        cont = 0
+    @staticmethod
+    def ricercaImmobileByDenominazione(denominazione):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
                 for immobile in immobili.values():
                     if immobile.denominazione == denominazione:
                         return immobile
-                    elif cont == 0:
-                        return "Non ci sono Immobili con questa denominazione"
-                return None
+                return "Immobile non trovato"
         else:
             return "File non esistente"
 
@@ -79,38 +76,51 @@ class Immobile:
     def ricercaImmobileBySigla(sigla):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
-                immobili = list(pickle.load(f))
+                immobili = dict(pickle.load(f))
                 for immobile in immobili.values():
                     if immobile.sigla == sigla:
                         return immobile
-                return "Non ci sono Immobili con questa sigla"
+                return "Immobile non trovato"
         else:
             return "File non esistente"
 
-
-    def ricercaImmobileByCodice(self, codice):
-        file_name = "../../Dati/Immobile.pickle"
+    @staticmethod
+    def ricercaImmobileByCodice(codice):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
                 for key in immobili.keys():
                     if key == codice:
                         return immobili[key]
-
-                return "Non ci sono Immobili con questo codice"
+                return "Immobile non trovato"
         else:
             return "File non esistente"
 
-    def ordinaImmobileByDenominazione(self, crescente):
-        file_name = "../../Dati/Immobile.pickle"
+    @staticmethod
+    def ordinaImmobileByDenominazione(isDecrescente):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
+                sorted_denominazione = []
+                for immobile in immobili.values():
+                    sorted_denominazione.append(immobile.denominazione)
+                print(sorted_denominazione)
+                sorted_denominazione.sort(reverse=isDecrescente)
+                print(sorted_denominazione)
 
-                immobili_ordinati = sorted(immobili)
-                return immobili_ordinati
+                sorted_immobili = []
+                for denom in sorted_denominazione:
+                    for immobile in immobili.values():
+                        if(immobile.denominazione == denom):
+                            sorted_immobili.append(immobile)
+                            break
+                print(sorted_immobili)
+                return sorted_immobili
         else:
-            return "File non esistente"
+            return None
+
+    def rimuoviImmobile(self):
+        pass
 
 
 
@@ -136,5 +146,28 @@ if os.path.isfile(file_name):
 
 print(immobili_list1)
 
-immobile1 = Immobile.ricercaImmobileByCodice(45)
-print(immobile1.getInfoImmobile())
+immobile1 = Immobile.ricercaImmobileByCodice(2)
+Immobile.stampa(immobile1)
+
+immobile2 = Immobile.ricercaImmobileByDenominazione("hvn")
+Immobile.stampa(immobile2)
+
+immobile3 = Immobile.ricercaImmobileBySigla("bu")
+Immobile.stampa(immobile3)
+
+immobile4 = Immobile.ordinaImmobileByDenominazione(False)
+print(immobile4)
+for immobile123 in immobile4:
+    print(immobile123.getInfoImmobile())
+
+
+#print(type(Immobile.getAllImmobili()))
+
+
+
+print(type(Immobile.getAllImmobili()))
+for immobile in Immobile.getAllImmobili():
+    print(immobile)
+    print(type(immobile))
+    print(immobile.getInfoImmobile())
+"""
