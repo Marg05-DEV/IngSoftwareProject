@@ -25,11 +25,12 @@ class Immobile:
         self.via = via
 
         immobile = {}
-        if os.path.isfile('../../Dati/Immobile.pickle'):
-            with open('../../Dati/Immobile.pickle', 'rb') as f:
+        file_name = '../../Dati/Immobile.pickle'
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
                 immobile = pickle.load(f)
         immobile[codice] = self
-        with open('../../Dati/Immobile.pickle', 'wb') as f:
+        with open(file_name, 'wb') as f:
             pickle.dump(immobile, f, pickle.HIGHEST_PROTOCOL)
 
     def getImmobile(self):
@@ -40,8 +41,11 @@ class Immobile:
             "codiceFiscale": self.codiceFiscale
         }
 
-    def ricercaImmobile(self):
+    def ricercaImmobileDenominazione(self):
         pass
-
+    def ricercaImmobileSigla(self):
+        pass
+    def ricercaImmobileCodice(self):
+        pass
 immo = Immobile()
 immo.aggiungiImmobile(1, "thg","hvn", "irn","rgvjh","63073", "63073", "jbnt" )
