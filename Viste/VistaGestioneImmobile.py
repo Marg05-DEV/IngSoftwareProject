@@ -65,9 +65,9 @@ class VistaGestioneImmobile(QWidget):
     def update_list(self):
         print("2.1")
         self.lista_immobili = []
-        print(type(Immobile.getAllImmobili()))
-        self.lista_immobili.extend(Immobile.getAllImmobili())
-        print("2.2")
+        print(Immobile.getAllImmobili('../Dati/Immobile.pickle'))
+        self.lista_immobili = Immobile.getAllImmobili()
+        print("2.2:", self.lista_immobili)
         listview_model = QStandardItemModel(self.lista_immobili)
         for immobile in self.lista_immobili:
             item = QStandardItem()

@@ -2,6 +2,7 @@ import sys
 
 from PyQt6.QtWidgets import QApplication
 
+
 from Viste.VistaHome import VistaHome
 
 # Press the green button in the gutter to run the script.

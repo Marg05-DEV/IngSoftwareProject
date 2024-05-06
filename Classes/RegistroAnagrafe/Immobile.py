@@ -2,6 +2,7 @@ import os.path
 import pickle
 
 file_name = 'Dati/Immobile.pickle'
+#file_name = '../../Dati/Immobile.pickle'
 
 class Immobile:
 
@@ -50,13 +51,14 @@ class Immobile:
         }
 
     @staticmethod
-    def getAllImmobili():
+    def getAllImmobili(relative_file_name=file_name):
         dict_immobili = {}
-        if os.path.isfile(file_name):
-            with open(file_name, 'rb') as f:
+        if os.path.isfile(relative_file_name):
+            with open(relative_file_name, 'rb') as f:
                 print("2.1.2")
                 dict_immobili = dict(pickle.load(f))
                 print("2.1.3")
+                print(dict_immobili)
                 return list(dict_immobili.values())
         return []
 
@@ -123,15 +125,6 @@ class Immobile:
         pass
 
 
-
-
-    def stampa(self):
-        if type(self) == str:
-            print(self)
-        else:
-            print(self.getInfoImmobile())
-
-
 """
 immo1 = Immobile()
 immo2 = Immobile()
@@ -139,6 +132,8 @@ immo3 = Immobile()
 immo1.aggiungiImmobile(1, "ou", "fac", "jnknnf", "Ascoli", "Ascoli", "63073", 'Tesiono')
 immo2.aggiungiImmobile(2, "bu", "mic", "sdfasdf", "Offida", "Ascoli", "687120", 'Cozza')
 immo3.aggiungiImmobile(7, "ad", "bcc", "jvnak", "ASTI", "aSTI", "98745", 'Azzi')
+
+
 
 if os.path.isfile(file_name):
     with open(file_name, 'rb') as f:
@@ -162,12 +157,11 @@ for immobile123 in immobile4:
 
 
 #print(type(Immobile.getAllImmobili()))
+"""
 
-
-
-print(type(Immobile.getAllImmobili()))
+print('\n\n', type(Immobile.getAllImmobili()))
+print(str(Immobile.getAllImmobili()) + '\n')
 for immobile in Immobile.getAllImmobili():
-    print(immobile)
+    print('\n', immobile)
     print(type(immobile))
     print(immobile.getInfoImmobile())
-"""
