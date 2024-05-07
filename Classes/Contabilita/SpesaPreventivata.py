@@ -9,6 +9,8 @@ class spesaPreventivata:
         self.importo = importo
         self.tipologia = tipologia
 
+
+
     def getSpetaPreventivata(self):
         return {
             "codice": self.codice,

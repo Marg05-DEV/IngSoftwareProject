@@ -1,7 +1,7 @@
 import os
 import pickle
 
-
+nome_file = 'Dati/unitaImmobiliari.pickle'
 class UnitaImmobiliare:
 
     def __init__(self, foglio, subalterno, condomini, millesimi, particella, tipoUnitaImmobiliare, interno):
@@ -26,7 +26,7 @@ class UnitaImmobiliare:
         unitaImmobiliari = {}
         if os.path.isFile('Dati/unitaImmobiliari.pickle'):
             with open('Dati/unitaImmobiliari.pickle', 'rb' ) as f:
-                unitaImmobiliari = pickle.load(f)
+                unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
         with open('Dati/unitaImmobiliari.pickle', 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
@@ -54,6 +54,36 @@ class UnitaImmobiliare:
         else:
             return "File non esistente"
 
+
+    def rimuoviUnitaImmobiliare(self):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'wb+') as f:
+                unitaImmobiliari = pickle.load(f)
+                del unitaImmobiliari[self.interno]
+        self.interno = 0
+        self.foglio = ""
+        self.subalterno = ""
+        self.condomini = ""
+        self.millesimi = 0
+        self.particella = 0
+        self.tipoUnitaImmobiliare = ""
+        del self
+
+    def modificaUnitaImmobiliare(self, interno = None, foglio = None, subalterno = None, condomini = None, millesimi = None, particella = None, tipoUnitaImmobiliare = None):
+        if interno is not None:
+            self.interno = interno
+        if foglio is not None:
+            self.foglio = foglio
+        if subalterno is not None:
+            self.subalterno = subalterno
+        if condomini is not None:
+            self.condomini = condomini
+        if millesimi is not None:
+            self.millesimi = millesimi
+        if particella is not None:
+            self.particella = particella
+        if tipoUnitaImmobiliare is not None:
+            self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
 
 
 
