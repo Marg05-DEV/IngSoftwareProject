@@ -18,10 +18,11 @@ class VistaGestioneImmobile(QWidget):
         searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        print(self.searchType.currentIndex)
         self.searchType.activated.connect(self.debugComboBox)
+
         sortLabel = QLabel("Ordina per:")
         sortType = QComboBox()
+
         sortType.addItems(["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente", "Codice decrescente"])
         find_layout.addWidget(searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
@@ -31,7 +32,7 @@ class VistaGestioneImmobile(QWidget):
         action_layout = QHBoxLayout()
 
         print("1")
-        self.lista_immobili = QListView()
+        self.list_view_immobili = QListView()
         print("2")
         self.update_list()
         print("3")
@@ -47,7 +48,7 @@ class VistaGestioneImmobile(QWidget):
         button_layout.addWidget(updateBtn)
         button_layout.addWidget(deleteBtn)
 
-        action_layout.addWidget(self.lista_immobili)
+        action_layout.addWidget(self.list_view_immobili)
         action_layout.addLayout(button_layout)
 
         main_layout.addLayout(find_layout)
@@ -65,10 +66,11 @@ class VistaGestioneImmobile(QWidget):
     def update_list(self):
         print("2.1")
         self.lista_immobili = []
-        print(Immobile.getAllImmobili('../Dati/Immobile.pickle'))
-        self.lista_immobili = Immobile.getAllImmobili()
+        self.lista_immobili = list(Immobile.getAllImmobili().values())
         print("2.2:", self.lista_immobili)
-        listview_model = QStandardItemModel(self.lista_immobili)
+
+        listview_model = QStandardItemModel(self.list_view_immobili)
+        print("2.3")
         for immobile in self.lista_immobili:
             item = QStandardItem()
             item_text = f"{immobile.codice} {immobile.sigla} - {immobile.denominazione}"
@@ -79,4 +81,4 @@ class VistaGestioneImmobile(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
             print("2.3")
-        self.lista_immobili.setModel(listview_model)
+        self.list_view_immobili.setModel(listview_model)

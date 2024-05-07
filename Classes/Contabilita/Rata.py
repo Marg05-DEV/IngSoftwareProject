@@ -10,7 +10,17 @@ class Rata:
 
     def __init__(self):
         self.codice = 0
-    def aggiungiRata(self, codice):
+        self.dataRegistrazione = datetime.datetime(year=1970, month=1, day=1)
+        self.descrizione = ""
+        self.importo = 0.0
+        self.numeroRicevuta = 0
+        self.pagata = False
+        self.unitaImmobiliare = None
+
+
+
+    def aggiungiRata(self, codice, numRateRegistrate, dataRegistrazione, descrizione, importo, numeroRicevuta, pagata, unitaImmobiliare):
+        numRateRegistrate += 1
         self.codice = codice
         self.dataRegistrazione = dataRegistrazione
         self.descrizione = descrizione

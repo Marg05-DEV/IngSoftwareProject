@@ -51,16 +51,11 @@ class Immobile:
         }
 
     @staticmethod
-    def getAllImmobili(relative_file_name=file_name):
-        dict_immobili = {}
-        if os.path.isfile(relative_file_name):
-            with open(relative_file_name, 'rb') as f:
-                print("2.1.2")
-                dict_immobili = dict(pickle.load(f))
-                print("2.1.3")
-                print(dict_immobili)
-                return list(dict_immobili.values())
-        return []
+    def getAllImmobili():
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
+                immobili = dict(pickle.load(f))
+                return immobili
 
     @staticmethod
     def ricercaImmobileByDenominazione(denominazione):
@@ -207,7 +202,7 @@ for immobile123 in immobile4:
 
 
 #print(type(Immobile.getAllImmobili()))
-"""
+
 
 print('\n\n', type(Immobile.getAllImmobili()))
 print(str(Immobile.getAllImmobili()) + '\n')
@@ -215,3 +210,5 @@ for immobile in Immobile.getAllImmobili():
     print('\n', immobile)
     print(type(immobile))
     print(immobile.getInfoImmobile())
+
+"""
