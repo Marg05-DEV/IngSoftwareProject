@@ -106,9 +106,7 @@ class Immobile:
                 sorted_denominazione = []
                 for immobile in immobili.values():
                     sorted_denominazione.append(immobile.denominazione)
-                print(sorted_denominazione)
                 sorted_denominazione.sort(reverse=isDecrescente)
-                print(sorted_denominazione)
 
                 sorted_immobili = []
                 for denom in sorted_denominazione:
@@ -116,13 +114,65 @@ class Immobile:
                         if(immobile.denominazione == denom):
                             sorted_immobili.append(immobile)
                             break
-                print(sorted_immobili)
+                return sorted_immobili
+        else:
+            return None
+
+    @staticmethod
+    def ordinaImmobileBySigla(isDecrescente):
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
+                immobili = dict(pickle.load(f))
+                sorted_sigla = []
+                for immobile in immobili.values():
+                    sorted_sigla.append(immobile.sigla)
+                sorted_sigla.sort(reverse=isDecrescente)
+
+                sorted_immobili = []
+                for sigla in sorted_sigla:
+                    for immobile in immobili.values():
+                        if (immobile.sigla == sigla):
+                            sorted_immobili.append(immobile)
+                            break
+                return sorted_immobili
+        else:
+            return None
+
+    @staticmethod
+    def ordinaImmobileByCodice(isDecrescente):
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
+                immobili = dict(pickle.load(f))
+                sorted_codice = []
+                for immobile in immobili.values():
+                    sorted_codice.append(immobile.codice)
+                sorted_codice.sort(reverse=isDecrescente)
+
+                sorted_immobili = []
+                for codice in sorted_codice:
+                    for immobile in immobili.values():
+                        if (immobile.codice == codice):
+                            sorted_immobili.append(immobile)
+                            break
                 return sorted_immobili
         else:
             return None
 
     def rimuoviImmobile(self):
-        pass
+        if os.path.isfile(file_name):
+            with open(file_name, "wb+") as f:
+                immobili = dict(pickle.load(f))
+                del immobili[self.codice]
+            self.codice = 0
+            self.sigla = ""
+            self.denominazione = ""
+            self.codiceFiscale = ""
+            self.citta = ""
+            self.provincia = ""
+            self.cap = ""
+            self.via = ""
+
+
 
 
 """
