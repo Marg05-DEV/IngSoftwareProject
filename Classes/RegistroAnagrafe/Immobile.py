@@ -15,7 +15,6 @@ class Immobile:
         self.provincia = ""
         self.cap = ""
         self.via = ""
-        print("oggetto creato: ", self)
 
     def aggiungiImmobile(self, codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
         self.codice = codice
@@ -30,13 +29,10 @@ class Immobile:
         immobili = {}
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
-                immobili = dict(pickle.load(f))
-        print(immobili)
+                immobili = pickle.load(f)
         immobili[codice] = self
         with open(file_name, 'wb') as f:
-                pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-
-        print(immobili)
+            pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
 
     def getInfoImmobile(self):
         return {
@@ -166,49 +162,3 @@ class Immobile:
             self.provincia = ""
             self.cap = ""
             self.via = ""
-
-
-
-
-"""
-immo1 = Immobile()
-immo2 = Immobile()
-immo3 = Immobile()
-immo1.aggiungiImmobile(1, "ou", "fac", "jnknnf", "Ascoli", "Ascoli", "63073", 'Tesiono')
-immo2.aggiungiImmobile(2, "bu", "mic", "sdfasdf", "Offida", "Ascoli", "687120", 'Cozza')
-immo3.aggiungiImmobile(7, "ad", "bcc", "jvnak", "ASTI", "aSTI", "98745", 'Azzi')
-
-
-
-if os.path.isfile(file_name):
-    with open(file_name, 'rb') as f:
-        immobili_list1 = list(pickle.load(f))
-
-print(immobili_list1)
-
-immobile1 = Immobile.ricercaImmobileByCodice(2)
-Immobile.stampa(immobile1)
-
-immobile2 = Immobile.ricercaImmobileByDenominazione("hvn")
-Immobile.stampa(immobile2)
-
-immobile3 = Immobile.ricercaImmobileBySigla("bu")
-Immobile.stampa(immobile3)
-
-immobile4 = Immobile.ordinaImmobileByDenominazione(False)
-print(immobile4)
-for immobile123 in immobile4:
-    print(immobile123.getInfoImmobile())
-
-
-#print(type(Immobile.getAllImmobili()))
-
-
-print('\n\n', type(Immobile.getAllImmobili()))
-print(str(Immobile.getAllImmobili()) + '\n')
-for immobile in Immobile.getAllImmobili():
-    print('\n', immobile)
-    print(type(immobile))
-    print(immobile.getInfoImmobile())
-
-"""

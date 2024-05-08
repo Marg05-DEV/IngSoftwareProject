@@ -1,7 +1,8 @@
-from Classes.RegistroAnagrafe.Immobile import Immobile
 
 import os.path
 import pickle
+
+from Classes.RegistroAnagrafe.Immobile import Immobile
 
 from unittest import TestCase
 
@@ -9,7 +10,7 @@ from unittest import TestCase
 class TestImmobile(TestCase):
 
     def test_aggiungiImmobile(self):
-        immobile = Immobile.Immobile()
+        immobile = Immobile()
         immobile.aggiungiImmobile(4, "sig","den", "ccrdhgbgib", "Offida", "AP", "88888", "tesino")
 
         immobili = None

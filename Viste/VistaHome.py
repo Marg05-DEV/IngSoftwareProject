@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton
 
-from Viste.VistaGestioneImmobile import VistaGestioneImmobile
+from Viste.VisteImmobile.VistaGestioneImmobile import VistaGestioneImmobile
 
 
 class VistaHome(QWidget):
