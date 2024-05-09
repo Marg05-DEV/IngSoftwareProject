@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 class Spesa:
+    numSpeseRegistrate = 0
 
     def __init__(self):
         self.codice = 0
@@ -14,9 +15,16 @@ class Spesa:
         self.immobile = None
         self.pagata = False
         self.dataPagamento = datetime(year=1970, month=1, day=1)
-        self.tipoSpesa = ""
+        self.tipologia = ""
+        self.dataFattura = datetime(year=1970, month=1, day=1)
+        self.dataRegistrazione = datetime(year=1970, month=1, day=1)
+        self.isRitenuta = False
+        self.numeroFattura = 0
 
-    def aggiungiSpesa(self, descrizione, fornitore, importo, codice, tipoSpesa, dataScadenza, immobile, pagata, dataPagamento):
+
+
+    def aggiungiSpesa(self, descrizione, fornitore, importo, codice, tipologia, dataScadenza, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione ,isRitenuta, numeroFattura):
+        Spesa.numSpeseRegistrate += 1
         self.descrizione = descrizione
         self.fornitore = fornitore
         self.codice = codice
@@ -25,7 +33,11 @@ class Spesa:
         self.immobile = immobile
         self.pagata = pagata
         self.dataPagamento = dataPagamento
-        self.tipoSpesa = tipoSpesa
+        self.tipologia = tipologia
+        self.dataFattura = dataFattura
+        self.dataRegistrazione = dataRegistrazione
+        self.isRitenuta = isRitenuta
+        self.numeroFattura = numeroFattura
 
         spese = {}
         if os.path.isfile('Dati/spese.pickle'):

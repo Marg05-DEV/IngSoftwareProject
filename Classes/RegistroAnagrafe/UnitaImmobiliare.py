@@ -1,6 +1,8 @@
 import os
 import pickle
 
+import Immobile
+
 nome_file = 'Dati/unitaImmobiliari.pickle'
 class UnitaImmobiliare:
 
@@ -12,9 +14,14 @@ class UnitaImmobiliare:
         self.millesimi = 0
         self.particella = 0
         self.tipoUnitaImmobiliare = ""
+        self.categoria = ""
+        self.classe = 0
+        self.immobile = None
+        self.scala = 0
+        self.ZC = ""
 
 
-    def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, millesimi, particella, interno, tipoUnitaImmobiliare):
+    def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, millesimi, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
         self.interno = interno
         self.foglio = foglio
         self.subalterno = subalterno
@@ -22,13 +29,18 @@ class UnitaImmobiliare:
         self.millesimi = millesimi
         self.particella = particella
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
+        self.categoria = categoria
+        self.classe = classe
+        self.immobile = immobile
+        self.scala = scala
+        self.ZC = ZC
 
         unitaImmobiliari = {}
         if os.path.isFile('Dati/unitaImmobiliari.pickle'):
             with open('Dati/unitaImmobiliari.pickle', 'rb' ) as f:
                 unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
-        with open('Dati/unitaImmobiliari.pickle', 'wb') as f:
+        with open(nome_file, 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
 
@@ -40,7 +52,11 @@ class UnitaImmobiliare:
             "condomini": self.condomini,
             "milleismi": self.millesimi,
             "particella": self.particella,
-            "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare
+            "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare,
+            "categoria": self.categoria,
+            "immobile": self.immobile,
+            "scala": self.scala,
+            "ZC": self.ZC
         }
 
     def ricercaUnitaImmobiliareInterno(self,interno):
@@ -67,9 +83,14 @@ class UnitaImmobiliare:
         self.millesimi = 0
         self.particella = 0
         self.tipoUnitaImmobiliare = ""
+        self.categoria = ""
+        self.classe = 0
+        self.immobile = None
+        self.scala = 0
+        self.ZC = ""
         del self
 
-    def modificaUnitaImmobiliare(self, interno = None, foglio = None, subalterno = None, condomini = None, millesimi = None, particella = None, tipoUnitaImmobiliare = None):
+    def modificaUnitaImmobiliare(self, interno = None, foglio = None, subalterno = None, condomini = None, millesimi = None, particella = None, tipoUnitaImmobiliare = None, categoria = None, immobile = None, scala = None, ZC = None ):
         if interno is not None:
             self.interno = interno
         if foglio is not None:
@@ -84,6 +105,14 @@ class UnitaImmobiliare:
             self.particella = particella
         if tipoUnitaImmobiliare is not None:
             self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
+        if categoria is not None:
+            self.categoria = categoria
+        if immobile is not None:
+            self.immobile = immobile
+        if scala is not None:
+            self.scala = scala
+        if ZC is not None:
+            self.ZC = ZC
 
 
 

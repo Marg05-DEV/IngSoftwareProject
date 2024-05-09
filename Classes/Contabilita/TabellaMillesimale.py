@@ -8,11 +8,17 @@ class TabellaMillesimale:
         self.codice = 0
         self.nome = ""
         self.tipologiaSpesa = None
+        self.descrizione = ""
+        self.immobile = None
+        self.millesimi = None
 
-    def aggiungiTabellaMillesimale(self, codice, nome, tipologieSpesa):
+    def aggiungiTabellaMillesimale(self, codice, nome, tipologieSpesa, descrizione, immobile, millesimi):
         self.codice = codice
         self.nome = nome
         self.tipologiaSpesa = tipologieSpesa
+        self.descrizione = descrizione
+        self.immobile = immobile
+        self.millesimi = millesimi
 
         tabelleMillesimali = {}
         if os.path.isfile(nome_file):

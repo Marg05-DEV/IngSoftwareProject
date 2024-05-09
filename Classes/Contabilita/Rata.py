@@ -19,8 +19,8 @@ class Rata:
 
 
 
-    def aggiungiRata(self, codice, numRateRegistrate, dataRegistrazione, descrizione, importo, numeroRicevuta, pagata, unitaImmobiliare):
-        numRateRegistrate += 1
+    def aggiungiRata(self, codice, dataRegistrazione, descrizione, importo, numeroRicevuta, pagata, unitaImmobiliare):
+        Rata.numRateRegistrate += 1
         self.codice = codice
         self.dataRegistrazione = dataRegistrazione
         self.descrizione = descrizione
@@ -72,5 +72,11 @@ class Rata:
 
     def getRata(self):
         return {
-            "codice": self.codice
+            "codice": self.codice,
+            "dataRegistrazione": self.dataRegistrazione,
+            "descrizione": self.descrizione,
+            "importo": self.importo,
+            "numeroRicevuta": self.numeroRicevuta,
+            "pagata": self.pagata,
+            "unitaImmobiliare": self.unitaImmobiliare
         }
