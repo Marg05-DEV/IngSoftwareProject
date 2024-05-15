@@ -85,17 +85,16 @@ class Immobile:
         else:
             return "File non esistente"
 
-    @staticmethod
-    def ricercaImmobileBySigla(sigla):
+    def ricercaImmobileBySigla(self, sigla):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
                 for immobile in immobili.values():
                     if immobile.sigla == sigla:
                         return immobile
-                return "Immobile non trovato"
+                return None
         else:
-            return "File non esistente"
+            return None
 
     @staticmethod
     def ricercaImmobileByCodice(codice):

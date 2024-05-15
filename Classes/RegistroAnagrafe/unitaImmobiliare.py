@@ -1,8 +1,9 @@
 
-import os
+import os.path
 import pickle
-from Immobile import Immobile
+from immobile import Immobile
 nome_file = 'Dati/UnitaImmobiliari.pickle'
+
 class UnitaImmobiliare:
 
     def __init__(self):
@@ -55,17 +56,16 @@ class UnitaImmobiliare:
             "ZC": self.ZC
         }
 
-    @staticmethod
-    def ricercaUnitaImmobiliareInterno(interno):
+    def ricercaUnitaImmobiliareInterno(self, interno):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
                 for unitaImmobiliare in unitaImmobiliari.values():
                     if unitaImmobiliari.interno == interno:
                         return unitaImmobiliare
-                return "L'unita' immobiliare cercata non e' presente"
+                return None
         else:
-            return "File non esistente"
+            return None
 
 
     def rimuoviUnitaImmobiliare(self):
@@ -109,12 +109,11 @@ class UnitaImmobiliare:
             self.ZC = ZC
 
 unitaImmobiliare_1 = UnitaImmobiliare()
-unitaImmobiliare_1.aggiungiUnitaImmobiliare("bofo", "sodmk", "edkel,e",
-                                                                 1, 34, 1, "Sesso",
-                                                                 "cella", 2, Immobile.ricercaImmobileBySigla("ccr"), 1, "e" )
+unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 34, "negozio", "Sesso",
+                                                                 1, Immobile().ricercaImmobileBySigla("ccr"),1,"a")
 unitaImmobiliare_2 = UnitaImmobiliare()
-unitaImmobiliare_2.aggiungiUnitaImmobiliare("sx", "rfv", "rc,e", 3, 33, 2,
-                                 "tipo", "dfjejn", 2, Immobile.ricercaImmobileBySigla("ccr"), 2, "s")
+unitaImmobiliare_2.aggiungiUnitaImmobiliare(2, 2, {}, 2, 3, "negozio", "Sesso",
+                                                                 2, Immobile().ricercaImmobileBySigla("ccr"),3,"b")
 unitaImmobiliare_3 = UnitaImmobiliare()
-unitaImmobiliare_3.aggiungiUnitaImmobiliare("eff", "ede", "edee", 2, 35, 3,
-                                            "kikko", "rnjg", 2, Immobile.ricercaImmobileBySigla("ccr"),3,"d")
+unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
+                                                                 3, Immobile().ricercaImmobileBySigla("ccr"),2,"c")

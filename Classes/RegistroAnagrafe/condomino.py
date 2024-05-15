@@ -2,7 +2,8 @@
 import datetime
 import os.path
 import pickle
-from UnitaImmobiliare import UnitaImmobiliare
+from immobile import Immobile
+from unitaImmobiliare import UnitaImmobiliare
 
 nome_file = 'Dati/Condomini.pickle'
 class Condomino:
@@ -135,14 +136,14 @@ class Condomino:
             self.telefono = telefono
 
 condomino1 = Condomino()
-condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime("1968, 2, 23"), "affe",
-                                           "Roma", "1", UnitaImmobiliare.ricercaUnitaImmobiliareInterno(1), "Sbt", "pippo@gmail.com", "3333333333")
+condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
+                                           "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(1), "Sbt", "pippo@gmail.com", "3333333333")
 condomino2 = Condomino()
-condomino2.aggiungiCondomino("Giovanni", "Blu", "Ascoli", datetime.datetime("2002, 5, 14"), "ccr",
-                                           "Sbt", "2", UnitaImmobiliare.ricercaUnitaImmobiliareInterno(2),"Firenze", "pluto@gmail.com", "4444444444" )
+condomino2.aggiungiCondomino("Giovanni", "Blu", "Ascoli", datetime.datetime(2002, 5, 14), "ccr",
+                                           "Sbt", 2, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2),"Firenze", "pluto@gmail.com", "4444444444" )
 condomino3 = Condomino()
-condomino3.aggiungiCondomino("Buls", "Verdi", "Colli", datetime.datetime("19998, 11, 31"), "dvd",
-                                           "Sbt", "3", UnitaImmobiliare.ricercaUnitaImmobiliareInterno(3),"Roma", "minni@gmail.com", "555555555" )
+condomino3.aggiungiCondomino("Buls", "Verdi", "Colli", datetime.datetime(1998, 11, 15), "dvd",
+                                           "Sbt", 3, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(3),"Roma", "minni@gmail.com", "555555555" )
 print(condomino1.getDatiAnagraficiCondomino())
 print(condomino2.getDatiAnagraficiCondomino())
 print(condomino3.getDatiAnagraficiCondomino())
