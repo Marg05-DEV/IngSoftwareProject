@@ -45,6 +45,36 @@ class Spesa:
         with open('Dati/spese.pickle', 'wb') as f:
             pickle.dump(spese, f , pickle.HIGHEST_PROTOCOL)
 
+    def modificaSpesa(self, descrizione = None, fornitore = None, importo = None, codice = None, tipoSpesa = None, immobile = None,
+                      pagata = None, dataPagamento = None, dataFattura = None, dataRegistrazione = None,isRitenuta = None, numeroFattura = None):
+        if descrizione is not None:
+            self.descrizione = descrizione
+        if fornitore is not None:
+            self.fornitore = fornitore
+        if codice is not None:
+            self.codice = codice
+        if importo is not None:
+            self.importo = importo
+        if tipoSpesa is not None:
+            self.tipoSpesa = tipoSpesa
+        if immobile is not None:
+            self.immobile = immobile
+        if pagata is not None:
+            self.pagata = pagata
+        if dataPagamento is not None:
+            self.dataPagamento = dataPagamento
+        if dataFattura is not None:
+            self.dataFattura = dataFattura
+        if dataRegistrazione is not None:
+            self.dataRegistrazione = dataRegistrazione
+        if isRitenuta is not None:
+            self.isRitenuta = isRitenuta
+        if numeroFattura is not None:
+            self.numeroFattura = numeroFattura
+
+
+
+
     def ricercaSpesaByDataPagamento(self, dataPagamento):
         if os.path.isfile('Dati/spese.pickle'):
             with open('dati/spese.pickle', 'rb') as f:

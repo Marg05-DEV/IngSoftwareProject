@@ -78,3 +78,22 @@ class Rata:
             "pagata": self.pagata,
             "unitaImmobiliare": self.unitaImmobiliare
         }
+
+    def modificaRata(self, codice = None, dataRegistrazione = None, descrizione = None, importo = None, numeroRicevuta = None,
+                     pagata = None, unitaImmobiliare = None):
+        if codice is not None:
+            self.codice = codice
+        if dataRegistrazione is not None:
+            self.dataRegistrazione = dataRegistrazione
+        if descrizione is not None:
+            self.descrizione = descrizione
+        if importo is not None:
+            self.importo = importo
+        if numeroRicevuta is not None:
+            self.numeroRicevuta = numeroRicevuta
+        if pagata is not None:
+            self.pagata = pagata
+        if unitaImmobiliare is not None:
+            self.unitaImmobiliare = unitaImmobiliare
+
+

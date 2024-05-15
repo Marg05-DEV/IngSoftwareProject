@@ -34,6 +34,26 @@ class Immobile:
         with open(file_name, 'wb') as f:
             pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
 
+    def modificaImmobile(self,  codice = None, sigla = None, denominazione = None, codiceFiscale = None, citta = None, provincia = None, cap = None, via = None):
+        if codice is not None:
+            self.codice = codice
+        if sigla is not None:
+            self.sigla = sigla
+        if denominazione is not None:
+            self.denominazione = denominazione
+        if codiceFiscale is not None:
+            self.codiceFiscale = codiceFiscale
+        if citta is not None:
+            self.citta = citta
+        if provincia is not None:
+            self.provincia = provincia
+        if cap is not None:
+            self.cap = cap
+        if via is not None:
+            self.via = via
+
+
+
     def getInfoImmobile(self):
         return {
             "codice": self.codice,
