@@ -36,11 +36,10 @@ class TipoSpesa:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
-            for tipoSpesa in tipiSpesa:
-                if tipoSpesa.nome == nome:
-                    return tipoSpesa
-                else:
-                    return "Tipo spesa non esistente"
+                for tipoSpesa in tipiSpesa:
+                    if tipoSpesa.nome == nome:
+                        return tipoSpesa
+                return "Tipo spesa non esistente"
         else:
             return "File non esistente"
 

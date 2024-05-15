@@ -1,3 +1,4 @@
+
 import os
 import pickle
 
@@ -6,12 +7,11 @@ import Immobile
 nome_file = 'Dati/unitaImmobiliari.pickle'
 class UnitaImmobiliare:
 
-    def __init__(self, foglio, subalterno, condomini, millesimi, particella, tipoUnitaImmobiliare, interno):
+    def __init__(self):
         self.interno = 0
-        self.foglio = ""
-        self.subalterno = ""
-        self.condomini = ""
-        self.millesimi = 0
+        self.foglio = 0
+        self.subalterno = 0
+        self.condomini = {}
         self.particella = 0
         self.tipoUnitaImmobiliare = ""
         self.categoria = ""
@@ -21,12 +21,11 @@ class UnitaImmobiliare:
         self.ZC = ""
 
 
-    def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, millesimi, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
+    def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
         self.interno = interno
         self.foglio = foglio
         self.subalterno = subalterno
         self.condomini = condomini
-        self.millesimi = millesimi
         self.particella = particella
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
         self.categoria = categoria
@@ -36,8 +35,8 @@ class UnitaImmobiliare:
         self.ZC = ZC
 
         unitaImmobiliari = {}
-        if os.path.isFile('Dati/unitaImmobiliari.pickle'):
-            with open('Dati/unitaImmobiliari.pickle', 'rb' ) as f:
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb' ) as f:
                 unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
         with open(nome_file, 'wb') as f:
@@ -50,7 +49,6 @@ class UnitaImmobiliare:
             "foglio": self.foglio,
             "subalterno": self.subalterno,
             "condomini": self.condomini,
-            "milleismi": self.millesimi,
             "particella": self.particella,
             "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare,
             "categoria": self.categoria,
@@ -59,14 +57,15 @@ class UnitaImmobiliare:
             "ZC": self.ZC
         }
 
-    def ricercaUnitaImmobiliareInterno(self,interno):
-        if os.path.isfile('Dati/unitaImmobiliari.pickle'):
-            with open('Dati/unitaImmobiliari.pickle', 'rb') as f:
-                unitaImmobiliari = dict(pickle.loaf(f))
+    @staticmethod
+    def ricercaUnitaImmobiliareInterno(interno):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                unitaImmobiliari = dict(pickle.load(f))
                 for unitaImmobiliare in unitaImmobiliari.values():
                     if unitaImmobiliari.interno == interno:
                         return unitaImmobiliare
-            return "L'unita' immobiliare cercata non e' presente"
+                return "L'unita' immobiliare cercata non e' presente"
         else:
             return "File non esistente"
 
@@ -80,7 +79,6 @@ class UnitaImmobiliare:
         self.foglio = ""
         self.subalterno = ""
         self.condomini = ""
-        self.millesimi = 0
         self.particella = 0
         self.tipoUnitaImmobiliare = ""
         self.categoria = ""
@@ -99,8 +97,6 @@ class UnitaImmobiliare:
             self.subalterno = subalterno
         if condomini is not None:
             self.condomini = condomini
-        if millesimi is not None:
-            self.millesimi = millesimi
         if particella is not None:
             self.particella = particella
         if tipoUnitaImmobiliare is not None:

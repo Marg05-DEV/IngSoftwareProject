@@ -10,15 +10,13 @@ class Fornitore:
         self.indirizzoSede = ""
         self.partitaIva = ""
         self.tipoProfessione = ""
-        self.codice = 0
 
-    def aggiungiFornitore(self , cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione, codice):
+    def aggiungiFornitore(self , cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
         self.cittaSede = cittaSede
         self.denominazione = denominazione
         self.indirizzoSede = indirizzoSede
         self.partitaIva = partitaIva
         self.tipoProfessione = tipoProfessione
-        self.codice = codice
 
         fornitori = {}
         if os.path.isfile(nome_file):
@@ -35,5 +33,4 @@ class Fornitore:
             "indirizzoSede": self.indirizzoSede,
             "partitaIva": self.partitaIva,
             "tipoProfessione": self.tipoProfessione,
-            "codice:": self.codice
         }

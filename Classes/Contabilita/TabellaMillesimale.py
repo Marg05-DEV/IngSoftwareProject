@@ -7,10 +7,10 @@ class TabellaMillesimale:
     def __init__(self):
         self.codice = 0
         self.nome = ""
-        self.tipologiaSpesa = None
+        self.tipologiaSpesa =[]
         self.descrizione = ""
         self.immobile = None
-        self.millesimi = None
+        self.millesimi = {}
 
     def aggiungiTabellaMillesimale(self, codice, nome, tipologieSpesa, descrizione, immobile, millesimi):
         self.codice = codice

@@ -49,11 +49,10 @@ class Rata:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
-            for rata in rate:
-                if rata.dataRegistrazione == data:
-                    return rata
-                else:
-                    return "Rata non trovata"
+                for rata in rate:
+                    if rata.dataRegistrazione == data:
+                        return rata
+                return "Rata non trovata"
         else:
             return "File non esistente"
 
@@ -61,10 +60,9 @@ class Rata:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
-            for rata in rate:
-                if rata.codice == codice:
-                    return rata
-            else:
+                for rata in rate:
+                    if rata.codice == codice:
+                        return rata
                 return "Rata non trovata"
         else:
             return "File non esistente"

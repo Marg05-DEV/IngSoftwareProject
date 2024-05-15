@@ -154,6 +154,7 @@ class Immobile:
             with open(file_name, "wb+") as f:
                 immobili = dict(pickle.load(f))
                 del immobili[self.codice]
+                pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
             self.codice = 0
             self.sigla = ""
             self.denominazione = ""
