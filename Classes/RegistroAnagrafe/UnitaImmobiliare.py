@@ -1,10 +1,8 @@
 
 import os
 import pickle
-
-import Immobile
-
-nome_file = 'Dati/unitaImmobiliari.pickle'
+from Immobile import Immobile
+nome_file = 'Dati/UnitaImmobiliari.pickle'
 class UnitaImmobiliare:
 
     def __init__(self):
@@ -110,5 +108,13 @@ class UnitaImmobiliare:
         if ZC is not None:
             self.ZC = ZC
 
-
-
+unitaImmobiliare_1 = UnitaImmobiliare()
+unitaImmobiliare_1.aggiungiUnitaImmobiliare("bofo", "sodmk", "edkel,e",
+                                                                 1, 34, 1, "Sesso",
+                                                                 "cella", 2, Immobile.ricercaImmobileBySigla("ccr"), 1, "e" )
+unitaImmobiliare_2 = UnitaImmobiliare()
+unitaImmobiliare_2.aggiungiUnitaImmobiliare("sx", "rfv", "rc,e", 3, 33, 2,
+                                 "tipo", "dfjejn", 2, Immobile.ricercaImmobileBySigla("ccr"), 2, "s")
+unitaImmobiliare_3 = UnitaImmobiliare()
+unitaImmobiliare_3.aggiungiUnitaImmobiliare("eff", "ede", "edee", 2, 35, 3,
+                                            "kikko", "rnjg", 2, Immobile.ricercaImmobileBySigla("ccr"),3,"d")

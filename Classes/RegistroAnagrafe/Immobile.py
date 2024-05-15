@@ -163,3 +163,11 @@ class Immobile:
             self.provincia = ""
             self.cap = ""
             self.via = ""
+
+
+"""
+immobile1 =Immobile()
+immobile1.aggiungiImmobile(1, "ccr", "dav", "dgn", "offida", "ap",
+                                       "63073", "tesino")
+print(immobile1.getInfoImmobile())
+"""

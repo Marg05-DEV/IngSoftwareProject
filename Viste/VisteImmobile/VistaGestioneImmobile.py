@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListV
     QPushButton
 
 from Classes.RegistroAnagrafe.Immobile import Immobile
+from Viste.VisteImmobile.VistaCreateImmobile import VistaCreateImmobile
 
 
 class VistaGestioneImmobile(QWidget):
@@ -54,14 +55,10 @@ class VistaGestioneImmobile(QWidget):
         self.setWindowTitle("Gestione Immobile")
 
     def create_button(self, testo, action):
-        i = 1
-        print("inizio bottone", i)
         button = QPushButton(testo)
-        button.setFixedSize(100, 70)
+        button.setFixedSize(110, 55)
         button.setCheckable(True)
         button.clicked.connect(action)
-        print("bottone", i)
-        i += 1
         return button
 
     def debugComboBox1(self, combo):
@@ -93,7 +90,9 @@ class VistaGestioneImmobile(QWidget):
         self.list_view_immobili.setModel(listview_model)
 
     def go_Create_immobile(self):
-        pass
+        self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.update_list)
+        self.vista_nuovo_immobile.show()
+
 
     def go_Read_immobile(self):
         pass

@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy
 
 from Viste.VisteImmobile.VistaGestioneImmobile import VistaGestioneImmobile
 
@@ -20,14 +20,13 @@ class VistaHome(QWidget):
                                                  "Scegli un immobile e visualizza le sue tabelle millesimali o calcola il bilancio dell'esercizio.", self.goBilancio))
         vertical_layout.addWidget(self.getButton("Gestione Documenti",
                                                  "Visualizza tutti i documenti creati come i registri anagrafici o i prospetti del bilancio degli immobili.", self.goDocumenti))
-
         self.setLayout(vertical_layout)
         self.resize(600, 400)
     def getButton(self, testo, sottotesto, on_click):
         button = QPushButton(testo)
         button.setText(button.text() + "\n" + sottotesto)
-        button.setFixedSize(580, 75)
         button.setCheckable(True)
+        button.setSizePolicy(QSizePolicy.E)
         button.clicked.connect(on_click)
         return button
 
