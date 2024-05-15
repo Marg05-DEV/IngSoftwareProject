@@ -2,8 +2,9 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
     QPushButton
 
-from Classes.RegistroAnagrafe.Immobile import Immobile
+from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteImmobile.VistaCreateImmobile import VistaCreateImmobile
+from Viste.VisteImmobile.VistaReadImmobile import VistaReadImmobile
 
 
 class VistaGestioneImmobile(QWidget):
@@ -93,12 +94,22 @@ class VistaGestioneImmobile(QWidget):
         self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.update_list)
         self.vista_nuovo_immobile.show()
 
-
     def go_Read_immobile(self):
-        pass
+        item = None
+        for index in self.list_view_immobili.selectedIndexes():
+            item = self.list_view_immobili.model().itemFromIndex(index)
+            print(item.text())
+        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
+        print(sel_immobile)
+        print(sel_immobile.getInfoImmobile())
+        self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile)
+        self.vista_dettaglio_immobile.show()
 
     def go_Update_immobile(self):
         pass
 
     def go_Delete_immobile(self):
         pass
+
+    def azione(self):
+        print("Nella funzione", self.list_view_immobili.currentIndex())

@@ -2,7 +2,7 @@ import sys
 
 from PyQt6.QtWidgets import QApplication
 
-from Classes.RegistroAnagrafe.Immobile import Immobile
+from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VistaHome import VistaHome
 
 

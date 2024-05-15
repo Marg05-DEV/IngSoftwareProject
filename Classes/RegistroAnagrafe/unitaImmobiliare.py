@@ -60,8 +60,9 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
+                print( type(unitaImmobiliari))
                 for unitaImmobiliare in unitaImmobiliari.values():
-                    if unitaImmobiliari.interno == interno:
+                    if unitaImmobiliare.interno == interno:
                         return unitaImmobiliare
                 return None
         else:

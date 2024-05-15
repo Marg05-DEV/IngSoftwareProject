@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, QSizePolicy
 
 
 class VistaCreateImmobile(QWidget):
@@ -23,7 +23,6 @@ class VistaCreateImmobile(QWidget):
         main_layout.addLayout(self.pairLabelInput("CAP"), 5, 0)
         main_layout.addLayout(self.pairLabelInput("Via"), 5, 1)
 
-
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 6, 0, 1, 2)
         main_layout.addWidget(self.create_button("Aggiungi Immobile", self.createImmobile), 7, 0, 1, 2)
 
@@ -32,15 +31,16 @@ class VistaCreateImmobile(QWidget):
         self.resize(600, 400)
         self.setWindowTitle("Inserimento Nuovo Immobile")
 
-
-    def create_button(self, testo, action):
+    @staticmethod
+    def create_button(testo, action):
         button = QPushButton(testo)
         button.setCheckable(True)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
         return button
 
-
-    def pairLabelInput(self, testo):
+    @staticmethod
+    def pairLabelInput(testo):
         pair_layout = QHBoxLayout()
 
         label = QLabel(testo + ": ")

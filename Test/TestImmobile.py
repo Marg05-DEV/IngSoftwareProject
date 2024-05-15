@@ -2,7 +2,7 @@ import os.path
 import pickle
 from unittest import TestCase
 
-from Classes.RegistroAnagrafe.Immobile import Immobile
+from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class TestImmobile(TestCase):
