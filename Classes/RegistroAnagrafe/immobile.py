@@ -121,7 +121,7 @@ class Immobile:
                 sorted_immobili = []
                 for denom in sorted_denominazione:
                     for immobile in immobili.values():
-                        if(immobile.denominazione == denom):
+                        if immobile.denominazione == denom:
                             sorted_immobili.append(immobile)
                             break
                 return sorted_immobili
@@ -141,7 +141,7 @@ class Immobile:
                 sorted_immobili = []
                 for sigla in sorted_sigla:
                     for immobile in immobili.values():
-                        if (immobile.sigla == sigla):
+                        if immobile.sigla == sigla:
                             sorted_immobili.append(immobile)
                             break
                 return sorted_immobili
@@ -161,7 +161,7 @@ class Immobile:
                 sorted_immobili = []
                 for codice in sorted_codice:
                     for immobile in immobili.values():
-                        if (immobile.codice == codice):
+                        if immobile.codice == codice:
                             sorted_immobili.append(immobile)
                             break
                 return sorted_immobili
@@ -174,14 +174,15 @@ class Immobile:
                 immobili = dict(pickle.load(f))
                 del immobili[self.codice]
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-            self.codice = 0
-            self.sigla = ""
-            self.denominazione = ""
-            self.codiceFiscale = ""
-            self.citta = ""
-            self.provincia = ""
-            self.cap = ""
-            self.via = ""
+        self.codice = 0
+        self.sigla = ""
+        self.denominazione = ""
+        self.codiceFiscale = ""
+        self.citta = ""
+        self.provincia = ""
+        self.cap = ""
+        self.via = ""
+        del self
 
 
 """
