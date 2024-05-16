@@ -4,7 +4,9 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListV
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteImmobile.VistaCreateImmobile import VistaCreateImmobile
+from Viste.VisteImmobile.VistaDeleteImmobile import VistaDeleteImmobile
 from Viste.VisteImmobile.VistaReadImmobile import VistaReadImmobile
+from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
 
 
 class VistaGestioneImmobile(QWidget):
@@ -39,11 +41,15 @@ class VistaGestioneImmobile(QWidget):
         self.list_view_immobili = QListView()
         self.update_list()
         button_layout = QVBoxLayout()
+        self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Immobile", self.go_Create_immobile))
-        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile))
-        button_layout.addWidget(self.create_button("Modifica immobile", self.go_Update_immobile))
-        button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile))
+        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile, True))
+        button_layout.addWidget(self.create_button("Modifica Immobile", self.go_Update_immobile, True))
+        button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile, True))
+
+        selectionModel = self.list_view_immobili.selectionModel()
+        selectionModel.selectionChanged.connect(self.able_button)
 
         action_layout.addWidget(self.list_view_immobili)
         action_layout.addLayout(button_layout)
@@ -55,11 +61,13 @@ class VistaGestioneImmobile(QWidget):
         self.resize(600, 400)
         self.setWindowTitle("Gestione Immobile")
 
-    def create_button(self, testo, action):
+    def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setFixedSize(110, 55)
         button.setCheckable(True)
         button.clicked.connect(action)
+        button.setDisabled(disabled)
+        self.button_list[testo] = button
         return button
 
     def debugComboBox1(self, combo):
@@ -75,7 +83,6 @@ class VistaGestioneImmobile(QWidget):
     def update_list(self):
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
-
         listview_model = QStandardItemModel(self.list_view_immobili)
 
         for immobile in self.lista_immobili:
@@ -100,16 +107,35 @@ class VistaGestioneImmobile(QWidget):
             item = self.list_view_immobili.model().itemFromIndex(index)
             print(item.text())
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        print(sel_immobile)
-        print(sel_immobile.getInfoImmobile())
         self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile)
         self.vista_dettaglio_immobile.show()
 
     def go_Update_immobile(self):
-        pass
+        item = None
+        for index in self.list_view_immobili.selectedIndexes():
+            item = self.list_view_immobili.model().itemFromIndex(index)
+            print(item.text())
+        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
+        self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.update_list)
+        self.vista_modifica_immobile.show()
 
     def go_Delete_immobile(self):
-        pass
+        item = None
+        for index in self.list_view_immobili.selectedIndexes():
+            item = self.list_view_immobili.model().itemFromIndex(index)
+            print(item.text())
+        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
+        self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.update_list)
+        self.vista_elimina_immobile.show()
 
-    def azione(self):
-        print("Nella funzione", self.list_view_immobili.currentIndex())
+
+    def able_button(self):
+        print("selezione cambiata")
+        if not self.list_view_immobili.selectedIndexes():
+            self.button_list["Visualizza Immobile"].setDisabled(True)
+            self.button_list["Modifica Immobile"].setDisabled(True)
+            self.button_list["Elimina Immobile"].setDisabled(True)
+        else:
+            self.button_list["Visualizza Immobile"].setDisabled(False)
+            self.button_list["Modifica Immobile"].setDisabled(False)
+            self.button_list["Elimina Immobile"].setDisabled(False)

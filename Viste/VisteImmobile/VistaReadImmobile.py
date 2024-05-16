@@ -43,18 +43,11 @@ class VistaReadImmobile(QWidget):
         return button
 
     def pair_label(self, testo, index):
-        j = 1
-        print(" -", j)
-        j += 1
         pair_layout = QHBoxLayout()
-        print(" -", j)
-        j += 1
+
         lbl_desc = QLabel(testo + ": ")
-        print(" -", j)
-        j += 1
         lbl_content = QLabel(str(self.sel_immobile.getInfoImmobile()[index]))
-        print(" -", j)
-        j += 1
+
         pair_layout.addWidget(lbl_desc)
         pair_layout.addWidget(lbl_content)
 

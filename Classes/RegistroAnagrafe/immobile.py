@@ -5,7 +5,7 @@ file_name = 'Dati/Immobile.pickle'
 #file_name = '../../Dati/Immobile.pickle'
 
 class Immobile:
-
+    #print("dentro immobile:", dir())
     def __init__(self):
         self.codice = 0
         self.sigla = ""
@@ -17,6 +17,7 @@ class Immobile:
         self.via = ""
 
     def aggiungiImmobile(self, codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
+        #print("dentro immobile:", dir())
         self.codice = codice
         self.sigla = sigla
         self.denominazione = denominazione
@@ -69,16 +70,23 @@ class Immobile:
     @staticmethod
     def getAllImmobili():
         if os.path.isfile(file_name):
-            with open(file_name, 'rb') as f:
-                immobili = dict(pickle.load(f))
+            print(2)
+            with open(file_name, 'rb') as f:#che succede?Appena chiudi fai il commit
+                try:
+                    immobili = dict(pickle.load(f))
+                except EOFError:
+                    immobili = {} #funziona. Ho provato prima ma per ora non lo faccio. C'è sicuramente un problema sulla function rimuoviImmobile
+                    #Fra un po finisco lezione. Non so se chiudendo il computer la sessione si blocca. Io mo lo faccio ma se è aspettati che il tempo di arriva e mi ci rimetto
                 return immobili
+        else:
+            return {}#ora esco dalla sessione, 
 
     @staticmethod
     def ricercaImmobileByDenominazione(denominazione):
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
-                for immobile in immobili.values():
+                for immobile in immobili.values(): #l'errore è dato quando il file è vuoto. Fammi fa la prova da app per vedere se funziona la vista aggiungi immobile
                     if immobile.denominazione == denominazione:
                         return immobile
                 return "Immobile non trovato"
@@ -172,7 +180,7 @@ class Immobile:
         if os.path.isfile(file_name):
             with open(file_name, "wb+") as f:
                 immobili = dict(pickle.load(f))
-                del immobili[self.codice]
+                del immobili[str(self.codice)]
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
         self.codice = 0
         self.sigla = ""
@@ -184,10 +192,16 @@ class Immobile:
         self.via = ""
         del self
 
+# il blocco dentro l'if viene avviato solo se viene avviata direttamente la classe immobile
+# Quindi arrivando dal file main non verrà fatto il seguente blocco
+# Invece quando fai da terminale python .../Immobilie.py te lo dovrebbe fare
 
-"""
-immobile1 =Immobile()
-immobile1.aggiungiImmobile(1, "ccr", "dav", "dgn", "offida", "ap",
-                                       "63073", "tesino")
-print(immobile1.getInfoImmobile())
-"""
+#mi continua a da errore
+#EOFError: Ran out of input
+
+if __name__ == "__main__":
+    immobile1 = Immobile()
+    immobile1.aggiungiImmobile(1, "ccr", "figa", "dvd", "Offida",
+                                                    "AP", "63073", "Tesino")
+    print(immobile1.getInfoImmobile())
+

@@ -8,6 +8,11 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 class TestImmobile(TestCase):
 
     def test_aggiungiImmobile(self):
+        x = 10
+        from Classes.RegistroAnagrafe.immobile import Immobile
+        print("ciao")
+        print(dir())
+        print(dir(Immobile))
         self.immobile = Immobile()
         self.immobile.aggiungiImmobile(4, "sig", "den",
                                        "ccrdhgbgib", "Offida", "AP", "88888", "tesino")
