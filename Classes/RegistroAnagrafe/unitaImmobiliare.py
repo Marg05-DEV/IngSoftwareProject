@@ -60,7 +60,6 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                print( type(unitaImmobiliari))
                 for unitaImmobiliare in unitaImmobiliari.values():
                     if unitaImmobiliare.interno == interno:
                         return unitaImmobiliare
@@ -109,15 +108,16 @@ class UnitaImmobiliare:
         if ZC is not None:
             self.ZC = ZC
 
-unitaImmobiliare_1 = UnitaImmobiliare()
-unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 1, "viva", "all", 1, Immobile().ricercaImmobileBySigla("ccr"), 1, "a")
-unitaImmobiliare_2 = UnitaImmobiliare()
-unitaImmobiliare_2.aggiungiUnitaImmobiliare(2, 2, {}, 2, 3, "negozio", "Sesso",
-                                                                 2, Immobile().ricercaImmobileBySigla("ccr"), 3, "b")
-unitaImmobiliare_3 = UnitaImmobiliare()
-unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
-                                                                 3, Immobile().ricercaImmobileBySigla("ccr"),2,"c")
-print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
-unitaImmobiliare_1.modificaUnitaImmobiliare(1, 1, {}, 1, 12, "negozio", "Sesso",
-                                                                 1, Immobile().ricercaImmobileBySigla("ccr"),1,"a")
-print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
+if __name__ == "__main__":
+    unitaImmobiliare_1 = UnitaImmobiliare()
+    unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 1, "viva", "all", 1, Immobile().ricercaImmobileBySigla("ccr"), 1, "a")
+    unitaImmobiliare_2 = UnitaImmobiliare()
+    unitaImmobiliare_2.aggiungiUnitaImmobiliare(2, 2, {}, 2, 3, "negozio", "Sesso",
+                                                                     2, Immobile().ricercaImmobileBySigla("ccr"), 3, "b")
+    unitaImmobiliare_3 = UnitaImmobiliare()
+    unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
+                                                                     3, Immobile().ricercaImmobileBySigla("ccr"),2,"c")
+    print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
+    unitaImmobiliare_1.modificaUnitaImmobiliare(1, 1, {}, 1, 12, "negozio", "Sesso",
+                                                                     1, Immobile().ricercaImmobileBySigla("ccr"),1,"a")
+    print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
