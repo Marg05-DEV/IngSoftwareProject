@@ -2,6 +2,7 @@
 import datetime
 import os.path
 import pickle
+
 from immobile import Immobile
 from unitaImmobiliare import UnitaImmobiliare
 
@@ -43,14 +44,15 @@ class Condomino:
 
     def rimuoviCondomino(self):
         if os.path.isfile(nome_file):
-            with open(nome_file, 'wb+') as f:
+            with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
                 del condomini[self.codice]
+            with open(nome_file, 'wb') as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
         self.nome = ""
         self.cognome = ""
         self.residenza = ""
-        self.codice = 0
+        self.codice = -1
         self.dataDiNascita = datetime.datetime(year=1970, month=1, day=1)
         self.codiceFiscale = ""
         self.luogoDiNascita = ""
@@ -113,9 +115,11 @@ class Condomino:
         else:
             return None
 
-    def modificaUnitaCondomino(self, nome = None, cognome = None, residenza = None, dataDiNascita = None, codiceFiscale = None, luogoDiNascita = None, unitaImmobiliare = None, provinciaDiNascita = None, email = None, telefono = None ):
+    def modificaUnitaCondomino(self, nome = None, cognome = None, residenza = None, dataDiNascita = None, codiceFiscale = None, luogoDiNascita = None, codice = None, unitaImmobiliare = None, provinciaDiNascita = None, email = None, telefono = None ):
         if nome is not None:
             self.nome = nome
+        if codice is not None:
+            self.codice = codice
         if cognome is not None:
             self.cognome = cognome
         if residenza is not None:
@@ -137,7 +141,7 @@ class Condomino:
 
 condomino1 = Condomino()
 condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
-                                           "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(1), "Sbt", "pippo@gmail.com", "3333333333")
+                                           "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2), "Sbt", "pippo@gmail.com", "3333333333")
 condomino2 = Condomino()
 condomino2.aggiungiCondomino("Giovanni", "Blu", "Ascoli", datetime.datetime(2002, 5, 14), "ccr",
                                            "Sbt", 2, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2),"Firenze", "pluto@gmail.com", "4444444444" )
