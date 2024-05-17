@@ -39,7 +39,8 @@ class VistaGestioneImmobile(QWidget):
         action_layout = QHBoxLayout()
 
         self.list_view_immobili = QListView()
-        self.update_list()
+
+
         button_layout = QVBoxLayout()
         self.button_list = {}
 
@@ -48,10 +49,13 @@ class VistaGestioneImmobile(QWidget):
         button_layout.addWidget(self.create_button("Modifica Immobile", self.go_Update_immobile, True))
         button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile, True))
 
-        selectionModel = self.list_view_immobili.selectionModel()
-        selectionModel.selectionChanged.connect(self.able_button)
-
         action_layout.addWidget(self.list_view_immobili)
+
+        self.update_list()
+
+        self.selectionModel = self.list_view_immobili.selectionModel()
+        self.selectionModel.selectionChanged.connect(self.able_button)
+
         action_layout.addLayout(button_layout)
 
         main_layout.addLayout(find_layout)
@@ -81,6 +85,9 @@ class VistaGestioneImmobile(QWidget):
         print("post")
 
     def update_list(self):
+        print("cazzi1")
+
+        print("cazzi2")
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         listview_model = QStandardItemModel(self.list_view_immobili)

@@ -17,7 +17,6 @@ class VistaCreateImmobile(QWidget):
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
         main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
-        print(1)
 
         main_layout.addLayout(self.pairLabelInput("Denominazione", "denominazione", ), 1, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("CF/Partita IVA", "codiceFiscale"), 2, 0, 1, 2)
@@ -49,10 +48,10 @@ class VistaCreateImmobile(QWidget):
 
         label = QLabel(testo + ": ")
         input_line = QLineEdit()
-        print(1)
+
         if index == "codice":
             input_line.setValidator(QIntValidator())
-            print(1)
+
         self.input_lines[index] = input_line
 
         pair_layout.addWidget(label)

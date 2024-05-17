@@ -17,7 +17,6 @@ class Immobile:
         self.via = ""
 
     def aggiungiImmobile(self, codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
-        #print("dentro immobile:", dir())
         self.codice = codice
         self.sigla = sigla
         self.denominazione = denominazione
@@ -31,9 +30,14 @@ class Immobile:
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = pickle.load(f)
+        print(immobili.keys())
+        for key_codice in immobili.keys():
+            if key_codice == codice:
+                return "L'immobile è già esistente"
         immobili[codice] = self
         with open(file_name, 'wb') as f:
             pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+        return "Il nuovo immobile " + denominazione + " è stato inserito"
 
     def modificaImmobile(self,  codice = None, sigla = None, denominazione = None, codiceFiscale = None, citta = None, provincia = None, cap = None, via = None):
         if codice is not None:
@@ -71,16 +75,14 @@ class Immobile:
     def getAllImmobili():
         if os.path.isfile(file_name):
             print(2)
-            with open(file_name, 'rb') as f:#che succede?Appena chiudi fai il commit
+            with open(file_name, 'rb') as f:
                 try:
                     immobili = dict(pickle.load(f))
                 except EOFError:
-                    immobili = {} #funziona. Ho provato prima ma per ora non lo faccio. C'è sicuramente un problema sulla function rimuoviImmobile
-                    #Fra un po finisco lezione. Non so se chiudendo il computer la sessione si blocca. Io mo lo faccio ma se è aspettati che il tempo di arriva e mi ci rimetto
+                    immobili = {}
                 return immobili
         else:
-            return {}#ora esco dalla sessione, 
-
+            return {}
     @staticmethod
     def ricercaImmobileByDenominazione(denominazione):
         if os.path.isfile(file_name):
@@ -177,31 +179,28 @@ class Immobile:
             return None
 
     def rimuoviImmobile(self):
+        immobili = {}
         if os.path.isfile(file_name):
-            with open(file_name, "wb+") as f:
+            with open(file_name, "rb") as f:
+                print(immobili)
                 immobili = dict(pickle.load(f))
-                del immobili[str(self.codice)]
+                del immobili[self.codice]
+            with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-        self.codice = 0
-        self.sigla = ""
-        self.denominazione = ""
-        self.codiceFiscale = ""
-        self.citta = ""
-        self.provincia = ""
-        self.cap = ""
-        self.via = ""
-        del self
-
-# il blocco dentro l'if viene avviato solo se viene avviata direttamente la classe immobile
-# Quindi arrivando dal file main non verrà fatto il seguente blocco
-# Invece quando fai da terminale python .../Immobilie.py te lo dovrebbe fare
-
-#mi continua a da errore
-#EOFError: Ran out of input
+                print("b", immobili)
+            self.codice = -1
+            self.sigla = ""
+            self.denominazione = ""
+            self.codiceFiscale = ""
+            self.citta = ""
+            self.provincia = ""
+            self.cap = ""
+            self.via = ""
+            del self
 
 if __name__ == "__main__":
     immobile1 = Immobile()
-    immobile1.aggiungiImmobile(1, "ccr", "figa", "dvd", "Offida",
+    immobile1.aggiungiImmobile(5, "ccr", "figa", "dvd", "Offida",
                                                     "AP", "63073", "Tesino")
     print(immobile1.getInfoImmobile())
 
