@@ -89,7 +89,7 @@ class Condomino:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
-                for condomino in condomini:
+                for condomino in condomini.values():
                     if condomino.nome == nome:
                         return condomino
                 return "Condomino non trovato"
@@ -149,7 +149,11 @@ if __name__ == "__main__":
     condomino3 = Condomino()
     condomino3.aggiungiCondomino("Buls", "Verdi", "Colli", datetime.datetime(1998, 11, 15), "dvd",
                                                "Sbt", 3, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(3),"Roma", "minni@gmail.com", "555555555" )
-    print(condomino1.getDatiAnagraficiCondomino())
+   # print(condomino1.getDatiAnagraficiCondomino())
     condomino1.modificaUnitaCondomino("Fica", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
                                                "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2), "Sbt", "pippo@gmail.com", "3333333333")
-    print(condomino1.getDatiAnagraficiCondomino())
+   # print(condomino1.getDatiAnagraficiCondomino())
+    condomino4 = Condomino().ordinaCondominoByName(False)
+    condomino= Condomino()
+    for condomino in condomino4:
+        print(condomino.nome)

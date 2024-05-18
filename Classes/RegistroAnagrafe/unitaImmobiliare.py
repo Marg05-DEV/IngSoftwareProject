@@ -56,7 +56,8 @@ class UnitaImmobiliare:
             "ZC": self.ZC
         }
 
-    def ricercaUnitaImmobiliareInterno(self, interno):
+    @staticmethod
+    def ricercaUnitaImmobiliareInterno(interno):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
@@ -64,6 +65,25 @@ class UnitaImmobiliare:
                     if unitaImmobiliare.interno == interno:
                         return unitaImmobiliare
                 return None
+        else:
+            return None
+
+    @staticmethod
+    def ordinaCondominoByDatiCatastali(isDecrescente):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                unitaImmobiliari = dict(pickle.load(f))
+                sorted_dati_catastali = []
+                for unitaImmobiliare in unitaImmobiliari.values():
+                    sorted_dati_catastali.append(unitaImmobiliare.interno)
+                sorted_dati_catastali.sort(reverse=isDecrescente)
+                sorted_unitaImmobilairi = []
+                for interno in sorted_dati_catastali:
+                    for unitaImmobiliare in unitaImmobiliari.values():
+                        if (unitaImmobiliare.interno == interno):
+                            sorted_unitaImmobilairi.append(unitaImmobiliare)
+                            break
+                return sorted_unitaImmobilairi
         else:
             return None
 

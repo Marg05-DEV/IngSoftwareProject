@@ -22,7 +22,7 @@ class Fornitore:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
-        fornitori[codice] = self
+        fornitori[denominazione] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
 
