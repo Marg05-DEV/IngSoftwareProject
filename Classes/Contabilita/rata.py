@@ -41,10 +41,19 @@ class Rata:
 
     def rimuoviRata(self):
         if os.path.isfile(nome_file):
-            with open(nome_file, 'wb+') as f:
+            with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
                 del rate[self.codice]
-        self.codice = 0
+            with open(nome_file, 'wb') as f:
+                pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
+        self.codice = -1
+        self.dataPagamento = datetime.datetime(year=1970, month=1, day=1)
+        self.descrizione = ""
+        self.importo = 0.0
+        self.numeroRicevuta = 0
+        self.pagata = False
+        self.tipoPagamento = ""
+        self.unitaImmobiliare = None
         del self
 
     def ricercaRataByDataPagamento(self, data):

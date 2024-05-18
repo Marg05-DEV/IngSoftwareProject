@@ -2,7 +2,7 @@ import os.path
 import pickle
 from datetime import datetime
 
-
+nome_file = 'Dati/spese.pickle'
 class Spesa:
     numSpeseRegistrate = 0
 
@@ -38,12 +38,12 @@ class Spesa:
         self.numeroFattura = numeroFattura
 
         spese = {}
-        if os.path.isfile('Dati/spese.pickle'):
-            with open('dati/spese.pickle', 'rb') as f:
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
                 spese = pickle.load(f)
         spese[codice] = self
-        with open('Dati/spese.pickle', 'wb') as f:
-            pickle.dump(spese, f , pickle.HIGHEST_PROTOCOL)
+        with open(nome_file, 'wb') as f:
+            pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
 
     def modificaSpesa(self, descrizione = None, fornitore = None, importo = None, codice = None, tipoSpesa = None, immobile = None,
                       pagata = None, dataPagamento = None, dataFattura = None, dataRegistrazione = None, isRitenuta = None, numeroFattura = None):

@@ -64,5 +64,19 @@ class TabellaMillesimale:
         self.millesimi = {}
         del self
 
+    def modificaTabellaMillesimale(self, codice = None, nome = None, tipologieSpesa = None, descrizione = None, immobile = None, millesimi = None ):
+        if codice is not None:
+            self.codice = codice
+        if nome is not None:
+            self.nome = nome
+        if tipologieSpesa is not None:
+            self.tipologiaSpesa = tipologieSpesa
+        if descrizione is not None:
+            self.descrizione = descrizione
+        if immobile is not None:
+            self.immobile = immobile
+        if millesimi is not None:
+            self.millesimi = millesimi
+
 
 

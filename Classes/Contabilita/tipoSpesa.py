@@ -24,10 +24,12 @@ class TipoSpesa:
 
     def rimuoviTipoSpesa(self):
         if os.path.isfile(nome_file):
-            with open(nome_file, 'wb+') as f:
+            with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
                 del tipiSpesa[self.codice]
-        self.codice = 0
+            with open(nome_file, 'wb') as f:
+                pickle.dump(tipiSpesa, f, pickle.HIGHEST_PROTOCOL)
+        self.codice = -1
         self.descrizione = ""
         self.nome = ""
         del self
