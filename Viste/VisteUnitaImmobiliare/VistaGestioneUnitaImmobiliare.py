@@ -2,11 +2,11 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
 
-from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteImmobile.VistaCreateImmobile import VistaCreateImmobile
-from Viste.VisteImmobile.VistaDeleteImmobile import VistaDeleteImmobile
-from Viste.VisteImmobile.VistaReadImmobile import VistaReadImmobile
-from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+from Viste.VisteImmobile.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
+from Viste.VisteImmobile.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
+from Viste.VisteImmobile.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
+from Viste.VisteImmobile.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 
 
 class VistaGestioneImmobile(QWidget):
@@ -168,4 +168,3 @@ class VistaGestioneImmobile(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
-

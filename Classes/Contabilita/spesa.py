@@ -72,12 +72,31 @@ class Spesa:
         if numeroFattura is not None:
             self.numeroFattura = numeroFattura
 
+    def rimuoviSpesa(self):
+        if os.path.isfile(nome_file):
+            with (open(nome_file, 'rb') as f):
+               spese = dict(pickle.load(f))
+               del spese[self.codice]
+            with open(nome_file,'"wb') as f:
+                pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
+        self.codice = -1
+        self.dataFattura = datetime(year=1970, month=1, day=1)
+        self.dataRegistrazione = datetime(year=1970, month=1, day=1)
+        self.dataPagamento = datetime(year=1970, month=1, day=1)
+        self.descrizione = ""
+        self.fornitore = None
+        self.importo = 0.0
+        self.immobile = None
+        self.isRitenuta = False
+        self.tipoSpesa = None
+        self.pagata = False
+        self.numeroFattura = 0
+        del self
 
-
-
-    def ricercaSpesaByDataPagamento(self, dataPagamento):
-        if os.path.isfile('Dati/spese.pickle'):
-            with open('dati/spese.pickle', 'rb') as f:
+    @staticmethod
+    def ricercaSpesaByDataPagamento(dataPagamento):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
                     if spesa.dataPagamento == dataPagamento:
@@ -85,9 +104,10 @@ class Spesa:
                 return "Spesa non Trovata"
         return "File non esistente"
 
-    def ricercaSpesaByTipoSpesa(self, tipo):
-        if os.path.isfile('Dati/spese.pickle'):
-            with open('dati/spese.pickle', 'rb') as f:
+    @staticmethod
+    def ricercaSpesaByTipoSpesa(tipo):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
                     if spesa.tipoSpesa == tipo:
@@ -95,19 +115,20 @@ class Spesa:
                 return "Spesa non Trovata"
         return "File non esistente"
 
-    def ricercaSpesaByImmobile(self, nomeImmobile):
-        if os.path.isfile('Dati/spese.pickle'):
-            with open('dati/spese.pickle', 'rb') as f:
+    @staticmethod
+    def ricercaSpesaByImmobile(nomeImmobile):
+        if (os.path.isfile(nome_file)):
+            with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
                     if spesa.immobile == nomeImmobile:
                         return spesa
                 return "Spesa non Trovata"
         return "File non esistente"
-
-    def ricercaSpesaByFornitore(self, fornitore):
-        if os.path.isfile('Dati/spese.pickle'):
-            with open('dati/spese.pickle', 'rb') as f:
+    @staticmethod
+    def ricercaSpesaByFornitore(fornitore):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
                     if spesa.fornitore == fornitore:

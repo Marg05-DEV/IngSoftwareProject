@@ -61,7 +61,7 @@ class VistaCreateImmobile(QWidget):
 
     def createImmobile(self):
         temp_immobile = Immobile()
-        temp_immobile.aggiungiImmobile(int(self.input_lines["codice"].text()),
+        msg = temp_immobile.aggiungiImmobile(int(self.input_lines["codice"].text()),
                                        self.input_lines["sigla"].text(),
                                        self.input_lines["denominazione"].text(),
                                        self.input_lines["codiceFiscale"].text(),
@@ -69,8 +69,9 @@ class VistaCreateImmobile(QWidget):
                                        self.input_lines["provincia"].text(),
                                        self.input_lines["cap"].text(),
                                        self.input_lines["via"].text())
-        self.callback()
+        self.callback(msg)
         self.close()
 
     def reset(self):
-        pass
+        for input_line in self.input_lines.values():
+            input_line.clear()

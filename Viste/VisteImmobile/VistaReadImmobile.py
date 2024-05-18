@@ -1,6 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout
 
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Viste.VisteImmobile import VistaGestioneImmobile
+from Viste.VisteImmobile.VistaDeleteImmobile import VistaDeleteImmobile
+from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
+
 
 class VistaReadImmobile(QWidget):
 
@@ -54,7 +58,11 @@ class VistaReadImmobile(QWidget):
         return pair_layout
 
     def updateImmobile(self):
-        pass
+        self.vista_modifica_immobile = VistaUpdateImmobile(self.sel_immobile, callback=VistaGestioneImmobile.callback)
+        self.vista_modifica_immobile.show()
+        self.close()
 
     def deleteImmobile(self):
-        pass
+        self.vista_elimina_immobile = VistaDeleteImmobile(self.sel_immobile, callback=VistaGestioneImmobile.callback)
+        self.vista_elimina_immobile.show()
+        self.close()
