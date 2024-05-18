@@ -10,23 +10,25 @@ class Rata:
 
     def __init__(self):
         self.codice = 0
-        self.dataRegistrazione = datetime.datetime(year=1970, month=1, day=1)
+        self.dataPagamento = datetime.datetime(year=1970, month=1, day=1)
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
         self.pagata = False
+        self.tipoPagamento = ""
         self.unitaImmobiliare = None
 
 
 
-    def aggiungiRata(self, codice, dataRegistrazione, descrizione, importo, numeroRicevuta, pagata, unitaImmobiliare):
+    def aggiungiRata(self, codice, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare):
         Rata.numRateRegistrate += 1
         self.codice = codice
-        self.dataRegistrazione = dataRegistrazione
+        self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.importo = importo
         self.numeroRicevuta = numeroRicevuta
         self.pagata = pagata
+        self.tipoPagamento = tipoPagamento
         self.unitaImmobiliare = unitaImmobiliare
 
         rate = {}
@@ -45,12 +47,12 @@ class Rata:
         self.codice = 0
         del self
 
-    def ricercaRataByDataRegistrazione(self, data):
+    def ricercaRataByDataPagamento(self, data):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
-                for rata in rate:
-                    if rata.dataRegistrazione == data:
+                for rata in rate.values():
+                    if rata.dataPagamento == data:
                         return rata
                 return "Rata non trovata"
         else:
@@ -60,7 +62,7 @@ class Rata:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
-                for rata in rate:
+                for rata in rate.values():
                     if rata.codice == codice:
                         return rata
                 return "Rata non trovata"
@@ -69,22 +71,28 @@ class Rata:
 
 
     def getRata(self):
+        if self.pagata:
+            pagata = "si"
+        else:
+            pagata = "no"
+
         return {
             "codice": self.codice,
-            "dataRegistrazione": self.dataRegistrazione,
+            "dataPagamento": self.dataPagamento,
             "descrizione": self.descrizione,
             "importo": self.importo,
             "numeroRicevuta": self.numeroRicevuta,
-            "pagata": self.pagata,
+            "Pagata": pagata,
+            "tipoPagamento": self.tipoPagamento,
             "unitaImmobiliare": self.unitaImmobiliare
         }
 
-    def modificaRata(self, codice = None, dataRegistrazione = None, descrizione = None, importo = None, numeroRicevuta = None,
-                     pagata = None, unitaImmobiliare = None):
+    def modificaRata(self, codice = None, dataPagamento = None, descrizione = None, importo = None, numeroRicevuta = None,
+                     pagata = None, tipoPagamento = None, unitaImmobiliare = None):
         if codice is not None:
             self.codice = codice
-        if dataRegistrazione is not None:
-            self.dataRegistrazione = dataRegistrazione
+        if dataPagamento is not None:
+            self.dataPagamento = dataPagamento
         if descrizione is not None:
             self.descrizione = descrizione
         if importo is not None:
@@ -93,6 +101,8 @@ class Rata:
             self.numeroRicevuta = numeroRicevuta
         if pagata is not None:
             self.pagata = pagata
+        if tipoPagamento is not None:
+            self.tipoPagamento = tipoPagamento
         if unitaImmobiliare is not None:
             self.unitaImmobiliare = unitaImmobiliare
 

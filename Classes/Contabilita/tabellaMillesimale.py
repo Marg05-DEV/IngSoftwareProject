@@ -33,18 +33,35 @@ class TabellaMillesimale:
         return {
             "codice": self.codice,
             "nome": self.nome,
-            "tipologiaSpesa": self.tipologiaSpesa
+            "tipologiaSpesa": self.tipologiaSpesa,
+            "Descrizione": self.descrizione
         }
+
+    @staticmethod
+    def getAllTabelleMillesimali():
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                try:
+                    tabelleMillesimali = dict(pickle.load(f))
+                except EOFError:
+                    tabelleMillesimali = {}
+                return tabelleMillesimali
+        else:
+            return {}
 
     def rimuoviTabellaMillesimale(self):
         if os.path.isfile(nome_file):
             with open(nome_file, 'wb+') as f:
                 tabelleMillesimali = pickle.load(f)
                 del tabelleMillesimali[self.codice]
+            with open(nome_file, 'wb') as f:
                 pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
-        self.codice = 0
+        self.codice = -1
         self.nome = ""
-        self.tipologiaSpesa = ""
+        self.tipologiaSpesa = []
+        self.descrizione = ()
+        self.immobile = None
+        self.millesimi = {}
         del self
 
 

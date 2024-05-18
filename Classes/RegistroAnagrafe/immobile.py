@@ -74,7 +74,6 @@ class Immobile:
     @staticmethod
     def getAllImmobili():
         if os.path.isfile(file_name):
-            print(2)
             with open(file_name, 'rb') as f:
                 try:
                     immobili = dict(pickle.load(f))

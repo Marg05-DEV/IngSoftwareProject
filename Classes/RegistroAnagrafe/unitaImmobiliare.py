@@ -57,6 +57,18 @@ class UnitaImmobiliare:
         }
 
     @staticmethod
+    def getAllUnitaImmobiliari():
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                try:
+                    unitaImmobiliari = dict(pickle.load(f))
+                except EOFError:
+                    unitaImmobiliari = {}
+                return unitaImmobiliari
+        else:
+            return {}
+
+    @staticmethod
     def ricercaUnitaImmobiliareInterno(interno):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -69,7 +81,7 @@ class UnitaImmobiliare:
             return None
 
     @staticmethod
-    def ordinaCondominoByDatiCatastali(isDecrescente):
+    def ordinaCondominoByInterno(isDecrescente):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
@@ -80,7 +92,7 @@ class UnitaImmobiliare:
                 sorted_unitaImmobilairi = []
                 for interno in sorted_dati_catastali:
                     for unitaImmobiliare in unitaImmobiliari.values():
-                        if (unitaImmobiliare.interno == interno):
+                        if unitaImmobiliare.interno == interno:
                             sorted_unitaImmobilairi.append(unitaImmobiliare)
                             break
                 return sorted_unitaImmobilairi
@@ -90,19 +102,21 @@ class UnitaImmobiliare:
 
     def rimuoviUnitaImmobiliare(self):
         if os.path.isfile(nome_file):
-            with open(nome_file, 'wb+') as f:
+            with open(nome_file, 'rb') as f:
                 unitaImmobiliari = pickle.load(f)
                 del unitaImmobiliari[self.interno]
+            with open(nome_file, 'wb') as f:
+                pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
         self.interno = -1
-        self.foglio = -1
-        self.subalterno = -1
+        self.foglio = 0
+        self.subalterno = 0
         self.condomini = {}
-        self.particella = -1
+        self.particella = 0
         self.tipoUnitaImmobiliare = ""
         self.categoria = ""
-        self.classe = -1
+        self.classe = 0
         self.immobile = None
-        self.scala = -1
+        self.scala = 0
         self.ZC = ""
         del self
 

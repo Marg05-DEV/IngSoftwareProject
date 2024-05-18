@@ -9,11 +9,11 @@ class Spesa:
     def __init__(self):
         self.codice = 0
         self.dataFattura = datetime(year=1970, month=1, day=1)
-        self.dataPagamento = datetime(year=1970, month=1, day=1)
         self.dataRegistrazione = datetime(year=1970, month=1, day=1)
+        self.dataPagamento = datetime(year=1970, month=1, day=1)
         self.descrizione = ""
         self.fornitore = None
-        self.importo = 0
+        self.importo = 0.0
         self.immobile = None
         self.isRitenuta = False
         self.tipoSpesa = None
@@ -22,12 +22,12 @@ class Spesa:
 
 
 
-    def aggiungiSpesa(self, descrizione, fornitore, importo, codice, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione ,isRitenuta, numeroFattura):
+    def aggiungiSpesa(self, descrizione, fornitore, importo, codice, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
         Spesa.numSpeseRegistrate += 1
         self.codice = codice
         self.dataFattura = dataFattura
-        self.dataPagamento = dataPagamento
         self.dataRegistrazione = dataRegistrazione
+        self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.fornitore = fornitore
         self.importo = importo
@@ -46,7 +46,7 @@ class Spesa:
             pickle.dump(spese, f , pickle.HIGHEST_PROTOCOL)
 
     def modificaSpesa(self, descrizione = None, fornitore = None, importo = None, codice = None, tipoSpesa = None, immobile = None,
-                      pagata = None, dataPagamento = None, dataFattura = None, dataRegistrazione = None,isRitenuta = None, numeroFattura = None):
+                      pagata = None, dataPagamento = None, dataFattura = None, dataRegistrazione = None, isRitenuta = None, numeroFattura = None):
         if descrizione is not None:
             self.descrizione = descrizione
         if fornitore is not None:
@@ -115,22 +115,101 @@ class Spesa:
                 return "Spesa non Trovata"
         return "File non esistente"
 
+    @staticmethod
+    def ordinaCondominoByDataRegistrazione():
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                spese = dict(pickle.load(f))
+                sorted_dataRegistrazione = []
+                for spesa in spese.values():
+                    sorted_dataRegistrazione.append(spesa.dataRegistrazione)
+                sorted_dataRegistrazione.sort()
+                sorted_spese = []
+                for dataRegistrazione in sorted_dataRegistrazione:
+                    for spesa in spese.values():
+                        if spesa.dataRegistrazione == dataRegistrazione:
+                            sorted_spese.append(spesa)
+                            break
+                return sorted_spese
+        else:
+            return None
+
+    @staticmethod
+    def ordinaCondominoByTipoSpesa(isDecrescente):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                spese = dict(pickle.load(f))
+                sorted_tipoSpesa = []
+                for spesa in spese.values():
+                    sorted_tipoSpesa.append(spesa.tipoSpesa)
+                sorted_tipoSpesa.sort(reverse=isDecrescente)
+                sorted_spese = []
+                for tipoSpesa in sorted_tipoSpesa:
+                    for spesa in spese.values():
+                        if spesa.tipoSpesa == tipoSpesa:
+                            sorted_spese.append(spesa)
+                            break
+                return sorted_spese
+        else:
+            return None
+
+    @staticmethod
+    def ordinaCondominoByImmobile(isDecrescente):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                spese = dict(pickle.load(f))
+                sorted_immobile = []
+                for spesa in spese.values():
+                    sorted_immobile.append(spesa.immobile)
+                sorted_immobile.sort(reverse=isDecrescente)
+                sorted_spese = []
+                for immobile in sorted_immobile:
+                    for spesa in spese.values():
+                        if spesa.immobile == immobile:
+                            sorted_spese.append(spesa)
+                            break
+                return sorted_spese
+        else:
+            return None
+
+    @staticmethod
+    def ordinaCondominoByFornitore(isDecrescente):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                spese = dict(pickle.load(f))
+                sorted_fornitore = []
+                for spesa in spese.values():
+                    sorted_fornitore.append(spesa.fornitore)
+                sorted_fornitore.sort(reverse=isDecrescente)
+                sorted_spese = []
+                for fornitore in sorted_fornitore:
+                    for spesa in spese.values():
+                        if spesa.fornitore == fornitore:
+                            sorted_spese.append(spesa)
+                            break
+                return sorted_spese
+        else:
+            return None
 
 
     def getSpesa(self):
+        if self.pagata:
+            pagata = "si"
+        else:
+            pagata = "no"
         return {
         "Numero spese Registrate" : Spesa.numSpeseRegistrate,
         "Codice" : self.codice,
         "Data Fattura" : self.dataFattura,
-        "Data Pagamento" : self.dataPagamento,
         "Data Registrazione" : self.dataRegistrazione,
+        "Data Pagamento" : self.dataPagamento,
         "Descrizione" : self.descrizione,
         "Fornitore" : self.fornitore,
         "Importo" : self.importo,
         "Immobile" : self.immobile,
         "IsRitenuta" : self.isRitenuta,
         "TipoSpesa" : self.tipoSpesa,
-        "Pagata" : self.pagata,
+        "Pagata" : pagata,
         "NumeroFattura" : self.numeroFattura
         }
         

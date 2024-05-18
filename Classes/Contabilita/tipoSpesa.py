@@ -32,11 +32,13 @@ class TipoSpesa:
         self.nome = ""
         del self
 
-    def ricercaTipoSpesaByNome(self,nome):
+    @staticmethod
+    def ricercaTipoSpesaByNome(nome):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
-                for tipoSpesa in tipiSpesa:
+                print(type(tipiSpesa))
+                for tipoSpesa in tipiSpesa.values():
                     if tipoSpesa.nome == nome:
                         return tipoSpesa
                 return "Tipo spesa non esistente"
@@ -44,9 +46,27 @@ class TipoSpesa:
             return "File non esistente"
 
 
-    def getSpesa(self):
+    def getTipoSpesa(self):
         return {
             "codice": self.codice,
             "descrizione": self.descrizione,
             "nome": self.nome
         }
+
+    @staticmethod
+    def getAllTipoSpesa():
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                try:
+                    tipoSpese = dict(pickle.load(f))
+                except EOFError:
+                    tipoSpese = {}
+                return tipoSpese
+        else:
+            return {}
+
+if __name__ == "__main__":
+    tipoSpesa1 = TipoSpesa()
+    tipoSpesa1.aggiungiTipoSpesa(1, "fi", "du")
+
+    print(tipoSpesa1.getTipoSpesa())
