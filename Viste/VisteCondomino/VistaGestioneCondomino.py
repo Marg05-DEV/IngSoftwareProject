@@ -86,7 +86,7 @@ class VistaGestioneCondomino(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
-"""
+
     def debugComboBox1(self, combo):
         print("pre")
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
@@ -96,18 +96,15 @@ class VistaGestioneCondomino(QWidget):
         print("pre")
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
         print("post")
-"""
-    def update_list(self):
-        print("cazzi1")
 
-        print("cazzi2")
+    def update_list(self):
         self.lista_condomini = []
         self.lista_condomini = list(Condomino.getAllCondomini().values())
         listview_model = QStandardItemModel(self.list_view_condomino)
 
         for condomino in self.lista_condomini:
             item = QStandardItem()
-            item_text = f"{condomino.codice} {condomino.sigla} - {condomino.denominazione}"
+            item_text = f"{condomino.codice} {condomino.nome} - {condomino.cognome} - {condomino.unitaImmobiliare}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()

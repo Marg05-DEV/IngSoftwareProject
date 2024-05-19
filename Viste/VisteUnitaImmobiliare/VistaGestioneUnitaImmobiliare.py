@@ -97,16 +97,13 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         print("post")
 
     def update_list(self):
-        print("cazzi1")
-
-        print("cazzi2")
         self.lista_unitaImmobiliari = []
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
 
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
-            item_text = f"{unitaImmobiliare.codice} {unitaImmobiliare.sigla} - {unitaImmobiliare.denominazione}"
+            item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.immobile} - {unitaImmobiliare.condomini}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
