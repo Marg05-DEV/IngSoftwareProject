@@ -3,16 +3,16 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
 
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
-from Viste.VisteImmobile.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
-from Viste.VisteImmobile.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteImmobile.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
-from Viste.VisteImmobile.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
+from Viste.VisteUnitaImmobiliare.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
+from Viste.VisteUnitaImmobiliare.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
+from Viste.VisteUnitaImmobiliare.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
+from Viste.VisteUnitaImmobiliare.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 
 
-class VistaGestioneImmobile(QWidget):
+class VistaGestioneUnitaImmobiliare(QWidget):
 
     def __init__(self, parent=None):
-        super(VistaGestioneImmobile, self).__init__(parent)
+        super(VistaGestioneUnitaImmobiliare, self).__init__(parent)
 
         main_layout = QVBoxLayout()
 
@@ -38,22 +38,22 @@ class VistaGestioneImmobile(QWidget):
 
         action_layout = QHBoxLayout()
 
-        self.list_view_immobili = QListView()
+        self.list_view_unitaImmobiliare = QListView()
 
 
         button_layout = QVBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Immobile", self.go_Create_immobile))
-        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile, True))
-        button_layout.addWidget(self.create_button("Modifica Immobile", self.go_Update_immobile, True))
-        button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile, True))
+        button_layout.addWidget(self.create_button("Aggiungi Unità Immobiliare", self.go_Create_unitaImmobiliare))
+        button_layout.addWidget(self.create_button("Visualizza Unità Immobiliare", self.go_Read_unitaImmobiliare, True))
+        button_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.go_Update_unitaImmobiliare, True))
+        button_layout.addWidget(self.create_button("Elimina Unità Immobiliare", self.go_Delete_unitaImmobiliare, True))
 
-        action_layout.addWidget(self.list_view_immobili)
+        action_layout.addWidget(self.list_view_unitaImmobiliare)
 
         self.update_list()
 
-        self.selectionModel = self.list_view_immobili.selectionModel()
+        self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
 
         message_layout = QHBoxLayout()
@@ -75,7 +75,7 @@ class VistaGestioneImmobile(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Immobile")
+        self.setWindowTitle("Gestione Unità Immobiliare")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -100,13 +100,13 @@ class VistaGestioneImmobile(QWidget):
         print("cazzi1")
 
         print("cazzi2")
-        self.lista_immobili = []
-        self.lista_immobili = list(Immobile.getAllImmobili().values())
-        listview_model = QStandardItemModel(self.list_view_immobili)
+        self.lista_unitaImmobiliari = []
+        self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
 
-        for immobile in self.lista_immobili:
+        for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
-            item_text = f"{immobile.codice} {immobile.sigla} - {immobile.denominazione}"
+            item_text = f"{unitaImmobiliare.codice} {unitaImmobiliare.sigla} - {unitaImmobiliare.denominazione}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -114,50 +114,50 @@ class VistaGestioneImmobile(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
 
-        self.list_view_immobili.setModel(listview_model)
+        self.list_view_unitaImmobiliare.setModel(listview_model)
 
-    def go_Create_immobile(self):
-        self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.callback)
-        self.vista_nuovo_immobile.show()
+    def go_Create_unitaImmobiliare(self):
+        self.vista_nuovo_unitaImmobiliare = VistaCreateUnitaImmobiliare(callback=self.callback)
+        self.vista_nuovo_unitaImmobiliare.show()
 
-    def go_Read_immobile(self):
+    def go_Read_unitaImmobiliare(self):
         item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
+        for index in self.list_view_unitaImmobiliare.selectedIndexes():
+            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile)
-        self.vista_dettaglio_immobile.show()
+        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        self.vista_dettaglio_unitaImmobiliare = VistaReadUnitaImmobiliare(sel_unitaImmobiliare)
+        self.vista_dettaglio_unitaImmobiliare.show()
 
-    def go_Update_immobile(self):
+    def go_Update_unitaImmobiliare(self):
         item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
+        for index in self.list_view_unitaImmobiliare.selectedIndexes():
+            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
-        self.vista_modifica_immobile.show()
+        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        self.vista_modifica_immobile = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
+        self.vista_modifica_unitaImmobiliare.show()
 
-    def go_Delete_immobile(self):
+    def go_Delete_unitaImmobiliare(self):
         item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
+        for index in self.list_view_unitaImmobiliare.selectedIndexes():
+            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.callback)
-        self.vista_elimina_immobile.show()
+        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        self.vista_elimina_unitaImmobiliare = VistaDeleteUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
+        self.vista_elimina_unitaImmobiliare.show()
 
 
     def able_button(self):
         print("selezione cambiata")
-        if not self.list_view_immobili.selectedIndexes():
-            self.button_list["Visualizza Immobile"].setDisabled(True)
-            self.button_list["Modifica Immobile"].setDisabled(True)
-            self.button_list["Elimina Immobile"].setDisabled(True)
+        if not self.list_view_unitaImmobiliare.selectedIndexes():
+            self.button_list["Visualizza Unità Immobiliare"].setDisabled(True)
+            self.button_list["Modifica Unità Immobiliare"].setDisabled(True)
+            self.button_list["Elimina Unità Immobiliare"].setDisabled(True)
         else:
-            self.button_list["Visualizza Immobile"].setDisabled(False)
-            self.button_list["Modifica Immobile"].setDisabled(False)
-            self.button_list["Elimina Immobile"].setDisabled(False)
+            self.button_list["Visualizza Unità Immobiliare"].setDisabled(False)
+            self.button_list["Modifica Unità Immobiliare"].setDisabled(False)
+            self.button_list["Elimina Unità Immobiliare"].setDisabled(False)
 
     def callback(self, msg):
         self.update_list()
