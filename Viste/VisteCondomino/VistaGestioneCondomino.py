@@ -17,7 +17,7 @@ class VistaGestioneCondomino(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
-
+        """
         searchbar = QLineEdit()
         searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
@@ -35,6 +35,7 @@ class VistaGestioneCondomino(QWidget):
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(self.sortType, 1, 1)
+        """
 
         action_layout = QHBoxLayout()
 
@@ -69,7 +70,7 @@ class VistaGestioneCondomino(QWidget):
         message_layout.addWidget(self.msg)
         action_layout.addLayout(button_layout)
 
-        main_layout.addLayout(find_layout)
+        #main_layout.addLayout(find_layout)
         main_layout.addLayout(action_layout)
         main_layout.addLayout(message_layout)
 
