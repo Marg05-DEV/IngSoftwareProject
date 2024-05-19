@@ -86,7 +86,7 @@ class VistaGestioneCondomino(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
-
+"""
     def debugComboBox1(self, combo):
         print("pre")
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
@@ -96,7 +96,7 @@ class VistaGestioneCondomino(QWidget):
         print("pre")
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
         print("post")
-
+"""
     def update_list(self):
         print("cazzi1")
 
