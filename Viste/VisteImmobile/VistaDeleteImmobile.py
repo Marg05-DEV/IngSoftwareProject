@@ -33,6 +33,6 @@ class VistaDeleteImmobile(QWidget):
         return button
 
     def deleteImmobile(self):
-        self.sel_immobile.rimuoviImmobile()
-        self.callback()
+        msg = self.sel_immobile.rimuoviImmobile()
+        self.callback(msg)
         self.close()

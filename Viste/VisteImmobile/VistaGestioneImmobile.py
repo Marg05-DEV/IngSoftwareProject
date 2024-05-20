@@ -30,7 +30,7 @@ class VistaGestioneImmobile(QWidget):
         self.sortType.addItems(
             ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
              "Codice decrescente"])
-        self.sortType.activated.connect(self.debugComboBox2)
+        self.sortType.activated.connect(self.ordina_lista)
         find_layout.addWidget(searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
@@ -91,17 +91,29 @@ class VistaGestioneImmobile(QWidget):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         print("post")
 
-    def debugComboBox2(self, combo):
+    def ordina_lista(self):
         print("pre")
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
         print("post")
+        if self.sortType.currentIndex() == 0:
+            self.update_list()
+        elif self.sortType.currentIndex() == 1:
+            self.update_list(decr=True)
+        elif self.sortType.currentIndex() == 2:
+            self.update_list(Immobile.ordinaImmobileBySigla)
+        elif self.sortType.currentIndex() == 3:
+            self.update_list(Immobile.ordinaImmobileBySigla, True)
+        elif self.sortType.currentIndex() == 4:
+            self.update_list(Immobile.ordinaImmobileByCodice)
+        elif self.sortType.currentIndex() == 5:
+            self.update_list(Immobile.ordinaImmobileByCodice, True)
+        else:
+            print("Altro")
 
-    def update_list(self):
-        print("cazzi1")
-
-        print("cazzi2")
+    def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False):
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
+        sorting_function(self.lista_immobili, decr)
         listview_model = QStandardItemModel(self.list_view_immobili)
 
         for immobile in self.lista_immobili:
@@ -115,6 +127,7 @@ class VistaGestioneImmobile(QWidget):
             listview_model.appendRow(item)
 
         self.list_view_immobili.setModel(listview_model)
+
 
     def go_Create_immobile(self):
         self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.callback)

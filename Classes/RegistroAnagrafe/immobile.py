@@ -39,25 +39,25 @@ class Immobile:
             pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
         return "Il nuovo immobile " + denominazione + " è stato inserito"
 
-    def modificaImmobile(self,  codice = None, sigla = None, denominazione = None, codiceFiscale = None, citta = None, provincia = None, cap = None, via = None):
-        if codice is not None:
-            self.codice = codice
-        if sigla is not None:
-            self.sigla = sigla
-        if denominazione is not None:
-            self.denominazione = denominazione
-        if codiceFiscale is not None:
-            self.codiceFiscale = codiceFiscale
-        if citta is not None:
-            self.citta = citta
-        if provincia is not None:
-            self.provincia = provincia
-        if cap is not None:
-            self.cap = cap
-        if via is not None:
-            self.via = via
+    def modificaImmobile(self,  codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
+        if os.path.isfile(file_name):
+            with open(file_name, "rb") as f:
+                immobili = dict(pickle.load(f))
+                immobili[self.codice].codice = codice
+                immobili[self.codice].sigla = sigla
+                immobili[self.codice].denominazione = denominazione
+                immobili[self.codice].codiceFiscale = codiceFiscale
+                immobili[self.codice].citta = citta
+                immobili[self.codice].provincia = provincia
+                immobili[self.codice].cap = cap
+                immobili[self.codice].via = via
+                immobili[codice] = immobili[self.codice]
+                del immobili[self.codice]
+            with open(file_name, "wb") as f:
+                pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+                print("b", immobili)
 
-
+            return "L'immobile "
 
     def getInfoImmobile(self):
         return {
@@ -150,35 +150,31 @@ class Immobile:
             list_immobili[i] = sorted_immobili[i]
 
     @staticmethod
-    def ordinaImmobileByCodice(isDecrescente):
-        if os.path.isfile(file_name):
-            with open(file_name, 'rb') as f:
-                immobili = dict(pickle.load(f))
-                sorted_codice = []
-                for immobile in immobili.values():
-                    sorted_codice.append(immobile.codice)
-                sorted_codice.sort(reverse=isDecrescente)
+    def ordinaImmobileByCodice(list_immobili, isDecrescente=False):
+        sorted_codice = []
+        for immobile in list_immobili:
+            sorted_codice.append(immobile.codice)
+        sorted_codice.sort(reverse=isDecrescente)
 
-                sorted_immobili = []
-                for codice in sorted_codice:
-                    for immobile in immobili.values():
-                        if immobile.codice == codice:
-                            sorted_immobili.append(immobile)
-                            break
-                return sorted_immobili
-        else:
-            return None
+        sorted_immobili = []
+        for codice in sorted_codice:
+            for immobile in list_immobili:
+                if immobile.codice == codice:
+                    sorted_immobili.append(immobile)
+                    break
+        for i in range(len(list_immobili)):
+            list_immobili[i] = sorted_immobili[i]
+
 
     def rimuoviImmobile(self):
         immobili = {}
+        nome_immobile = self.denominazione
         if os.path.isfile(file_name):
             with open(file_name, "rb") as f:
-                print(immobili)
                 immobili = dict(pickle.load(f))
                 del immobili[self.codice]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-                print("b", immobili)
             self.codice = -1
             self.sigla = ""
             self.denominazione = ""
@@ -188,6 +184,8 @@ class Immobile:
             self.cap = ""
             self.via = ""
             del self
+            return "L'immobile " + nome_immobile + " è stato rimosso"
+
 
 if __name__ == "__main__":
     immobile1 = Immobile()

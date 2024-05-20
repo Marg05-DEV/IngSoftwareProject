@@ -1,12 +1,12 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel, QHBoxLayout, QPushButton
 
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
-from Viste.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
-from Viste.VisteCondomino.VistaReadCondomino import VistaReadCondomino
-from Viste.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaReadCondomino import VistaReadCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
 
 
 class VistaGestioneCondomino(QWidget):

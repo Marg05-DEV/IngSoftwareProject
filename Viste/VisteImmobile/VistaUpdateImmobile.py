@@ -7,6 +7,7 @@ class VistaUpdateImmobile(QWidget):
         super(VistaUpdateImmobile, self).__init__()
         self.callback = callback
         self.sel_immobile = sel_immobile
+        self.input_lines = {}
         main_layout = QGridLayout()
 
         lbl_frase = QLabel("Inserisci i nuovi dati dell'immobile da modificare:")
@@ -47,6 +48,7 @@ class VistaUpdateImmobile(QWidget):
 
         label = QLabel(testo + ": ")
         input_line = QLineEdit()
+        self.input_lines[index] = input_line
         input_line.setPlaceholderText(str(self.sel_immobile.getInfoImmobile()[index]))
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
@@ -54,8 +56,11 @@ class VistaUpdateImmobile(QWidget):
         return pair_layout
 
     def updateImmobile(self):
-        self.callback()
+        msg = "fatto"
+        print(self.input_lines["sigla"].text().isEmpty())
+        self.callback(msg)
         self.close()
 
     def reset(self):
-        pass
+        for input_line in self.input_lines.values():
+            input_line.clear()
