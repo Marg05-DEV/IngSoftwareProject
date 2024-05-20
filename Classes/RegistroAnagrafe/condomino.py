@@ -120,30 +120,28 @@ class Condomino:
         else:
             return None
 
-    def modificaUnitaCondomino(self, nome = None, cognome = None, residenza = None, dataDiNascita = None, codiceFiscale = None, luogoDiNascita = None, codice = None, unitaImmobiliare = None, provinciaDiNascita = None, email = None, telefono = None ):
-        if nome is not None:
-            self.nome = nome
-        if codice is not None:
-            self.codice = codice
-        if cognome is not None:
-            self.cognome = cognome
-        if residenza is not None:
-            self.residenza = residenza
-        if dataDiNascita is not None:
-            self.dataDiNascita = dataDiNascita
-        if codiceFiscale is not None:
-            self.codiceFiscale = codiceFiscale
-        if luogoDiNascita is not None:
-            self.luogoDiNascita = luogoDiNascita
-        if unitaImmobiliare is not None:
-            self.unitaImmobiliare = unitaImmobiliare
-        if provinciaDiNascita is not None:
-            self.provinciaDiNascita = provinciaDiNascita
-        if email is not None:
-            self.email = email
-        if telefono is not None:
-            self.telefono = telefono
+    def modificaondomiino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare, provincia, email, telefono):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                condomini = dict(pickle.load(f))
+                condomini[self.codice].codice = codice
+                condomini[self.codice].nome = nome
+                condomini[self.codice].cognome = cognome
+                condomini[self.codice].residenza = residenza
+                condomini[self.codice].dataDiNascita = dataDiNascita
+                condomini[self.codice].codiceFiscale = codiceFiscale
+                condomini[self.codice].luogoDiNascita = luogoDiNascita
+                condomini[self.codice].unitaImmobiliare = unitaImmobiliare
+                condomini[self.codice].provincia = provincia
+                condomini[self.codice].email = email
+                condomini[self.codice].telefono = telefono
+                condomini[codice] = condomini[self.codice]
+                del condomini[self.codice]
+            with open(nome_file, "wb") as f:
+                pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
+                print("b", condomini)
 
+            return "Il condomino"
 if __name__ == "__main__":
     condomino1 = Condomino()
     condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
