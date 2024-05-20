@@ -87,7 +87,7 @@ class Immobile:
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
-                for immobile in immobili.values(): #l'errore è dato quando il file è vuoto. Fammi fa la prova da app per vedere se funziona la vista aggiungi immobile
+                for immobile in immobili.values():
                     if immobile.denominazione == denominazione:
                         return immobile
                 return "Immobile non trovato"
@@ -118,44 +118,36 @@ class Immobile:
             return "File non esistente"
 
     @staticmethod
-    def ordinaImmobileByDenominazione(isDecrescente):
-        if os.path.isfile(file_name):
-            with open(file_name, 'rb') as f:
-                immobili = dict(pickle.load(f))
-                sorted_denominazione = []
-                for immobile in immobili.values():
-                    sorted_denominazione.append(immobile.denominazione)
-                sorted_denominazione.sort(reverse=isDecrescente)
+    def ordinaImmobileByDenominazione(list_immobili, isDecrescente):
+        sorted_denominazione = []
+        for immobile in list_immobili:
+            sorted_denominazione.append(immobile.denominazione)
+        sorted_denominazione.sort(reverse=isDecrescente)
 
-                sorted_immobili = []
-                for denom in sorted_denominazione:
-                    for immobile in immobili.values():
-                        if immobile.denominazione == denom:
-                            sorted_immobili.append(immobile)
-                            break
-                return sorted_immobili
-        else:
-            return None
+        sorted_immobili = []
+        for denominazione in sorted_denominazione:
+            for immobile in list_immobili:
+                if immobile.denominazione == denominazione:
+                    sorted_immobili.append(immobile)
+                    break
+        for i in range(len(list_immobili)):
+            list_immobili[i] = sorted_immobili[i]
 
     @staticmethod
-    def ordinaImmobileBySigla(isDecrescente):
-        if os.path.isfile(file_name):
-            with open(file_name, 'rb') as f:
-                immobili = dict(pickle.load(f))
-                sorted_sigla = []
-                for immobile in immobili.values():
-                    sorted_sigla.append(immobile.sigla)
-                sorted_sigla.sort(reverse=isDecrescente)
+    def ordinaImmobileBySigla(list_immobili, isDecrescente):
+        sorted_sigla = []
+        for immobile in list_immobili:
+            sorted_sigla.append(immobile.sigla)
+        sorted_sigla.sort(reverse=isDecrescente)
 
-                sorted_immobili = []
-                for sigla in sorted_sigla:
-                    for immobile in immobili.values():
-                        if immobile.sigla == sigla:
-                            sorted_immobili.append(immobile)
-                            break
-                return sorted_immobili
-        else:
-            return None
+        sorted_immobili = []
+        for sigla in sorted_sigla:
+            for immobile in list_immobili:
+                if immobile.sigla == sigla:
+                    sorted_immobili.append(immobile)
+                    break
+        for i in range(len(list_immobili)):
+            list_immobili[i] = sorted_immobili[i]
 
     @staticmethod
     def ordinaImmobileByCodice(isDecrescente):

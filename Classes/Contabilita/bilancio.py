@@ -1,7 +1,7 @@
 import datetime
 import os.path
 import pickle
-
+from rata import Rata
 nome_file = 'Dati/Bilanci.pickle'
 
 class Bilancio:
@@ -58,4 +58,5 @@ class Bilancio:
             "speseConsuntivate": self.speseConsuntivate,
             "spesePreventivate": self.spesePreventivate
         }
+
 
