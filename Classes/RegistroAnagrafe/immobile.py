@@ -40,9 +40,12 @@ class Immobile:
         return "Il nuovo immobile " + denominazione + " è stato inserito"
 
     def modificaImmobile(self,  codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
+        msg = "L'immobile " + self.denominazione + " è stato modificato"
+        print(type(self.codice))
         if os.path.isfile(file_name):
             with open(file_name, "rb") as f:
                 immobili = dict(pickle.load(f))
+
                 immobili[self.codice].codice = codice
                 immobili[self.codice].sigla = sigla
                 immobili[self.codice].denominazione = denominazione
@@ -51,13 +54,15 @@ class Immobile:
                 immobili[self.codice].provincia = provincia
                 immobili[self.codice].cap = cap
                 immobili[self.codice].via = via
-                immobili[codice] = immobili[self.codice]
-                del immobili[self.codice]
+                print(immobili)
+                if codice != self.codice:
+                    immobili[codice] = immobili[self.codice]
+                    print(immobili)
+                    del immobili[self.codice]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-                print("b", immobili)
 
-            return "L'immobile "
+            return msg
 
     def getInfoImmobile(self):
         return {
@@ -188,8 +193,6 @@ class Immobile:
 
 
 if __name__ == "__main__":
-    immobile1 = Immobile()
-    immobile1.aggiungiImmobile(5, "ccr", "figa", "dvd", "Offida",
-                                                    "AP", "63073", "Tesino")
-    print(immobile1.getInfoImmobile())
+    immobili_dict = Immobile.getAllImmobili()
+    print(immobili_dict)
 

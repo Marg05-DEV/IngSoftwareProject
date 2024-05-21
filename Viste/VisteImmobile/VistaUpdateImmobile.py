@@ -56,8 +56,22 @@ class VistaUpdateImmobile(QWidget):
         return pair_layout
 
     def updateImmobile(self):
-        msg = "fatto"
-        print(self.input_lines["sigla"].text().isEmpty())
+        temp_immobile = {}
+        for attributo in self.sel_immobile.getInfoImmobile().keys():
+            if self.input_lines[attributo].text() == "":
+                temp_immobile[attributo] = self.sel_immobile.getInfoImmobile()[attributo]
+            else:
+                temp_immobile[attributo] = self.input_lines[attributo].text()
+
+        print(temp_immobile)
+        msg = self.sel_immobile.modificaImmobile(int(temp_immobile["codice"]),
+                                                 temp_immobile["sigla"],
+                                                 temp_immobile["denominazione"],
+                                                 temp_immobile["codiceFiscale"],
+                                                 temp_immobile["citta"],
+                                                 temp_immobile["provincia"],
+                                                 temp_immobile["cap"],
+                                                 temp_immobile["via"])
         self.callback(msg)
         self.close()
 
