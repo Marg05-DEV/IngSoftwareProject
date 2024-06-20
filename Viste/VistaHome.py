@@ -31,7 +31,6 @@ class VistaHome(QWidget):
     def getButton(self, testo, sottotesto, on_click):
         button = QPushButton(testo)
         button.setText(button.text() + "\n" + sottotesto)
-        button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button.clicked.connect(on_click)
         return button

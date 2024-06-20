@@ -12,18 +12,18 @@ from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
 class VistaGestioneImmobile(QWidget):
 
     def __init__(self, parent=None):
-        print("class VistaGestioneImmobile - __init__ inizio")
         super(VistaGestioneImmobile, self).__init__(parent)
 
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
 
-        searchbar = QLineEdit()
-        searchbar.setPlaceholderText("Ricerca...")
+        self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        self.searchType.activated.connect(self.debugComboBox1)
+        self.searchType.activated.connect(self.avvia_ricerca)
+        self.searchbar.textChanged.connect(self.avvia_ricerca)
 
         sortLabel = QLabel("Ordina per:")
         self.sortType = QComboBox()
@@ -31,8 +31,8 @@ class VistaGestioneImmobile(QWidget):
         self.sortType.addItems(
             ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
              "Codice decrescente"])
-        self.sortType.activated.connect(self.ordina_lista)
-        find_layout.addWidget(searchbar, 0, 0, 1, 3)
+        self.sortType.activated.connect(self.avvia_ordinamento)
+        find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(self.sortType, 1, 1)
@@ -40,7 +40,6 @@ class VistaGestioneImmobile(QWidget):
         action_layout = QHBoxLayout()
 
         self.list_view_immobili = QListView()
-
 
         button_layout = QVBoxLayout()
         self.button_list = {}
@@ -53,9 +52,6 @@ class VistaGestioneImmobile(QWidget):
         action_layout.addWidget(self.list_view_immobili)
 
         self.update_list()
-
-        self.selectionModel = self.list_view_immobili.selectionModel()
-        self.selectionModel.selectionChanged.connect(self.able_button)
 
         message_layout = QHBoxLayout()
 
@@ -77,53 +73,69 @@ class VistaGestioneImmobile(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Immobile")
-        print("class VistaGestioneImmobile - __init__ fine")
 
     def create_button(self, testo, action, disabled=False):
-        print("class VistaGestioneImmobile - create_button inizio: bottone " + testo)
         button = QPushButton(testo)
-        button.setFixedSize(110, 55)
-        button.setCheckable(True)
+        button.setFixedSize(115, 60)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
-        print("class VistaGestioneImmobile - create_button fine: bottone " + testo)
-        print()
         return button
 
-    def debugComboBox1(self, combo):
-        print("pre")
+    def avvia_ricerca(self):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
-        print("post")
+        sorting, desc = self.ordina_lista(True)
+        self.update_list(sorting, desc, True)
 
-    def ordina_lista(self):
-        print("pre")
+    def avvia_ordinamento(self):
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
-        print("post")
+        self.ordina_lista(False)
+
+    def ordina_lista(self, fromRicerca=False):
         if self.sortType.currentIndex() == 0:
+            if fromRicerca:
+                return Immobile.ordinaImmobileByDenominazione, False
             self.update_list()
         elif self.sortType.currentIndex() == 1:
+            if fromRicerca:
+                return Immobile.ordinaImmobileByDenominazione, True
             self.update_list(decr=True)
         elif self.sortType.currentIndex() == 2:
+            if fromRicerca:
+                return Immobile.ordinaImmobileBySigla, False
             self.update_list(Immobile.ordinaImmobileBySigla)
         elif self.sortType.currentIndex() == 3:
+            if fromRicerca:
+                return Immobile.ordinaImmobileBySigla, True
             self.update_list(Immobile.ordinaImmobileBySigla, True)
         elif self.sortType.currentIndex() == 4:
+            if fromRicerca:
+                return Immobile.ordinaImmobileByCodice, False
             self.update_list(Immobile.ordinaImmobileByCodice)
         elif self.sortType.currentIndex() == 5:
+            if fromRicerca:
+                return Immobile.ordinaImmobileByCodice, True
             self.update_list(Immobile.ordinaImmobileByCodice, True)
+
         else:
             print("Altro")
 
-    def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False):
+    def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
         print("class VistaGestioneImmobile - update_list inizio")
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
-        lista_im = Immobile.getAllImmobili()
-        for keys in lista_im.keys():
-            print(keys, type(keys))
-            print(lista_im[keys].codice, lista_im[keys].denominazione, type(lista_im[keys].codice))
+        if searchActivated and self.searchbar.text():
+            print("sto cercando...")
+            if self.searchType.currentIndex() == 0: # ricerca per denominazione
+                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.denominazione.upper()]
+            elif self.searchType.currentIndex() == 1: # ricerca per sigla
+                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.sigla.upper()]
+            elif self.searchType.currentIndex() == 2: # ricerca per codice
+                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text() in str(item.codice)]
+
         sorting_function(self.lista_immobili, decr)
+        print(self.lista_immobili)
+
         listview_model = QStandardItemModel(self.list_view_immobili)
 
         for immobile in self.lista_immobili:
@@ -137,7 +149,10 @@ class VistaGestioneImmobile(QWidget):
             listview_model.appendRow(item)
 
         self.list_view_immobili.setModel(listview_model)
-        print("class VistaGestioneImmobile - update_list fine")
+
+        self.selectionModel = self.list_view_immobili.selectionModel()
+        self.selectionModel.selectionChanged.connect(self.able_button)
+        print(type(self.selectionModel))
 
 
     def go_Create_immobile(self):
@@ -145,18 +160,15 @@ class VistaGestioneImmobile(QWidget):
         self.vista_nuovo_immobile.show()
 
     def go_Read_immobile(self):
-        print("class VistaGestioneImmobile - go_read_immobile inizio")
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
             print(item.text())
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile)
+        self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile, callback=self.callback)
         self.vista_dettaglio_immobile.show()
-        print("class VistaGestioneImmobile - go_read_immobile fine")
 
     def go_Update_immobile(self):
-        print("class VistaGestioneImmobile - go_update_immobile inizio")
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -165,11 +177,8 @@ class VistaGestioneImmobile(QWidget):
             print(int(item.text().split(" ")[0]))
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         print(sel_immobile, ": ", sel_immobile.getInfoImmobile())
-        print("cazzozozoz")
         self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
-        print("aiuto")
         self.vista_modifica_immobile.show()
-        print("class VistaGestioneImmobile - go_update_immobile fine")
 
     def go_Delete_immobile(self):
         item = None
@@ -182,7 +191,6 @@ class VistaGestioneImmobile(QWidget):
 
 
     def able_button(self):
-        print("selezione cambiata")
         if not self.list_view_immobili.selectedIndexes():
             self.button_list["Visualizza Immobile"].setDisabled(True)
             self.button_list["Modifica Immobile"].setDisabled(True)
@@ -193,7 +201,8 @@ class VistaGestioneImmobile(QWidget):
             self.button_list["Elimina Immobile"].setDisabled(False)
 
     def callback(self, msg):
-        self.update_list()
+        sort, desc = self.ordina_lista(True)
+        self.update_list(sort, desc)
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()

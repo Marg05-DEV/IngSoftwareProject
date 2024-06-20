@@ -8,28 +8,22 @@ from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
 
 class VistaReadImmobile(QWidget):
 
-    def __init__(self, sel_immobile):
+    def __init__(self, sel_immobile, callback):
         super(VistaReadImmobile, self).__init__()
-        i = 1
-
         self.sel_immobile = sel_immobile
+        self.callback = callback
 
         main_layout = QVBoxLayout()
 
         main_layout.addLayout(self.pair_label("Denominazione", "denominazione"))
         main_layout.addLayout(self.pair_label("CF/Partita IVA", "codiceFiscale"))
         main_layout.addLayout(self.pair_label("Codice Numerico", "codice"))
-        print(i)
-        i += 1
         main_layout.addLayout(self.pair_label("Sigla", "sigla"))
         main_layout.addLayout(self.pair_label("Città", "citta"))
         main_layout.addLayout(self.pair_label("Provincia", "provincia"))
-        print(i)
-        i += 1
         main_layout.addLayout(self.pair_label("CAP", "cap"))
         main_layout.addLayout(self.pair_label("Via", "via"))
-        print(i)
-        i += 1
+
         main_layout.addWidget(self.create_button("Modifica Immobile", self.updateImmobile))
         main_layout.addWidget(self.create_button("Elimina Immobile", self.deleteImmobile))
 
@@ -58,11 +52,11 @@ class VistaReadImmobile(QWidget):
         return pair_layout
 
     def updateImmobile(self):
-        self.vista_modifica_immobile = VistaUpdateImmobile(self.sel_immobile, callback=VistaGestioneImmobile.callback)
+        self.vista_modifica_immobile = VistaUpdateImmobile(self.sel_immobile, callback=self.callback)
         self.vista_modifica_immobile.show()
         self.close()
 
     def deleteImmobile(self):
-        self.vista_elimina_immobile = VistaDeleteImmobile(self.sel_immobile, callback=VistaGestioneImmobile.callback)
+        self.vista_elimina_immobile = VistaDeleteImmobile(self.sel_immobile, callback=self.callback)
         self.vista_elimina_immobile.show()
         self.close()

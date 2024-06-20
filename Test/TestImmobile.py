@@ -8,7 +8,6 @@ class TestImmobile(TestCase):
     def test_aggiungiImmobile(self):
         print(1)
         #from Classes.RegistroAnagrafe.immobile import Immobile
-        print("ciao")
         print(dir())
         print(dir(Immobile))
         self.immobile = Immobile()
