@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy
-
+from Viste.VisteContabilita.VistaGestioneContabilita import VistaGestioneContabilita
 from Viste.VisteImmobile.VistaGestioneImmobile import VistaGestioneImmobile
+from Viste.VisteRegistroAnagrafe.VistaMenuRegistroAnagrafe import VistaMenuRegistroAnagrafe
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaGestioneCondomino import VistaGestioneCondomino
 
 
 class VistaHome(QWidget):
@@ -40,10 +41,13 @@ class VistaHome(QWidget):
         self.vista_immobile.show()
 
     def goRegistroAnagrafe(self):
-        pass
+        self.vista_menuRegistroAnagrafe = VistaMenuRegistroAnagrafe()
+        self.vista_menuRegistroAnagrafe.show()
+
 
     def goContabilita(self):
-        pass
+        self.vist_contabilita = VistaGestioneContabilita()
+        self.vista_contabilita.show()
 
     def goBilancio(self):
         pass
