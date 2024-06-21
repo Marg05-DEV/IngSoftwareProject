@@ -17,7 +17,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
+        self.searchType.addItems(["Denominazione", "Sigla", "Codice"])
         self.searchType.activated.connect(self.debugComboBox1)
         self.searchType.activated.connect(self.avvia_ricerca)
         self.searchbar.textChanged.connect(self.avvia_ricerca)
@@ -69,8 +69,22 @@ class VistaMenuRegistroAnagrafe(QWidget):
     def go_Gestione_UnitaImmobiliare(self):
         search_text = self.searchbar.text().strip()
         print(f"Testo della barra di ricerca: {search_text}")
-        #if ricerca
-        self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(search_text)
+        immobile = 0
+        if self.searchbar.text():
+            print("sto cercando...")
+            if self.searchType.currentIndex() == 0:  # ricerca per denominazione
+                immobile = Immobile().ricercaImmobileByDenominazione(search_text)
+                print(immobile)
+            elif self.searchType.currentIndex() == 1:  # ricerca per sigla
+                immobile = Immobile().ricercaImmobileBySigla(search_text)
+                print(immobile)
+            elif self.searchType.currentIndex() == 2:  # ricerca per codice
+                immobile = Immobile().ricercaImmobileByCodice(search_text)
+                print(immobile)
+            elif not immobile:
+                print(immobile)
+                return None
+        self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(immobile)
         self.vista_Gestione_UnitaImmobiliare.show()
 
     def go_Gestione_Condomino(self):
