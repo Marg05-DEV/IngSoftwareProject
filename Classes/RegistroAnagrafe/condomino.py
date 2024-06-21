@@ -97,9 +97,9 @@ class Condomino:
                 for condomino in condomini.values():
                     if condomino.nome == nome:
                         return condomino
-                return "Condomino non trovato"
+                return None
         else:
-            return " File non esistente"
+            return None
 
     @staticmethod
     def ordinaCondominoByName(isDecrescente):

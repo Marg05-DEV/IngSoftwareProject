@@ -7,6 +7,8 @@ from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaCreateUnitaImmobilia
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaAddAssegnazione import VistaAddAssegnazione
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadAssegnazione import VistaReadAssegnazione
 
 
 class VistaGestioneUnitaImmobiliare(QWidget):
@@ -19,7 +21,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         find_layout = QGridLayout()
 
         searchbar = QLineEdit()
-        searchbar.setPlaceholderText("Ricerca...")
+        searchbar.setPlaceholderText("Ricerca Assegnazione")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
         self.searchType.activated.connect(self.debugComboBox1)
@@ -28,8 +30,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         self.sortType = QComboBox()
 
         self.sortType.addItems(
-            ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
-             "Codice decrescente"])
+            ["Dati catastali", "Nominativo condomino A-Z", "Nominativo condomino Z-A"])
         self.sortType.activated.connect(self.debugComboBox2)
         find_layout.addWidget(searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
@@ -44,10 +45,8 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         button_layout = QVBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Unità Immobiliare", self.go_Create_unitaImmobiliare))
-        button_layout.addWidget(self.create_button("Visualizza Unità Immobiliare", self.go_Read_unitaImmobiliare, True))
-        button_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.go_Update_unitaImmobiliare, True))
-        button_layout.addWidget(self.create_button("Elimina Unità Immobiliare", self.go_Delete_unitaImmobiliare, True))
+        button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
+        button_layout.addWidget(self.create_button("Visualizza Asseganzione", self.go_Read_Assegnazione, True))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
@@ -97,13 +96,26 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         print("post")
 
     def update_list(self):
+        print("class VistaGestioneImmobile - update_list inizio")
         self.lista_unitaImmobiliari = []
-        self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        self.lista_unitaImmobiliari = self.search_text
+        if searchActivated and self.searchbar.text():
+            print("sto cercando...")
+            if self.searchType.currentIndex() == 0:  # ricerca per denominazione
+                self.lista_unitaImmobiliari = [item for item in self.lista_immobili if
+                                       self.searchbar.text().upper() in item.denominazione.upper()]
+            elif self.searchType.currentIndex() == 1:  # ricerca per sigla
+                self.lista_unitaImmobiliari = [item for item in self.lista_immobili if
+                                       self.searchbar.text().upper() in item.sigla.upper()]
+
+        sorting_function(self.lista_unitaImmobiliari, decr)
+        print(self.lista_unitaImmobiliari)
+
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
 
-        for unitaImmobiliare in self.lista_unitaImmobiliari:
+        for immobile in self.lista_unitaImmobiliari:
             item = QStandardItem()
-            item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.immobile} - {unitaImmobiliare.condomini}"
+            item_text = f"{immobile.codice} {immobile.sigla} - {immobile.denominazione}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -111,20 +123,25 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
 
-        self.list_view_unitaImmobiliare.setModel(listview_model)
+        self.list_view_immobili.setModel(listview_model)
 
-    def go_Create_unitaImmobiliare(self):
-        self.vista_nuovo_unitaImmobiliare = VistaCreateUnitaImmobiliare(callback=self.callback)
-        self.vista_nuovo_unitaImmobiliare.show()
+        self.selectionModel = self.list_view_immobili.selectionModel()
+        self.selectionModel.selectionChanged.connect(self.able_button)
+        print(type(self.selectionModel))
 
-    def go_Read_unitaImmobiliare(self):
+
+    def go_Add_Assegnazione(self):
+        self.vista_nuova_Assegnazione = VistaAddAssegnazione()
+        self.vista_nuova_Assegnazione.show()
+
+    def go_Read_Assegnazione(self):
         item = None
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_unitaImmobiliare = VistaReadUnitaImmobiliare(sel_unitaImmobiliare)
-        self.vista_dettaglio_unitaImmobiliare.show()
+        self.vista_dettaglio_Assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare)
+        self.vista_dettaglio_Assegnazione.show()
 
     def go_Update_unitaImmobiliare(self):
         item = None

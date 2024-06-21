@@ -81,11 +81,12 @@ class VistaMenuRegistroAnagrafe(QWidget):
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
                 immobile = Immobile().ricercaImmobileByCodice(search_text)
                 print(immobile)
-            elif not immobile:
-                print(immobile)
-                return None
-        self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(immobile)
-        self.vista_Gestione_UnitaImmobiliare.show()
+        if immobile != None:
+            print("si")
+            self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(search_text)
+            self.vista_Gestione_UnitaImmobiliare.show()
+        else:
+            return None
 
     def go_Gestione_Condomino(self):
         self.vista_Gestione_Condomino = VistaGestioneCondomino()
