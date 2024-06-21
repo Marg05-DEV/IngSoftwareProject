@@ -45,7 +45,7 @@ class VistaGestioneImmobile(QWidget):
         self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Immobile", self.go_Create_immobile))
-        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile, True))
+        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile,True))
         button_layout.addWidget(self.create_button("Modifica Immobile", self.go_Update_immobile, True))
         button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile, True))
 

@@ -49,7 +49,7 @@ class VistaHome(QWidget):
 
 
     def goContabilita(self):
-        self.vist_contabilita = VistaGestioneContabilita()
+        self.vista_contabilita = VistaGestioneContabilita()
         self.vista_contabilita.show()
 
     def goBilancio(self):

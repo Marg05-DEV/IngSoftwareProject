@@ -1,35 +1,26 @@
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtGui import QStandardItemModel
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
+    QPushButton
+from Classes.Contabilita.spesa import Spesa
 
-from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
+class VistaGestioneSpese(QWidget):
+    def __init__(self, parent=None, sortLabel=None):
+        super(VistaGestioneSpese, self).__init__(parent)
 
-
-class VistaGestioneUnitaImmobiliare(QWidget):
-
-    def __init__(self, search_text, parent=None):
-        super(VistaGestioneUnitaImmobiliare, self).__init__(parent)
-        self.search_text = search_text
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
 
         searchbar = QLineEdit()
-        searchbar.setPlaceholderText("Ricerca...")
+        searchbar.setPlaceholderText("Ricerca Spesa")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
         self.searchType.activated.connect(self.debugComboBox1)
 
-        sortLabel = QLabel("Ordina per:")
-        self.sortType = QComboBox()
-
         self.sortType.addItems(
-            ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
-             "Codice decrescente"])
+            ["Data Di pagamento", "Tipo di Spesa A -> Z", "tipo di Spesa Z -> A", "Immobile A -> Z","Immobile Z -> A", "Fornitore A -> Z",
+             "Fornitore Z -> A"])
         self.sortType.activated.connect(self.debugComboBox2)
         find_layout.addWidget(searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
@@ -38,22 +29,21 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
         action_layout = QHBoxLayout()
 
-        self.list_view_unitaImmobiliare = QListView()
-
+        self.list_view_spese = QListView()
 
         button_layout = QVBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Unità Immobiliare", self.go_Create_unitaImmobiliare))
-        button_layout.addWidget(self.create_button("Visualizza Unità Immobiliare", self.go_Read_unitaImmobiliare, True))
-        button_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.go_Update_unitaImmobiliare, True))
-        button_layout.addWidget(self.create_button("Elimina Unità Immobiliare", self.go_Delete_unitaImmobiliare, True))
+        button_layout.addWidget(self.create_button("Aggiungi Spesa", self.go_Create_spesa))
+        button_layout.addWidget(self.create_button("Visualizza Spesa", self.go_Read_spesa, True))
+        button_layout.addWidget(self.create_button("Modifica Spesa", self.go_Update_spesa, True))
+        button_layout.addWidget(self.create_button("Elimina Spesa", self.go_Delete_spesa, True))
 
-        action_layout.addWidget(self.list_view_unitaImmobiliare)
+        action_layout.addWidget(self.list_view_spesa)
 
         self.update_list()
 
-        self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
+        self.selectionModel = self.list_view_spesa.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
 
         message_layout = QHBoxLayout()
@@ -75,7 +65,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Unità Immobiliare")
+        self.setWindowTitle("Gestione Spese")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -85,7 +75,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
-
+    
     def debugComboBox1(self, combo):
         print("pre")
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
@@ -97,11 +87,11 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         print("post")
 
     def update_list(self):
-        self.lista_unitaImmobiliari = []
-        self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
-        listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
+        self.lista_spese = []
+        self.lista_spese = list(Spesa.getAllSpese().values())
+        listview_model = QStandardItemModel(self.list_view_spese)
 
-        for unitaImmobiliare in self.lista_unitaImmobiliari:
+        for spese in self.lista_spese:
             item = QStandardItem()
             item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.immobile} - {unitaImmobiliare.condomini}"
             item.setText(item_text)

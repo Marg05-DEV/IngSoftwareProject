@@ -19,6 +19,8 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
         self.searchType.activated.connect(self.debugComboBox1)
+        self.searchType.activated.connect(self.avvia_ricerca)
+        self.searchbar.textChanged.connect(self.avvia_ricerca)
 
         find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
@@ -28,7 +30,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.button_layout1 = QVBoxLayout()
         button_layout2 = QVBoxLayout()
 
-        self.select_button = self.button_layout1.addWidget(self.create_button("Seleziona", self.go_Gestione_UnitaImmobiliare, True))
+        self.select_button = self.create_button("Seleziona", self.go_Gestione_UnitaImmobiliare, True)
         self.button_layout1.addWidget(self.select_button)
         button_layout2.addWidget(self.create_button("Visualizza i Condomini", self.go_Gestione_Condomino))
 
@@ -55,6 +57,9 @@ class VistaMenuRegistroAnagrafe(QWidget):
         print()
         return button
 
+    def avvia_ricerca(self):
+        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
+
     def debugComboBox1(self, combo):
         print("pre")
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(
@@ -62,7 +67,10 @@ class VistaMenuRegistroAnagrafe(QWidget):
         print("post")
 
     def go_Gestione_UnitaImmobiliare(self):
-        self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare()
+        search_text = self.searchbar.text().strip()
+        print(f"Testo della barra di ricerca: {search_text}")
+        #if ricerca
+        self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(search_text)
         self.vista_Gestione_UnitaImmobiliare.show()
 
     def go_Gestione_Condomino(self):
