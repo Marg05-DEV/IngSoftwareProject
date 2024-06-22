@@ -122,6 +122,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         self.lista_unitaImmobiliari = []
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
         print(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        print(self.lista_unitaImmobiliari)
         print(searchActivated and self.searchbar.text())
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
@@ -131,17 +132,23 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if
                                        self.searchbar.text().upper() in item.condomini.values().upper()]
-
+        print(self.lista_unitaImmobiliari)
         sorting_function(self.lista_unitaImmobiliari, decr)
+        print("ciao")
         print(self.lista_unitaImmobiliari)
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
-
+        flag = 0
         for unitaImmobiliare in self.lista_unitaImmobiliari:
-            flag = 0
-            if unitaImmobiliare.immobile == self.search_text:
+            print(unitaImmobiliare.immobile)
+            print(self.search_text)
+            print(unitaImmobiliare.immobile == self.search_text)
+            cod_immo = str(unitaImmobiliare.immobile.codice)
+            if cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text:
                 item = QStandardItem()
-                item_text = f"{unitaImmobiliare.codice} {unitaImmobiliare.denominazione} - {unitaImmobiliare.denominazione}"
+                print("si")
+                item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.condomini} - {unitaImmobiliare.tipoUnitaImmobiliare}"
+                print("no")
                 item.setText(item_text)
                 item.setEditable(False)
                 font = item.font()
@@ -149,9 +156,10 @@ class VistaGestioneUnitaImmobiliare(QWidget):
                 item.setFont(font)
                 listview_model.appendRow(item)
                 flag  += 1
-            elif flag == 0:
-                print("Non ci sono Unità Immobiliari assegante all'immobile")
-                return None
+
+        if flag == 0:
+            print("Non ci sono Unità Immobiliari assegante all'immobile")
+            return None
 
         self.list_view_unitaImmobiliare.setModel(listview_model)
 
@@ -161,7 +169,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
 
     def go_Add_Assegnazione(self):
-        self.vista_nuova_Assegnazione = VistaAddAssegnazione()
+        self.vista_nuova_Assegnazione = VistaAddAssegnazione(self.search_text)
         self.vista_nuova_Assegnazione.show()
 
     def go_Read_Assegnazione(self):

@@ -125,6 +125,7 @@ class VistaGestioneImmobile(QWidget):
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         print(Immobile.getAllImmobili().values())
+        print(self.lista_immobili)
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
             if self.searchType.currentIndex() == 0: # ricerca per denominazione
@@ -134,6 +135,7 @@ class VistaGestioneImmobile(QWidget):
             elif self.searchType.currentIndex() == 2: # ricerca per codice
                 self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text() in str(item.codice)]
 
+        print(self.lista_immobili)
         sorting_function(self.lista_immobili, decr)
         print(self.lista_immobili)
 

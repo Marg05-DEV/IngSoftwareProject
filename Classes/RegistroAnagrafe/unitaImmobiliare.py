@@ -1,8 +1,9 @@
 
 import os.path
 import pickle
-from immobile import Immobile
+from Classes.RegistroAnagrafe.immobile import Immobile
 nome_file = 'Dati/UnitaImmobiliari.pickle'
+#nome_file = '../../Dati/UnitaImmobiliari.pickle'
 
 class UnitaImmobiliare:
 
@@ -98,23 +99,21 @@ class UnitaImmobiliare:
             return None
 
     @staticmethod
-    def ordinaCondominoByInterno(isDecrescente):
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                unitaImmobiliari = dict(pickle.load(f))
-                sorted_dati_catastali = []
-                for unitaImmobiliare in unitaImmobiliari.values():
-                    sorted_dati_catastali.append(unitaImmobiliare.interno)
-                sorted_dati_catastali.sort(reverse=isDecrescente)
-                sorted_unitaImmobilairi = []
-                for interno in sorted_dati_catastali:
-                    for unitaImmobiliare in unitaImmobiliari.values():
-                        if unitaImmobiliare.interno == interno:
-                            sorted_unitaImmobilairi.append(unitaImmobiliare)
-                            break
-                return sorted_unitaImmobilairi
-        else:
-            return None
+    def ordinaCondominoByInterno(list_unitaImmobiliari, isDecrescente):
+        print("presente")
+        sorted_dati_catastali = []
+        for unitaImmobiliare in list_unitaImmobiliari:
+            sorted_dati_catastali.append(unitaImmobiliare.interno)
+        sorted_dati_catastali.sort(reverse=isDecrescente)
+        sorted_unitaImmobilairi = []
+        for interno in sorted_dati_catastali:
+            for unitaImmobiliare in list_unitaImmobiliari:
+                if unitaImmobiliare.interno == interno:
+                    sorted_unitaImmobilairi.append(unitaImmobiliare)
+                    break
+
+        for i in range(len(list_unitaImmobiliari)):
+            list_unitaImmobiliari[i] = sorted_unitaImmobilairi[i]
 
 
     def rimuoviUnitaImmobiliare(self):
@@ -161,17 +160,13 @@ class UnitaImmobiliare:
 
 if __name__ == "__main__":
     unitaImmobiliare_1 = UnitaImmobiliare()
-    unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 1, "viva", "all", 1, Immobile().ricercaImmobileBySigla("ccr"), 1, "a")
+    unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 1, "viva", "all", 1, Immobile().ricercaImmobileByCodice(1), 1, "a")
     unitaImmobiliare_2 = UnitaImmobiliare()
     unitaImmobiliare_2.aggiungiUnitaImmobiliare(2, 2, {}, 2, 3, "negozio", "Sesso",
-                                                                     2, Immobile().ricercaImmobileBySigla("ccr"), 3, "b")
+                                                                     2, Immobile().ricercaImmobileByCodice(1), 3, "b")
     unitaImmobiliare_3 = UnitaImmobiliare()
     unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
-                                                                     3, Immobile().ricercaImmobileBySigla("ccr"),2,"c")
-    #print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
-    unitaImmobiliare_1.modificaUnitaImmobiliare(1, 1, {}, 1, 12, "negozio", "Sesso",
-                                                                     1, Immobile().ricercaImmobileBySigla("ccr"),1,"a")
-    #print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
-    print(UnitaImmobiliare.getAllUnitaImmobiliari())
-    immo = Immobile.ricercaImmobileByCodice(1)
-    print(immo)
+                                                                     3, Immobile().ricercaImmobileByCodice(1),2,"c")
+
+    print(unitaImmobiliare_3.getInfoUnitaImmobiliare())
+    print(Immobile.ricercaImmobileByCodice(1))
