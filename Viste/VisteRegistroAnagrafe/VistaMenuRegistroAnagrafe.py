@@ -86,6 +86,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
             self.vista_Gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(search_text)
             self.vista_Gestione_UnitaImmobiliare.show()
         else:
+            print("no")
             return None
 
     def go_Gestione_Condomino(self):

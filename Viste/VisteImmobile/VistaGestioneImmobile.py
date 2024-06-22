@@ -124,6 +124,7 @@ class VistaGestioneImmobile(QWidget):
         print("class VistaGestioneImmobile - update_list inizio")
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
+        print(Immobile.getAllImmobili().values())
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
             if self.searchType.currentIndex() == 0: # ricerca per denominazione

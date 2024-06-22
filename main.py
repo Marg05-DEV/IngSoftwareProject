@@ -3,6 +3,8 @@ import sys
 from PyQt6.QtWidgets import QApplication
 
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+
 from Viste.VistaHome import VistaHome
 
 

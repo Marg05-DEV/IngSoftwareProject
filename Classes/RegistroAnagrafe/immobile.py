@@ -82,6 +82,7 @@ class Immobile:
             with open(file_name, 'rb') as f:
                 try:
                     immobili = dict(pickle.load(f))
+                    print("try")
                 except EOFError:
                     immobili = {}
                 return immobili
@@ -114,9 +115,10 @@ class Immobile:
 
     @staticmethod
     def ricercaImmobileByCodice(codice):
-        print(codice)
+        print(type(codice))
         cod = int(codice)
         if os.path.isfile(file_name):
+            print("si")
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
                 for key in immobili.keys():
@@ -127,6 +129,7 @@ class Immobile:
                         return immobili[key]
                 return None
         else:
+            print("ciuciu")
             return None
 
     @staticmethod

@@ -34,8 +34,9 @@ class UnitaImmobiliare:
         self.ZC = ZC
 
         unitaImmobiliari = {}
+        print(nome_file)
         if os.path.isfile(nome_file):
-            with open(nome_file, 'rb' ) as f:
+            with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
         with open(nome_file, 'wb') as f:
@@ -58,12 +59,28 @@ class UnitaImmobiliare:
 
     @staticmethod
     def getAllUnitaImmobiliari():
+        try:
+            with open(nome_file, 'rb') as f:
+                data = pickle.load(f)
+                print("Dati caricati:", data)
+                print("Tipo di dati caricati:", type(data))
+        except EOFError:
+            print("EOFError: il file è vuoto.")
+        except pickle.UnpicklingError as e:
+            print(f"UnpicklingError: errore durante il caricamento del file - {e}")
+        except Exception as e:
+            print(f"Errore sconosciuto: {e}")
+
         if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
+            print("dentro")
+            with open(nome_file, 'rb') as f:
                 try:
+                    print("dentro al try")
                     unitaImmobiliari = dict(pickle.load(f))
                 except EOFError:
+                    print("EOF")
                     unitaImmobiliari = {}
+                #print(unitaImmobiliari.values())
                 return unitaImmobiliari
         else:
             return {}
@@ -151,7 +168,10 @@ if __name__ == "__main__":
     unitaImmobiliare_3 = UnitaImmobiliare()
     unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
                                                                      3, Immobile().ricercaImmobileBySigla("ccr"),2,"c")
-    print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
+    #print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
     unitaImmobiliare_1.modificaUnitaImmobiliare(1, 1, {}, 1, 12, "negozio", "Sesso",
                                                                      1, Immobile().ricercaImmobileBySigla("ccr"),1,"a")
-    print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
+    #print(unitaImmobiliare_1.getInfoUnitaImmobiliare())
+    print(UnitaImmobiliare.getAllUnitaImmobiliari())
+    immo = Immobile.ricercaImmobileByCodice(1)
+    print(immo)
