@@ -115,7 +115,7 @@ class VistaAddAssegnazione(QWidget):
             print(msg)
             self.callback(msg)
             self.close()
-
+            print("Qui ti blocchi")
             self.vista_nuovo_Condomino = VistaAddCondomino(immo, interno)
             self.vista_nuovo_Condomino.show()
 
