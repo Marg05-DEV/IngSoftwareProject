@@ -140,10 +140,11 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         flag = 0
         for unitaImmobiliare in self.lista_unitaImmobiliari:
-            print(unitaImmobiliare.immobile)
             print(self.search_text)
-            print(unitaImmobiliare.immobile == self.search_text)
+            print(unitaImmobiliare.interno)
+            print(unitaImmobiliare.immobile.codice)
             cod_immo = str(unitaImmobiliare.immobile.codice)
+            print(cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text)
             if cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text:
                 item = QStandardItem()
                 print("si")
@@ -155,7 +156,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
                 font.setPointSize(12)
                 item.setFont(font)
                 listview_model.appendRow(item)
-                flag  += 1
+                flag += 1
 
         if flag == 0:
             print("Non ci sono Unità Immobiliari assegante all'immobile")

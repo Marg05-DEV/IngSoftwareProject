@@ -104,14 +104,17 @@ class UnitaImmobiliare:
         sorted_dati_catastali = []
         for unitaImmobiliare in list_unitaImmobiliari:
             sorted_dati_catastali.append(unitaImmobiliare.interno)
+        print("quo")
+        print(sorted_dati_catastali)
         sorted_dati_catastali.sort(reverse=isDecrescente)
+        print("Sta qui il problema?")
         sorted_unitaImmobilairi = []
         for interno in sorted_dati_catastali:
             for unitaImmobiliare in list_unitaImmobiliari:
                 if unitaImmobiliare.interno == interno:
                     sorted_unitaImmobilairi.append(unitaImmobiliare)
                     break
-
+        print("ci arrivi qui?")
         for i in range(len(list_unitaImmobiliari)):
             list_unitaImmobiliari[i] = sorted_unitaImmobilairi[i]
 
