@@ -60,7 +60,6 @@ class VistaCreateImmobile(QWidget):
         return pair_layout
 
     def createImmobile(self):
-        print("questa la fa")
         temp_immobile = Immobile()
         msg = temp_immobile.aggiungiImmobile(int(self.input_lines["codice"].text()),
                                        self.input_lines["sigla"].text(),

@@ -116,12 +116,10 @@ class VistaGestioneImmobile(QWidget):
             if fromRicerca:
                 return Immobile.ordinaImmobileByCodice, True
             self.update_list(Immobile.ordinaImmobileByCodice, True)
-
         else:
             print("Altro")
 
     def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
-        print("class VistaGestioneImmobile - update_list inizio")
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         print(Immobile.getAllImmobili().values())
@@ -204,6 +202,9 @@ class VistaGestioneImmobile(QWidget):
             self.button_list["Elimina Immobile"].setDisabled(False)
 
     def callback(self, msg):
+        self.button_list["Visualizza Immobile"].setDisabled(True)
+        self.button_list["Modifica Immobile"].setDisabled(True)
+        self.button_list["Elimina Immobile"].setDisabled(True)
         sort, desc = self.ordina_lista(True)
         self.update_list(sort, desc)
         self.msg.setText(msg)

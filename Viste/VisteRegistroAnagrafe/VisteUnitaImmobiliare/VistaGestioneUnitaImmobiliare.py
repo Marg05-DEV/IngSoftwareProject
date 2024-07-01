@@ -106,7 +106,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         elif self.sortType.currentIndex() == 1:
             if fromRicerca:
                 return UnitaImmobiliare.ordinaCondominoByInterno, True
-            self.update_list(decr = True)
+            self.update_list(decr=True)
         elif self.sortType.currentIndex() == 2:
             if fromRicerca:
                 return Condomino.ordinaCondominoByName, False
@@ -149,7 +149,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             if cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text:
                 item = QStandardItem()
                 print("si")
-                item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.condomini} - {unitaImmobiliare.tipoUnitaImmobiliare}"
+                item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {unitaImmobiliare.condomini}"
                 print("no")
                 item.setText(item_text)
                 item.setEditable(False)

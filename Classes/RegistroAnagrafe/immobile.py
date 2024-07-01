@@ -101,7 +101,8 @@ class Immobile:
         else:
             return None
 
-    def ricercaImmobileBySigla(self, sigla):
+    @staticmethod
+    def ricercaImmobileBySigla(sigla):
         print("sigla: " + sigla)
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
