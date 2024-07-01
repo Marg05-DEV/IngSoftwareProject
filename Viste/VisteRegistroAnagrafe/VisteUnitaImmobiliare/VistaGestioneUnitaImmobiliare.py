@@ -26,8 +26,9 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Assegnazione")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        self.searchType.activated.connect(self.debugComboBox1)
+        self.searchType.addItems(["Ricerca per dati catastali", "Ricerca per condomino"])
+        self.searchType.activated.connect(self.avvia_ricerca)
+        self.searchbar.textChanged.connect(self.avvia_ricerca)
 
         sortLabel = QLabel("Ordina per:")
         self.sortType = QComboBox()

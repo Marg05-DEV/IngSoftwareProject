@@ -136,6 +136,17 @@ class Spesa:
                 return "Spesa non Trovata"
         return "File non esistente"
 
+    def getAllSpese():
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                try:
+                    spese = dict(pickle.load(f))
+                except EOFError:
+                    spese = {}
+                return spese
+        else:
+            return {}
+
     @staticmethod
     def ordinaCondominoByDataRegistrazione():
         if os.path.isfile(nome_file):

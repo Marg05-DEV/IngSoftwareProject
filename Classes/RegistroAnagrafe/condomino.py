@@ -3,8 +3,8 @@ import datetime
 import os.path
 import pickle
 
-from immobile import Immobile
-from unitaImmobiliare import UnitaImmobiliare
+from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 nome_file = 'Dati/Condomini.pickle'
 class Condomino:
@@ -120,7 +120,7 @@ class Condomino:
         else:
             return None
 
-    def modificaondomiino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare, provincia, email, telefono):
+    def modificaUnitaCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare, provincia, email, telefono):
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 condomini = dict(pickle.load(f))

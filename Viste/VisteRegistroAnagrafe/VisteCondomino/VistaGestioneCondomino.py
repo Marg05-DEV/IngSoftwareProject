@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel, QHBoxLayout, QPushButton, QComboBox, \
+    QLineEdit
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -18,7 +19,7 @@ class VistaGestioneCondomino(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
-        """
+
         searchbar = QLineEdit()
         searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
@@ -36,7 +37,7 @@ class VistaGestioneCondomino(QWidget):
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(self.sortType, 1, 1)
-        """
+
 
         action_layout = QHBoxLayout()
 
@@ -71,13 +72,14 @@ class VistaGestioneCondomino(QWidget):
         message_layout.addWidget(self.msg)
         action_layout.addLayout(button_layout)
 
-        #main_layout.addLayout(find_layout)
+        main_layout.addLayout(find_layout)
         main_layout.addLayout(action_layout)
         main_layout.addLayout(message_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Condomino")
+        print("fine classe VistaGestioneCondomino")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
