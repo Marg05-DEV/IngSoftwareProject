@@ -95,19 +95,6 @@ class VistaAddAssegnazione(QWidget):
             scala = self.input_lines["scala"].text()
             zc = self.input_lines["ZC"].text()
 
-
-
-            print(type(foglio))
-            print(type(subalterno))
-            print(type(particella))
-            print(type(interno))
-            print(type(tipo_unita_immobiliare))
-            print(type(categoria))
-            print(type(classe))
-            print(type(scala))
-            print(type(zc))
-            print(type(immo))
-
             temp_unitaImmobiliare = UnitaImmobiliare()
             msg = temp_unitaImmobiliare.aggiungiUnitaImmobiliare(int(foglio), int(subalterno), {}, int(particella), int(interno),
                                                                  tipo_unita_immobiliare, categoria, int(classe),

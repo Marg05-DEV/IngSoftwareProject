@@ -47,10 +47,8 @@ class VistaGestioneCondomino(QWidget):
         button_layout = QVBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Condomino", self.go_Create_condomino))
         button_layout.addWidget(self.create_button("Visualizza Condomino", self.go_Read_condomino, True))
         button_layout.addWidget(self.create_button("Modifica Condomino", self.go_Update_condomino, True))
-        button_layout.addWidget(self.create_button("Elimina Condomino", self.go_Delete_condomino, True))
 
         action_layout.addWidget(self.list_view_condomino)
 
@@ -139,26 +137,15 @@ class VistaGestioneCondomino(QWidget):
         self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, callback=self.callback)
         self.vista_modifica_condomino.show()
 
-    def go_Delete_condomino(self):
-        item = None
-        for index in self.list_view_condomino.selectedIndexes():
-            item = self.list_view_condomino.model().itemFromIndex(index)
-            print(item.text())
-        sel_condomino = Condomino.ricercaCondominoByNome(int(item.text().split(" ")[0]))
-        self.vista_elimina_condomino = VistaDeleteCondomino(sel_condomino, callback=self.callback)
-        self.vista_elimina_condomino.show()
-
 
     def able_button(self):
         print("selezione cambiata")
         if not self.list_view_condomino.selectedIndexes():
             self.button_list["Visualizza Condomino"].setDisabled(True)
             self.button_list["Modifica Condomino"].setDisabled(True)
-            self.button_list["Elimina Condomino"].setDisabled(True)
         else:
             self.button_list["Visualizza Condomino"].setDisabled(False)
             self.button_list["Modifica Condomino"].setDisabled(False)
-            self.button_list["Elimina Condomino"].setDisabled(False)
 
     def callback(self, msg):
         self.update_list()

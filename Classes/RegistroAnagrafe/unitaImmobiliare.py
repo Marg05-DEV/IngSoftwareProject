@@ -2,6 +2,7 @@
 import os.path
 import pickle
 from Classes.RegistroAnagrafe.immobile import Immobile
+#from immobile import Immobile
 nome_file = 'Dati/UnitaImmobiliari.pickle'
 #nome_file = '../../Dati/UnitaImmobiliari.pickle'
 
@@ -40,8 +41,17 @@ class UnitaImmobiliare:
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
+        print(unitaImmobiliari.keys())
+        for unita in unitaImmobiliari.values():
+            print("Immobile che esiste: " + str(unita.interno))
+            print("Immobile che esiste: " + str(unita.scala))
+            print("Interno nuovo: " + str(interno))
+            print("Scala nuova: " + str(scala))
+            if unita.immobile == immobile and unita.interno == interno and unita.scala:
+                return "Unità immobiliare esistente"
         with open(nome_file, 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
+        return "L'unità immobiliare è stata inserita "
 
 
     def getInfoUnitaImmobiliare(self):

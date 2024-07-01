@@ -180,7 +180,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_Assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare)
+        self.vista_dettaglio_Assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, callback=self.callback)
         self.vista_dettaglio_Assegnazione.show()
 
     def go_Update_unitaImmobiliare(self):
