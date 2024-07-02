@@ -4,7 +4,7 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteContabilita.VistaGestioneContabilita import VistaGestioneContabilita
 from Viste.VisteImmobile.VistaGestioneImmobile import VistaGestioneImmobile
 from Viste.VisteRegistroAnagrafe.VistaMenuRegistroAnagrafe import VistaMenuRegistroAnagrafe
-from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaGestioneCondomino import VistaGestioneCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaGestioneCondomini import VistaGestioneCondomini
 
 
 class VistaHome(QWidget):

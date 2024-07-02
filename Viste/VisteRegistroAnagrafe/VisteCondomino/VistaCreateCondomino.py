@@ -1,19 +1,21 @@
+import datetime
+
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, \
-    QSizePolicy
+    QSizePolicy, QDateEdit
 import itertools
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
-#from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaGestioneUnitaImmobiliare import VistaGestioneUnitaImmobiliare
 
 
 
-class VistaAddCondomino(QWidget):
-    def __init__(self, immo, interno):
-        super(VistaAddCondomino, self).__init__()
-        self.interno = interno
-        self.immo = immo
+class VistaCreateCondomino(QWidget):
+    def __init__(self, immobile, ui, callback, isIterable):
+        super(VistaCreateCondomino, self).__init__()
+        self.immobile = immobile
+        self.unitaImmobiliare = ui
+        self.callback = callback
         main_layout = QGridLayout()
         self.input_lines = {}
 
@@ -32,12 +34,14 @@ class VistaAddCondomino(QWidget):
         main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Ttolo dell'unità immobiliare", "titoloUnitaImmobiliare"), 8, 0, 1, 2)
-
+        main_layout.addLayout(self.pairLabelInput("Titolo dell'unità immobiliare", "titoloUnitaImmobiliare"), 8, 0, 1, 2)
 
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 9, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione), 10, 0)
-        main_layout.addWidget(self.create_button("Aggiungi altro condomino", self.aggiungiCondomino), 10, 1)
+        if isIterable:
+            main_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione), 10, 0)
+            main_layout.addWidget(self.create_button("Aggiungi altro condomino", self.aggiungiCondomino), 10, 1)
+        else:
+            main_layout.addWidget(self.create_button("Aggiungi Condomino", self.terminaAssegnazione), 10, 0, 1, 2)
 
 
         self.setLayout(main_layout)
@@ -57,10 +61,10 @@ class VistaAddCondomino(QWidget):
         pair_layout = QHBoxLayout()
 
         label = QLabel(testo + ": ")
-        input_line = QLineEdit()
-
-        if index == "codice":
-            input_line.setValidator(QIntValidator())
+        if testo == "Data":
+            input_line = QDateEdit()
+        else:
+            input_line = QLineEdit()
 
         self.input_lines[index] = input_line
 
@@ -86,16 +90,20 @@ class VistaAddCondomino(QWidget):
             cognome = self.input_lines["cognome"].text()
             residenza = self.input_lines["residenza"].text()
             dataDiNascita = self.input_lines["dataDiNascita"].text()
+            print("data", dataDiNascita)
+            dataDiNascita = dataDiNascita.split("/")
+            print("data", dataDiNascita)
+            dataDiNascita = datetime.datetime(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
+            print("data", dataDiNascita)
             codiceFiscale = self.input_lines["codiceFiscale"].text()
             luogoDiNascita = self.input_lines["luogoDiNascita"].text()
             provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
-            codice = itertools.count(start = 1, step=1)
             email = self.input_lines["email"].text()
             telefono = self.input_lines["telefono"].text()
 
-            temp_Condomino = Condomino()
-            msg = temp_Condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                   luogoDiNascita, codice, unitaImmobiliare, provinciaDiNascita,
+            temp_condomino = Condomino()
+            msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
+                                                   luogoDiNascita, self.unitaImmobiliare, provinciaDiNascita,
                                                    email, telefono)
             for unit in self.lista_unitaImmobiliare:
                 if unit.interno == self.interno and unit.immobile == self.immo:
@@ -105,64 +113,41 @@ class VistaAddCondomino(QWidget):
 
             self.callback(msg)
             self.close()
-        except ValueError as e:
-            print(f"Errore nella conversione degli input: {e}")
-        except KeyError as e:
-            print(f"Campo di input mancante: {e}")
-
-        #self.vista_gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(self.immo)
-        #self.vista_gestione_UnitaImmobiliare.show()
 
     def aggiungiCondomino(self):
-        print("Dentro ad aggiungiCondomino")
-        self.lista_unitaImmobiliare = []
-        self.lista_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
-        for i in self.lista_unitaImmobiliare:
-            print("Stampo la lista di unità immobiliari: " + i)
-        self.lista_condomini = []
-        self.lista_condomini = list(Condomino.getAllCondomini().values())
-        for i in self.lista_condomini:
-            print("Stampo la lista di condomini: " + i)
-        unitaImmobiliare = None
-
-        print("Prima del for per trovare la giusta unità immobiliare")
-        for unita in self.lista_unitaImmobiliare:
-            if unita.interno == self.interno and unita.immobile == self.immo:
-                unitaImmobiliare = unita
-        print("stampo l'unità immobiliare corrisposndente")
-        print("eccola: " + unitaImmobiliare)
-
-        try:
             nome = self.input_lines["nome"].text()
             cognome = self.input_lines["cognome"].text()
             residenza = self.input_lines["residenza"].text()
             dataDiNascita = self.input_lines["dataDiNascita"].text()
+            print("data", dataDiNascita)
+            dataDiNascita = dataDiNascita.split("/")
+            print("data", dataDiNascita)
+            dataDiNascita = datetime.datetime(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
+            print("data", dataDiNascita)
             codiceFiscale = self.input_lines["codiceFiscale"].text()
+            print("codFiscale")
             luogoDiNascita = self.input_lines["luogoDiNascita"].text()
+            print("luogoDiNascita")
             provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
-            codice = itertools.count(start=1, step=1)
+            print("provinciaDiNascita")
             email = self.input_lines["email"].text()
+            print("email")
             telefono = self.input_lines["telefono"].text()
+            print("telefono")
 
             temp_Condomino = Condomino()
-            msg = temp_Condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                   luogoDiNascita, codice, unitaImmobiliare, provinciaDiNascita,
-                                                   email, telefono)
+            print("costr vuoto")
+            msg, condomino = temp_Condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
+                                                              luogoDiNascita, self.unitaImmobiliare, provinciaDiNascita,
+                                                              email, telefono)
 
-            for unit in self.lista_unitaImmobiliare:
-                if unit.interno == self.interno and unit.immobile == self.immo:
-                    key = self.input_lines["titoloUnitaImmobiliare"].text()
-                    value = self.input_lines["cognome"].text()
-                    unit.condomini[key] = value
+            print("condomino inserito")
+            value = self.input_lines["titoloUnitaImmobiliare"].text()
+            self.unitaImmobiliare.condomini[condomino] = value
 
-            self.callback(msg)
             self.close()
-            self.vista_nuovo_condomino = VistaAddCondomino(self.immo, self.interno)
+            self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)
             self.vista_nuovo_condomino.show()
-        except ValueError as e:
-            print(f"Errore nella conversione degli input: {e}")
-        except KeyError as e:
-            print(f"Campo di input mancante: {e}")
 
     def reset(self):
         for input_line in self.input_lines.values():

@@ -4,16 +4,16 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListV
 
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaAddAssegnazione import VistaAddAssegnazione
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadAssegnazione import VistaReadAssegnazione
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaReadAssegnazione import VistaReadAssegnazione
 
-class VistaGestioneUnitaImmobiliare(QWidget):
+class VistaGestioneRegistroAnagrafe(QWidget):
 
-    def __init__(self, search_text):
-        super(VistaGestioneUnitaImmobiliare, self).__init__()
-        self.search_text = search_text
+    def __init__(self, immobile):
+        super(VistaGestioneRegistroAnagrafe, self).__init__()
+        self.immobile = immobile
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
@@ -127,7 +127,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         flag = 0
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             cod_immo = str(unitaImmobiliare.immobile.codice)
-            if cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text:
+            if cod_immo == self.immobile.codice or unitaImmobiliare.immobile.denominazione == self.immobile.denominazione or unitaImmobiliare.immobile.sigla == self.immobile.sigla:
                 item = QStandardItem()
                 item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {unitaImmobiliare.condomini}"
                 item.setText(item_text)
@@ -149,7 +149,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
 
     def go_Add_Assegnazione(self):
-        self.vista_nuova_Assegnazione = VistaAddAssegnazione(self.search_text, callback=self.callback)
+        self.vista_nuova_Assegnazione = VistaCreateUnitaImmobiliare(self.immobile, callback=self.callback)
         self.vista_nuova_Assegnazione.show()
 
     def go_Read_Assegnazione(self):

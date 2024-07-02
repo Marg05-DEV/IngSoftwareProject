@@ -21,11 +21,10 @@ class Condomino:
         self.email = ""
         self.telefono = ""
 
-    def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare, provincia, email, telefono):
+    def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, unitaImmobiliare, provincia, email, telefono):
         self.nome = nome
         self.cognome = cognome
         self.residenza = residenza
-        self.codice = codice
         self.dataDiNascita = dataDiNascita
         self.codiceFiscale = codiceFiscale
         self.luogoDiNascita = luogoDiNascita
@@ -38,7 +37,10 @@ class Condomino:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
-
+                if condomini.keys():
+                    codice = max(condomini.keys()) + 1
+                    self.codice = codice
+                    print("codice", codice)
         condomini[codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)

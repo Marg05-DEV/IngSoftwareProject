@@ -5,16 +5,16 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaAddCondomino import VistaAddCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaReadCondomino import VistaReadCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
 
 
-class VistaGestioneCondomino(QWidget):
+class VistaGestioneCondomini(QWidget):
 
     def __init__(self, parent=None):
-        super(VistaGestioneCondomino, self).__init__(parent)
+        super(VistaGestioneCondomini, self).__init__(parent)
 
         main_layout = QVBoxLayout()
 
@@ -77,7 +77,7 @@ class VistaGestioneCondomino(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Condomino")
-        print("fine classe VistaGestioneCondomino")
+        print("fine classe VistaGestioneCondomini")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -116,7 +116,7 @@ class VistaGestioneCondomino(QWidget):
         self.list_view_condomino.setModel(listview_model)
 
     def go_Create_condomino(self):
-        self.vista_nuovo_condomino = VistaAddCondomino(callback=self.callback)
+        self.vista_nuovo_condomino = VistaCreateCondomino(callback=self.callback)
         self.vista_nuovo_condomino.show()
 
     def go_Read_condomino(self):

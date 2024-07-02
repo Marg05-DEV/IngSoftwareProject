@@ -51,7 +51,7 @@ class UnitaImmobiliare:
                 return "Unità immobiliare esistente"
         with open(nome_file, 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-        return "L'unità immobiliare è stata inserita "
+        return "L'unità immobiliare è stata inserita ", self
 
 
     def getInfoUnitaImmobiliare(self):

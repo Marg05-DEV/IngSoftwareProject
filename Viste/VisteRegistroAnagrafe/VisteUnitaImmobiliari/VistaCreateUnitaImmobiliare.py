@@ -6,13 +6,13 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaAddCondomino import VistaAddCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
 
 
-class VistaAddAssegnazione(QWidget):
+class VistaCreateUnitaImmobiliare(QWidget):
 
-    def __init__(self, search_text, callback):
-        super(VistaAddAssegnazione, self).__init__()
+    def __init__(self, immobile, callback):
+        super(VistaCreateUnitaImmobiliare, self).__init__()
         print("eu estou")
         self.search_text = search_text
         self.callback = callback
@@ -88,32 +88,27 @@ class VistaAddAssegnazione(QWidget):
                 immo = immobile
                 break
         print("Qui ci sono 1")
-        try:
-            foglio = self.input_lines["foglio"].text()
-            subalterno = self.input_lines["subalterno"].text()
-            particella = self.input_lines["particella"].text()
-            interno = self.input_lines["interno"].text()
-            tipo_unita_immobiliare = self.input_lines["tipoUnitaImmobiliare"].text()
-            categoria = self.input_lines["categoria"].text()
-            classe = self.input_lines["classe"].text()
-            scala = self.input_lines["scala"].text()
-            zc = self.input_lines["ZC"].text()
-            print("Qui ci sono 2")
-            temp_unitaImmobiliare = UnitaImmobiliare()
-            msg = temp_unitaImmobiliare.aggiungiUnitaImmobiliare(int(foglio), int(subalterno), {}, int(particella), int(interno),
-                                                                 tipo_unita_immobiliare, categoria, int(classe),
-                                                                 immo, int(scala), zc)
-            print("Msg: " + msg)
-            self.callback(msg)
-            self.close()
-            print("Qui ti blocchi")
-            self.vista_nuovo_Condomino = VistaAddCondomino(immo, interno)
-            self.vista_nuovo_Condomino.show()
+        """
 
-        except ValueError as e:
-            print(f"Errore nella conversione degli input: {e}")
-        except KeyError as e:
-            print(f"Campo di input mancante: {e}")
+        foglio = self.input_lines["foglio"].text()
+        subalterno = self.input_lines["subalterno"].text()
+        particella = self.input_lines["particella"].text()
+        interno = self.input_lines["interno"].text()
+        tipo_unita_immobiliare = self.input_lines["tipoUnitaImmobiliare"].text()
+        categoria = self.input_lines["categoria"].text()
+        classe = self.input_lines["classe"].text()
+        scala = self.input_lines["scala"].text()
+        zc = self.input_lines["ZC"].text()
+        print("Qui ci sono 2")
+        temp_unitaImmobiliare = UnitaImmobiliare()
+        msg, ui = temp_unitaImmobiliare.aggiungiUnitaImmobiliare(int(foglio), int(subalterno), {}, int(particella), int(interno),
+                                                             tipo_unita_immobiliare, categoria, int(classe),
+                                                             self.immobile, int(scala), zc)
+
+        self.close()
+        print("Qui ti blocchi")
+        self.vista_nuovo_Condomino = VistaCreateCondomino(self.immobile, ui, self.callback, True)
+        self.vista_nuovo_Condomino.show()
 
     def reset(self):
         for input_line in self.input_lines.values():

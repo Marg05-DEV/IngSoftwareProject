@@ -115,21 +115,18 @@ class Immobile:
 
     @staticmethod
     def ricercaImmobileByCodice(codice):
-        print(type(codice))
-        cod = int(codice)
+        if codice:
+            codice = int(codice)
+        else:
+            return None
         if os.path.isfile(file_name):
-            print("si")
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
                 for key in immobili.keys():
-                    print(type(key))
-                    print(type(codice))
-                    if key == cod:
-                        print("ok")
+                    if key == codice:
                         return immobili[key]
                 return None
         else:
-            print("ciuciu")
             return None
 
     @staticmethod
