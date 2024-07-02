@@ -9,7 +9,6 @@ from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaUpdateUnitaImmobilia
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaAddAssegnazione import VistaAddAssegnazione
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadAssegnazione import VistaReadAssegnazione
 
-
 class VistaGestioneUnitaImmobiliare(QWidget):
 
     def __init__(self, search_text):
@@ -150,7 +149,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
 
     def go_Add_Assegnazione(self):
-        self.vista_nuova_Assegnazione = VistaAddAssegnazione(self.search_text)
+        self.vista_nuova_Assegnazione = VistaAddAssegnazione(self.search_text, callback=self.callback)
         self.vista_nuova_Assegnazione.show()
 
     def go_Read_Assegnazione(self):

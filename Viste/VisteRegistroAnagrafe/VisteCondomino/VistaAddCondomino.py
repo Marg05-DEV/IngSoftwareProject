@@ -5,6 +5,8 @@ import itertools
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
+#from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaGestioneUnitaImmobiliare import VistaGestioneUnitaImmobiliare
+
 
 
 class VistaAddCondomino(QWidget):
@@ -25,7 +27,7 @@ class VistaAddCondomino(QWidget):
         main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"), 4, 0)
-        main_layout.addLayout(self.pairLabelInput("Provincia", "provinciaDiNascita"), 1, 1)
+        main_layout.addLayout(self.pairLabelInput("Provincia", "provinciaDiNascita"), 4, 1)
         main_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"), 4, 2)
         main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 2)
         main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 2)
@@ -108,17 +110,27 @@ class VistaAddCondomino(QWidget):
         except KeyError as e:
             print(f"Campo di input mancante: {e}")
 
+        #self.vista_gestione_UnitaImmobiliare = VistaGestioneUnitaImmobiliare(self.immo)
+        #self.vista_gestione_UnitaImmobiliare.show()
+
     def aggiungiCondomino(self):
+        print("Dentro ad aggiungiCondomino")
         self.lista_unitaImmobiliare = []
         self.lista_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        for i in self.lista_unitaImmobiliare:
+            print("Stampo la lista di unità immobiliari: " + i)
         self.lista_condomini = []
         self.lista_condomini = list(Condomino.getAllCondomini().values())
-        condomino = {}
+        for i in self.lista_condomini:
+            print("Stampo la lista di condomini: " + i)
         unitaImmobiliare = None
 
+        print("Prima del for per trovare la giusta unità immobiliare")
         for unita in self.lista_unitaImmobiliare:
             if unita.interno == self.interno and unita.immobile == self.immo:
                 unitaImmobiliare = unita
+        print("stampo l'unità immobiliare corrisposndente")
+        print("eccola: " + unitaImmobiliare)
 
         try:
             nome = self.input_lines["nome"].text()

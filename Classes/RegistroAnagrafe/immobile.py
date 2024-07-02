@@ -82,7 +82,6 @@ class Immobile:
             with open(file_name, 'rb') as f:
                 try:
                     immobili = dict(pickle.load(f))
-                    print("try")
                 except EOFError:
                     immobili = {}
                 return immobili

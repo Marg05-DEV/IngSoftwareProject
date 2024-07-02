@@ -11,11 +11,11 @@ from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaAddCondomino import VistaAd
 
 class VistaAddAssegnazione(QWidget):
 
-    def __init__(self, search_text):
+    def __init__(self, search_text, callback):
         super(VistaAddAssegnazione, self).__init__()
         print("eu estou")
         self.search_text = search_text
-        #self.callback = callback
+        self.callback = callback
         main_layout = QGridLayout()
         self.input_lines = {}
 
@@ -74,7 +74,11 @@ class VistaAddAssegnazione(QWidget):
         immo = None
 
         for immobile in self.lista_immobili:
-            if immobile.codice == int(self.search_text):
+            print(str(immobile.codice) + " -->" + self.search_text)
+            print(immobile.sigla + " -->" + self.search_text)
+            print(immobile.denominazione + " -->" + self.search_text)
+
+            if str(immobile.codice) == self.search_text:
                 immo = immobile
                 break
             elif immobile.sigla == self.search_text:
@@ -83,7 +87,7 @@ class VistaAddAssegnazione(QWidget):
             elif immobile.denominazione == self.search_text:
                 immo = immobile
                 break
-
+        print("Qui ci sono 1")
         try:
             foglio = self.input_lines["foglio"].text()
             subalterno = self.input_lines["subalterno"].text()
@@ -94,12 +98,12 @@ class VistaAddAssegnazione(QWidget):
             classe = self.input_lines["classe"].text()
             scala = self.input_lines["scala"].text()
             zc = self.input_lines["ZC"].text()
-
+            print("Qui ci sono 2")
             temp_unitaImmobiliare = UnitaImmobiliare()
             msg = temp_unitaImmobiliare.aggiungiUnitaImmobiliare(int(foglio), int(subalterno), {}, int(particella), int(interno),
                                                                  tipo_unita_immobiliare, categoria, int(classe),
                                                                  immo, int(scala), zc)
-            print(msg)
+            print("Msg: " + msg)
             self.callback(msg)
             self.close()
             print("Qui ti blocchi")

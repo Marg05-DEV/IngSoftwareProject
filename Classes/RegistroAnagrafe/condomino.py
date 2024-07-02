@@ -38,6 +38,7 @@ class Condomino:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
+
         condomini[codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
