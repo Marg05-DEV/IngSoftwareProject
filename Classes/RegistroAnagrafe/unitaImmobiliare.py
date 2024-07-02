@@ -63,6 +63,7 @@ class UnitaImmobiliare:
             "particella": self.particella,
             "tipoUnitaImmobiliare": self.tipoUnitaImmobiliare,
             "categoria": self.categoria,
+            "classe": self.classe,
             "immobile": self.immobile,
             "scala": self.scala,
             "ZC": self.ZC
@@ -98,6 +99,7 @@ class UnitaImmobiliare:
 
     @staticmethod
     def ricercaUnitaImmobiliareInterno(interno):
+        print("dentro la ricerca")
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))

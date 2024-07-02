@@ -4,9 +4,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListV
 
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadUnitaImmobiliare import VistaReadUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaAddAssegnazione import VistaAddAssegnazione
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadAssegnazione import VistaReadAssegnazione
@@ -15,9 +13,7 @@ from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliare.VistaReadAssegnazione imp
 class VistaGestioneUnitaImmobiliare(QWidget):
 
     def __init__(self, search_text):
-        print("hello")
         super(VistaGestioneUnitaImmobiliare, self).__init__()
-        print("hello1")
         self.search_text = search_text
         main_layout = QVBoxLayout()
 
@@ -50,14 +46,11 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
-        button_layout.addWidget(self.create_button("Visualizza Asseganzione", self.go_Read_Assegnazione, True))
+        button_layout.addWidget(self.create_button("Visualizza Assegnazione", self.go_Read_Assegnazione, True))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
         self.update_list()
-
-        self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
-        self.selectionModel.selectionChanged.connect(self.able_button)
 
         message_layout = QHBoxLayout()
 
@@ -79,12 +72,11 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Unità Immobiliare")
-        print("fine")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setFixedSize(110, 55)
-        button.setCheckable(True)
+        #button.setCheckable(True)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -122,9 +114,6 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         print("class VistaGestioneImmobile - update_list inizio")
         self.lista_unitaImmobiliari = []
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
-        print(UnitaImmobiliare.getAllUnitaImmobiliari().values())
-        print(self.lista_unitaImmobiliari)
-        print(searchActivated and self.searchbar.text())
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per dati catastali
@@ -133,24 +122,15 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if
                                        self.searchbar.text().upper() in item.condomini.values().upper()]
-        print(self.lista_unitaImmobiliari)
         sorting_function(self.lista_unitaImmobiliari, decr)
-        print("ciao")
-        print(self.lista_unitaImmobiliari)
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         flag = 0
         for unitaImmobiliare in self.lista_unitaImmobiliari:
-            print(self.search_text)
-            print(unitaImmobiliare.interno)
-            print(unitaImmobiliare.immobile.codice)
             cod_immo = str(unitaImmobiliare.immobile.codice)
-            print(cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text)
             if cod_immo == self.search_text or unitaImmobiliare.immobile.denominazione == self.search_text or unitaImmobiliare.immobile.sigla == self.search_text:
                 item = QStandardItem()
-                print("si")
                 item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {unitaImmobiliare.condomini}"
-                print("no")
                 item.setText(item_text)
                 item.setEditable(False)
                 font = item.font()
@@ -167,7 +147,6 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
         self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
-        print(type(self.selectionModel))
 
 
     def go_Add_Assegnazione(self):
@@ -179,7 +158,8 @@ class VistaGestioneUnitaImmobiliare(QWidget):
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[4]))
+        print(sel_unitaImmobiliare.getInfoUnitaImmobiliare())
         self.vista_dettaglio_Assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, callback=self.callback)
         self.vista_dettaglio_Assegnazione.show()
 
@@ -189,7 +169,7 @@ class VistaGestioneUnitaImmobiliare(QWidget):
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_modifica_immobile = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
+        self.vista_modifica_unitaImmobiliare = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
         self.vista_modifica_unitaImmobiliare.show()
 
     def go_Delete_unitaImmobiliare(self):
@@ -203,14 +183,14 @@ class VistaGestioneUnitaImmobiliare(QWidget):
 
 
     def able_button(self):
-        print("selezione cambiata")
         if not self.list_view_unitaImmobiliare.selectedIndexes():
             self.button_list["Visualizza Assegnazione"].setDisabled(True)
         else:
             self.button_list["Visualizza Assegnazione"].setDisabled(False)
-
     def callback(self, msg):
-        self.update_list()
+        self.button_list["Visualizza Assegnazione"].setDisabled(True)
+        sort, desc = self.ordina_lista(True)
+        self.update_list(sort, desc)
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
