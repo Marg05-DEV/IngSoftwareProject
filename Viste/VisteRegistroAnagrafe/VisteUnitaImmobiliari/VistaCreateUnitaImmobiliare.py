@@ -14,7 +14,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
     def __init__(self, immobile, callback):
         super(VistaCreateUnitaImmobiliare, self).__init__()
         print("eu estou")
-        self.search_text = search_text
+        self.immobile = immobile
         self.callback = callback
         main_layout = QGridLayout()
         self.input_lines = {}
@@ -69,6 +69,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
 
     def createUnitaImmobiliare(self):
         print("esslu")
+        """
         self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         immo = None

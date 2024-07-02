@@ -42,6 +42,7 @@ class UnitaImmobiliare:
                 unitaImmobiliari = dict(pickle.load(f))
         unitaImmobiliari[interno] = self
         print(unitaImmobiliari.keys())
+        """
         for unita in unitaImmobiliari.values():
             print("Immobile che esiste: " + str(unita.interno))
             print("Immobile che esiste: " + str(unita.scala))
@@ -49,6 +50,7 @@ class UnitaImmobiliare:
             print("Scala nuova: " + str(scala))
             if unita.immobile == immobile and unita.interno == interno and unita.scala:
                 return "Unità immobiliare esistente"
+                """
         with open(nome_file, 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
         return "L'unità immobiliare è stata inserita ", self

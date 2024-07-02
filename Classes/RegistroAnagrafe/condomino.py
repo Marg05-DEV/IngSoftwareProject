@@ -44,6 +44,7 @@ class Condomino:
         condomini[codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
+        return "Il condomino è stato aggiunto", self
 
     def rimuoviCondomino(self):
         if os.path.isfile(nome_file):

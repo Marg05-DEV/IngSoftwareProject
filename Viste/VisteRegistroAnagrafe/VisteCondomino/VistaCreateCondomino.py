@@ -74,18 +74,6 @@ class VistaCreateCondomino(QWidget):
         return pair_layout
 
     def terminaAssegnazione(self):
-        self.lista_unitaImmobiliare = []
-        self.lista_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
-        self.lista_condomini = []
-        self.lista_condomini = list(Condomino.getAllCondomini().values())
-        condomino = {}
-        unitaImmobiliare = None
-
-        for unita in self.lista_unitaImmobiliare:
-            if unita.interno == self.interno and unita.immobile == self.immo:
-                unitaImmobiliare = unita
-
-        try:
             nome = self.input_lines["nome"].text()
             cognome = self.input_lines["cognome"].text()
             residenza = self.input_lines["residenza"].text()
@@ -105,12 +93,12 @@ class VistaCreateCondomino(QWidget):
             msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
                                                    luogoDiNascita, self.unitaImmobiliare, provinciaDiNascita,
                                                    email, telefono)
-            for unit in self.lista_unitaImmobiliare:
-                if unit.interno == self.interno and unit.immobile == self.immo:
-                    key = self.input_lines["titoloUnitaImmobiliare"].text()
-                    value = self.input_lines["cognome"].text()
-                    unit.condomini[key] = value
 
+            print("condomino inserito")
+            value = self.input_lines["titoloUnitaImmobiliare"].text()
+            self.unitaImmobiliare.condomini[condomino] = value
+
+            print("condomino inserito")
             self.callback(msg)
             self.close()
 
