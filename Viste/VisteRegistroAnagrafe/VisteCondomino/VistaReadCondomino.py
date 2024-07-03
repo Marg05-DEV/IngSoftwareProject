@@ -1,3 +1,4 @@
+from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, QListView
 
@@ -12,6 +13,7 @@ class VistaReadCondomino(QWidget):
 
     def __init__(self, sel_condomino, callback):
         super(VistaReadCondomino, self).__init__()
+        print("dentro a read condomino")
         self.sel_condomino = sel_condomino
         self.callback = callback
 
@@ -32,11 +34,26 @@ class VistaReadCondomino(QWidget):
         lbl_frase.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(lbl_frase)
 
+        action_layout = QHBoxLayout()
         self.list_view_immobili = QListView()
-        main_layout.addWidget(self.list_view_immobili)
+        action_layout.addWidget(self.list_view_immobili)
+
+        message_layout = QHBoxLayout()
+
+        self.msg = QLabel("Non ci sono immobili assegnati")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
+
+        self.timer = QTimer(self)
+        self.timer.setInterval(5000)
+        self.timer.timeout.connect(self.hide_message)
+
+        message_layout.addWidget(self.msg)
+        self.listImmobiliAssegnati()
+        main_layout.addLayout(action_layout)
+        main_layout.addLayout(message_layout)
 
         self.setLayout(main_layout)
-
         self.resize(600, 400)
         self.setWindowTitle("Dettaglio Immobile")
 
@@ -60,20 +77,22 @@ class VistaReadCondomino(QWidget):
         return pair_layout
 
     def listImmobiliAssegnati(self):
-        """
-        list_immobili = []
-        list_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari())
-        for unitaImmo in list_unitaImmobiliare:
-            for condomino in unitaImmo.condomini.key():
-                if condomino == self.condomino:
-                    list_immobili = unitaImmo.immobile
-                else:
-                    print("Il condomino non è associato a nessun immobile")
-                    return None
+        print("entrato")
+        self.list_immobili = []
+        self.list_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        print(self.list_unitaImmobiliare)
+        for unita in self.list_unitaImmobiliare:
+            if unita.condomini:
+                for condomino in unita.condomini.keys():
+                   if condomino.codice == self.sel_condomino.codice:
+                        print("popolamento")
+                        self.list_immobili.append(unita.immobile)
 
         listview_model = QStandardItemModel(self.list_view_immobili)
-        flag = 0
-        for immobili in list_immobile:
+
+        for immobili in self.list_immobili:
+            print("so boccato")
+            print("scorro la lista ", immobili.denominazione, " ", immobili.sigla )
             item = QStandardItem()
             item_text = f"Denominazione: {immobili.denominazione} Sigla: {immobili.sigla}"
             item.setText(item_text)
@@ -82,15 +101,22 @@ class VistaReadCondomino(QWidget):
             font.setPointSize(12)
             item.setFont(font)
             listview_model.appendRow(item)
-            flag += 1
+            print("forse entro qui")
 
-        if flag == 0:
-            print("Non ci sono Unità Immobiliari assegante all'immobile")
+        if not self.list_immobili:
+            print("impossibile che entro qui")
+            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            self.msg.show()
             return None
 
-        self.list_view_unitaImmobiliare.setModel(listview_model)
-        """
+        print(listview_model)
+        self.list_view_immobili.setModel(listview_model)
+
     def updateCondomino(self):
         self.vista_modifica_condomino = VistaUpdateCondomino(self.sel_condomino, callback=self.callback)
         self.vista_modifica_condomino.show()
         self.close()
+
+    def hide_message(self):
+        self.msg.hide()
+        self.timer.stop()

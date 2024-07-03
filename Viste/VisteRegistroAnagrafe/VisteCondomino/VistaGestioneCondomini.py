@@ -13,13 +13,13 @@ class VistaGestioneCondomini(QWidget):
 
     def __init__(self, parent=None):
         super(VistaGestioneCondomini, self).__init__(parent)
-
+        print("sono in gestione condomini")
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
 
-        searchbar = QLineEdit()
-        searchbar.setPlaceholderText("Ricerca...")
+        self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca nome"])
         self.searchType.activated.connect(self.avvia_ricerca)
@@ -31,7 +31,7 @@ class VistaGestioneCondomini(QWidget):
         self.sortType.addItems(
             ["Nome A -> Z", "Nome Z -> A"])
         self.sortType.activated.connect(self.avvia_ordinamento)
-        find_layout.addWidget(searchbar, 0, 0, 1, 3)
+        find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(self.sortType, 1, 1)
@@ -75,12 +75,13 @@ class VistaGestioneCondomini(QWidget):
         print("fine classe VistaGestioneCondomini")
 
     def create_button(self, testo, action, disabled=False):
+        print("bottoni ok")
         button = QPushButton(testo)
         button.setFixedSize(110, 55)
-        button.setCheckable(True)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
+        print("uscita bottone")
         return button
 
     def avvia_ricerca(self):
@@ -104,20 +105,38 @@ class VistaGestioneCondomini(QWidget):
         else:
             print("Altro")
 
-    def update_list(self):
+    def update_list(self, sorting_function=Condomino.ordinaCondominoByName, decr=False, searchActivated=False):
+        print("dentro a update list")
         self.lista_condomini = []
         self.lista_condomini = list(Condomino.getAllCondomini().values())
+        print(Condomino.getAllCondomini().values())
+        print(searchActivated and self.searchbar.text())
+        if searchActivated and self.searchbar.text():
+            print("sto cercando...")
+            if self.searchType.currentIndex() == 0:
+                self.lista_condomini = [item for item in self.lista_condomini if self.searchbar.text().upper() in item.nome.upper()]
+        print(self.lista_condomini)
+        sorting_function(self.lista_condomini, decr)
+        print(self.lista_condomini)
+        print("ciao 1")
         listview_model = QStandardItemModel(self.list_view_condomino)
 
         for condomino in self.lista_condomini:
             item = QStandardItem()
-            item_text = f"{condomino.codice} {condomino.nome} - {condomino.cognome} - Immo.{condomino.unitaImmobiliare.immobile.denominazione} Int.{condomino.unitaImmobiliare.interno} Scala.{condomino.unitaImmobiliare.scala}"
+            item_text = f"{condomino.codice} {condomino.nome} - {condomino.cognome}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
             font.setPointSize(12)
             item.setFont(font)
             listview_model.appendRow(item)
+
+        if not self.lista_condomini:
+            print("ciao")
+            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            self.msg.show()
+            print("Non ci sono Unità Immobiliari assegante all'immobile")
+            return None
 
         self.list_view_condomino.setModel(listview_model)
 

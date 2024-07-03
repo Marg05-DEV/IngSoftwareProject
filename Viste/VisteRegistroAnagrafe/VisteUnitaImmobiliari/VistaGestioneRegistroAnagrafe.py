@@ -75,7 +75,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setFixedSize(110, 55)
-        #button.setCheckable(True)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

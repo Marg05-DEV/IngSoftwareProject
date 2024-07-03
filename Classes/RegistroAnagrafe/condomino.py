@@ -106,23 +106,21 @@ class Condomino:
             return None
 
     @staticmethod
-    def ordinaCondominoByName(isDecrescente):
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                condomini = dict(pickle.load(f))
-                sorted_nome = []
-                for condomino in condomini.values():
-                    sorted_nome.append(condomino.nome)
-                sorted_nome.sort(reverse=isDecrescente)
-                sorted_condomini = []
-                for nome in sorted_nome:
-                    for condomino in condomini.values():
-                        if (condomino.nome == nome):
-                            sorted_condomini.append(condomino)
-                            break
-                return sorted_condomini
-        else:
-            return None
+    def ordinaCondominoByName(list_condomini, isDecrescente):
+        print("sono nella funzione di ordina")
+        sorted_nome = []
+        for condomino in list_condomini:
+            sorted_nome.append(condomino.nome)
+        sorted_nome.sort(reverse=isDecrescente)
+        print(sorted_nome)
+        sorted_condomini = []
+        for nome in sorted_nome:
+            for condomino in list_condomini:
+                if condomino.nome == nome:
+                    sorted_condomini.append(condomino)
+                    break
+        for i in range(len(list_condomini)):
+            list_condomini[i] = sorted_condomini[i]
 
     def modificaUnitaCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, provincia, email, telefono):
         if os.path.isfile(nome_file):
