@@ -91,7 +91,7 @@ class VistaCreateCondomino(QWidget):
 
             temp_condomino = Condomino()
             msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                   luogoDiNascita, self.unitaImmobiliare, provinciaDiNascita,
+                                                   luogoDiNascita, provinciaDiNascita,
                                                    email, telefono)
 
             print("condomino inserito")
@@ -126,7 +126,7 @@ class VistaCreateCondomino(QWidget):
             temp_Condomino = Condomino()
             print("costr vuoto")
             msg, condomino = temp_Condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                              luogoDiNascita, self.unitaImmobiliare, provinciaDiNascita,
+                                                              luogoDiNascita, provinciaDiNascita,
                                                               email, telefono)
 
             print("condomino inserito")

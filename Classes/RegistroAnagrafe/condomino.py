@@ -6,6 +6,7 @@ import pickle
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
+#nome_file='../../Dati/Condomini.pickle'
 nome_file = 'Dati/Condomini.pickle'
 class Condomino:
     def __init__(self):
@@ -16,33 +17,37 @@ class Condomino:
         self.dataDiNascita = datetime.datetime(year=1970, month=1, day=1)
         self.codiceFiscale = ""
         self.luogoDiNascita = ""
-        self.unitaImmobiliare = None
         self.provinciaDiNascita = ""
         self.email = ""
         self.telefono = ""
 
-    def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, unitaImmobiliare, provincia, email, telefono):
+    def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, provincia, email, telefono):
+        print("sono dentro la funzione aggiungiCondomino nel file condomino.py")
         self.nome = nome
         self.cognome = cognome
         self.residenza = residenza
         self.dataDiNascita = dataDiNascita
         self.codiceFiscale = codiceFiscale
         self.luogoDiNascita = luogoDiNascita
-        self.unitaImmobiliare = unitaImmobiliare
         self.provinciaDiNascita = provincia
         self.email = email
         self.telefono = telefono
+        print("Qui ci sono arrivato")
 
         condomini = {}
+        codice = 1
         if os.path.isfile(nome_file):
+            print("il file è esistente")
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
+                print("chiavi del dict condomini: ", condomini.keys())
                 if condomini.keys():
                     codice = max(condomini.keys()) + 1
                     self.codice = codice
                     print("codice", codice)
         condomini[codice] = self
         with open(nome_file, 'wb') as f:
+            print("sovrascrivo il file")
             pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
         return "Il condomino è stato aggiunto", self
 
@@ -60,7 +65,6 @@ class Condomino:
         self.dataDiNascita = datetime.datetime(year=1970, month=1, day=1)
         self.codiceFiscale = ""
         self.luogoDiNascita = ""
-        self.unitaImmobiliare = None
         self.provinciaDiNascita = ""
         self.email = ""
         self.telefono = ""
@@ -75,7 +79,6 @@ class Condomino:
             "dataDiNascita": self.dataDiNascita,
             "codiceFiscale": self.codiceFiscale,
             "luogoDiNascita": self.luogoDiNascita,
-            "unitaImmobiliare": self.unitaImmobiliare,
             "provinciaDiNascita" : self.provinciaDiNascita,
             "email" : self.email,
             "telefono" : self.telefono
@@ -124,22 +127,19 @@ class Condomino:
         else:
             return None
 
-    def modificaUnitaCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, codice, unitaImmobiliare, provincia, email, telefono):
+    def modificaUnitaCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, provincia, email, telefono):
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 condomini = dict(pickle.load(f))
-                condomini[self.codice].codice = codice
                 condomini[self.codice].nome = nome
                 condomini[self.codice].cognome = cognome
                 condomini[self.codice].residenza = residenza
                 condomini[self.codice].dataDiNascita = dataDiNascita
                 condomini[self.codice].codiceFiscale = codiceFiscale
                 condomini[self.codice].luogoDiNascita = luogoDiNascita
-                condomini[self.codice].unitaImmobiliare = unitaImmobiliare
                 condomini[self.codice].provincia = provincia
                 condomini[self.codice].email = email
                 condomini[self.codice].telefono = telefono
-                condomini[codice] = condomini[self.codice]
                 del condomini[self.codice]
             with open(nome_file, "wb") as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
@@ -149,16 +149,13 @@ class Condomino:
 if __name__ == "__main__":
     condomino1 = Condomino()
     condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
-                                               "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(1), "Sbt", "pippo@gmail.com", "3333333333")
+                                               "Roma", "Sbt", "pippo@gmail.com", "3333333333")
     condomino2 = Condomino()
     condomino2.aggiungiCondomino("Giovanni", "Blu", "Ascoli", datetime.datetime(2002, 5, 14), "ccr",
-                                               "Sbt", 2, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2),"Firenze", "pluto@gmail.com", "4444444444" )
+                                               "Sbt", "Firenze", "pluto@gmail.com", "4444444444" )
     condomino3 = Condomino()
     condomino3.aggiungiCondomino("Buls", "Verdi", "Colli", datetime.datetime(1998, 11, 15), "dvd",
-                                               "Sbt", 3, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(3),"Roma", "minni@gmail.com", "555555555" )
-    #print(condomino1.getDatiAnagraficiCondomino())
-    condomino1.modificaUnitaCondomino("Fica", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
-                                               "Roma", 1, UnitaImmobiliare().ricercaUnitaImmobiliareInterno(2), "Sbt", "pippo@gmail.com", "3333333333")
-    #print(condomino1.getDatiAnagraficiCondomino())
+                                               "Sbt", "Roma", "minni@gmail.com", "555555555" )
+
 
     print(Condomino.getAllCondomini())

@@ -5,8 +5,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
-from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaReadCondomino import VistaReadCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
 
@@ -23,16 +21,16 @@ class VistaGestioneCondomini(QWidget):
         searchbar = QLineEdit()
         searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        self.searchType.activated.connect(self.debugComboBox1)
+        self.searchType.addItems(["Ricerca nome"])
+        self.searchType.activated.connect(self.avvia_ricerca)
+        self.searchbar.textChanged.connect(self.avvia_ricerca)
 
         sortLabel = QLabel("Ordina per:")
         self.sortType = QComboBox()
 
         self.sortType.addItems(
-            ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
-             "Codice decrescente"])
-        self.sortType.activated.connect(self.debugComboBox2)
+            ["Nome A -> Z", "Nome Z -> A"])
+        self.sortType.activated.connect(self.avvia_ordinamento)
         find_layout.addWidget(searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
@@ -53,9 +51,6 @@ class VistaGestioneCondomini(QWidget):
         action_layout.addWidget(self.list_view_condomino)
 
         self.update_list()
-
-        self.selectionModel = self.list_view_condomino.selectionModel()
-        self.selectionModel.selectionChanged.connect(self.able_button)
 
         message_layout = QHBoxLayout()
 
@@ -88,15 +83,26 @@ class VistaGestioneCondomini(QWidget):
         self.button_list[testo] = button
         return button
 
-    def debugComboBox1(self, combo):
-        print("pre")
+    def avvia_ricerca(self):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
-        print("post")
+        sorting, desc = self.ordina_lista(True)
+        self.update_list(sorting, desc, True)
 
-    def debugComboBox2(self, combo):
-        print("pre")
+    def avvia_ordinamento(self):
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
-        print("post")
+        self.ordina_lista(False)
+
+    def ordina_lista(self, fromRicerca=False):
+        if self.sortType.currentIndex() == 0:
+            if fromRicerca:
+                return Condomino.ricercaCondominoByNome, False
+            self.update_list()
+        elif self.sortType.currentIndex() == 1:
+            if fromRicerca:
+                return Condomino.ricercaCondominoByNome, True
+            self.update_list(decr=True)
+        else:
+            print("Altro")
 
     def update_list(self):
         self.lista_condomini = []
@@ -105,7 +111,7 @@ class VistaGestioneCondomini(QWidget):
 
         for condomino in self.lista_condomini:
             item = QStandardItem()
-            item_text = f"{condomino.codice} {condomino.nome} - {condomino.cognome} - {condomino.unitaImmobiliare}"
+            item_text = f"{condomino.codice} {condomino.nome} - {condomino.cognome} - Immo.{condomino.unitaImmobiliare.immobile.denominazione} Int.{condomino.unitaImmobiliare.interno} Scala.{condomino.unitaImmobiliare.scala}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -115,17 +121,16 @@ class VistaGestioneCondomini(QWidget):
 
         self.list_view_condomino.setModel(listview_model)
 
-    def go_Create_condomino(self):
-        self.vista_nuovo_condomino = VistaCreateCondomino(callback=self.callback)
-        self.vista_nuovo_condomino.show()
+        self.selectionModel = self.list_view_condomino.selectionModel()
+        self.selectionModel.selectionChanged.connect(self.able_button)
 
     def go_Read_condomino(self):
         item = None
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
             print(item.text())
-        sel_condomino = Condomino.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino)
+        sel_condomino = Condomino.ricercaCondominoByNome(item.text().split(" ")[1])
+        self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino, self.callback)
         self.vista_dettaglio_condomino.show()
 
     def go_Update_condomino(self):
@@ -133,7 +138,7 @@ class VistaGestioneCondomini(QWidget):
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
             print(item.text())
-        sel_condomino = Condomino.ricercaCondominoByNome(int(item.text().split(" ")[0]))
+        sel_condomino = Condomino.ricercaCondominoByNome(item.text().split(" ")[1])
         self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, callback=self.callback)
         self.vista_modifica_condomino.show()
 
