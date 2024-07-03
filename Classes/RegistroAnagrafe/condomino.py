@@ -22,7 +22,6 @@ class Condomino:
         self.telefono = ""
 
     def aggiungiCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, provincia, email, telefono):
-        print("sono dentro la funzione aggiungiCondomino nel file condomino.py")
         self.nome = nome
         self.cognome = cognome
         self.residenza = residenza
@@ -32,22 +31,20 @@ class Condomino:
         self.provinciaDiNascita = provincia
         self.email = email
         self.telefono = telefono
-        print("Qui ci sono arrivato")
 
+        codice = 1
         condomini = {}
 
         if os.path.isfile(nome_file):
             print("il file è esistente")
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
-                print("chiavi del dict condomini: ", condomini.keys())
                 if condomini.keys():
                     codice = max(condomini.keys()) + 1
                     self.codice = codice
                     print("codice", codice)
         condomini[codice] = self
         with open(nome_file, 'wb') as f:
-            print("sovrascrivo il file")
             pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
         return "Il condomino è stato aggiunto", self
 

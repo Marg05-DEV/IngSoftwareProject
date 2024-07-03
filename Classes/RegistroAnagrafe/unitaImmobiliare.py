@@ -9,6 +9,7 @@ nome_file = 'Dati/UnitaImmobiliari.pickle'
 class UnitaImmobiliare:
 
     def __init__(self):
+        self.codice = 0
         self.interno = 0
         self.foglio = 0
         self.subalterno = 0
@@ -35,6 +36,7 @@ class UnitaImmobiliare:
         self.scala = scala
         self.ZC = ZC
 
+        codice = 1
         unitaImmobiliari = {}
         print(nome_file)
         if os.path.isfile(nome_file):
@@ -132,7 +134,8 @@ class UnitaImmobiliare:
                 del unitaImmobiliari[self.interno]
             with open(nome_file, 'wb') as f:
                 pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-        self.interno = -1
+        self.interno = 0
+        self.codice = -1
         self.foglio = 0
         self.subalterno = 0
         self.condomini = {}
@@ -145,27 +148,38 @@ class UnitaImmobiliare:
         self.ZC = ""
         del self
 
-    def modificaUnitaImmobiliare(self, foglio = None, subalterno = None, condomini = None, particella = None, interno = None, tipoUnitaImmobiliare = None, categoria = None, classe = None, immobile = None, scala = None, ZC = None ):
-        if interno is not None:
-            self.interno = interno
-        if foglio is not None:
-            self.foglio = foglio
-        if subalterno is not None:
-            self.subalterno = subalterno
-        if condomini is not None:
-            self.condomini = condomini
-        if particella is not None:
-            self.particella = particella
-        if tipoUnitaImmobiliare is not None:
-            self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
-        if categoria is not None:
-            self.categoria = categoria
-        if immobile is not None:
-            self.immobile = immobile
-        if scala is not None:
-            self.scala = scala
-        if ZC is not None:
-            self.ZC = ZC
+    def addCondomino(self, condomino, titolo):
+        msg = "All'unità immobiliare seezionata è stato aggiunto il condomino " + condomino.nome + " " +  condomino.cognome
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                unitaImmobiliari = dict(pickle.load(f))
+
+                unitaImmobiliari[self.codice].condomini[condomino] = titolo
+            with open(nome_file, "wb") as f:
+                pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
+            return msg
+
+    def modificaUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
+        msg = "L'Unità immobiliare dell'immobile " + self.immobile.denominazione + " è stato modificata"
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                unitaImmobiliare = dict(pickle.load(f))
+
+                unitaImmobiliare[self.codice].foglio = foglio
+                unitaImmobiliare[self.codice].subalterno = subalterno
+                unitaImmobiliare[self.codice].condomini = condomini
+                unitaImmobiliare[self.codice].particella = particella
+                unitaImmobiliare[self.codice].interno = interno
+                unitaImmobiliare[self.codice].tipoUnitaImmobiliare = tipoUnitaImmobiliare
+                unitaImmobiliare[self.codice].categoria = categoria
+                unitaImmobiliare[self.codice].classe = classe
+                unitaImmobiliare[self.codice].immobile = immobile
+                unitaImmobiliare[self.codice].scala = scala
+                unitaImmobiliare[self.codice].ZC = ZC
+                
+            with open(nome_file, "wb") as f:
+                pickle.dump(unitaImmobiliare, f, pickle.HIGHEST_PROTOCOL)
+            return msg
 
 
 if __name__ == "__main__":

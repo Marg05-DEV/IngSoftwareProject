@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBo
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteCondomino import VistaGestioneCondomini
 from Viste.VisteRegistroAnagrafe.VisteCondomino import VistaUpdateCondomino
 
@@ -59,27 +60,36 @@ class VistaReadCondomino(QWidget):
         return pair_layout
 
     def listImmobiliAssegnati(self):
+        """
+        list_immobili = []
+        list_unitaImmobiliare = list(UnitaImmobiliare.getAllUnitaImmobiliari())
+        for unitaImmo in list_unitaImmobiliare:
+            for condomino in unitaImmo.condomini.key():
+                if condomino == self.condomino:
+                    list_immobili = unitaImmo.immobile
+                else:
+                    print("Il condomino non è associato a nessun immobile")
+                    return None
+
         listview_model = QStandardItemModel(self.list_view_immobili)
         flag = 0
-        for unitaImmobiliare in self.lista_unitaImmobiliari:
-            cod_immo = str(unitaImmobiliare.immobile.codice)
-            if cod_immo == self.immobile.codice or unitaImmobiliare.immobile.denominazione == self.immobile.denominazione or unitaImmobiliare.immobile.sigla == self.immobile.sigla:
-                item = QStandardItem()
-                item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {unitaImmobiliare.condomini}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model.appendRow(item)
-                flag += 1
+        for immobili in list_immobile:
+            item = QStandardItem()
+            item_text = f"Denominazione: {immobili.denominazione} Sigla: {immobili.sigla}"
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model.appendRow(item)
+            flag += 1
 
         if flag == 0:
             print("Non ci sono Unità Immobiliari assegante all'immobile")
             return None
 
         self.list_view_unitaImmobiliare.setModel(listview_model)
-
+        """
     def updateCondomino(self):
         self.vista_modifica_condomino = VistaUpdateCondomino(self.sel_condomino, callback=self.callback)
         self.vista_modifica_condomino.show()
