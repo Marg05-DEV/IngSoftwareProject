@@ -95,8 +95,8 @@ class VistaCreateCondomino(QWidget):
                                                    email, telefono)
 
             print("condomino inserito")
-            value = self.input_lines["titoloUnitaImmobiliare"].text()
-            self.unitaImmobiliare.condomini[condomino] = value
+            titolo = self.input_lines["titoloUnitaImmobiliare"].text()
+            self.unitaImmobiliare.addCondomino(condomino, titolo)
 
             print("condomino inserito")
             self.callback(msg)
@@ -129,9 +129,9 @@ class VistaCreateCondomino(QWidget):
                                                               luogoDiNascita, provinciaDiNascita,
                                                               email, telefono)
 
-            print("condomino inserito")
-            value = self.input_lines["titoloUnitaImmobiliare"].text()
-            self.unitaImmobiliare.condomini[condomino] = value
+            print("condomino inserito", condomino, condomino.getDatiAnagraficiCondomino())
+            titolo = self.input_lines["titoloUnitaImmobiliare"].text()
+            self.unitaImmobiliare.addCondomino(condomino, titolo)
 
             self.close()
             self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)

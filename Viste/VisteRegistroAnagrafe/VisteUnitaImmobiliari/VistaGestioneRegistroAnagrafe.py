@@ -49,11 +49,9 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
-        self.update_list()
-
         message_layout = QHBoxLayout()
 
-        self.msg = QLabel("Messaggio")
+        self.msg = QLabel("Non ci sono unità immobiliari")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
@@ -63,6 +61,8 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         message_layout.addWidget(self.msg)
         action_layout.addLayout(button_layout)
+
+        self.update_list()
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(action_layout)
@@ -92,56 +92,58 @@ class VistaGestioneRegistroAnagrafe(QWidget):
     def ordina_lista(self, fromRicerca=False):
         if self.sortType.currentIndex() == 0:
             if fromRicerca:
-                return UnitaImmobiliare.ordinaCondominoByInterno, False
+                return UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, False
             self.update_list()
         elif self.sortType.currentIndex() == 1:
             if fromRicerca:
-                return UnitaImmobiliare.ordinaCondominoByInterno, True
+                return UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, True
             self.update_list(decr=True)
         elif self.sortType.currentIndex() == 2:
             if fromRicerca:
                 return Condomino.ordinaCondominoByName, False
-            self.update_list(Condomino.ordinaCondominoByName, False)
+            self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, False)
         elif self.sortType.currentIndex() == 3:
             if fromRicerca:
                 return Condomino.ordinaCondominoByName, True
-            self.update_list(Condomino.ordinaCondominoByName, True)
+            self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, True)
         else:
             print("Altro")
 
-    def update_list(self, sorting_function=UnitaImmobiliare.ordinaCondominoByInterno, decr=False, searchActivated=False):
+    def update_list(self, sorting_function=UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, decr=False, searchActivated=False):
         print("class VistaGestioneImmobile - update_list inizio")
         self.lista_unitaImmobiliari = []
-        self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliari().values())
+        self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per dati catastali
-                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if
-                                       self.searchbar.text().upper() in item.interno.upper()]
+                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.interno.upper()]
             elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
-                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if
-                                       self.searchbar.text().upper() in item.condomini.values().upper()]
+                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.condomini.values().upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
-        flag = 0
+        print("cazzi")
         for unitaImmobiliare in self.lista_unitaImmobiliari:
-            cod_immo = str(unitaImmobiliare.immobile.codice)
-            if cod_immo == self.immobile.codice or unitaImmobiliare.immobile.denominazione == self.immobile.denominazione or unitaImmobiliare.immobile.sigla == self.immobile.sigla:
-                item = QStandardItem()
-                item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {unitaImmobiliare.condomini}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model.appendRow(item)
-                flag += 1
+            item = QStandardItem()
+            print(unitaImmobiliare.condomini)
+            nominativi_condomini = [(item.cognome + " " + item.nome) for item in unitaImmobiliare.condomini.keys()]
+            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {nominativi_condomini}"
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model.appendRow(item)
+        print("cazzi2", self.lista_unitaImmobiliari)
 
-        if flag == 0:
+        if not self.lista_unitaImmobiliari:
+            print("ciao")
+            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            self.msg.show()
             print("Non ci sono Unità Immobiliari assegante all'immobile")
             return None
 
+        print("cazzi3")
         self.list_view_unitaImmobiliare.setModel(listview_model)
 
         self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()

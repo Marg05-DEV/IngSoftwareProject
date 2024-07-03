@@ -57,7 +57,6 @@ class Immobile:
                 print(immobili)
                 if codice != self.codice:
                     immobili[codice] = immobili[self.codice]
-                    print(immobili)
                     del immobili[self.codice]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
@@ -198,8 +197,4 @@ class Immobile:
             del self
             return "L'immobile " + nome_immobile + " è stato rimosso"
 
-
-if __name__ == "__main__":
-    immobili_dict = Immobile.getAllImmobili()
-    print(immobili_dict)
 

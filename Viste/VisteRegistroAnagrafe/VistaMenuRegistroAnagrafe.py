@@ -44,7 +44,6 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.button_layout.addWidget(self.select_button)
         self.button_layout.addWidget(self.create_button("Visualizza tutti i Condomini", self.go_Gestione_Condomino))
 
-        self.searchbar.textChanged.connect(self.able_button)
         self.searchbar.textChanged.connect(self.selectioning)
 
         main_layout.addLayout(find_layout)
@@ -78,9 +77,11 @@ class VistaMenuRegistroAnagrafe(QWidget):
         if immobile != None:
             print("immobile trovato")
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
+            self.select_button.setEnabled(True)
         else:
             print("Nessun immobile trovato")
             self.immobile_selezionato.setText("Nessun immobile selezionato")
+            self.select_button.setEnabled(False)
 
 
     def sel_tipo_ricerca(self):
@@ -125,9 +126,3 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.vista_Gestione_Condomino = VistaGestioneCondomini()
         self.vista_Gestione_Condomino.show()
 
-    def able_button(self):
-        print("selezione cambiata")
-        if self.searchbar.text().strip():
-            self.select_button.setEnabled(True)
-        else:
-            self.select_button.setEnabled(False)

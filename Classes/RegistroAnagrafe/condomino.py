@@ -1,4 +1,3 @@
-
 import datetime
 import os.path
 import pickle
@@ -8,6 +7,7 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 #nome_file='../../Dati/Condomini.pickle'
 nome_file = 'Dati/Condomini.pickle'
+
 class Condomino:
     def __init__(self):
         self.nome = ""
@@ -35,7 +35,7 @@ class Condomino:
         print("Qui ci sono arrivato")
 
         condomini = {}
-        codice = 1
+
         if os.path.isfile(nome_file):
             print("il file è esistente")
             with open(nome_file, 'rb') as f:
@@ -131,6 +131,7 @@ class Condomino:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 condomini = dict(pickle.load(f))
+
                 condomini[self.codice].nome = nome
                 condomini[self.codice].cognome = cognome
                 condomini[self.codice].residenza = residenza
@@ -140,22 +141,13 @@ class Condomino:
                 condomini[self.codice].provincia = provincia
                 condomini[self.codice].email = email
                 condomini[self.codice].telefono = telefono
-                del condomini[self.codice]
             with open(nome_file, "wb") as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
                 print("b", condomini)
 
             return "Il condomino"
 if __name__ == "__main__":
-    condomino1 = Condomino()
-    condomino1.aggiungiCondomino("Mario", "Rossi", "Offida", datetime.datetime(1968, 2, 23), "affe",
-                                               "Roma", "Sbt", "pippo@gmail.com", "3333333333")
-    condomino2 = Condomino()
-    condomino2.aggiungiCondomino("Giovanni", "Blu", "Ascoli", datetime.datetime(2002, 5, 14), "ccr",
-                                               "Sbt", "Firenze", "pluto@gmail.com", "4444444444" )
-    condomino3 = Condomino()
-    condomino3.aggiungiCondomino("Buls", "Verdi", "Colli", datetime.datetime(1998, 11, 15), "dvd",
-                                               "Sbt", "Roma", "minni@gmail.com", "555555555" )
+
 
 
     print(Condomino.getAllCondomini())

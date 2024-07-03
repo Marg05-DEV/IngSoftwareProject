@@ -68,29 +68,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
         return pair_layout
 
     def createUnitaImmobiliare(self):
-        print("esslu")
-        """
-        self.lista_immobili = []
-        self.lista_immobili = list(Immobile.getAllImmobili().values())
-        immo = None
-
-        for immobile in self.lista_immobili:
-            print(str(immobile.codice) + " -->" + self.search_text)
-            print(immobile.sigla + " -->" + self.search_text)
-            print(immobile.denominazione + " -->" + self.search_text)
-
-            if str(immobile.codice) == self.search_text:
-                immo = immobile
-                break
-            elif immobile.sigla == self.search_text:
-                immo = immobile
-                break
-            elif immobile.denominazione == self.search_text:
-                immo = immobile
-                break
-        print("Qui ci sono 1")
-        """
-
         foglio = self.input_lines["foglio"].text()
         subalterno = self.input_lines["subalterno"].text()
         particella = self.input_lines["particella"].text()

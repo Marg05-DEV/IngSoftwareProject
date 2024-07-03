@@ -40,17 +40,11 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
-        unitaImmobiliari[interno] = self
-        print(unitaImmobiliari.keys())
-        """
-        for unita in unitaImmobiliari.values():
-            print("Immobile che esiste: " + str(unita.interno))
-            print("Immobile che esiste: " + str(unita.scala))
-            print("Interno nuovo: " + str(interno))
-            print("Scala nuova: " + str(scala))
-            if unita.immobile == immobile and unita.interno == interno and unita.scala:
-                return "Unità immobiliare esistente"
-                """
+                if unitaImmobiliari.keys():
+                    codice = max(unitaImmobiliari.keys()) + 1
+                    self.codice = codice
+                    print("codice", codice)
+        unitaImmobiliari[codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
         return "L'unità immobiliare è stata inserita ", self
@@ -73,31 +67,28 @@ class UnitaImmobiliare:
 
     @staticmethod
     def getAllUnitaImmobiliari():
-        try:
-            with open(nome_file, 'rb') as f:
-                data = pickle.load(f)
-                print("Dati caricati:", data)
-                print("Tipo di dati caricati:", type(data))
-        except EOFError:
-            print("EOFError: il file è vuoto.")
-        except pickle.UnpicklingError as e:
-            print(f"UnpicklingError: errore durante il caricamento del file - {e}")
-        except Exception as e:
-            print(f"Errore sconosciuto: {e}")
-
         if os.path.isfile(nome_file):
-            print("dentro")
             with open(nome_file, 'rb') as f:
                 try:
-                    print("dentro al try")
                     unitaImmobiliari = dict(pickle.load(f))
                 except EOFError:
-                    print("EOF")
                     unitaImmobiliari = {}
-                #print(unitaImmobiliari.values())
                 return unitaImmobiliari
         else:
             return {}
+
+    @staticmethod
+    def getAllUnitaImmobiliariByImmobile(immobile):
+        unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
+        if unitaImmobiliari:
+            unitaImmobiliariByImmobile = {}
+            for key, value in unitaImmobiliari.items():
+                if value.immobile.codice == immobile.codice:
+                    unitaImmobiliariByImmobile[key] = value
+            return unitaImmobiliariByImmobile
+        else:
+            return {}
+
 
     @staticmethod
     def ricercaUnitaImmobiliareInterno(interno):
@@ -113,25 +104,26 @@ class UnitaImmobiliare:
             return None
 
     @staticmethod
-    def ordinaCondominoByInterno(list_unitaImmobiliari, isDecrescente):
-        print("presente")
-        sorted_dati_catastali = []
+    def ordinaUnitaImmobiliariByInterno(list_unitaImmobiliari, isDecrescente):
+        sorted_interno = []
         for unitaImmobiliare in list_unitaImmobiliari:
-            sorted_dati_catastali.append(unitaImmobiliare.interno)
-        print("quo")
-        print(sorted_dati_catastali)
-        sorted_dati_catastali.sort(reverse=isDecrescente)
+            sorted_interno.append(unitaImmobiliare.interno)
+        sorted_interno.sort(reverse=isDecrescente)
         print("Sta qui il problema?")
-        sorted_unitaImmobilairi = []
-        for interno in sorted_dati_catastali:
+        sorted_unitaImmobiliari = []
+        for interno in sorted_interno:
             for unitaImmobiliare in list_unitaImmobiliari:
                 if unitaImmobiliare.interno == interno:
-                    sorted_unitaImmobilairi.append(unitaImmobiliare)
+                    sorted_unitaImmobiliari.append(unitaImmobiliare)
                     break
         print("ci arrivi qui?")
         for i in range(len(list_unitaImmobiliari)):
-            list_unitaImmobiliari[i] = sorted_unitaImmobilairi[i]
+            list_unitaImmobiliari[i] = sorted_unitaImmobiliari[i]
+        print("vediamo qui")
 
+    @staticmethod
+    def ordinaUnitaImmobiliariByName(list_unitaImmobiliari, isDecrescente):
+        pass
 
     def rimuoviUnitaImmobiliare(self):
         if os.path.isfile(nome_file):
@@ -174,6 +166,7 @@ class UnitaImmobiliare:
             self.scala = scala
         if ZC is not None:
             self.ZC = ZC
+
 
 if __name__ == "__main__":
     unitaImmobiliare_1 = UnitaImmobiliare()
