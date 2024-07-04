@@ -1,3 +1,5 @@
+from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, \
     QListWidget, QListView
 
@@ -5,8 +7,8 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Viste.VisteImmobile import VistaGestioneImmobile
-from Viste.VisteImmobile.VistaDeleteImmobile import VistaDeleteImmobile
-from Viste.VisteImmobile.VistaUpdateImmobile import VistaUpdateImmobile
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari import VistaDeleteUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari import VistaUpdateUnitaImmobiliare
 
 
 class VistaReadAssegnazione(QWidget):
@@ -47,15 +49,28 @@ class VistaReadAssegnazione(QWidget):
         condomini_label.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(condomini_label)
 
-        self.condomini_list = QListView()
-        for condomino in self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()["condomini"]:
-            self.condomini_list.addItem(condomino)
-        main_layout.addWidget(self.condomini_list)
+        self.list_view_condomini = QListView()
+        main_layout.addWidget(self.list_view_condomini)
 
         main_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino))
         main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
         main_layout.addWidget(self.create_button("Visualizza Condomino", self.readCondomino))
         main_layout.addWidget(self.create_button("Rimuovi Condomino", self.deleteCondomino))
+
+        message_layout = QHBoxLayout()
+        print("dentro a read condomino 6")
+        self.msg = QLabel("Non ci sono immobili assegnati")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
+        print("dentro a read condomino 7")
+        self.timer = QTimer(self)
+        self.timer.setInterval(5000)
+        self.timer.timeout.connect(self.hide_message)
+        print("dentro a read condomino 8")
+        self.update_list()
+        print("dentro a read condomino 9")
+        message_layout.addWidget(self.msg)
+        main_layout.addLayout(message_layout)
 
         self.setLayout(main_layout)
 
@@ -89,9 +104,36 @@ class VistaReadAssegnazione(QWidget):
         layout.addWidget(lbl_content, row, col * 2 + 1)
         print("esci da qua")
 
+    def update_list(self):
+        print("dentro a update 1")
+        self.list_condomini = self.sel_unitaImmobiliare.getCondominiAssociati()
+        print("dentro a update 1")
+        if not self.list_condomini:
+            self.msg.setText("Non ci sono immobili assegnati al condomino selezionato")
+            self.msg.show()
+        else:
+            self.msg.hide()
+        print("dentro a update 2")
+        listview_model = QStandardItemModel(self.list_view_condomini)
+
+        for condomino in self.list_condomini:
+            item = QStandardItem()
+            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino.codiceFiscale}"
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model.appendRow(item)
+        print("qui finisce")
+        self.list_view_condomini.setModel(listview_model)
+
+    def hide_message(self):
+        self.msg.hide()
+        self.timer.stop()
     def updateUnitaImmobiliare(self):
-        # Logica per aggiornare l'unità immobiliare
-        pass
+        self.modifica_unitaImmobiliare = VistaUpdateUnitaImmobiliare(self.sel_unitaImmobiliare, callback=self.callback, onlyAnagrafica=True)
+        self.modifica_unitaImmobiliare.show()
 
     def deleteUnitaImmobiliare(self):
         # Logica per rimuovere l'unità immobiliare

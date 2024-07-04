@@ -181,6 +181,20 @@ class UnitaImmobiliare:
                 pickle.dump(unitaImmobiliare, f, pickle.HIGHEST_PROTOCOL)
             return msg
 
+    def getCondominiAssociati(self):
+        condomini_associati = []
+        print("ci sono")
+        print("condomini: ", self.condomini)
+        if self.condomini:
+            print("chiavi: ", self.condomini.keys())
+            for condomino in self.condomini.keys():
+                condomini_associati.append(condomino)
+            return condomini_associati
+        else:
+            print("Non ci sono condomini associati")
+            return []
+
+
 
 if __name__ == "__main__":
     unitaImmobiliare_1 = UnitaImmobiliare()

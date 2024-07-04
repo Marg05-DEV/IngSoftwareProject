@@ -99,11 +99,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             self.update_list(decr=True)
         elif self.sortType.currentIndex() == 2:
             if fromRicerca:
-                return Condomino.ordinaCondominoByName, False
+                return UnitaImmobiliare.ordinaUnitaImmobiliariByName, False
             self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, False)
         elif self.sortType.currentIndex() == 3:
             if fromRicerca:
-                return Condomino.ordinaCondominoByName, True
+                return UnitaImmobiliare.ordinaUnitaImmobiliariByName(), True
             self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, True)
         else:
             print("Altro")
