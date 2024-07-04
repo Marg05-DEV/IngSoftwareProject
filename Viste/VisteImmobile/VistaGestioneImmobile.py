@@ -51,8 +51,6 @@ class VistaGestioneImmobile(QWidget):
 
         action_layout.addWidget(self.list_view_immobili)
 
-        self.update_list()
-
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
@@ -62,6 +60,9 @@ class VistaGestioneImmobile(QWidget):
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
+
+
+        self.update_list()
 
         message_layout.addWidget(self.msg)
         action_layout.addLayout(button_layout)
@@ -83,13 +84,16 @@ class VistaGestioneImmobile(QWidget):
         return button
 
     def avvia_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         sorting, desc = self.ordina_lista(True)
         self.update_list(sorting, desc, True)
 
     def avvia_ordinamento(self):
-        print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
-        self.ordina_lista(False)
+        if self.searchbar.text():
+            sorting, desc = self.ordina_lista(True)
+            self.update_list(sorting, desc, True)
+        else:
+            self.ordina_lista(False)
+
 
     def ordina_lista(self, fromRicerca=False):
         if self.sortType.currentIndex() == 0:
@@ -125,7 +129,6 @@ class VistaGestioneImmobile(QWidget):
         print(Immobile.getAllImmobili().values())
         print(self.lista_immobili)
         if searchActivated and self.searchbar.text():
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0: # ricerca per denominazione
                 self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.denominazione.upper()]
             elif self.searchType.currentIndex() == 1: # ricerca per sigla
@@ -133,9 +136,16 @@ class VistaGestioneImmobile(QWidget):
             elif self.searchType.currentIndex() == 2: # ricerca per codice
                 self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text() in str(item.codice)]
 
-        print(self.lista_immobili)
         sorting_function(self.lista_immobili, decr)
-        print(self.lista_immobili)
+
+        if not self.lista_immobili:
+            if searchActivated:
+                self.msg.setText("Nessun immobile corrisponde alla ricerca")
+            else:
+                self.msg.setText("Non sono presenti immobili")
+            self.msg.show()
+        elif not self.timer.isActive():
+            self.msg.hide()
 
         listview_model = QStandardItemModel(self.list_view_immobili)
 

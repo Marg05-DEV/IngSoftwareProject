@@ -21,7 +21,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Assegnazione")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per dati catastali", "Ricerca per condomino"])
+        self.searchType.addItems(["Ricerca per scala", "Ricerca per interno", "Ricerca per condomino"])
         self.searchType.activated.connect(self.avvia_ricerca)
         self.searchbar.textChanged.connect(self.avvia_ricerca)
 
@@ -29,7 +29,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.sortType = QComboBox()
 
         self.sortType.addItems(
-            ["Dati catastali", "Nominativo condomino A-Z", "Nominativo condomino Z-A"])
+            ["Scala", "Interno", "Nominativo condomino A-Z", "Nominativo condomino Z-A"])
         self.sortType.activated.connect(self.avvia_ordinamento)
         find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
@@ -74,7 +74,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(110, 55)
+        button.setFixedSize(150, 55)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -125,8 +125,8 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
             print(unitaImmobiliare.condomini)
-            nominativi_condomini = [(item.cognome + " " + item.nome) for item in unitaImmobiliare.condomini.keys()]
-            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {nominativi_condomini}"
+            proprietario = [(item.cognome + " " + item.nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "proprietario"]
+            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - PROPRIETARIO: {proprietario[0]}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -154,14 +154,17 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.vista_nuova_Assegnazione.show()
 
     def go_Read_Assegnazione(self):
+        print("uiui")
         item = None
+        print("uiui")
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
+        print(item.text().split(" "))
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[4]))
-        print(sel_unitaImmobiliare.getInfoUnitaImmobiliare())
-        self.vista_dettaglio_Assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, callback=self.callback)
-        self.vista_dettaglio_Assegnazione.show()
+        print("si",sel_unitaImmobiliare.getInfoUnitaImmobiliare())
+        self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, callback=self.callback)
+        self.vista_dettaglio_assegnazione.show()
 
     def go_Update_unitaImmobiliare(self):
         item = None

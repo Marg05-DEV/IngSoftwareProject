@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, \
-    QListWidget
+    QListWidget, QListView
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -47,7 +47,7 @@ class VistaReadAssegnazione(QWidget):
         condomini_label.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(condomini_label)
 
-        self.condomini_list = QListWidget()
+        self.condomini_list = QListView()
         for condomino in self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()["condomini"]:
             self.condomini_list.addItem(condomino)
         main_layout.addWidget(self.condomini_list)
