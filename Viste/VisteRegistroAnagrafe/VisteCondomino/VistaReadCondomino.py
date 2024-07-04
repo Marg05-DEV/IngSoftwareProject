@@ -33,29 +33,28 @@ class VistaReadCondomino(QWidget):
         lbl_frase = QLabel("Immobili a cui il condomino è assegnato:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(lbl_frase)
-        print("dentro a read condomino 4")
+
         action_layout = QHBoxLayout()
         self.list_view_immobili = QListView()
-        print("dentro a read condomino 5")
 
         action_layout.addWidget(self.list_view_immobili)
 
         message_layout = QHBoxLayout()
-        print("dentro a read condomino 6")
+
         self.msg = QLabel("Non ci sono immobili assegnati")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
-        print("dentro a read condomino 7")
+
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
-        print("dentro a read condomino 8")
+
         self.update_list()
-        print("dentro a read condomino 9")
+
         message_layout.addWidget(self.msg)
         main_layout.addLayout(action_layout)
         main_layout.addLayout(message_layout)
-        print("dentro a read condomino 10")
+
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Dettaglio Condomino")

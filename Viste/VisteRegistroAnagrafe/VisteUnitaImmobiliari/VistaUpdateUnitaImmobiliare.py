@@ -8,7 +8,7 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 class VistaUpdateUnitaImmobiliare(QWidget):
 
-    def __init__(self, sel_unitaImmobiliare, callback, onlyAnagrafica=False):
+    def __init__(self, sel_unitaImmobiliare, callback):
         super(VistaUpdateUnitaImmobiliare, self).__init__()
         self.callback = callback
         self.sel_unitaImmobiliare = sel_unitaImmobiliare
@@ -30,15 +30,10 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         main_layout.addLayout(self.pairLabelInput("ZC", "ZC"), 4, 1)
         main_layout.addLayout(self.pairLabelInput("Classe", "classe"), 5, 0)
         main_layout.addLayout(self.pairLabelInput("Categoria", "categoria"), 5, 1)
-        n = 5
 
-        if not onlyAnagrafica:
-            n = 6
-            main_layout.addLayout(self.pairLabelInput("Email", "email"), n, 0, 1, 3)
+        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 6, 0)
 
-        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), n + 1, 0, 1, 3)
-
-        main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare), n + 1, 0, 1, 3)
+        main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare), 6, 1)
 
         self.setLayout(main_layout)
 
@@ -77,23 +72,26 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         print(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare().keys())
         for attributo in self.sel_unitaImmobiliare.getInfoUnitaImmobiliare().keys():
             print(attributo)
-            if attributo == "codice" or self.input_lines[attributo].text() == "":
+            print(attributo == "codice" or attributo == "condomini" or attributo == "immobile" or self.input_lines[attributo].text() == "")
+            if attributo == "codice" or attributo == "condomini" or attributo == "immobile" or self.input_lines[attributo].text() == "" :
+                print("attr1: ", attributo)
                 temp_unitaImmobiliare[attributo] = self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()[attributo]
             else:
+                print("attr2: ", attributo)
                 temp_unitaImmobiliare[attributo] = self.input_lines[attributo].text()
 
         print(temp_unitaImmobiliare)
 
-        msg = self.sel_unitaImmobiliare.modificaUnitaImmobiliare(temp_unitaImmobiliare["foglio"],
-                                                   temp_unitaImmobiliare["subalterno"],
-                                                   temp_unitaImmobiliare["condomini"],
-                                                   temp_unitaImmobiliare["particella"],
-                                                   temp_unitaImmobiliare["interno"],
+        msg = self.sel_unitaImmobiliare.modificaUnitaImmobiliare(int(temp_unitaImmobiliare["foglio"]),
+                                                   int(temp_unitaImmobiliare["subalterno"]),
+                                                   self.sel_unitaImmobiliare.condomini,
+                                                   int(temp_unitaImmobiliare["particella"]),
+                                                   int(temp_unitaImmobiliare["interno"]),
                                                    temp_unitaImmobiliare["tipoUnitaImmobiliare"],
                                                    temp_unitaImmobiliare["categoria"],
-                                                   temp_unitaImmobiliare["classe"],
+                                                   int(temp_unitaImmobiliare["classe"]),
                                                  self.sel_unitaImmobiliare.immobile,
-                                                 temp_unitaImmobiliare["scala"],
+                                                 int(temp_unitaImmobiliare["scala"]),
                                                  temp_unitaImmobiliare["ZC"])
         print("fine update condomino")
         self.callback(msg)

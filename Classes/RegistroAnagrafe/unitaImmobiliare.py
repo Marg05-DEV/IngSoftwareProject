@@ -53,6 +53,7 @@ class UnitaImmobiliare:
 
 
     def getInfoUnitaImmobiliare(self):
+        print("cont: ")
         return{
             "interno": self.interno,
             "foglio": self.foglio,
