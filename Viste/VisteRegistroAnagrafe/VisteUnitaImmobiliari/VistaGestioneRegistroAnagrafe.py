@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
 
@@ -49,7 +49,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
-        message_layout = QHBoxLayout()
+        bottom_layout = QVBoxLayout()
 
         self.msg = QLabel("Non ci sono unità immobiliari")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
@@ -59,14 +59,15 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
-        message_layout.addWidget(self.msg)
+        bottom_layout.addWidget(self.msg)
+        bottom_layout.addWidget(self.create_button("Mostra Registro Anagrafe Condominiale", self.go_pdf_RegAn), Qt.AlignmentFlag.AlignCenter)
         action_layout.addLayout(button_layout)
 
         self.update_list()
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(action_layout)
-        main_layout.addLayout(message_layout)
+        main_layout.addLayout(bottom_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -75,6 +76,8 @@ class VistaGestioneRegistroAnagrafe(QWidget):
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setFixedSize(150, 55)
+        if testo == "Mostra Registro Anagrafe Condominiale":
+            button.setFixedSize(550, 55)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -119,6 +122,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             if self.searchType.currentIndex() == 0:  # ricerca per dati catastali
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.interno.upper()]
             elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
+                #proprietario = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.condomini.values().upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)
 
@@ -132,19 +136,22 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
             print(unitaImmobiliare.condomini)
-            proprietario = [(item.cognome + " " + item.nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "proprietario"]
-            if not unitaImmobiliare.condomini or proprietario:
-                proprietario_text = proprietario[0] if proprietario else "Nessun condomino"
-                if proprietario_text == "Nessun condomino":
-                    item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {proprietario_text}"
-                else:
-                    item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - PROPRIETARIO: {proprietario_text}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model.appendRow(item)
+            proprietario = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
+            if not proprietario:
+                proprietario_text = "Nessun proprietario"
+                if not unitaImmobiliare.condomini:
+                    proprietario_text = "Nessun condomino"
+            else:
+                proprietario_text = "PROPRIETARIO: " + proprietario[0]
+
+            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {proprietario_text}"
+
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model.appendRow(item)
 
         print("cazzi3")
         self.list_view_unitaImmobiliare.setModel(listview_model)
@@ -170,24 +177,8 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, self.immobile, callback=self.callback)
         self.vista_dettaglio_assegnazione.show()
 
-    def go_Update_unitaImmobiliare(self):
-        item = None
-        for index in self.list_view_unitaImmobiliare.selectedIndexes():
-            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_modifica_unitaImmobiliare = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
-        self.vista_modifica_unitaImmobiliare.show()
-
-    def go_Delete_unitaImmobiliare(self):
-        item = None
-        for index in self.list_view_unitaImmobiliare.selectedIndexes():
-            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_elimina_unitaImmobiliare = VistaDeleteUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
-        self.vista_elimina_unitaImmobiliare.show()
-
+    def go_pdf_RegAn(self):
+        pass
 
     def able_button(self):
         if not self.list_view_unitaImmobiliare.selectedIndexes():
@@ -195,13 +186,14 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         else:
             self.button_list["Visualizza Assegnazione"].setDisabled(False)
 
-    def callback(self, msg):
+    def callback(self, msg = ""):
         self.button_list["Visualizza Assegnazione"].setDisabled(True)
         sort, desc = self.ordina_lista(True)
         self.update_list(sort, desc)
-        self.msg.setText(msg)
-        self.msg.show()
-        self.timer.start()
+        if msg:
+            self.msg.setText(msg)
+            self.msg.show()
+            self.timer.start()
 
     def hide_message(self):
         self.msg.hide()

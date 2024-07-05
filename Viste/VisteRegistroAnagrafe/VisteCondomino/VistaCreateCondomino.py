@@ -2,7 +2,7 @@ import datetime
 
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, \
-    QSizePolicy, QDateEdit
+    QSizePolicy, QDateEdit, QComboBox
 import itertools
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -25,23 +25,25 @@ class VistaCreateCondomino(QWidget):
 
         main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
 
-        main_layout.addLayout(self.pairLabelInput("Nome", "nome", ), 1, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 2)
+        main_layout.addLayout(self.pairLabelInput("Nome", "nome", ), 1, 0, 1, 3)
+        main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 3)
+        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 3)
         main_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"), 4, 0)
         main_layout.addLayout(self.pairLabelInput("Provincia", "provinciaDiNascita"), 4, 1)
         main_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"), 4, 2)
-        main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 2)
-        main_layout.addLayout(self.pairLabelInput("Titolo dell'unità immobiliare", "titoloUnitaImmobiliare"), 8, 0, 1, 2)
+        main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 3)
+        main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 3)
+        main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 3)
+        main_layout.addLayout(self.pairLabelInput("Titolo dell'unità immobiliare", "titolo"), 8, 0, 1, 3)
 
-        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 9, 0, 1, 2)
+        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 9, 0, 1, 3)
         if isIterable:
-            main_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione), 10, 0)
-            main_layout.addWidget(self.create_button("Aggiungi altro condomino", self.altroCondomino), 10, 1)
+            button_layout = QHBoxLayout()
+            button_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione))
+            button_layout.addWidget(self.create_button("Aggiungi altro condomino", self.altroCondomino))
+            main_layout.addLayout(button_layout, 10, 0, 1, 3)
         else:
-            main_layout.addWidget(self.create_button("Aggiungi Condomino", self.terminaAssegnazione), 10, 0, 1, 2)
+            main_layout.addWidget(self.create_button("Aggiungi Condomino", self.terminaAssegnazione), 10, 0, 1, 3)
 
 
         self.setLayout(main_layout)
@@ -63,6 +65,10 @@ class VistaCreateCondomino(QWidget):
         label = QLabel(testo + ": ")
         if testo == "Data":
             input_line = QDateEdit()
+        elif index == "titolo":
+            input_line = QComboBox()
+            input_line.setPlaceholderText("Scegli un titolo per il condomino...")
+            input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
         else:
             input_line = QLineEdit()
 
@@ -91,10 +97,8 @@ class VistaCreateCondomino(QWidget):
         msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
                                                           luogoDiNascita, provinciaDiNascita,
                                                           email, telefono)
-        print("ciao")
-        titolo = self.input_lines["titoloUnitaImmobiliare"].text()
-        print("ciao", condomino, titolo)
-        print(self.unitaImmobiliare)
+
+        titolo = self.input_lines["titolo"].currentText()
 
         self.unitaImmobiliare.addCondomino(condomino, titolo)
 

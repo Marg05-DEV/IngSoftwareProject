@@ -164,7 +164,7 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                unitaImmobiliari[self.codice].condomini[condomino] = titolo
+                unitaImmobiliari[self.codice].condomini[condomino.codiceFiscale] = titolo
         with open(nome_file, "wb") as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
         print("oh si")
@@ -173,33 +173,20 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                for condomino_assoc in self.condomini.keys():
-                    if condomino_assoc.codice == condomino.codice:
-                        unitaImmobiliari[self.codice].condomini[condomino_assoc] = titolo
+                unitaImmobiliari[self.codice].condomini[condomino.codiceFiscale] = titolo
         with open(nome_file, "wb") as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
     def removeCondomino(self, condomino):
-        print("condomino da eliminare", condomino)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                print("rimozione", self.getInfoUnitaImmobiliare())
-                condomino_da_rimuovere = None
-                for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
-                    print("condomino ", condomino_assoc, condomino_assoc.getDatiAnagraficiCondomino())
-                    if condomino_assoc.codice == condomino.codice:
-                        print("rimozione", unitaImmobiliari[self.codice].condomini[condomino_assoc])
-                        removed = unitaImmobiliari[self.codice].condomini[condomino_assoc]
-                        condomino_da_rimuovere = condomino_assoc
-                        print("condomino ch esto rimuovendo: ", condomino_da_rimuovere, type(condomino_da_rimuovere))
-                if condomino_da_rimuovere:
-                    print("pronto alla rimozione")
-                    removed = unitaImmobiliari[self.codice].condomini.pop(condomino_da_rimuovere)
-                    print("Rimosso:", removed)
-                    #if removed == "proprietario" and len(unitaImmobiliari[self.codice].condomini) > 0:
-                        #for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
-                            #unitaImmobiliari[self.codice].condomini[condomino_assoc] = "proprietario"
+                removed = unitaImmobiliari[self.codice].condomini.pop(condomino.codiceFiscale)
+                if removed == "Proprietario" and len(unitaImmobiliari[self.codice].condomini) > 0:
+                    for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
+                        if unitaImmobiliari[self.codice].condomini[condomino_assoc] == "Coproprietario":
+                            unitaImmobiliari[self.codice].condomini[condomino_assoc] = "Proprietario"
+                            break
                 else:
                     print("nessun condomino da rimuovere")
                 with open(nome_file, "wb") as f:
@@ -244,16 +231,3 @@ class UnitaImmobiliare:
             return []
 
 
-
-if __name__ == "__main__":
-    unitaImmobiliare_1 = UnitaImmobiliare()
-    unitaImmobiliare_1.aggiungiUnitaImmobiliare(1, 1, {}, 1, 1, "viva", "all", 1, Immobile().ricercaImmobileByCodice(1), 1, "a")
-    unitaImmobiliare_2 = UnitaImmobiliare()
-    unitaImmobiliare_2.aggiungiUnitaImmobiliare(2, 2, {}, 2, 3, "negozio", "Sesso",
-                                                                     2, Immobile().ricercaImmobileByCodice(1), 3, "b")
-    unitaImmobiliare_3 = UnitaImmobiliare()
-    unitaImmobiliare_3.aggiungiUnitaImmobiliare(3, 3, {}, 3, 4, "negozio", "Sesso",
-                                                                     3, Immobile().ricercaImmobileByCodice(1),2,"c")
-
-    print(unitaImmobiliare_3.getInfoUnitaImmobiliare())
-    print(Immobile.ricercaImmobileByCodice(1))

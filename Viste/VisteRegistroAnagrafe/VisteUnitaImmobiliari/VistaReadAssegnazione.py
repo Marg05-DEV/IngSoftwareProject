@@ -19,7 +19,6 @@ class VistaReadAssegnazione(QWidget):
 
     def __init__(self, sel_unitaImmobiliare, immobile, callback):
         super(VistaReadAssegnazione, self).__init__()
-        print("dentro readAssegnazione")
         self.sel_unitaImmobiliare = sel_unitaImmobiliare
         self.immobile = immobile
         self.callback = callback
@@ -95,7 +94,6 @@ class VistaReadAssegnazione(QWidget):
     def update_list(self):
 
         if not self.sel_unitaImmobiliare.condomini:
-            print("ciao")
             self.msg.setText("Non ci sono condomini assegnati al l'unità immobiliare")
             self.msg.show()
         else:
@@ -103,9 +101,10 @@ class VistaReadAssegnazione(QWidget):
         print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_condomini)
         print(self.sel_unitaImmobiliare.condomini.items())
-        for condomino, titolo in self.sel_unitaImmobiliare.condomini.items():
+        for condomino_cf, titolo in self.sel_unitaImmobiliare.condomini.items():
             item = QStandardItem()
-            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino.codiceFiscale} ({titolo.upper()})"
+            condomino = Condomino.ricercaCondominoByCF(condomino_cf)
+            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino_cf} ({titolo.upper()})"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -118,6 +117,8 @@ class VistaReadAssegnazione(QWidget):
         self.selectionModel = self.list_view_condomini.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
 
+    def closeEvent(self, event):
+        self.callback()
 
     def updateUnitaImmobiliare(self):
         self.modifica_unitaImmobiliare = VistaUpdateUnitaImmobiliare(self.sel_unitaImmobiliare, callback=self.callback)
@@ -138,7 +139,6 @@ class VistaReadAssegnazione(QWidget):
         print(self.list_view_condomini.selectedIndexes())
         for index in self.list_view_condomini.selectedIndexes():
             item = self.list_view_condomini.model().itemFromIndex(index)
-        print("in modifica")
         print(item.text().split(" (")[0].split(" - ")[1])
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])
         print("si va a modificare", sel_condomino)

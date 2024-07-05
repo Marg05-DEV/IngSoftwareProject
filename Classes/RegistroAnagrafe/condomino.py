@@ -149,7 +149,6 @@ class Condomino:
             with open(nome_file, "wb") as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
                 print("b", condomini)
-
             return "Il condomino " + cognome + " " + nome + " è stato modificato"
 
     def getImmobiliAssociati(self):
@@ -162,7 +161,7 @@ class Condomino:
                     flag = True
             if not flag:
                 for condomino in unitaImmobiliare.condomini.keys():
-                    if condomino.codice == self.codice:
+                    if Condomino.ricercaCondominoByCF(condomino).codice == self.codice:
                         immobili_associati.append(unitaImmobiliare.immobile)
             else:
                 flag = False

@@ -14,7 +14,8 @@ class VistaReadCondomino(QWidget):
         super(VistaReadCondomino, self).__init__()
         print("dentro a read condomino 1")
         self.sel_condomino = sel_condomino
-        self.unita_immobiliare = unita_immobiliare
+        if fromUnitaImmobiliare:
+            self.unita_immobiliare = unita_immobiliare
         self.callback = callback
         print("dentro a read condomino 2")
         main_layout = QVBoxLayout()
@@ -33,9 +34,7 @@ class VistaReadCondomino(QWidget):
             titolo_layout = QHBoxLayout()
 
             lbl_desc = QLabel("Titolo nell'unità immobiliare: ")
-            for condomino in self.unita_immobiliare.condomini.keys():
-                if condomino.codice == self.sel_condomino.codice:
-                    lbl_content = QLabel(str(self.unita_immobiliare.condomini[condomino]))
+            lbl_content = QLabel(str(self.unita_immobiliare.condomini[self.sel_condomino.codiceFiscale]))
 
             titolo_layout.addWidget(lbl_desc)
             titolo_layout.addWidget(lbl_content)
@@ -48,12 +47,15 @@ class VistaReadCondomino(QWidget):
             lbl_frase.setStyleSheet("font-weight: bold;")
             main_layout.addWidget(lbl_frase)
 
-            action_layout = QHBoxLayout()
             self.list_view_immobili = QListView()
 
-            action_layout.addWidget(self.list_view_immobili)
+            self.msg = QLabel("Non ci sono condomini assegnati")
+            self.msg.setStyleSheet("color: red; font-weight: bold;")
+            self.msg.hide()
+
+            main_layout.addWidget(self.list_view_immobili)
+            main_layout.addWidget(self.msg)
             self.update_list()
-            main_layout.addLayout(action_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -81,8 +83,9 @@ class VistaReadCondomino(QWidget):
     def update_list(self):
         print("dentro a update 1")
         self.list_immobili = self.sel_condomino.getImmobiliAssociati()
-        print("dentro a update 1")
+        print("dentro a update 1", self.list_immobili)
         if not self.list_immobili:
+            print("ciao")
             self.msg.setText("Non ci sono immobili assegnati al condomino selezionato")
             self.msg.show()
         else:

@@ -47,11 +47,11 @@ condomino.aggiungiCondomino("Elena", "Bianchi", "Offida", datetime.date(1988, 1,
 
 # Seeding Unità Immobiliari
 unitaImmobiliare = UnitaImmobiliare()
-unitaImmobiliare.aggiungiUnitaImmobiliare(1, 1, {Condomino.ricercaCondominoByNome("Maria"): "proprietario", Condomino.ricercaCondominoByNome("Giovanni"): "coproprietario"}, 1, 1, "appartamento", "A/2",
+unitaImmobiliare.aggiungiUnitaImmobiliare(1, 1, {"VRDMRA75M12C023P": "Proprietario", "BNCGIO80T03H123Q": "Coproprietario"}, 1, 1, "appartamento", "A/2",
                                             1, Immobile.ricercaImmobileByCodice(1), 1, "a")
 
-unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {Condomino.ricercaCondominoByNome("Elena"): "proprietario"}, 2, 2, "appartamento", "A/2",
+unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {"BNCELNA88A06T321G": "Proprietario"}, 2, 2, "appartamento", "A/2",
                                             2, Immobile.ricercaImmobileByCodice(2), 2, "b")
 
-unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {Condomino.ricercaCondominoByNome("Laura"): "proprietario"}, 3, 3, "garage", "B/1",
+unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {"GLRLRA95N17T654R": "Proprietario"}, 3, 3, "garage", "B/1",
                                             3, Immobile.ricercaImmobileByCodice(1), 2, "c")

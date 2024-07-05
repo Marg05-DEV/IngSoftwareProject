@@ -1,18 +1,20 @@
 import datetime
 
 from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QDateEdit
+from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QDateEdit, \
+    QComboBox
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 
 
 class VistaUpdateCondomino(QWidget):
 
-    def __init__(self, sel_condomino, callback, ui, onlyAnagrafica=False):
+    def __init__(self, sel_condomino, callback, ui=None, onlyAnagrafica=False):
         super(VistaUpdateCondomino, self).__init__()
         self.callback = callback
         self.sel_condomino = sel_condomino
-        self.ui = ui
+        if not onlyAnagrafica:
+            self.ui = ui
         self.input_lines = {}
         self.onlyAnagrafica = onlyAnagrafica
         main_layout = QGridLayout()
@@ -69,12 +71,9 @@ class VistaUpdateCondomino(QWidget):
             data = self.sel_condomino.getDatiAnagraficiCondomino()[index]
             input_line.setDate(QDate(data.year, data.month, data.day))
         elif index == "titolo":
-            print("per il titolo")
-            input_line = QLineEdit()
-            for condomino in self.ui.condomini.keys():
-                if condomino.codice == self.sel_condomino.codice:
-                    input_line.setPlaceholderText(str(self.ui.condomini[condomino]))
-            print("per il titolo")
+            input_line = QComboBox()
+            input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
+            input_line.setCurrentText(str(self.ui.condomini[self.sel_condomino.codiceFiscale]))
         else:
             print("not data")
             input_line = QLineEdit()
@@ -121,11 +120,9 @@ class VistaUpdateCondomino(QWidget):
                                                    temp_condomino["telefono"])
 
         if not self.onlyAnagrafica:
-            if not self.input_lines["titolo"].text() == "":
-                titolo = self.input_lines["titolo"].text()
+            titolo = self.input_lines["titolo"].currentText()
             self.ui.modificaTitoloCondomino(self.sel_condomino, titolo)
 
-        print("fine update condomino")
         self.callback(msg)
         self.close()
 
