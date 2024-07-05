@@ -79,6 +79,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
+
     def avvia_ricerca(self):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         sorting, desc = self.ordina_lista(True)
@@ -103,7 +104,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, False)
         elif self.sortType.currentIndex() == 3:
             if fromRicerca:
-                return UnitaImmobiliare.ordinaUnitaImmobiliariByName(), True
+                return UnitaImmobiliare.ordinaUnitaImmobiliariByName, True
             self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, True)
         else:
             print("Altro")
@@ -121,7 +122,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         sorting_function(self.lista_unitaImmobiliari, decr)
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
-        print("cazzi")
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
             print(unitaImmobiliare.condomini)
@@ -163,7 +163,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         print(item.text().split(" "))
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[4]))
         print("si",sel_unitaImmobiliare.getInfoUnitaImmobiliare())
-        self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, callback=self.callback)
+        self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, self.immobile, callback=self.callback)
         self.vista_dettaglio_assegnazione.show()
 
     def go_Update_unitaImmobiliare(self):
@@ -190,6 +190,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             self.button_list["Visualizza Assegnazione"].setDisabled(True)
         else:
             self.button_list["Visualizza Assegnazione"].setDisabled(False)
+
     def callback(self, msg):
         self.button_list["Visualizza Assegnazione"].setDisabled(True)
         sort, desc = self.ordina_lista(True)

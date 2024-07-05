@@ -34,7 +34,7 @@ class VistaUpdateCondomino(QWidget):
 
         if not onlyAnagrafica:
             n = 8
-            main_layout.addLayout(self.pairLabelInput("Email", "email"), n, 0, 1, 3)
+            main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"), n, 0, 1, 3)
 
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset), n + 1, 0, 1, 3)
 

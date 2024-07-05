@@ -112,17 +112,14 @@ class UnitaImmobiliare:
         for unitaImmobiliare in list_unitaImmobiliari:
             sorted_interno.append(unitaImmobiliare.interno)
         sorted_interno.sort(reverse=isDecrescente)
-        print("Sta qui il problema?")
         sorted_unitaImmobiliari = []
         for interno in sorted_interno:
             for unitaImmobiliare in list_unitaImmobiliari:
                 if unitaImmobiliare.interno == interno:
                     sorted_unitaImmobiliari.append(unitaImmobiliare)
                     break
-        print("ci arrivi qui?")
         for i in range(len(list_unitaImmobiliari)):
             list_unitaImmobiliari[i] = sorted_unitaImmobiliari[i]
-        print("vediamo qui")
 
     @staticmethod
     def ordinaUnitaImmobiliariByName(list_unitaImmobiliari, isDecrescente):
@@ -132,22 +129,23 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = pickle.load(f)
-                del unitaImmobiliari[self.interno]
+                del unitaImmobiliari[self.codice]
             with open(nome_file, 'wb') as f:
                 pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-        self.interno = 0
-        self.codice = -1
-        self.foglio = 0
-        self.subalterno = 0
-        self.condomini = {}
-        self.particella = 0
-        self.tipoUnitaImmobiliare = ""
-        self.categoria = ""
-        self.classe = 0
-        self.immobile = None
-        self.scala = 0
-        self.ZC = ""
-        del self
+            self.interno = 0
+            self.codice = -1
+            self.foglio = 0
+            self.subalterno = 0
+            self.condomini = {}
+            self.particella = 0
+            self.tipoUnitaImmobiliare = ""
+            self.categoria = ""
+            self.classe = 0
+            self.immobile = None
+            self.scala = 0
+            self.ZC = ""
+            del self
+            return "L'assegnazione è stata eliminata"
 
     def addCondomino(self, condomino, titolo):
         msg = "All'unità immobiliare seezionata è stato aggiunto il condomino " + condomino.nome + " " +  condomino.cognome

@@ -56,13 +56,14 @@ class Condomino:
         self.cognome = ""
         self.residenza = ""
         self.codice = -1
-        self.dataDiNascita = datetime.datetime(year=1970, month=1, day=1)
+        self.dataDiNascita = datetime.date(year=1970, month=1, day=1)
         self.codiceFiscale = ""
         self.luogoDiNascita = ""
         self.provinciaDiNascita = ""
         self.email = ""
         self.telefono = ""
         del self
+        return "Il condomino è stato rimosso definitivamente"
 
     def getDatiAnagraficiCondomino(self):
         return {

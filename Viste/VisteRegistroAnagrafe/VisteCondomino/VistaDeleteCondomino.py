@@ -1,3 +1,4 @@
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit
 
 from Classes.RegistroAnagrafe.condomino import Condomino
@@ -19,8 +20,22 @@ class VistaDeleteCondomino(QWidget):
         main_layout.addWidget(self.create_button("Procedi", self.deleteCondomino), 1, 0)
         main_layout.addWidget(self.create_button("Annulla", self.close), 1, 1)
 
-        self.setLayout(main_layout)
 
+        message_layout = QHBoxLayout()
+
+        self.msg = QLabel("Il condomino è stato rimosso")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
+
+        self.timer = QTimer(self)
+        self.timer.setInterval(5000)
+        self.timer.timeout.connect(self.hide_message)
+
+        message_widget = QWidget()
+        message_widget.setLayout(message_layout)
+        main_layout.addWidget(message_widget, 2, 0, 1, 2)
+
+        self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Rimuovi Condomino")
 
@@ -33,6 +48,19 @@ class VistaDeleteCondomino(QWidget):
         return button
 
     def deleteCondomino(self):
-        self.sel_condomino.rimuoviCondomino()
-        self.callback()
+        msg = ""
+        for condomino in self.unita_immobiliare.condomini.keys():
+            if condomino.codice == self.sel_condomino.codice:
+                print(self.unita_immobiliare.condomini)
+                self.unita_immobiliare.removeCondomino(condomino)
+                print(self.unita_immobiliare.condomini)
+                msg = "Il condomino è stato disassegnato dall'unità immobiliare"
+                print("dissasociato", self.sel_condomino.getImmobiliAssociati())
+        if not self.sel_condomino.getImmobiliAssociati():
+            msg = self.sel_condomino.rimuoviCondomino()
+        self.callback(msg)
         self.close()
+
+    def hide_message(self):
+        self.msg.hide()
+        self.timer.stop()

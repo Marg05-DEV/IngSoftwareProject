@@ -20,11 +20,11 @@ class VistaDeleteUnitaImmobiliare(QWidget):
 
         main_layout.addWidget(self.create_button("Procedi", self.deleteUnitaImmobiliare), 1, 0)
         main_layout.addWidget(self.create_button("Annulla", self.close), 1, 1)
-        print("dai giovanotto")
+
         message_layout = QHBoxLayout()
-        print("valore 1")
+
         self.msg = QLabel("L'assegnazione è stata rimossa")
-        print("valore 2")
+
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
@@ -35,7 +35,6 @@ class VistaDeleteUnitaImmobiliare(QWidget):
         message_widget = QWidget()
         message_widget.setLayout(message_layout)
         main_layout.addWidget(message_widget, 2, 0, 1, 2)
-        print("apposto")
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -52,9 +51,8 @@ class VistaDeleteUnitaImmobiliare(QWidget):
         return button
 
     def deleteUnitaImmobiliare(self):
-        print("rimozione...")
-        self.sel_unitaImmobiliare.rimuoviUnitaImmobiliare()
-        self.callback()
+        msg = self.sel_unitaImmobiliare.rimuoviUnitaImmobiliare()
+        self.callback(msg)
         self.close()
 
     def hide_message(self):

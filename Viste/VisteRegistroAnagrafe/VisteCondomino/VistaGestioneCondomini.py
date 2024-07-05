@@ -128,8 +128,6 @@ class VistaGestioneCondomini(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
 
-
-
         self.list_view_condomino.setModel(listview_model)
 
         self.selectionModel = self.list_view_condomino.selectionModel()

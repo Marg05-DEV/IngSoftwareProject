@@ -9,15 +9,19 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 from Viste.VisteImmobile import VistaGestioneImmobile
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari import VistaDeleteUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaCreateCondomino import VistaCreateCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaReadCondomino import VistaReadCondomino
 
 
 class VistaReadAssegnazione(QWidget):
 
-    def __init__(self, sel_unitaImmobiliare, callback):
+    def __init__(self, sel_unitaImmobiliare, immobile, callback):
         super(VistaReadAssegnazione, self).__init__()
         print("dentro readAssegnazione")
         self.sel_unitaImmobiliare = sel_unitaImmobiliare
+        self.immobile = immobile
         self.callback = callback
         main_layout = QVBoxLayout()
 
@@ -52,7 +56,7 @@ class VistaReadAssegnazione(QWidget):
 
         action_layout = QHBoxLayout()
         self.list_view_condomini = QListView()
-        action_layout.addWidget(self.list_view_condomini)
+        main_layout.addWidget(self.list_view_condomini, 10, 0, 5, 2)
 
         main_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino))
         main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
@@ -80,12 +84,13 @@ class VistaReadAssegnazione(QWidget):
         self.resize(600, 400)
         self.setWindowTitle("Dettaglio Assegnazione")
 
-    @staticmethod
-    def create_button(testo, action):
+
+    def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
+        button.setDisabled(disabled)
+        self.button_list[testo] = button
         return button
 
     def pair_label(self, testo, index):
@@ -125,12 +130,13 @@ class VistaReadAssegnazione(QWidget):
             font.setPointSize(12)
             item.setFont(font)
             listview_model.appendRow(item)
+
         print("qui finisce")
         self.list_view_condomini.setModel(listview_model)
+        self.selectionModel = self.list_view_condomini.selectionModel()
+        self.selectionModel.selectionChanged.connect(self.able_button)
 
-    def hide_message(self):
-        self.msg.hide()
-        self.timer.stop()
+
     def updateUnitaImmobiliare(self):
         self.modifica_unitaImmobiliare = VistaUpdateUnitaImmobiliare(self.sel_unitaImmobiliare, callback=self.callback)
         self.close()
@@ -142,14 +148,60 @@ class VistaReadAssegnazione(QWidget):
         self.rimuovi_unitaImmobiliare.show()
 
     def addCondomino(self):
-        # Logica per aggiungere un condominio
-        pass
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.sel_unitaImmobiliare, self.lista_condomini_callback,  False)
+        self.vista_nuovo_condomino.show()
 
     def updateCondomino(self):
-        pass
+        item = None
+        print(self.list_view_condomini.selectedIndexes())
+        for index in self.list_view_condomini.selectedIndexes():
+            item = self.list_view_condomini.model().itemFromIndex(index)
+        print("in modifica")
+        print(item.text().split(" (")[0].split(" - ")[1])
+        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])
+        print("si va a modificare", sel_condomino)
+        self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, self.lista_condomini_callback, self.sel_unitaImmobiliare, onlyAnagrafica=False)
+        print("si va a modificare")
+        self.vista_modifica_condomino.show()
 
     def readCondomino(self):
-        pass
+        item = None
+        for index in self.list_view_condomini.selectedIndexes():
+            item = self.list_view_condomini.model().itemFromIndex(index)
+        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])
+        self.vista_visualizza_condomino = VistaReadCondomino(sel_condomino, self.lista_condomini_callback, True, self.sel_unitaImmobiliare)
+        self.vista_visualizza_condomino.show()
 
     def deleteCondomino(self):
-        pass
+        item = None
+        for index in self.list_view_condomini.selectedIndexes():
+            item = self.list_view_condomini.model().itemFromIndex(index)
+        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])
+        self.vista_rimuovi_condomino = VistaDeleteCondomino(sel_condomino, self.sel_unitaImmobiliare, callback=self.lista_condomini_callback)
+        self.vista_rimuovi_condomino.show()
+
+    def able_button(self):
+        print("selezione cambiata")
+        print("lista button", self.button_list)
+        if not self.list_view_condomini.selectedIndexes():
+            self.button_list["Modifica Condomino"].setDisabled(True)
+            self.button_list["Visualizza Condomino"].setDisabled(True)
+            self.button_list["Rimuovi Condomino"].setDisabled(True)
+        else:
+            self.button_list["Modifica Condomino"].setDisabled(False)
+            self.button_list["Visualizza Condomino"].setDisabled(False)
+            self.button_list["Rimuovi Condomino"].setDisabled(False)
+
+    def lista_condomini_callback(self, msg):
+        self.button_list["Modifica Condomino"].setDisabled(True)
+        self.button_list["Visualizza Condomino"].setDisabled(True)
+        self.button_list["Rimuovi Condomino"].setDisabled(True)
+        self.sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.sel_unitaImmobiliare.codice)
+        self.update_list()
+        self.msg.setText(msg)
+        self.msg.show()
+        self.timer.start()
+
+    def hide_message(self):
+        self.msg.hide()
+        self.timer.stop()
