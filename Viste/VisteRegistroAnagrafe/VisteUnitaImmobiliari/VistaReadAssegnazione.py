@@ -36,7 +36,7 @@ class VistaReadAssegnazione(QWidget):
         lbl_frase1 = QLabel("DATI CATASTALI: ")
         lbl_frase1.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(lbl_frase1, 3, 0, 1, 2)
-
+        """
         main_layout.addWidget(self.new_label("Foglio", "foglio"), 4, 0)
         main_layout.addWidget(self.new_label("Particella", "particella"), 4, 1)
         main_layout.addWidget(self.new_label("Subalterno", "subalterno"), 5, 0)
@@ -44,9 +44,9 @@ class VistaReadAssegnazione(QWidget):
         main_layout.addWidget(self.new_label("Classe", "classe"), 6, 0)
         main_layout.addWidget(self.new_label("Categoria", "categoria"), 6, 1)
         print("FINE GRID")
-
+        """
         self.create_table()
-
+        main_layout.addWidget(self.tableWidget, 5, 0, 1, 2)
         """
         # Crea la tabella
         self.table = QTableWidget()
@@ -120,12 +120,22 @@ class VistaReadAssegnazione(QWidget):
 
     def create_table(self):
         self.dati_catastali = self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()
-        columns = len(self.dati_catastali)
+        columns = 6
         rows = 2
 
-        self.tableWidget = QtWidgets.QTableWidget()
+        self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(rows)
         self.tableWidget.setColumnCount(columns)
+
+        self.tableWidget.setMinimumSize(600, 100)
+        self.tableWidget.setMaximumSize(100, 600)
+
+        for i in range(columns):
+            self.tableWidget.setColumnWidth(i, 20)
+
+        for i in range(rows):
+            self.tableWidget.setRowHeight(i, 20)
+        print("ok")
 
     def new_label(self, testo, index):
         label = QLabel(testo + ": " + str(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()[index]))
