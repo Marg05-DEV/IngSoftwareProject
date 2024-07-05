@@ -153,7 +153,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
 
-        print("cazzi3")
         self.list_view_unitaImmobiliare.setModel(listview_model)
 
         self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
