@@ -53,18 +53,18 @@ class Condomino:
                 del condomini[self.codice]
             with open(nome_file, 'wb') as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
-        self.nome = ""
-        self.cognome = ""
-        self.residenza = ""
-        self.codice = -1
-        self.dataDiNascita = datetime.date(year=1970, month=1, day=1)
-        self.codiceFiscale = ""
-        self.luogoDiNascita = ""
-        self.provinciaDiNascita = ""
-        self.email = ""
-        self.telefono = ""
-        del self
-        return "Il condomino è stato rimosso definitivamente"
+            self.nome = ""
+            self.cognome = ""
+            self.residenza = ""
+            self.codice = -1
+            self.dataDiNascita = datetime.date(year=1970, month=1, day=1)
+            self.codiceFiscale = ""
+            self.luogoDiNascita = ""
+            self.provinciaDiNascita = ""
+            self.email = ""
+            self.telefono = ""
+            del self
+            return "Il condomino è stato rimosso definitivamente"
 
     def getDatiAnagraficiCondomino(self):
         return {

@@ -133,13 +133,18 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             item = QStandardItem()
             print(unitaImmobiliare.condomini)
             proprietario = [(item.cognome + " " + item.nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "proprietario"]
-            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - PROPRIETARIO: {proprietario[0]}"
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            listview_model.appendRow(item)
+            if not unitaImmobiliare.condomini or proprietario:
+                proprietario_text = proprietario[0] if proprietario else "Nessun condomino"
+                if proprietario_text == "Nessun condomino":
+                    item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {proprietario_text}"
+                else:
+                    item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - PROPRIETARIO: {proprietario_text}"
+                item.setText(item_text)
+                item.setEditable(False)
+                font = item.font()
+                font.setPointSize(12)
+                item.setFont(font)
+                listview_model.appendRow(item)
 
         print("cazzi3")
         self.list_view_unitaImmobiliare.setModel(listview_model)

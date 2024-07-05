@@ -185,16 +185,27 @@ class UnitaImmobiliare:
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
                 print("rimozione", self.getInfoUnitaImmobiliare())
+                condomino_da_rimuovere = None
                 for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
                     print("condomino ", condomino_assoc, condomino_assoc.getDatiAnagraficiCondomino())
                     if condomino_assoc.codice == condomino.codice:
                         print("rimozione", unitaImmobiliari[self.codice].condomini[condomino_assoc])
-                        removed = unitaImmobiliari[self.codice].condomini.pop(condomino_assoc)
-                        print(unitaImmobiliari[self.codice].condomini)
-        with open(nome_file, "wb") as f:
-            print("fine")
-            pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-            print("firn")
+                        removed = unitaImmobiliari[self.codice].condomini[condomino_assoc]
+                        condomino_da_rimuovere = condomino_assoc
+                        print("condomino ch esto rimuovendo: ", condomino_da_rimuovere, type(condomino_da_rimuovere))
+                if condomino_da_rimuovere:
+                    print("pronto alla rimozione")
+                    removed = unitaImmobiliari[self.codice].condomini.pop(condomino_da_rimuovere)
+                    print("Rimosso:", removed)
+                    #if removed == "proprietario" and len(unitaImmobiliari[self.codice].condomini) > 0:
+                        #for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
+                            #unitaImmobiliari[self.codice].condomini[condomino_assoc] = "proprietario"
+                else:
+                    print("nessun condomino da rimuovere")
+                with open(nome_file, "wb") as f:
+                    print("fine")
+                    pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
+                    print("firn")
 
     def modificaUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
         msg = "L'Unità immobiliare dell'immobile " + self.immobile.denominazione + " è stato modificata"
