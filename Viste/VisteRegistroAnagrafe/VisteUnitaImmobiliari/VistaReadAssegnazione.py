@@ -56,13 +56,6 @@ class VistaReadAssegnazione(QWidget):
         self.list_view_condomini = QListView()
         main_layout.addWidget(self.list_view_condomini, 10, 0, 5, 2)
 
-        main_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino), 16, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino, True), 17, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Visualizza Condomino", self.readCondomino, True), 18, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Rimuovi Condomino", self.deleteCondomino, True), 19, 0, 1, 2)
-
-
-
         self.msg = QLabel("Non ci sono condomini assegnati")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
@@ -71,7 +64,13 @@ class VistaReadAssegnazione(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
-        main_layout.addWidget(self.msg, 20, 0, 1, 2)
+        main_layout.addWidget(self.msg, 16, 0, 1, 2)
+
+        main_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino), 17, 0, 1, 2)
+        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino, True), 18, 0, 1, 2)
+        main_layout.addWidget(self.create_button("Visualizza Condomino", self.readCondomino, True), 19, 0, 1, 2)
+        main_layout.addWidget(self.create_button("Rimuovi Condomino", self.deleteCondomino, True), 20, 0, 1, 2)
+
         self.update_list()
 
         self.setLayout(main_layout)
@@ -94,7 +93,7 @@ class VistaReadAssegnazione(QWidget):
     def update_list(self):
 
         if not self.sel_unitaImmobiliare.condomini:
-            self.msg.setText("Non ci sono condomini assegnati al l'unità immobiliare")
+            self.msg.setText("Non ci sono condomini assegnati all'unità immobiliare")
             self.msg.show()
         else:
             self.msg.hide()

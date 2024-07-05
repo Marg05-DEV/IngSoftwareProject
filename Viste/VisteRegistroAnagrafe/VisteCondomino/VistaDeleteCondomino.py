@@ -50,7 +50,7 @@ class VistaDeleteCondomino(QWidget):
 
     def deleteCondomino(self):
         msg = ""
-        self.unita_immobiliare.removeCondomino(Condomino.ricercaCondominoByCF(self.sel_condomino.codiceFiscale))
+        self.unita_immobiliare.removeCondomino(self.sel_condomino)
         msg = "Il condomino è stato disassegnato dall'unità immobiliare"
         print("dissasociato", self.sel_condomino.getImmobiliAssociati())
         if not self.sel_condomino.getImmobiliAssociati():
