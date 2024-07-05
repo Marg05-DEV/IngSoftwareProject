@@ -114,7 +114,8 @@ class Immobile:
 
     @staticmethod
     def ricercaImmobileByCodice(codice):
-        if codice:
+        codice = str(codice)
+        if codice and codice.isnumeric():
             codice = int(codice)
         else:
             return None

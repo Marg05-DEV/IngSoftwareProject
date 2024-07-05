@@ -10,10 +10,11 @@ from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import Vist
 
 class VistaReadCondomino(QWidget):
 
-    def __init__(self, sel_condomino, callback):
+    def __init__(self, sel_condomino, callback, fromUnitaImmobiliare, unita_immobiliare=None):
         super(VistaReadCondomino, self).__init__()
         print("dentro a read condomino 1")
         self.sel_condomino = sel_condomino
+        self.unita_immobiliare = unita_immobiliare
         self.callback = callback
         print("dentro a read condomino 2")
         main_layout = QVBoxLayout()
@@ -27,33 +28,32 @@ class VistaReadCondomino(QWidget):
         main_layout.addLayout(self.pair_label("Residenza", "residenza"))
         main_layout.addLayout(self.pair_label("Telefono", "telefono"))
         main_layout.addLayout(self.pair_label("Email", "email"))
-        print("dentro a read condomino 3")
-        main_layout.addWidget(self.create_button("Modifica Dati Anagrafici Condomino", self.updateCondomino))
 
-        lbl_frase = QLabel("Immobili a cui il condomino è assegnato:")
-        lbl_frase.setStyleSheet("font-weight: bold;")
-        main_layout.addWidget(lbl_frase)
+        if fromUnitaImmobiliare:
+            titolo_layout = QHBoxLayout()
 
-        action_layout = QHBoxLayout()
-        self.list_view_immobili = QListView()
+            lbl_desc = QLabel("Titolo nell'unità immobiliare: ")
+            for condomino in self.unita_immobiliare.condomini.keys():
+                if condomino.codice == self.sel_condomino.codice:
+                    lbl_content = QLabel(str(self.unita_immobiliare.condomini[condomino]))
 
-        action_layout.addWidget(self.list_view_immobili)
+            titolo_layout.addWidget(lbl_desc)
+            titolo_layout.addWidget(lbl_content)
 
-        message_layout = QHBoxLayout()
+            main_layout.addLayout(titolo_layout)
+        else:
+            main_layout.addWidget(self.create_button("Modifica Dati Anagrafici Condomino", self.updateCondomino))
 
-        self.msg = QLabel("Non ci sono immobili assegnati")
-        self.msg.setStyleSheet("color: red; font-weight: bold;")
-        self.msg.hide()
+            lbl_frase = QLabel("Immobili a cui il condomino è assegnato:")
+            lbl_frase.setStyleSheet("font-weight: bold;")
+            main_layout.addWidget(lbl_frase)
 
-        self.timer = QTimer(self)
-        self.timer.setInterval(5000)
-        self.timer.timeout.connect(self.hide_message)
+            action_layout = QHBoxLayout()
+            self.list_view_immobili = QListView()
 
-        self.update_list()
-
-        message_layout.addWidget(self.msg)
-        main_layout.addLayout(action_layout)
-        main_layout.addLayout(message_layout)
+            action_layout.addWidget(self.list_view_immobili)
+            self.update_list()
+            main_layout.addLayout(action_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)

@@ -70,7 +70,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Unità Immobiliare")
+        self.setWindowTitle("Gestione Registro Anagrafe Condominiale: " + self.immobile.denominazione)
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -113,6 +113,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         print("class VistaGestioneImmobile - update_list inizio")
         self.lista_unitaImmobiliari = []
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
+        print("lista unità immobiliari:", self.lista_unitaImmobiliari)
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per dati catastali
@@ -120,6 +121,12 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.condomini.values().upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)
+
+
+        if not self.lista_unitaImmobiliari:
+            print("ciao")
+            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            self.msg.show()
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         for unitaImmobiliare in self.lista_unitaImmobiliari:
@@ -133,14 +140,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             font.setPointSize(12)
             item.setFont(font)
             listview_model.appendRow(item)
-        print("cazzi2", self.lista_unitaImmobiliari)
-
-        if not self.lista_unitaImmobiliari:
-            print("ciao")
-            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
-            self.msg.show()
-            print("Non ci sono Unità Immobiliari assegante all'immobile")
-            return None
 
         print("cazzi3")
         self.list_view_unitaImmobiliare.setModel(listview_model)

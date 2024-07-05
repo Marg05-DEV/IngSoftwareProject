@@ -6,10 +6,11 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 
 class VistaDeleteCondomino(QWidget):
 
-    def __init__(self, sel_condomino, callback):
+    def __init__(self, sel_condomino, unita_immobiliare, callback):
         super(VistaDeleteCondomino, self).__init__()
         self.callback = callback
         self.sel_condomino = sel_condomino
+        self.unita_immobiliare = unita_immobiliare
         main_layout = QGridLayout()
 
         lbl_frase = QLabel("Sei sicuro di voler rimuovere il condomino?")

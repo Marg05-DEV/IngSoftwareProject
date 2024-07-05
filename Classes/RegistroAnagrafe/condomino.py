@@ -39,6 +39,7 @@ class Condomino:
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
                 if condomini.keys():
+                    print(max(condomini.keys()))
                     self.codice = max(condomini.keys()) + 1
         condomini[self.codice] = self
         with open(nome_file, 'wb') as f:
@@ -119,12 +120,12 @@ class Condomino:
     def ordinaCondominoByNominativo(list_condomini, isDecrescente):
         sorted_nominativo = []
         for condomino in list_condomini:
-            sorted_nominativo.append(condomino.cognome + " "+ condomino.nome)
+            sorted_nominativo.append((condomino.cognome + " "+ condomino.nome).upper())
         sorted_nominativo.sort(reverse=isDecrescente)
         sorted_condomini = []
         for nominativo in sorted_nominativo:
             for condomino in list_condomini:
-                if (condomino.cognome + " " +condomino.nome) == nominativo:
+                if (condomino.cognome + " " +condomino.nome).upper() == nominativo:
                     sorted_condomini.append(condomino)
                     break
         for i in range(len(list_condomini)):

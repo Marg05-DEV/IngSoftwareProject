@@ -21,7 +21,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
         self.immobili_completer = QCompleter(completer_list)
-        #self.immobili_completer.setCaseSensitivity(Qt.UncaseSensitive)
+        self.immobili_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         print(self.immobili_completer.completionModel())
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")

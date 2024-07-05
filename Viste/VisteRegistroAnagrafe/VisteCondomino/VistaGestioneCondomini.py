@@ -138,10 +138,10 @@ class VistaGestioneCondomini(QWidget):
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
             print(item.text())
-            print(item.text().split(" "))
-        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" ")[3])
+            print(item.text().split(" - "))
+        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" - ")[1])
         print(sel_condomino)
-        self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino, self.callback)
+        self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino, self.callback, False)
         self.vista_dettaglio_condomino.show()
 
     def go_Update_condomino(self):
@@ -149,7 +149,7 @@ class VistaGestioneCondomini(QWidget):
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
             print(item.text())
-        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" ")[3])
+        sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" - ")[1])
         self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, callback=self.callback, onlyAnagrafica=True)
         self.vista_modifica_condomino.show()
 

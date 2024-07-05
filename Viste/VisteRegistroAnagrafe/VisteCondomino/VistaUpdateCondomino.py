@@ -8,31 +8,37 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 
 class VistaUpdateCondomino(QWidget):
 
-    def __init__(self, sel_condomino, callback, onlyAnagrafica=False):
+    def __init__(self, sel_condomino, callback, ui, onlyAnagrafica=False):
         super(VistaUpdateCondomino, self).__init__()
         self.callback = callback
         self.sel_condomino = sel_condomino
+        self.ui = ui
         self.input_lines = {}
+        self.onlyAnagrafica = onlyAnagrafica
         main_layout = QGridLayout()
-
+        print("ye")
         lbl_frase = QLabel("Inserisci i nuovi dati del condomino da modificare:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
-
+        print("ye")
         main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
-
+        print("ye")
         main_layout.addLayout(self.pairLabelInput("Nome", "nome"), 1, 0, 1, 3)
+        print("ye")
         main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 3)
         main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 3)
+        print("ye")
         main_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"), 4, 0)
         main_layout.addLayout(self.pairLabelInput("Provincia di nascita", "provinciaDiNascita"), 4, 1)
+        print("ye")
         main_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"), 4, 2)
+        print("ye")
         main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 3)
         main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 3)
         main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 3)
         n = 7
-
-        if not onlyAnagrafica:
+        print("ye")
+        if not self.onlyAnagrafica:
             n = 8
             main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"), n, 0, 1, 3)
 
@@ -56,15 +62,28 @@ class VistaUpdateCondomino(QWidget):
     def pairLabelInput(self, testo, index):
         pair_layout = QHBoxLayout()
         label = QLabel(testo + ": ")
+        input_line = None
 
         if testo == "Data":
             input_line = QDateEdit()
             data = self.sel_condomino.getDatiAnagraficiCondomino()[index]
             input_line.setDate(QDate(data.year, data.month, data.day))
-        else:
+        elif index == "titolo":
+            print("per il titolo")
             input_line = QLineEdit()
+            for condomino in self.ui.condomini.keys():
+                if condomino.codice == self.sel_condomino.codice:
+                    input_line.setPlaceholderText(str(self.ui.condomini[condomino]))
+            print("per il titolo")
+        else:
+            print("not data")
+            input_line = QLineEdit()
+            print("ci siamo quasi", self.sel_condomino)
+            print(self.sel_condomino.getDatiAnagraficiCondomino())
             input_line.setPlaceholderText(str(self.sel_condomino.getDatiAnagraficiCondomino()[index]))
+            print("input creato ...")
         self.input_lines[index] = input_line
+        print("e aggiunto ")
 
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
@@ -100,6 +119,12 @@ class VistaUpdateCondomino(QWidget):
                                                    temp_condomino["provinciaDiNascita"],
                                                    temp_condomino["email"],
                                                    temp_condomino["telefono"])
+
+        if not self.onlyAnagrafica:
+            if not self.input_lines["titolo"].text() == "":
+                titolo = self.input_lines["titolo"].text()
+            self.ui.modificaTitoloCondomino(self.sel_condomino, titolo)
+
         print("fine update condomino")
         self.callback(msg)
         self.close()

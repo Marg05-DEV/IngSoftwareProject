@@ -39,7 +39,7 @@ class VistaCreateCondomino(QWidget):
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 9, 0, 1, 2)
         if isIterable:
             main_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione), 10, 0)
-            main_layout.addWidget(self.create_button("Aggiungi altro condomino", self.aggiungiCondomino), 10, 1)
+            main_layout.addWidget(self.create_button("Aggiungi altro condomino", self.altroCondomino), 10, 1)
         else:
             main_layout.addWidget(self.create_button("Aggiungi Condomino", self.terminaAssegnazione), 10, 0, 1, 2)
 
@@ -73,69 +73,47 @@ class VistaCreateCondomino(QWidget):
 
         return pair_layout
 
-    def terminaAssegnazione(self):
-            nome = self.input_lines["nome"].text()
-            cognome = self.input_lines["cognome"].text()
-            residenza = self.input_lines["residenza"].text()
-            dataDiNascita = self.input_lines["dataDiNascita"].text()
-            print("data", dataDiNascita)
-            dataDiNascita = dataDiNascita.split("/")
-            print("data", dataDiNascita)
-            dataDiNascita = datetime.datetime(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
-            print("data", dataDiNascita)
-            codiceFiscale = self.input_lines["codiceFiscale"].text()
-            luogoDiNascita = self.input_lines["luogoDiNascita"].text()
-            provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
-            email = self.input_lines["email"].text()
-            telefono = self.input_lines["telefono"].text()
-
-            temp_condomino = Condomino()
-            msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                   luogoDiNascita, provinciaDiNascita,
-                                                   email, telefono)
-
-            print("condomino inserito")
-            titolo = self.input_lines["titoloUnitaImmobiliare"].text()
-            self.unitaImmobiliare.addCondomino(condomino, titolo)
-
-            print("condomino inserito")
-            self.callback(msg)
-            self.close()
-
     def aggiungiCondomino(self):
-            nome = self.input_lines["nome"].text()
-            cognome = self.input_lines["cognome"].text()
-            residenza = self.input_lines["residenza"].text()
-            dataDiNascita = self.input_lines["dataDiNascita"].text()
-            print("data", dataDiNascita)
-            dataDiNascita = dataDiNascita.split("/")
-            print("data", dataDiNascita)
-            dataDiNascita = datetime.datetime(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
-            print("data", dataDiNascita)
-            codiceFiscale = self.input_lines["codiceFiscale"].text()
-            print("codFiscale")
-            luogoDiNascita = self.input_lines["luogoDiNascita"].text()
-            print("luogoDiNascita")
-            provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
-            print("provinciaDiNascita")
-            email = self.input_lines["email"].text()
-            print("email")
-            telefono = self.input_lines["telefono"].text()
-            print("telefono")
+        print("stiamo per aggiungere")
+        nome = self.input_lines["nome"].text()
+        cognome = self.input_lines["cognome"].text()
+        residenza = self.input_lines["residenza"].text()
+        dataDiNascita = self.input_lines["dataDiNascita"].text()
+        dataDiNascita = dataDiNascita.split("/")
+        dataDiNascita = datetime.date(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
+        codiceFiscale = self.input_lines["codiceFiscale"].text()
+        luogoDiNascita = self.input_lines["luogoDiNascita"].text()
+        provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
+        email = self.input_lines["email"].text()
+        telefono = self.input_lines["telefono"].text()
 
-            temp_Condomino = Condomino()
-            print("costr vuoto")
-            msg, condomino = temp_Condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                              luogoDiNascita, provinciaDiNascita,
-                                                              email, telefono)
+        temp_condomino = Condomino()
+        msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
+                                                          luogoDiNascita, provinciaDiNascita,
+                                                          email, telefono)
+        print("ciao")
+        titolo = self.input_lines["titoloUnitaImmobiliare"].text()
+        print("ciao", condomino, titolo)
+        print(self.unitaImmobiliare)
 
-            print("condomino inserito", condomino, condomino.getDatiAnagraficiCondomino())
-            titolo = self.input_lines["titoloUnitaImmobiliare"].text()
-            self.unitaImmobiliare.addCondomino(condomino, titolo)
+        self.unitaImmobiliare.addCondomino(condomino, titolo)
 
-            self.close()
-            self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)
-            self.vista_nuovo_condomino.show()
+        print("aggiunta in corso...")
+
+        return msg
+
+    def terminaAssegnazione(self):
+        msg = self.aggiungiCondomino()
+        print("stiamo per uscire", msg)
+        print("f di callback", self.callback)
+        self.callback(msg)
+        self.close()
+
+    def altroCondomino(self):
+        msg = self.aggiungiCondomino()
+        self.close()
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)
+        self.vista_nuovo_condomino.show()
 
     def reset(self):
         for input_line in self.input_lines.values():
