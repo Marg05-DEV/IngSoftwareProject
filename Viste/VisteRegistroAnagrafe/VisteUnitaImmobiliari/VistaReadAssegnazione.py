@@ -1,7 +1,8 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, \
-    QListWidget, QListView
+    QListWidget, QListView, QTableWidget, QTableWidgetItem
+from PyQt6.uic.properties import QtWidgets
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -44,6 +45,37 @@ class VistaReadAssegnazione(QWidget):
         main_layout.addWidget(self.new_label("Categoria", "categoria"), 6, 1)
         print("FINE GRID")
 
+        self.create_table()
+
+        """
+        # Crea la tabella
+        self.table = QTableWidget()
+        self.table.setRowCount(2)  # Imposta il numero di righe
+        self.table.setColumnCount(6)  # Imposta il numero di colonne
+        self.table.setHorizontalHeaderLabels(["Proprietà", "Valore"])  # Imposta le intestazioni delle colonne
+
+        # Aggiungi i dati alla tabella
+        self.table.setItem(0, 0, QTableWidgetItem("Foglio"))
+        self.table.setItem(0, 1, QTableWidgetItem("foglio"))
+
+        self.table.setItem(1, 0, QTableWidgetItem("Particella"))
+        self.table.setItem(1, 1, QTableWidgetItem("particella"))
+
+        self.table.setItem(2, 0, QTableWidgetItem("Subalterno"))
+        self.table.setItem(2, 1, QTableWidgetItem("subalterno"))
+
+        self.table.setItem(3, 0, QTableWidgetItem("ZC"))
+        self.table.setItem(3, 1, QTableWidgetItem("ZC"))
+
+        self.table.setItem(4, 0, QTableWidgetItem("Classe"))
+        self.table.setItem(4, 1, QTableWidgetItem("classe"))
+
+        self.table.setItem(5, 0, QTableWidgetItem("Categoria"))
+        self.table.setItem(5, 1, QTableWidgetItem("categoria"))
+
+        # Aggiungi la tabella al layout
+        main_layout.addWidget(self.table, 1, 0, 1, 2)
+        """
         self.button_list = {}
         main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare), 7, 0, 1, 2)
         main_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare), 8, 0, 1, 2)
@@ -85,6 +117,15 @@ class VistaReadAssegnazione(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
+
+    def create_table(self):
+        self.dati_catastali = self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()
+        columns = len(self.dati_catastali)
+        rows = 2
+
+        self.tableWidget = QtWidgets.QTableWidget()
+        self.tableWidget.setRowCount(rows)
+        self.tableWidget.setColumnCount(columns)
 
     def new_label(self, testo, index):
         label = QLabel(testo + ": " + str(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()[index]))
