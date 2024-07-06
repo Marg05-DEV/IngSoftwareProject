@@ -46,35 +46,7 @@ class VistaReadAssegnazione(QWidget):
         """
         self.table_dati_catastali = self.create_table()
         main_layout.addWidget(self.table_dati_catastali, 5, 0, 1, 2)
-        """
-        # Crea la tabella
-        self.table = QTableWidget()
-        self.table.setRowCount(2)  # Imposta il numero di righe
-        self.table.setColumnCount(6)  # Imposta il numero di colonne
-        self.table.setHorizontalHeaderLabels(["Proprietà", "Valore"])  # Imposta le intestazioni delle colonne
 
-        # Aggiungi i dati alla tabella
-        self.table.setItem(0, 0, QTableWidgetItem("Foglio"))
-        self.table.setItem(0, 1, QTableWidgetItem("foglio"))
-
-        self.table.setItem(1, 0, QTableWidgetItem("Particella"))
-        self.table.setItem(1, 1, QTableWidgetItem("particella"))
-
-        self.table.setItem(2, 0, QTableWidgetItem("Subalterno"))
-        self.table.setItem(2, 1, QTableWidgetItem("subalterno"))
-
-        self.table.setItem(3, 0, QTableWidgetItem("ZC"))
-        self.table.setItem(3, 1, QTableWidgetItem("ZC"))
-
-        self.table.setItem(4, 0, QTableWidgetItem("Classe"))
-        self.table.setItem(4, 1, QTableWidgetItem("classe"))
-
-        self.table.setItem(5, 0, QTableWidgetItem("Categoria"))
-        self.table.setItem(5, 1, QTableWidgetItem("categoria"))
-
-        # Aggiungi la tabella al layout
-        main_layout.addWidget(self.table, 1, 0, 1, 2)
-        """
         self.button_list = {}
         main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare), 7, 0, 1, 2)
         main_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare), 8, 0, 1, 2)
@@ -119,7 +91,6 @@ class VistaReadAssegnazione(QWidget):
         return button
 
     def create_table(self):
-        print("create tabella")
         table = QTableWidget()
         table.setRowCount(1)
         table.setColumnCount(6)
@@ -152,8 +123,14 @@ class VistaReadAssegnazione(QWidget):
         table.verticalHeader().setVisible(False)
         table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)  # Stretch columns to fit the table width
+        table.horizontalHeader().setStretchLastSection(True)
+        table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         table.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        table.resizeRowsToContents()
+
         return table
 
     def new_label(self, testo, index):
