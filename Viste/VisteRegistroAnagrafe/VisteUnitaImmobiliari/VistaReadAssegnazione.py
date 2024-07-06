@@ -130,7 +130,6 @@ class VistaReadAssegnazione(QWidget):
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         table.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         table.resizeRowsToContents()
-
         return table
 
     def new_label(self, testo, index):
