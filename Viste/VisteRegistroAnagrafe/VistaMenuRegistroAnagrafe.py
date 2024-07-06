@@ -26,6 +26,8 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
+        self.lbl_search.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+        self.lbl_searchType.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         self.searchType = QComboBox()
         self.searchType.addItems(["Denominazione", "Sigla", "Codice"])
         self.searchType.activated.connect(self.sel_tipo_ricerca)

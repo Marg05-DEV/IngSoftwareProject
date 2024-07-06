@@ -65,6 +65,17 @@ class UnitaImmobiliare:
             "ZC": self.ZC
         }
 
+    def getDatiCatastali(self):
+        return {
+            "Foglio": self.foglio,
+            "Particella": self.particella,
+            "Subalterno": self.subalterno,
+            "ZC": self.ZC,
+            "Classe": self.classe,
+            "Categoria": self.categoria
+        }
+
+
     @staticmethod
     def getAllUnitaImmobiliari():
         if os.path.isfile(nome_file):

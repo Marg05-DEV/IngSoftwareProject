@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
+    QPushButton, QSizePolicy, QSpacerItem
 
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
@@ -43,9 +44,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         button_layout = QVBoxLayout()
         self.button_list = {}
-
+        button_layout.addSpacerItem(QSpacerItem(20, 80, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
+        button_layout.addSpacerItem(QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Visualizza Assegnazione", self.go_Read_Assegnazione, True))
+        button_layout.addSpacerItem(QSpacerItem(20, 80, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
@@ -75,9 +78,10 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(150, 55)
         if testo == "Mostra Registro Anagrafe Condominiale":
-            button.setFixedSize(550, 55)
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        else:
+            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

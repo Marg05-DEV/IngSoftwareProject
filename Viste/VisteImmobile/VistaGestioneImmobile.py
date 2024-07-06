@@ -1,6 +1,7 @@
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
+    QPushButton, QSizePolicy
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteImmobile.VistaCreateImmobile import VistaCreateImmobile
@@ -77,7 +78,7 @@ class VistaGestioneImmobile(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(115, 60)
+        button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

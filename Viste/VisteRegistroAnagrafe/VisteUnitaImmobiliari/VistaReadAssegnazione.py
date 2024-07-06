@@ -1,8 +1,7 @@
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, \
-    QListWidget, QListView, QTableWidget, QTableWidgetItem
-from PyQt6.uic.properties import QtWidgets
+from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, QListView, \
+    QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -45,8 +44,8 @@ class VistaReadAssegnazione(QWidget):
         main_layout.addWidget(self.new_label("Categoria", "categoria"), 6, 1)
         print("FINE GRID")
         """
-        self.create_table()
-        main_layout.addWidget(self.tableWidget, 5, 0, 1, 2)
+        self.table_dati_catastali = self.create_table()
+        main_layout.addWidget(self.table_dati_catastali, 5, 0, 1, 2)
         """
         # Crea la tabella
         self.table = QTableWidget()
@@ -86,6 +85,7 @@ class VistaReadAssegnazione(QWidget):
         main_layout.addWidget(condomini_label, 9, 0, 1, 2)
 
         self.list_view_condomini = QListView()
+        self.list_view_condomini.setAlternatingRowColors(True)
         main_layout.addWidget(self.list_view_condomini, 10, 0, 5, 2)
 
         self.msg = QLabel("Non ci sono condomini assegnati")
@@ -119,23 +119,42 @@ class VistaReadAssegnazione(QWidget):
         return button
 
     def create_table(self):
-        self.dati_catastali = self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()
-        columns = 6
-        rows = 2
+        print("create tabella")
+        table = QTableWidget()
+        table.setRowCount(1)
+        table.setColumnCount(6)
+        print("create tabella")
 
-        self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(rows)
-        self.tableWidget.setColumnCount(columns)
+        dati_catastali = self.sel_unitaImmobiliare.getDatiCatastali()
+        print("create tabella")
 
-        self.tableWidget.setMinimumSize(600, 100)
-        self.tableWidget.setMaximumSize(100, 600)
+        header = list(dati_catastali.keys())
+        dati = list(dati_catastali.values())
+        print("create tabella")
 
-        for i in range(columns):
-            self.tableWidget.setColumnWidth(i, 20)
+        i = 0
+        for h in header:
+            item = QTableWidgetItem(h)
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            table.setHorizontalHeaderItem(i, item)
+            i += 1
+        print("create tabella")
 
-        for i in range(rows):
-            self.tableWidget.setRowHeight(i, 20)
-        print("ok")
+        i = 0
+        for d in dati:
+            item = QTableWidgetItem(str(d))
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            table.setItem(0, i, item)
+            i += 1
+
+        table.verticalHeader().setVisible(False)
+        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        table.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        return table
 
     def new_label(self, testo, index):
         label = QLabel(testo + ": " + str(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()[index]))
