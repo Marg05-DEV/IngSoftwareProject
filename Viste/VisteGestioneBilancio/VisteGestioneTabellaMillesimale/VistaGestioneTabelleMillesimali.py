@@ -81,22 +81,42 @@ class VistaGestioneTabelleMillesimali(QWidget):
         i = 0
         for unita in self.unitaImmobiliari_immobile.values():
             text_condomini = ""
+            condomini = []
             print(unita.condomini.keys())
             item = QStandardItem()
-            condomini = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unita.condomini.keys()]
+            for condo in unita.condomini.keys():
+                condomino = Condomino.ricercaCondominoByCF(condo)
+                nome_condo = f"{condomino.nome} {condomino.cognome}"
+                titolo = unita.condomini[condo]
+                print(titolo)
+                stringa = f"{nome_condo} {titolo}"
+                condomini.append(stringa)
             print(condomini)
-            for condo in condomini:
-                text_condomini = f"{condo}\n"
-            item_text = f"Scala:{unita.scala} Interno:{unita.interno}\n Condomini:{text_condomini}"
+            cont = 0
+            for i in condomini:
+                print(type(i))
+                if not cont:
+                    text_condomini = i
+                else:
+                    text_condomini = text_condomini + ",\n" + i
+                cont += 1
+            print("lista no problem")
+            item_text = f"Scala:{unita.scala} Int:{unita.interno}\n Condomini:{text_condomini}"
+            print(item_text)
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
             font.setPointSize(12)
             item.setFont(font)
+            print("ciao1")
             item_table = QTableWidgetItem(item_text)
+            print("ciao2")
             item_table.setFlags(Qt.ItemFlag.NoItemFlags)
+            print("ciao3")
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            print("ciao4")
             table.setVerticalHeaderItem(i, item_table)
+            print("ciao5")
             i += 1
         print(self.tabelle_millesimali)
         i = 0
