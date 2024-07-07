@@ -23,35 +23,43 @@ class VistaReadAssegnazione(QWidget):
         self.sel_unitaImmobiliare = sel_unitaImmobiliare
         self.immobile = immobile
         self.callback = callback
-        main_layout = QGridLayout()
+        main_layout = QVBoxLayout()
 
         lbl_frase = QLabel("INFORMAZIONI UNITA' IMMOBILIARE:")
         lbl_frase.setStyleSheet("font-weight: bold;")
-        main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
+        main_layout.addWidget(lbl_frase)
 
-        main_layout.addWidget(self.new_label("Tipologia Unità Immobiliare", "tipoUnitaImmobiliare"), 1, 0, 1, 2)
-        main_layout.addWidget(self.new_label("Scala", "scala"), 2, 0)
-        main_layout.addWidget(self.new_label("Interno", "interno"),2, 1)
+        main_layout.addWidget(self.new_label("Tipologia Unità Immobiliare", "tipoUnitaImmobiliare"))
+        if sel_unitaImmobiliare.tipoUnitaImmobiliare == "Appartamento":
+            appartamento_layout = QHBoxLayout()
+            appartamento_layout.addWidget(self.new_label("Scala", "scala"))
+            appartamento_layout.addWidget(self.new_label("Interno", "interno"))
+            main_layout.addLayout(appartamento_layout)
 
         lbl_frase1 = QLabel("DATI CATASTALI: ")
         lbl_frase1.setStyleSheet("font-weight: bold;")
-        main_layout.addWidget(lbl_frase1, 3, 0, 1, 2)
+        main_layout.addWidget(lbl_frase1)
 
         self.table_dati_catastali = self.create_table()
-        main_layout.addWidget(self.table_dati_catastali, 5, 0, 1, 2)
+        main_layout.addWidget(self.table_dati_catastali)
 
         self.button_list = {}
-        main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare), 7, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare), 8, 0, 1, 2)
+        main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare))
+        main_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare))
         print("Prossimo problema")
+
+        self.button_list["Modifica Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        self.button_list["Rimuovi Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
         condomini_label = QLabel("CONDOMINI ASSEGNATI:")
         condomini_label.setStyleSheet("font-weight: bold;")
-        main_layout.addWidget(condomini_label, 9, 0, 1, 2)
+        main_layout.addWidget(condomini_label)
+
+        condomini_layout = QHBoxLayout()
 
         self.list_view_condomini = QListView()
         self.list_view_condomini.setAlternatingRowColors(True)
-        main_layout.addWidget(self.list_view_condomini, 10, 0, 5, 2)
+        condomini_layout.addWidget(self.list_view_condomini)
 
         self.msg = QLabel("Non ci sono condomini assegnati")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
@@ -61,12 +69,17 @@ class VistaReadAssegnazione(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
-        main_layout.addWidget(self.msg, 16, 0, 1, 2)
+        button_layout = QVBoxLayout()
 
-        main_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino), 17, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino, True), 18, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Visualizza Condomino", self.readCondomino, True), 19, 0, 1, 2)
-        main_layout.addWidget(self.create_button("Rimuovi Condomino", self.deleteCondomino, True), 20, 0, 1, 2)
+        button_layout.addWidget(self.create_button("Aggiungi Condomino", self.addCondomino))
+        button_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino, True))
+        button_layout.addWidget(self.create_button("Visualizza Condomino", self.readCondomino, True))
+        button_layout.addWidget(self.create_button("Rimuovi Condomino", self.deleteCondomino, True))
+
+        condomini_layout.addLayout(button_layout)
+
+        main_layout.addLayout(condomini_layout)
+        main_layout.addWidget(self.msg)
 
         self.update_list()
 
@@ -77,10 +90,11 @@ class VistaReadAssegnazione(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
+
         return button
 
     def create_table(self):

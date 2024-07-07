@@ -82,7 +82,7 @@ class GestoreRegistroAnagrafe:
             else:
                 print("si prop")
                 proprietario = Condomino.ricercaCondominoByCF(proprietario_cf[0])
-                proprietari_unita_immobiliari.append([item.codice, proprietario.cognome, proprietario.nome])
+                proprietari_unita_immobiliari.append([item.codice, proprietario.cognome.upper(), proprietario.nome.upper()])
 
         print("fine aver scorso unita")
         print(senza_proprietario)

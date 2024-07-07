@@ -2,7 +2,7 @@ import datetime
 
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QDateEdit, \
-    QComboBox
+    QComboBox, QVBoxLayout
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 
@@ -16,53 +16,59 @@ class VistaUpdateCondomino(QWidget):
         if not onlyAnagrafica:
             self.ui = ui
         self.input_lines = {}
+        self.input_errors = {}
+        self.buttons = {}
         self.onlyAnagrafica = onlyAnagrafica
-        main_layout = QGridLayout()
+
+        main_layout = QVBoxLayout()
         print("ye")
         lbl_frase = QLabel("Inserisci i nuovi dati del condomino da modificare:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
-        print("ye")
-        main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
-        print("ye")
-        main_layout.addLayout(self.pairLabelInput("Nome", "nome"), 1, 0, 1, 3)
-        print("ye")
-        main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 3)
-        print("ye")
-        main_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"), 4, 0)
-        main_layout.addLayout(self.pairLabelInput("Provincia di nascita", "provinciaDiNascita"), 4, 1)
-        print("ye")
-        main_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"), 4, 2)
-        print("ye")
-        main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 3)
-        n = 7
-        print("ye")
+        main_layout.addWidget(lbl_frase)
+
+        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"))
+        main_layout.addLayout(self.pairLabelInput("Nome", "nome", ))
+        main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"))
+
+        nascita_layout = QHBoxLayout()
+        nascita_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"))
+        nascita_layout.addLayout(self.pairLabelInput("Provincia", "provinciaDiNascita"))
+        nascita_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"))
+        main_layout.addLayout(nascita_layout)
+
+        main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"))
+        main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"))
+        main_layout.addLayout(self.pairLabelInput("Email", "email"))
+
         if not self.onlyAnagrafica:
-            n = 8
-            main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"), n, 0, 1, 3)
+            main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"))
 
-        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), n + 1, 0, 1, 3)
-
-        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino), n + 1, 0, 1, 3)
+        main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
+        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
 
         self.setLayout(main_layout)
 
         self.resize(600, 400)
         self.setWindowTitle("Modifica Condomino")
 
-    @staticmethod
-    def create_button(testo, action):
+    def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
+        self.buttons[testo] = button
         return button
 
     def pairLabelInput(self, testo, index):
+        input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
+
+        error = QLabel("placeholder")
+        error.setStyleSheet("color: red; font-style: italic;")
+        error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        error.setVisible(False)
+
         label = QLabel(testo + ": ")
         input_line = None
 
@@ -70,24 +76,30 @@ class VistaUpdateCondomino(QWidget):
             input_line = QDateEdit()
             data = self.sel_condomino.getDatiAnagraficiCondomino()[index]
             input_line.setDate(QDate(data.year, data.month, data.day))
+            input_line.dateChanged.connect(self.input_validation)
         elif index == "titolo":
             input_line = QComboBox()
-            input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
+            if 'Proprietario' in self.ui.condomini.values():
+                input_line.addItems(["Coproprietario", "Inquilino"])
+            else:
+                input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
             input_line.setCurrentText(str(self.ui.condomini[self.sel_condomino.codiceFiscale]))
+            input_line.activated.connect(self.input_validation)
         else:
-            print("not data")
             input_line = QLineEdit()
-            print("ci siamo quasi", self.sel_condomino)
-            print(self.sel_condomino.getDatiAnagraficiCondomino())
             input_line.setPlaceholderText(str(self.sel_condomino.getDatiAnagraficiCondomino()[index]))
-            print("input creato ...")
+            input_line.textChanged.connect(self.input_validation)
+
         self.input_lines[index] = input_line
-        print("e aggiunto ")
+        self.input_errors[index] = error
 
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
 
-        return pair_layout
+        input_layout.addWidget(error)
+        input_layout.addLayout(pair_layout)
+
+        return input_layout
 
     def updateCondomino(self):
         print("inizio update condomino")
@@ -129,3 +141,36 @@ class VistaUpdateCondomino(QWidget):
     def reset(self):
         for input_line in self.input_lines.values():
             input_line.clear()
+        if not self.onlyAnagrafica:
+            if 'Proprietario' in self.ui.condomini.values():
+                self.input_lines['titolo'].addItems(["Coproprietario", "Inquilino"])
+            else:
+                self.input_lines['titolo'].addItems(["Proprietario", "Coproprietario", "Inquilino"])
+            self.input_lines['titolo'].setCurrentText(self.ui.condomini[self.sel_condomino.codiceFiscale])
+
+    def input_validation(self):
+        print("scrivendo ...")
+        condomini = Condomino.getAllCondomini()
+        num_errors = 0
+        unique_fields = ['codiceFiscale']
+        there_is_unique_error = {}
+
+        for field in unique_fields:
+            print(field)
+            there_is_unique_error[field] = False
+            for condomino in condomini.values():
+                if str(condomino.getDatiAnagraficiCondomino()[field]).upper() != str(self.sel_condomino.getDatiAnagraficiCondomino()[field]).upper():
+                    if self.input_lines[field].text().upper() == str(condomino.getDatiAnagraficiCondomino()[field]).upper():
+                        num_errors += 1
+                        there_is_unique_error[field] = True
+                        break
+            if there_is_unique_error[field]:
+                self.input_errors[field].setText(f"{field} già esistente")
+                self.input_errors[field].setVisible(True)
+            else:
+                self.input_errors[field].setVisible(False)
+
+        if num_errors > 0:
+            self.buttons["Modifica Condomino"].setDisabled(True)
+        else:
+            self.buttons["Modifica Condomino"].setDisabled(False)

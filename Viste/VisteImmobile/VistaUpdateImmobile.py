@@ -106,7 +106,7 @@ class VistaUpdateImmobile(QWidget):
         print("scrivendo ...")
         immobili = Immobile.getAllImmobili()
         num_errors = 0
-        unique_fields = ['codice', 'sigla', 'denominazione', 'codiceFiscale']
+        unique_fields = ['codiceFiscale']
         there_is_unique_error = {}
 
         for field in unique_fields:

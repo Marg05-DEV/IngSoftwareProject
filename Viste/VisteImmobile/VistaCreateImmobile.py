@@ -100,10 +100,10 @@ class VistaCreateImmobile(QWidget):
         there_is_unique_error = {}
 
         for field in required_fields:
-            there_is_unique_error[field] = False
             if self.input_lines[field].text():
                 num_writed_lines += 1
                 if field in unique_fields:
+                    there_is_unique_error[field] = False
                     print(field)
                     for immobile in immobili.values():
                         if self.input_lines[field].text().upper() == str(immobile.getInfoImmobile()[field]).upper():
