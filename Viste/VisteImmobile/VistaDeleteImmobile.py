@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit
 
+from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaDeleteImmobile(QWidget):
@@ -33,6 +35,16 @@ class VistaDeleteImmobile(QWidget):
         return button
 
     def deleteImmobile(self):
+        msg = ""
+        for unitaImmobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.sel_immobile).values():
+            for cf_condominoAssociato in unitaImmobiliare.condomini.keys():
+                print("sto per eliminare il condomino con cf", cf_condominoAssociato)
+                condomino = Condomino.ricercaCondominoByCF(cf_condominoAssociato)
+                msg = unitaImmobiliare.removeCondomino(condomino)
+                if not condomino.getImmobiliAssociati():
+                    msg = condomino.rimuoviCondomino()
+            msg = unitaImmobiliare.rimuoviUnitaImmobiliare()
+
         msg = self.sel_immobile.rimuoviImmobile()
         self.callback(msg)
         self.close()

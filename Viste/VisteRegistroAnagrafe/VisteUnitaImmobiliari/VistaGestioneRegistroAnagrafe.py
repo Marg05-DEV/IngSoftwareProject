@@ -96,7 +96,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
     def avvia_ordinamento(self):
         print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
-        self.ordina_lista(False)
+        if self.searchbar.text():
+            sorting, desc = self.ordina_lista(True)
+            self.update_list(sorting, desc, True)
+        else:
+            self.ordina_lista(False)
 
     def ordina_lista(self, fromRicerca=False):
         if self.sortType.currentIndex() == 0: #scala
@@ -119,17 +123,24 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             print("Altro")
 
     def update_list(self, sorting_function=GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala, decr=False, searchActivated=False):
-        print("class VistaGestioneImmobile - update_list inizio")
-
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
-        print("lista unità immobiliari:", self.lista_unitaImmobiliari)
+
         if searchActivated and self.searchbar.text():
             print("sto cercando...")
-            if self.searchType.currentIndex() == 0:  # ricerca per dati catastali
-                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.interno.upper()]
-            elif self.searchType.currentIndex() == 1:  # ricerca per nominativo condomino
-                #proprietario = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
-                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in item.condomini.values().upper()]
+            if self.searchType.currentIndex() == 0:  # ricerca per scala
+                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in str(item.scala).upper()]
+            if self.searchType.currentIndex() == 1:  # ricerca per interno
+                self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in str(item.interno).upper()]
+            elif self.searchType.currentIndex() == 2:  # ricerca per nominativo condomino
+                condomini = {item.codice: '    '.join([Condomino.ricercaCondominoByCF(cf).cognome + " " + Condomino.ricercaCondominoByCF(cf).nome for cf in item.condomini.keys()])
+                             for item in self.lista_unitaImmobiliari}
+                print("************************************************************************")
+                print("************************************************************************")
+                print("condomini", condomini)
+                print("************************************************************************")
+                print("************************************************************************")
+
+                self.lista_unitaImmobiliari = [UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item) for item in condomini.keys() if self.searchbar.text().upper() in condomini[item].upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)
 
 
@@ -172,15 +183,10 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.vista_nuova_Assegnazione.show()
 
     def go_Read_Assegnazione(self):
-        print("uiui")
         item = None
-        print("uiui")
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print("valore .data()" + str(item.data()))
-        print(item.text().split(" "))
         sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item.data())
-        print("si",sel_unitaImmobiliare.getInfoUnitaImmobiliare())
         self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, self.immobile, callback=self.callback)
         self.vista_dettaglio_assegnazione.show()
 
@@ -195,6 +201,9 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
     def callback(self, msg=""):
         self.button_list["Visualizza Assegnazione"].setDisabled(True)
+        self.searchbar.clear()
+        self.searchType.clear()
+        self.searchType.addItems(["Ricerca per scala", "Ricerca per interno", "Ricerca per condomino"])
         sort, desc = self.ordina_lista(True)
         self.update_list(sort, desc)
         if msg:

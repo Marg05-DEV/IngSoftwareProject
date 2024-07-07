@@ -39,7 +39,7 @@ class VistaMenuGestioneBilancio(QWidget):
 
         self.select_button = self.create_button("Vai alla gestione delle tabelle millesimali", self.go_Gestione_TabelleMillesimali, True)
         self.button_layout.addWidget(self.select_button)
-        self.select_button1 =self.create_button("Vai alla gestione del bilancio", self.go_Gestione_Bilancio, True)
+        self.select_button1 = self.create_button("Vai alla gestione del bilancio", self.go_Gestione_Bilancio, True)
         self.button_layout.addWidget(self.select_button1)
         self.searchbar.textChanged.connect(self.selectioning)
 

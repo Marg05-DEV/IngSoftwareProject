@@ -5,7 +5,7 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 
-#from fpdf import FPDF
+from fpdf import FPDF
 
 class GestoreRegistroAnagrafe:
     @staticmethod
@@ -65,24 +65,55 @@ class GestoreRegistroAnagrafe:
         proprietari_unita_immobiliari = []
         senza_proprietario = []
         senza_condomini = []
+        print('inizio ordinamento proprietario')
         for item in list_unitaImmobiliari:
+            print("------------------------------------------------------------------------------------------")
+            print(item.getInfoUnitaImmobiliare())
             proprietario_cf = [key for key, value in item.condomini.items() if value == 'Proprietario']
             print(proprietario_cf)
             if len(proprietario_cf) < 1:
-                if len(item.condomini < 1):
-                    senza_condomini.append(item.codice)
+                print("no prop")
+                if len(item.condomini) < 1:
+                    print("nessun condomino")
+                    senza_condomini.append(item)
                 else:
-                    senza_proprietario.append(item.codice)
+                    print("nessun propriestario")
+                    senza_proprietario.append(item)
+            else:
+                print("si prop")
+                proprietario = Condomino.ricercaCondominoByCF(proprietario_cf[0])
+                proprietari_unita_immobiliari.append([item.codice, proprietario.cognome, proprietario.nome])
 
-            proprietario = Condomino.ricercaCondominoByCF(proprietario_cf[0])
-            proprietari_unita_immobiliari.append([item.codice, proprietario.cognome, proprietario.nome])
-        GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_proprietario)
-        GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_condomini)
-        proprietari_unita_immobiliari.sort(key=lambda row: row[2])
-        proprietari_unita_immobiliari.sort(key=lambda row: row[1])
+        print("fine aver scorso unita")
         print(senza_proprietario)
         print(senza_condomini)
         print(proprietari_unita_immobiliari)
+        if len(senza_proprietario) > 0:
+            GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_proprietario)
+        if len(senza_condomini) > 0:
+            GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_condomini)
+        print("ordinati lo schifo")
+        proprietari_unita_immobiliari.sort(reverse=isDecrescente, key=lambda row: row[2])
+        proprietari_unita_immobiliari.sort(reverse=isDecrescente, key=lambda row: row[1])
+        print(senza_proprietario)
+        print(senza_condomini)
+        print(proprietari_unita_immobiliari)
+
+        sorted_unitaImmobiliari = []
+        for proprietario in proprietari_unita_immobiliari:
+            for unitaImmobiliare in list_unitaImmobiliari:
+                if unitaImmobiliare.codice == proprietario[0]:
+                    sorted_unitaImmobiliari.append(unitaImmobiliare)
+                    break
+
+        for item in senza_proprietario:
+            sorted_unitaImmobiliari.append(item)
+        for item in senza_condomini:
+            sorted_unitaImmobiliari.append(item)
+
+        for i in range(len(list_unitaImmobiliari)):
+            list_unitaImmobiliari[i] = sorted_unitaImmobiliari[i]
+
     @staticmethod
     def ricercaCondominoByNome(nome):
         nome_file = 'Dati/Condomini.pickle'
@@ -110,6 +141,8 @@ class GestoreRegistroAnagrafe:
                     break
         for i in range(len(list_condomini)):
             list_condomini[i] = sorted_condomini[i]
+
     def generaPDFRegistroAnagrafeCondominiale(self):
-        pdf = FPDF()
+        pass
+
 

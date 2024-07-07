@@ -87,11 +87,11 @@ def up():
 
     print("\n ------------------------------------------------- \n")
 
-    #seedin tabelle millesimali
+    #seeding tabelle millesimali
     tabellaMillesimale = TabellaMillesimale()
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [], "Spesa generale", Immobile.ricercaImmobileByCodice(1), {})
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [], "Spesa relative all'uso dell'ascensore", Immobile.ricercaImmobileByCodice(1), {})
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [], "Spesa impiando giardino", Immobile.ricercaImmobileByCodice(1), {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [], "Spesa impianto giardino", Immobile.ricercaImmobileByCodice(1), {})
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))

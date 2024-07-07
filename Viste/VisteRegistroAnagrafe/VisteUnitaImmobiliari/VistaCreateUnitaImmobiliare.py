@@ -95,7 +95,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
         if index in integer_lines:
             input_line.setValidator(QIntValidator())
 
-
         self.labels[index] = label
         self.input_lines[index] = input_line
         self.input_errors[index] = error
@@ -192,6 +191,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
                 else:
                     self.input_errors[field].setVisible(False)
         print("numero linee riempite", num_writed_lines)
+
         if num_writed_lines < len(self.required_fields) or there_is_unique_pair_error:
             self.buttons["Assegna Condomini"].setDisabled(True)
         else:

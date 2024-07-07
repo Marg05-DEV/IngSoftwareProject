@@ -10,7 +10,7 @@ class TabellaMillesimale:
         self.tipologiaSpesa =[]
         self.descrizione = ""
         self.immobile = 0
-        self.millesimi = {}
+        self.millesimi = {}  # {unita immobiliare: millesimo}
 
     def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile, millesimi):
         self.nome = nome

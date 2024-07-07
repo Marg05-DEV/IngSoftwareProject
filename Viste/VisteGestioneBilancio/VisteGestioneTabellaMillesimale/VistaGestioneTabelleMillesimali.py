@@ -48,7 +48,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         main_layout.addLayout(message_layout)
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
+        self.resize(1200, 800)
         self.setWindowTitle("Gestione Immobile")
 
     def create_button(self, testo, action, disabled=False):
@@ -115,7 +115,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
             i += 1
 
         print("create tabella")
-        table.verticalHeader().setVisible(False)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.horizontalHeader().setStretchLastSection(True)

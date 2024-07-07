@@ -92,7 +92,6 @@ class VistaCreateImmobile(QWidget):
             input_line.clear()
 
     def input_validation(self):
-        print("scrivendo ...")
         immobili = Immobile.getAllImmobili()
         num_errors = 0
         num_writed_lines = 0
