@@ -9,7 +9,7 @@ class TabellaMillesimale:
         self.nome = ""
         self.tipologiaSpesa =[]
         self.descrizione = ""
-        self.immobile = None
+        self.immobile = 0
         self.millesimi = {}
 
     def aggiungiTabellaMillesimale(self, codice, nome, tipologieSpesa, descrizione, immobile, millesimi):
@@ -27,6 +27,7 @@ class TabellaMillesimale:
         tabelleMillesimali[codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
+        return "Tabella millesimale aggiunta"
 
 
     def getTabellaMillesimale(self):

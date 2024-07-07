@@ -1,30 +1,29 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
+    QPushButton, QTableWidget
 
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+
 
 class VistaGestioneTabelleMillesimali(QWidget):
 
-    def __init__(self, parent=None):
-        super(VistaGestioneTabelleMillesimali, self).__init__(parent)
-
+    def __init__(self, immobile):
+        super(VistaGestioneTabelleMillesimali, self).__init__()
+        self.immobile = immobile
         main_layout = QVBoxLayout()
-
-
-
         action_layout = QHBoxLayout()
 
-        self.list_view_immobili = QListView()
+        self.table_tabellaMillesimale = self.create_table()
+        main_layout.addWidget(self.table_tabellaMillesimale)
 
         button_layout = QVBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Tabella Millesimale", self.go_Create_immobile))
-        button_layout.addWidget(self.create_button("Visualizza Tabella Millesimale", self.go_Read_immobile,True))
-        button_layout.addWidget(self.create_button("Rimuovi Tabella Millesimale", self.go_Update_immobile, True))
-
-        action_layout.addWidget(self.list_view_immobili)
+        button_layout.addWidget(self.create_button("Aggiungi Tabella Millesimale", self.go_add_unitaImmobiliare()))
+        button_layout.addWidget(self.create_button("Visualizza Tabella Millesimale", self.go_read_unitaImmobiliare(),True))
+        button_layout.addWidget(self.create_button("Rimuovi Tabella Millesimale", self.go_delete_unitaImmobiliare(), True))
 
         message_layout = QHBoxLayout()
 
@@ -57,45 +56,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.button_list[testo] = button
         return button
 
-    def avvia_ricerca(self):
-        sorting, desc = self.ordina_lista(True)
-        self.update_list(sorting, desc, True)
+    def create_table(self):
+        table = QTableWidget()
+        self.unitaImmobiliari_immobile = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
+        table.setRowCount(len(self.unitaImmobiliari_immobile)+1)
 
-    def avvia_ordinamento(self):
-        if self.searchbar.text():
-            sorting, desc = self.ordina_lista(True)
-            self.update_list(sorting, desc, True)
-        else:
-            self.ordina_lista(False)
-
-
-    def ordina_lista(self, fromRicerca=False):
-        if self.sortType.currentIndex() == 0:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByDenominazione, False
-            self.update_list()
-        elif self.sortType.currentIndex() == 1:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByDenominazione, True
-            self.update_list(decr=True)
-        elif self.sortType.currentIndex() == 2:
-            if fromRicerca:
-                return Immobile.ordinaImmobileBySigla, False
-            self.update_list(Immobile.ordinaImmobileBySigla)
-        elif self.sortType.currentIndex() == 3:
-            if fromRicerca:
-                return Immobile.ordinaImmobileBySigla, True
-            self.update_list(Immobile.ordinaImmobileBySigla, True)
-        elif self.sortType.currentIndex() == 4:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByCodice, False
-            self.update_list(Immobile.ordinaImmobileByCodice)
-        elif self.sortType.currentIndex() == 5:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByCodice, True
-            self.update_list(Immobile.ordinaImmobileByCodice, True)
-        else:
-            print("Altro")
 
     def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
         self.lista_immobili = []
@@ -140,11 +105,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print(type(self.selectionModel))
 
 
-    def go_Create_immobile(self):
+    def go_add_unitaImmobiliare(self):
         self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.callback)
         self.vista_nuovo_immobile.show()
 
-    def go_Read_immobile(self):
+    def go_read_unitaImmobiliare(self):
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -153,7 +118,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile, callback=self.callback)
         self.vista_dettaglio_immobile.show()
 
-    def go_Update_immobile(self):
+    def go_delete_unitaImmobiliare(self):
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -165,14 +130,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
         self.vista_modifica_immobile.show()
 
-    def go_Delete_immobile(self):
-        item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.callback)
-        self.vista_elimina_immobile.show()
 
 
     def able_button(self):
