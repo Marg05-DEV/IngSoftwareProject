@@ -88,7 +88,6 @@ class VistaReadAssegnazione(QWidget):
         table.setRowCount(1)
         table.setColumnCount(6)
         print("create tabella")
-
         dati_catastali = self.sel_unitaImmobiliare.getDatiCatastali()
         print("create tabella")
 

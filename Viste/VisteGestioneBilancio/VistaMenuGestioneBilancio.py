@@ -39,8 +39,8 @@ class VistaMenuGestioneBilancio(QWidget):
 
         self.select_button = self.create_button("Vai alla gestione delle tabelle millesimali", self.go_Gestione_TabelleMillesimali, True)
         self.button_layout.addWidget(self.select_button)
-        self.button_layout.addWidget(self.create_button("Vai alla gestione del bilancio", self.go_Gestione_Bilancio, True))
-
+        self.select_button1 =self.create_button("Vai alla gestione del bilancio", self.go_Gestione_Bilancio, True)
+        self.button_layout.addWidget(self.select_button1)
         self.searchbar.textChanged.connect(self.selectioning)
 
         main_layout.addLayout(find_layout)
@@ -75,10 +75,12 @@ class VistaMenuGestioneBilancio(QWidget):
             print("immobile trovato")
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
             self.select_button.setEnabled(True)
+            self.select_button1.setEnabled(True)
         else:
             print("Nessun immobile trovato")
             self.immobile_selezionato.setText("Nessun immobile selezionato")
             self.select_button.setEnabled(False)
+            self.select_button1.setEnabled(False)
 
 
     def sel_tipo_ricerca(self):

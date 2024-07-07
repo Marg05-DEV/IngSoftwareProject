@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 
 from Viste.VistaHome import VistaHome

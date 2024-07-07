@@ -5,6 +5,7 @@ import shutil
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 def up():
     # Seeding Immobili
@@ -85,6 +86,12 @@ def up():
         print(unitaImmobiliare.getInfoUnitaImmobiliare())
 
     print("\n ------------------------------------------------- \n")
+
+    #seedin tabelle millesimali
+    tabellaMillesimale = TabellaMillesimale()
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [], "Spesa generale", Immobile.ricercaImmobileByCodice(1), {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [], "Spesa relative all'uso dell'ascensore", Immobile.ricercaImmobileByCodice(1), {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [], "Spesa impiando giardino", Immobile.ricercaImmobileByCodice(1), {})
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))
