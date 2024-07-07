@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit
 
+from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 

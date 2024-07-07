@@ -3,6 +3,14 @@ from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
     QPushButton
 from Classes.Contabilita.spesa import Spesa
+from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
+
+
+class VistaReadUnitaImmobiliare:
+    pass
+
 
 class VistaGestioneSpese(QWidget):
     def __init__(self, parent=None, sortLabel=None):
@@ -112,7 +120,7 @@ class VistaGestioneSpese(QWidget):
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
         self.vista_dettaglio_unitaImmobiliare = VistaReadUnitaImmobiliare(sel_unitaImmobiliare)
         self.vista_dettaglio_unitaImmobiliare.show()
 
@@ -121,7 +129,7 @@ class VistaGestioneSpese(QWidget):
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
         self.vista_modifica_immobile = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
         self.vista_modifica_unitaImmobiliare.show()
 
@@ -130,7 +138,7 @@ class VistaGestioneSpese(QWidget):
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
             print(item.text())
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
+        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
         self.vista_elimina_unitaImmobiliare = VistaDeleteUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
         self.vista_elimina_unitaImmobiliare.show()
 

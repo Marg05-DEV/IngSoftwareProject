@@ -3,6 +3,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
     QPushButton, QSizePolicy, QSpacerItem
 
+from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
@@ -44,11 +45,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         button_layout = QVBoxLayout()
         self.button_list = {}
-        button_layout.addSpacerItem(QSpacerItem(20, 80, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
         button_layout.addSpacerItem(QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Visualizza Assegnazione", self.go_Read_Assegnazione, True))
-        button_layout.addSpacerItem(QSpacerItem(20, 80, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
@@ -66,6 +67,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         bottom_layout.addWidget(self.create_button("Mostra Registro Anagrafe Condominiale", self.go_pdf_RegAn), Qt.AlignmentFlag.AlignCenter)
         action_layout.addLayout(button_layout)
 
+        self.lista_unitaImmobiliari = []
         self.update_list()
 
         main_layout.addLayout(find_layout)
@@ -97,28 +99,28 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.ordina_lista(False)
 
     def ordina_lista(self, fromRicerca=False):
-        if self.sortType.currentIndex() == 0:
+        if self.sortType.currentIndex() == 0: #scala
             if fromRicerca:
-                return UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, False
+                return GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala, False
             self.update_list()
-        elif self.sortType.currentIndex() == 1:
+        elif self.sortType.currentIndex() == 1: #interno
             if fromRicerca:
-                return UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, True
-            self.update_list(decr=True)
-        elif self.sortType.currentIndex() == 2:
+                return GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByInterno, False
+            self.update_list(GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByInterno)
+        elif self.sortType.currentIndex() == 2: #nominativo proprietario A - Z
             if fromRicerca:
-                return UnitaImmobiliare.ordinaUnitaImmobiliariByName, False
-            self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, False)
-        elif self.sortType.currentIndex() == 3:
+                return GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByNominativoProprietario, False
+            self.update_list(GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByNominativoProprietario, False)
+        elif self.sortType.currentIndex() == 3: #nominativo proprietario Z - A
             if fromRicerca:
-                return UnitaImmobiliare.ordinaUnitaImmobiliariByName, True
-            self.update_list(UnitaImmobiliare.ordinaUnitaImmobiliariByName, True)
+                return GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByNominativoProprietario, True
+            self.update_list(GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByNominativoProprietario, True)
         else:
             print("Altro")
 
-    def update_list(self, sorting_function=UnitaImmobiliare.ordinaUnitaImmobiliariByInterno, decr=False, searchActivated=False):
+    def update_list(self, sorting_function=GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala, decr=False, searchActivated=False):
         print("class VistaGestioneImmobile - update_list inizio")
-        self.lista_unitaImmobiliari = []
+
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         print("lista unità immobiliari:", self.lista_unitaImmobiliari)
         if searchActivated and self.searchbar.text():
@@ -132,7 +134,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
 
         if not self.lista_unitaImmobiliari:
-            print("ciao")
             self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
             self.msg.show()
 
@@ -148,8 +149,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             else:
                 proprietario_text = "PROPRIETARIO: " + proprietario[0]
 
-            item_text = f"Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} {unitaImmobiliare.tipoUnitaImmobiliare} - {proprietario_text}"
-
+            if unitaImmobiliare.tipoUnitaImmobiliare.upper() == "APPARTAMENTO":
+                item_text = f"{unitaImmobiliare.tipoUnitaImmobiliare} Scala {unitaImmobiliare.scala}  Int. {unitaImmobiliare.interno} - {proprietario_text}"
+            else:
+                item_text = f"{unitaImmobiliare.tipoUnitaImmobiliare} - {proprietario_text}"
+            item.setData(unitaImmobiliare.codice)
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -173,9 +177,9 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         print("uiui")
         for index in self.list_view_unitaImmobiliare.selectedIndexes():
             item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
+            print("valore .data()" + str(item.data()))
         print(item.text().split(" "))
-        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[4]))
+        sel_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item.data())
         print("si",sel_unitaImmobiliare.getInfoUnitaImmobiliare())
         self.vista_dettaglio_assegnazione = VistaReadAssegnazione(sel_unitaImmobiliare, self.immobile, callback=self.callback)
         self.vista_dettaglio_assegnazione.show()
@@ -189,7 +193,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         else:
             self.button_list["Visualizza Assegnazione"].setDisabled(False)
 
-    def callback(self, msg = ""):
+    def callback(self, msg=""):
         self.button_list["Visualizza Assegnazione"].setDisabled(True)
         sort, desc = self.ordina_lista(True)
         self.update_list(sort, desc)
@@ -201,3 +205,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
+        if not self.lista_unitaImmobiliari:
+            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            self.msg.show()

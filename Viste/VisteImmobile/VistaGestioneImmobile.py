@@ -62,7 +62,7 @@ class VistaGestioneImmobile(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
-
+        self.lista_immobili = []
         self.update_list()
 
         message_layout.addWidget(self.msg)
@@ -125,7 +125,6 @@ class VistaGestioneImmobile(QWidget):
             print("Altro")
 
     def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
-        self.lista_immobili = []
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         print(Immobile.getAllImmobili().values())
         print(self.lista_immobili)
@@ -225,4 +224,7 @@ class VistaGestioneImmobile(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
+        if not self.lista_immobili:
+            self.msg.setText("Non sono presenti immobili")
+            self.msg.show()
 

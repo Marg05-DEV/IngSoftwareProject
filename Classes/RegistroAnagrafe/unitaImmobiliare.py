@@ -1,6 +1,7 @@
 
 import os.path
 import pickle
+
 from Classes.RegistroAnagrafe.immobile import Immobile
 #from immobile import Immobile
 nome_file = 'Dati/UnitaImmobiliari.pickle'
@@ -18,7 +19,7 @@ class UnitaImmobiliare:
         self.tipoUnitaImmobiliare = ""
         self.categoria = ""
         self.classe = 0
-        self.immobile = None
+        self.immobile = 0
         self.scala = 0
         self.ZC = ""
 
@@ -32,7 +33,7 @@ class UnitaImmobiliare:
         self.tipoUnitaImmobiliare = tipoUnitaImmobiliare
         self.categoria = categoria
         self.classe = classe
-        self.immobile = immobile
+        self.immobile = immobile.id
         self.scala = scala
         self.ZC = ZC
 
@@ -48,6 +49,51 @@ class UnitaImmobiliare:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
         return "L'unità immobiliare è stata inserita ", self
 
+    def modificaUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare,
+                                 categoria, classe, immobile, scala, ZC):
+        print(immobile)
+        msg = "L'unità immobiliare dell'immobile " + immobile.denominazione + " è stato modificata"
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                unitaImmobiliare = dict(pickle.load(f))
+
+                unitaImmobiliare[self.codice].foglio = foglio
+                unitaImmobiliare[self.codice].subalterno = subalterno
+                unitaImmobiliare[self.codice].condomini = condomini
+                unitaImmobiliare[self.codice].particella = particella
+                unitaImmobiliare[self.codice].interno = interno
+                unitaImmobiliare[self.codice].tipoUnitaImmobiliare = tipoUnitaImmobiliare
+                unitaImmobiliare[self.codice].categoria = categoria
+                unitaImmobiliare[self.codice].classe = classe
+                unitaImmobiliare[self.codice].immobile = immobile.id
+                unitaImmobiliare[self.codice].scala = scala
+                unitaImmobiliare[self.codice].ZC = ZC
+
+        with open(nome_file, "wb") as f:
+            pickle.dump(unitaImmobiliare, f, pickle.HIGHEST_PROTOCOL)
+        return msg
+
+    def rimuoviUnitaImmobiliare(self):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                unitaImmobiliari = pickle.load(f)
+                del unitaImmobiliari[self.codice]
+            with open(nome_file, 'wb') as f:
+                pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
+            self.interno = 0
+            self.codice = -1
+            self.foglio = 0
+            self.subalterno = 0
+            self.condomini = {}
+            self.particella = 0
+            self.tipoUnitaImmobiliare = ""
+            self.categoria = ""
+            self.classe = 0
+            self.immobile = -1
+            self.scala = 0
+            self.ZC = ""
+            del self
+            return "L'assegnazione è stata eliminata"
 
     def getInfoUnitaImmobiliare(self):
         print("cont: ")
@@ -75,6 +121,22 @@ class UnitaImmobiliare:
             "Categoria": self.categoria
         }
 
+    @staticmethod
+    def ricercaUnitaImmobiliareByCodice(codice):
+        nome_file = 'Dati/UnitaImmobiliari.pickle'
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                unitaImmobiliari = dict(pickle.load(f))
+                print(unitaImmobiliari)
+                print(codice)
+                for cod_ui in unitaImmobiliari.keys():
+                    print(cod_ui)
+                    if cod_ui == codice:
+                        print("dentor")
+                        return unitaImmobiliari[cod_ui]
+                return None
+        else:
+            return None
 
     @staticmethod
     def getAllUnitaImmobiliari():
@@ -94,82 +156,12 @@ class UnitaImmobiliare:
         if unitaImmobiliari:
             unitaImmobiliariByImmobile = {}
             for key, value in unitaImmobiliari.items():
-                if value.immobile.codice == immobile.codice:
+                if value.immobile == immobile.id:
                     unitaImmobiliariByImmobile[key] = value
+            print("unita imm per immobile", unitaImmobiliariByImmobile)
             return unitaImmobiliariByImmobile
         else:
             return {}
-
-
-    @staticmethod
-    def ricercaUnitaImmobiliareInterno(interno):
-        print("dentro la ricerca")
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                unitaImmobiliari = dict(pickle.load(f))
-                for unitaImmobiliare in unitaImmobiliari.values():
-                    if unitaImmobiliare.interno == interno:
-                        return unitaImmobiliare
-                return None
-        else:
-            return None
-
-    @staticmethod
-    def ricercaUnitaImmobiliareByCodice(codice):
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                unitaImmobiliari = dict(pickle.load(f))
-                print(unitaImmobiliari)
-                print(codice)
-                for cod_ui in unitaImmobiliari.keys():
-                    print(cod_ui)
-                    if cod_ui == codice:
-                        print("dentor")
-                        return unitaImmobiliari[cod_ui]
-                return None
-        else:
-            return None
-
-    @staticmethod
-    def ordinaUnitaImmobiliariByInterno(list_unitaImmobiliari, isDecrescente):
-        sorted_interno = []
-        for unitaImmobiliare in list_unitaImmobiliari:
-            sorted_interno.append(unitaImmobiliare.interno)
-        sorted_interno.sort(reverse=isDecrescente)
-        sorted_unitaImmobiliari = []
-        for interno in sorted_interno:
-            for unitaImmobiliare in list_unitaImmobiliari:
-                if unitaImmobiliare.interno == interno:
-                    sorted_unitaImmobiliari.append(unitaImmobiliare)
-                    break
-        for i in range(len(list_unitaImmobiliari)):
-            list_unitaImmobiliari[i] = sorted_unitaImmobiliari[i]
-
-    @staticmethod
-    def ordinaUnitaImmobiliariByName(list_unitaImmobiliari, isDecrescente):
-        pass
-
-    def rimuoviUnitaImmobiliare(self):
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                unitaImmobiliari = pickle.load(f)
-                del unitaImmobiliari[self.codice]
-            with open(nome_file, 'wb') as f:
-                pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-            self.interno = 0
-            self.codice = -1
-            self.foglio = 0
-            self.subalterno = 0
-            self.condomini = {}
-            self.particella = 0
-            self.tipoUnitaImmobiliare = ""
-            self.categoria = ""
-            self.classe = 0
-            self.immobile = None
-            self.scala = 0
-            self.ZC = ""
-            del self
-            return "L'assegnazione è stata eliminata"
 
     def addCondomino(self, condomino, titolo):
         if os.path.isfile(nome_file):
@@ -204,28 +196,6 @@ class UnitaImmobiliare:
                     print("fine")
                     pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
                     print("firn")
-
-    def modificaUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
-        msg = "L'Unità immobiliare dell'immobile " + self.immobile.denominazione + " è stato modificata"
-        if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
-                unitaImmobiliare = dict(pickle.load(f))
-
-                unitaImmobiliare[self.codice].foglio = foglio
-                unitaImmobiliare[self.codice].subalterno = subalterno
-                unitaImmobiliare[self.codice].condomini = condomini
-                unitaImmobiliare[self.codice].particella = particella
-                unitaImmobiliare[self.codice].interno = interno
-                unitaImmobiliare[self.codice].tipoUnitaImmobiliare = tipoUnitaImmobiliare
-                unitaImmobiliare[self.codice].categoria = categoria
-                unitaImmobiliare[self.codice].classe = classe
-                unitaImmobiliare[self.codice].immobile = immobile
-                unitaImmobiliare[self.codice].scala = scala
-                unitaImmobiliare[self.codice].ZC = ZC
-                
-        with open(nome_file, "wb") as f:
-            pickle.dump(unitaImmobiliare, f, pickle.HIGHEST_PROTOCOL)
-        return msg
 
 
     def getCondominiAssociati(self):

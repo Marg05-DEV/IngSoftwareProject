@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit
+from PyQt6.QtGui import QIntValidator
+from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout
+
+from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class VistaUpdateImmobile(QWidget):
@@ -8,6 +11,8 @@ class VistaUpdateImmobile(QWidget):
         self.callback = callback
         self.sel_immobile = sel_immobile
         self.input_lines = {}
+        self.input_errors = {}
+        self.buttons = {}
         main_layout = QGridLayout()
 
         lbl_frase = QLabel("Inserisci i nuovi dati dell'immobile da modificare:")
@@ -35,29 +40,47 @@ class VistaUpdateImmobile(QWidget):
         self.resize(600, 400)
         self.setWindowTitle("Modifica Immobile")
 
-    @staticmethod
-    def create_button(testo, action):
+    def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
+        self.buttons[testo] = button
         return button
 
     def pairLabelInput(self, testo, index):
+        input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
+
+        error = QLabel("placeholder")
+        error.setStyleSheet("color: red; font-style: italic;")
+        error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        error.setVisible(False)
 
         label = QLabel(testo + ": ")
         input_line = QLineEdit()
+
+        if index == "codice":
+            input_line.setValidator(QIntValidator())
+
+        input_line.textChanged.connect(self.input_validation)
         self.input_lines[index] = input_line
+        self.input_errors[index] = error
+
         input_line.setPlaceholderText(str(self.sel_immobile.getInfoImmobile()[index]))
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
 
-        return pair_layout
+        input_layout.addWidget(error)
+        input_layout.addLayout(pair_layout)
+
+        return input_layout
 
     def updateImmobile(self):
+        print("si aggiorna")
         temp_immobile = {}
-        for attributo in self.sel_immobile.getInfoImmobile().keys():
+        for attributo in self.input_lines:
+            print("----------------" + attributo + "----------------")
             if self.input_lines[attributo].text() == "":
                 temp_immobile[attributo] = self.sel_immobile.getInfoImmobile()[attributo]
             else:
@@ -78,3 +101,30 @@ class VistaUpdateImmobile(QWidget):
     def reset(self):
         for input_line in self.input_lines.values():
             input_line.clear()
+
+    def input_validation(self):
+        print("scrivendo ...")
+        immobili = Immobile.getAllImmobili()
+        num_errors = 0
+        unique_fields = ['codice', 'sigla', 'denominazione', 'codiceFiscale']
+        there_is_unique_error = {}
+
+        for field in unique_fields:
+            print(field)
+            there_is_unique_error[field] = False
+            for immobile in immobili.values():
+                if str(immobile.getInfoImmobile()[field]).upper() != str(self.sel_immobile.getInfoImmobile()[field]).upper():
+                    if self.input_lines[field].text().upper() == str(immobile.getInfoImmobile()[field]).upper():
+                        num_errors += 1
+                        there_is_unique_error[field] = True
+                        break
+            if there_is_unique_error[field]:
+                self.input_errors[field].setText(f"{field} già esistente")
+                self.input_errors[field].setVisible(True)
+            else:
+                self.input_errors[field].setVisible(False)
+
+        if num_errors > 0:
+            self.buttons["Modifica Immobile"].setDisabled(True)
+        else:
+            self.buttons["Modifica Immobile"].setDisabled(False)

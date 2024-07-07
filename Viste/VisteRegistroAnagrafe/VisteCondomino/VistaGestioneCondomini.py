@@ -3,6 +3,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QListView, QLabel, QHBoxLayout, QPushButton, QComboBox, \
     QLineEdit
 
+from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaReadCondomino import VistaReadCondomino
@@ -105,7 +106,7 @@ class VistaGestioneCondomini(QWidget):
         self.lista_condomini = list(Condomino.getAllCondomini().values())
         if searchActivated and self.searchbar.text():
             self.lista_condomini = [item for item in self.lista_condomini if self.searchbar.text().upper() in (item.cognome + " " + item.nome).upper()]
-        Condomino.ordinaCondominoByNominativo(self.lista_condomini, decr)
+        GestoreRegistroAnagrafe.ordinaCondominoByNominativo(self.lista_condomini, decr)
 
         if not self.lista_condomini:
             if searchActivated:

@@ -16,7 +16,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
-        completer_list = [item.denominazione for item in Immobile.getAllImmobili().values()]
+        completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
         print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
@@ -90,11 +90,11 @@ class VistaMenuRegistroAnagrafe(QWidget):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-            lista_completamento = [item.denominazione for item in Immobile.getAllImmobili().values()]
+            lista_completamento = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
         elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-            lista_completamento = [item.sigla for item in Immobile.getAllImmobili().values()]
+            lista_completamento = sorted([item.sigla for item in Immobile.getAllImmobili().values()])
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
-            lista_completamento = [str(item.codice) for item in Immobile.getAllImmobili().values()]
+            lista_completamento = sorted([str(item.codice) for item in Immobile.getAllImmobili().values()])
         print("ciao1")
         print("Lista completamento", lista_completamento)
         self.immobili_completer.setModel(QStringListModel(lista_completamento))

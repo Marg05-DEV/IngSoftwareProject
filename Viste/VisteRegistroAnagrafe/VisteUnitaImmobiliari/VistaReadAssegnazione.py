@@ -3,6 +3,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, QListView, \
     QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView
 
+from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
@@ -35,15 +36,7 @@ class VistaReadAssegnazione(QWidget):
         lbl_frase1 = QLabel("DATI CATASTALI: ")
         lbl_frase1.setStyleSheet("font-weight: bold;")
         main_layout.addWidget(lbl_frase1, 3, 0, 1, 2)
-        """
-        main_layout.addWidget(self.new_label("Foglio", "foglio"), 4, 0)
-        main_layout.addWidget(self.new_label("Particella", "particella"), 4, 1)
-        main_layout.addWidget(self.new_label("Subalterno", "subalterno"), 5, 0)
-        main_layout.addWidget(self.new_label("ZC", "ZC"), 5, 1)
-        main_layout.addWidget(self.new_label("Classe", "classe"), 6, 0)
-        main_layout.addWidget(self.new_label("Categoria", "categoria"), 6, 1)
-        print("FINE GRID")
-        """
+
         self.table_dati_catastali = self.create_table()
         main_layout.addWidget(self.table_dati_catastali, 5, 0, 1, 2)
 
@@ -120,16 +113,17 @@ class VistaReadAssegnazione(QWidget):
             table.setItem(0, i, item)
             i += 1
 
+        print("create tabella")
         table.verticalHeader().setVisible(False)
-        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)  # Stretch columns to fit the table width
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.horizontalHeader().setStretchLastSection(True)
-        table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
-        table.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        table.setMaximumHeight(50)
+        print("create tabella")
         table.resizeRowsToContents()
+        print("create tabella")
         return table
 
     def new_label(self, testo, index):
@@ -143,6 +137,7 @@ class VistaReadAssegnazione(QWidget):
             self.msg.show()
         else:
             self.msg.hide()
+
         print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_condomini)
         print(self.sel_unitaImmobiliare.condomini.items())
@@ -232,3 +227,7 @@ class VistaReadAssegnazione(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
+        if not self.sel_unitaImmobiliare.condomini:
+            self.msg.setText("Non ci sono condomini assegnati all'unità immobiliare")
+            self.msg.show()
+

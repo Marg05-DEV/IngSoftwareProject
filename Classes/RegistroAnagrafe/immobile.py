@@ -1,12 +1,14 @@
 import os.path
 import pickle
+import shutil
 
 file_name = 'Dati/Immobile.pickle'
+directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Classes\RegistroAnagrafe", "Dati\\pdf\\")
 #file_name = '../../Dati/Immobile.pickle'
 
 class Immobile:
-    #print("dentro immobile:", dir())
     def __init__(self):
+        self.id = 1
         self.codice = 0
         self.sigla = ""
         self.denominazione = ""
@@ -15,6 +17,7 @@ class Immobile:
         self.provincia = ""
         self.cap = ""
         self.via = ""
+        self.files_path = ""
 
     def aggiungiImmobile(self, codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
         self.codice = codice
@@ -26,38 +29,48 @@ class Immobile:
         self.cap = cap
         self.via = via
 
+        os.makedirs(directory_files + sigla +"\\")
+
+        self.files_path = directory_files + sigla + "\\"
+
+        print(self.files_path)
+
         immobili = {}
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = pickle.load(f)
+                if immobili.keys():
+                    print(max(immobili.keys()))
+                    self.id = max(immobili.keys()) + 1
         print(immobili.keys())
-        for key_codice in immobili.keys():
-            if key_codice == codice:
+        for immobile in immobili.values():
+            if immobile.codice == codice:
                 return "L'immobile è già esistente"
-        immobili[codice] = self
+        immobili[self.id] = self
         with open(file_name, 'wb') as f:
             pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
         return "Il nuovo immobile " + denominazione + " è stato inserito"
 
     def modificaImmobile(self,  codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
+        print("dentro modifica")
         msg = "L'immobile " + self.denominazione + " è stato modificato"
         print(type(self.codice))
         if os.path.isfile(file_name):
             with open(file_name, "rb") as f:
                 immobili = dict(pickle.load(f))
 
-                immobili[self.codice].codice = codice
-                immobili[self.codice].sigla = sigla
-                immobili[self.codice].denominazione = denominazione
-                immobili[self.codice].codiceFiscale = codiceFiscale
-                immobili[self.codice].citta = citta
-                immobili[self.codice].provincia = provincia
-                immobili[self.codice].cap = cap
-                immobili[self.codice].via = via
+                immobili[self.id].files_path = directory_files + sigla + "\\"
+                if sigla != self.sigla:
+                    os.rename(self.files_path, immobili[self.id].files_path)
+                immobili[self.id].codice = codice
+                immobili[self.id].sigla = sigla
+                immobili[self.id].denominazione = denominazione
+                immobili[self.id].codiceFiscale = codiceFiscale
+                immobili[self.id].citta = citta
+                immobili[self.id].provincia = provincia
+                immobili[self.id].cap = cap
+                immobili[self.id].via = via
                 print(immobili)
-                if codice != self.codice:
-                    immobili[codice] = immobili[self.codice]
-                    del immobili[self.codice]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
 
@@ -72,7 +85,7 @@ class Immobile:
             "citta": self.citta,
             "provincia": self.provincia,
             "cap": self.cap,
-            "via": self.via
+            "via": self.via,
         }
 
     @staticmethod
@@ -122,9 +135,21 @@ class Immobile:
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
-                for key in immobili.keys():
-                    if key == codice:
-                        return immobili[key]
+                for immobile in immobili.values():
+                    if immobile.codice == codice:
+                        return immobile
+                return None
+        else:
+            return None
+
+    @staticmethod
+    def ricercaImmobileById(id):
+        if os.path.isfile(file_name):
+            with open(file_name, 'rb') as f:
+                immobili = dict(pickle.load(f))
+                for id_immobile in immobili.keys():
+                    if id_immobile == id:
+                        return immobili[id_immobile]
                 return None
         else:
             return None
@@ -184,10 +209,12 @@ class Immobile:
         if os.path.isfile(file_name):
             with open(file_name, "rb") as f:
                 immobili = dict(pickle.load(f))
-                del immobili[self.codice]
+                del immobili[self.id]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+            shutil.rmtree(self.files_path)
             self.codice = -1
+            self.id = -1
             self.sigla = ""
             self.denominazione = ""
             self.codiceFiscale = ""
@@ -199,3 +226,5 @@ class Immobile:
             return "L'immobile " + nome_immobile + " è stato rimosso"
 
 
+if __name__ == "__main__":
+    print(directory_files)

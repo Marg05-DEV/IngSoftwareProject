@@ -3,6 +3,7 @@ import datetime
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QDateEdit
 
+from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
@@ -90,9 +91,9 @@ class VistaUpdateUnitaImmobiliare(QWidget):
                                                    temp_unitaImmobiliare["tipoUnitaImmobiliare"],
                                                    temp_unitaImmobiliare["categoria"],
                                                    int(temp_unitaImmobiliare["classe"]),
-                                                 self.sel_unitaImmobiliare.immobile,
-                                                 int(temp_unitaImmobiliare["scala"]),
-                                                 temp_unitaImmobiliare["ZC"])
+                                                   Immobile.ricercaImmobileById(self.sel_unitaImmobiliare.immobile),
+                                                   int(temp_unitaImmobiliare["scala"]),
+                                                   temp_unitaImmobiliare["ZC"])
         print("fine update condomino")
         self.callback(msg)
         self.close()
