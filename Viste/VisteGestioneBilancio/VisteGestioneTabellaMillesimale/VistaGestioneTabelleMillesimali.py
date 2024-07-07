@@ -78,13 +78,16 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
         print(list_unitaImmobiliare)
         print(self.unitaImmobiliari_immobile)
-        i = 1
+        i = 0
         for unita in self.unitaImmobiliari_immobile.values():
+            text_condomini = ""
             print(unita.condomini.keys())
             item = QStandardItem()
             condomini = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unita.condomini.keys()]
             print(condomini)
-            item_text = f"Scala:{unita.scala} Interno:{unita.interno}\n Condomini:{condomini}"
+            for condo in condomini:
+                text_condomini = f"{condo}\n"
+            item_text = f"Scala:{unita.scala} Interno:{unita.interno}\n Condomini:{text_condomini}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
