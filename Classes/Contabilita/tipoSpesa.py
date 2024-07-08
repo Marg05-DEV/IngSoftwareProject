@@ -9,8 +9,7 @@ class TipoSpesa:
         self.descrizione = ""
         self.nome = ""
 
-    def aggiungiTipoSpesa(self, codice, descrizione, nome):
-        self.codice = codice
+    def aggiungiTipoSpesa(self, descrizione, nome):
         self.descrizione = descrizione
         self.nome = nome
 
@@ -18,9 +17,12 @@ class TipoSpesa:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 tipiSpesa = dict(pickle.load(f))
-        tipiSpesa[codice] = self
+                if tipiSpesa.keys():
+                    self.codice = max(tipiSpesa.keys()) + 1
+        tipiSpesa[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(tipiSpesa, f, pickle.HIGHEST_PROTOCOL)
+        return "Il tipo di spesa è stato aggiunto"
 
     def rimuoviTipoSpesa(self):
         if os.path.isfile(nome_file):
@@ -43,14 +45,13 @@ class TipoSpesa:
                 for tipoSpesa in tipiSpesa.values():
                     if tipoSpesa.nome == nome:
                         return tipoSpesa
-                return "Tipo spesa non esistente"
+                return None
         else:
-            return "File non esistente"
+            return None
 
 
     def getTipoSpesa(self):
         return {
-            "codice": self.codice,
             "descrizione": self.descrizione,
             "nome": self.nome
         }
@@ -69,6 +70,5 @@ class TipoSpesa:
 
 if __name__ == "__main__":
     tipoSpesa1 = TipoSpesa()
-    tipoSpesa1.aggiungiTipoSpesa(1, "fi", "du")
 
     print(tipoSpesa1.getTipoSpesa())

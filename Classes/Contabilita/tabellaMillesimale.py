@@ -5,7 +5,7 @@ nome_file = 'Dati/tabelleMillesimali.pickle'
 class TabellaMillesimale:
 
     def __init__(self):
-        self.codice = 0
+        self.codice = 1
         self.nome = ""
         self.tipologiaSpesa =[]
         self.descrizione = ""

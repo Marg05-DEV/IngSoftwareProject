@@ -20,7 +20,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         action_layout = QHBoxLayout()
 
         self.table_tabellaMillesimale = self.create_table()
-        main_layout.addWidget(self.table_tabellaMillesimale)
+        action_layout.addWidget(self.table_tabellaMillesimale)
 
         button_layout = QVBoxLayout()
         self.button_list = {}
@@ -53,7 +53,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(115, 60)
+        button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -149,7 +149,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         return table
 
     def go_add_tabellaMillesimale(self):
-        self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(callback=self.callback)
+        self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
         self.vista_nuovo_immobile.show()
 
     def go_read_tabellaMillesimale(self):
@@ -186,9 +186,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
     def callback(self, msg):
         self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
         self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
-        self.msg.setText(msg)
-        self.msg.show()
-        self.timer.start()
+        self.create_table()
+        if msg:
+            self.msg.setText(msg)
+            self.msg.show()
+            self.timer.start()
 
     def hide_message(self):
         self.msg.hide()
