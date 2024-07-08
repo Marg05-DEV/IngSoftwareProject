@@ -2,6 +2,7 @@ import datetime
 import os
 import shutil
 
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -92,6 +93,16 @@ def up():
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [], "Spesa generale", Immobile.ricercaImmobileByCodice(1), {})
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [], "Spesa relative all'uso dell'ascensore", Immobile.ricercaImmobileByCodice(1), {})
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [], "Spesa impianto giardino", Immobile.ricercaImmobileByCodice(1), {})
+
+    print("\n ------------------------------------------------- \n")
+
+    # seeding tipi di spesa
+    tipo_spesa = TipoSpesa()
+    tipo_spesa.aggiungiTipoSpesa("Spese per la manutenzione ordinaria delle aree comuni", "Manutenzione Ordinaria")
+    tipo_spesa.aggiungiTipoSpesa("Spese per la manutenzione straordinaria delle aree comuni", "Manutenzione Straordinaria")
+    tipo_spesa.aggiungiTipoSpesa("Spese per il riscaldamento centralizzato", "Riscaldamento")
+    tipo_spesa.aggiungiTipoSpesa("Spese per l'illuminazione delle aree comuni", "Illuminazione Comune")
+    tipo_spesa.aggiungiTipoSpesa("Spese per la pulizia delle aree comuni", "Pulizia")
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))

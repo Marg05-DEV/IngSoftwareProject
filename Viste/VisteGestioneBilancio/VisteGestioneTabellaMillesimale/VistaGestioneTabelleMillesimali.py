@@ -123,16 +123,16 @@ class VistaGestioneTabelleMillesimali(QWidget):
         header = table.verticalHeader()
         table.setMaximumHeight(header.length())
         print("create tabella")
-        return table
 
+        return table
     def go_add_tabellaMillesimale(self):
         self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
         self.vista_nuovo_immobile.show()
 
     def go_read_tabellaMillesimale(self):
         item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
+        for index in self.tabelle_millesimali.selectedIndexes():
+            item = self.table_tabellaMillesimale.model().itemFromIndex(index)
             print(item.text())
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         self.vista_dettaglio_immobile = VistaReadTabellaMillesimale(sel_immobile, callback=self.callback)
@@ -140,8 +140,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
     def go_delete_tabellaMillesimale(self):
         item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
+        for index in self.tabelle_millesimali.selectedIndexes():
+            item = self.tabelle_millesimali.model().itemFromIndex(index)
             print(item.text())
             print("ciao")
             print(int(item.text().split(" ")[0]))
@@ -153,7 +153,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
 
     def able_button(self):
-        if not self.list_view_immobili.selectedIndexes():
+        if not self.tabelle_millesimali.selectedIndexes():
             self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
         else:

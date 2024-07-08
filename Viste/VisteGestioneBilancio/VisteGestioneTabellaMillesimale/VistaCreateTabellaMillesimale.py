@@ -1,52 +1,65 @@
 import datetime
 
-from PyQt6.QtGui import QIntValidator
+from PyQt6.QtGui import QIntValidator, QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, \
-    QSizePolicy, QDateEdit, QComboBox
+    QSizePolicy, QDateEdit, QComboBox, QListView
 import itertools
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 
 
 class VistaCreateTabellaMillesimale(QWidget):
-    def __init__(self, immobile, ui, callback, isIterable):
+    def __init__(self, immobile, callback):
         super(VistaCreateTabellaMillesimale, self).__init__()
         self.immobile = immobile
-        self.unitaImmobiliare = ui
         self.callback = callback
-        main_layout = QGridLayout()
         self.input_lines = {}
+        self.input_errors = {}
+        main_layout = QGridLayout()
 
-        lbl_frase = QLabel("Inserisci i dati per l'aggiunta di un nuovo condomino:")
+        lbl_frase = QLabel("Inserisci i dati della nuova tabella millesimale:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
         main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
+        action_layout1 = QHBoxLayout()
+        action_layout1.addLayout(self.pairLabelInput("Nome", "nome", ), 1, 0, 1, 3)
+        action_layout1.addLayout(self.pairLabelInput("Descrizione", "descrizione"), 2, 0, 1, 3)
 
-        main_layout.addLayout(self.pairLabelInput("Nome", "nome", ), 1, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"), 2, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"), 3, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"), 4, 0)
-        main_layout.addLayout(self.pairLabelInput("Provincia", "provinciaDiNascita"), 4, 1)
-        main_layout.addLayout(self.pairLabelInput("Data", "dataDiNascita"), 4, 2)
-        main_layout.addLayout(self.pairLabelInput("Residenza", "residenza"), 5, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Telefono", "telefono"), 6, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Email", "email"), 7, 0, 1, 3)
-        main_layout.addLayout(self.pairLabelInput("Titolo dell'unità immobiliare", "titolo"), 8, 0, 1, 3)
+        action_layout2 = QHBoxLayout
+        self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Ricerca tipo spesa")
+        button_layout = QVBoxLayout()
+        button_layout.addWidget(self.create_button("Aggiungi altro condomino", self.add_tipo_spesa))
 
-        main_layout.addWidget(self.create_button("Svuota i campi", self.reset), 9, 0, 1, 3)
-        if isIterable:
-            button_layout = QHBoxLayout()
-            button_layout.addWidget(self.create_button("Termina Assegnazione", self.terminaAssegnazione))
-            button_layout.addWidget(self.create_button("Aggiungi altro condomino", self.altroCondomino))
-            main_layout.addLayout(button_layout, 10, 0, 1, 3)
-        else:
-            main_layout.addWidget(self.create_button("Aggiungi Condomino", self.terminaAssegnazione), 10, 0, 1, 3)
+        action_layout2.addLayout(self.searchbar)
+        action_layout2.addLayout(button_layout)
 
+        action_layout3 = QHBoxLayout()
+        lbl_frase = QLabel("Inserisci i dati della nuova tabella millesimale:")
+        lbl_frase.setStyleSheet("font-weight: bold;")
+        lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
+        button_layout1 = QVBoxLayout()
+        button_layout1.addWidget(self.create_button("Aggiungi", self.seleziona_tipo_spesa))
+        action_layout3.addWidget(lbl_frase)
+        action_layout3.addLayout(button_layout1)
+
+        tipi_spesa_layout = QHBoxLayout()
+
+        self.list_view_tipi_spesa = QListView()
+        self.list_view_tipi_spesa.setAlternatingRowColors(True)
+        tipi_spesa_layout.addWidget(self.list_view_tipi_spesa)
+        main_layout.addLayout(action_layout1, 3, 0, 1, 2)
+        main_layout.addLayout(action_layout2, 4, 0, 1, 2)
+        main_layout.addLayout(action_layout3, 5, 0, 1, 2)
+        main_layout.addLayout(tipi_spesa_layout, 6, 0, 1, 2)
+
+        main_layout.addWidget(self.create_button("Aggiungi Unita Immobiliare", self.aggiungiUnitaImmobiliare), 7, 0, 1, 2)
         self.setLayout(main_layout)
 
         self.resize(600, 400)
@@ -61,64 +74,41 @@ class VistaCreateTabellaMillesimale(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
+        input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
-        label = QLabel(testo + ": ")
-        if testo == "Data":
-            input_line = QDateEdit()
-        elif index == "titolo":
-            input_line = QComboBox()
-            input_line.setPlaceholderText("Scegli un titolo per il condomino...")
-            input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
-        else:
-            input_line = QLineEdit()
+        error = QLabel("placeholder")
+        error.setStyleSheet("color: red; font-style: italic;")
+        error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        error.setVisible(False)
 
+        label = QLabel(testo + "*: ")
+        input_line = QLineEdit()
+
+        if index == "codice":
+            input_line.setValidator(QIntValidator())
+
+        input_line.textChanged.connect(self.input_validation)
         self.input_lines[index] = input_line
+        self.input_errors[index] = error
 
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
 
-        return pair_layout
+        input_layout.addWidget(error)
+        input_layout.addLayout(pair_layout)
 
-    def aggiungiCondomino(self):
-        print("stiamo per aggiungere")
-        nome = self.input_lines["nome"].text()
-        cognome = self.input_lines["cognome"].text()
-        residenza = self.input_lines["residenza"].text()
-        dataDiNascita = self.input_lines["dataDiNascita"].text()
-        dataDiNascita = dataDiNascita.split("/")
-        dataDiNascita = datetime.date(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
-        codiceFiscale = self.input_lines["codiceFiscale"].text()
-        luogoDiNascita = self.input_lines["luogoDiNascita"].text()
-        provinciaDiNascita = self.input_lines["provinciaDiNascita"].text()
-        email = self.input_lines["email"].text()
-        telefono = self.input_lines["telefono"].text()
+        return input_layout
 
-        temp_condomino = Condomino()
-        msg, condomino = temp_condomino.aggiungiCondomino(nome, cognome, residenza, dataDiNascita, codiceFiscale,
-                                                          luogoDiNascita, provinciaDiNascita,
-                                                          email, telefono)
+    def aggiungiUnitaImmobiliare(self):
+        pass
 
-        titolo = self.input_lines["titolo"].currentText()
+    def seleziona_tipo_spesa(self):
+        self.tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
 
-        self.unitaImmobiliare.addCondomino(condomino, titolo)
-
-        print("aggiunta in corso...")
-
-        return msg
-
-    def terminaAssegnazione(self):
-        msg = self.aggiungiCondomino()
-        print("stiamo per uscire", msg)
-        print("f di callback", self.callback)
-        self.callback(msg)
-        self.close()
-
-    def altroCondomino(self):
-        msg = self.aggiungiCondomino()
-        self.close()
-        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)
-        self.vista_nuovo_condomino.show()
+    def nuovo_tipo_spesa(self):
+        #self.new_tipo_spesa = VistaCreateTipoSpesa()
+        self.new_tipo_spesa.show()
 
     def reset(self):
         for input_line in self.input_lines.values():
