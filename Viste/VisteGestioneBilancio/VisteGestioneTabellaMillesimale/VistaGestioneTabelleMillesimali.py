@@ -21,7 +21,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
         self.table_tabellaMillesimale = self.create_table()
         action_layout.addWidget(self.table_tabellaMillesimale)
-
+        self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.able_button)
+        self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.recupero_tabella)
         button_layout = QVBoxLayout()
         self.button_list = {}
 
@@ -125,6 +126,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print("create tabella")
 
         return table
+    def recupero_tabella(self):
+        row = self.table_tabellaMillesimale.currentItem().column()
+        selected_tabella = self.table_tabellaMillesimale.horizontalHeader(row)
+        nome_tabella = selected_tabella.text()
+        print(nome_tabella)
     def go_add_tabellaMillesimale(self):
         self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
         self.vista_nuovo_immobile.show()
@@ -153,7 +159,9 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
 
     def able_button(self):
-        if not self.tabelle_millesimali.selectedIndexes():
+        print("ciao")
+        print(self.tabelle_millesimali.selectionModel().selectedColumns())
+        if not bool(self.tabelle_millesimali.selectionModel().selectedColumns()):
             self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
         else:
