@@ -23,14 +23,11 @@ class VistaCreateCondomino(QWidget):
         self.input_lines = {}
         self.input_errors = {}
         self.buttons = {}
-        N = 0
-        N += 1
-        print(N)
+
         lbl_frase = QLabel("Inserisci i dati per l'aggiunta di un nuovo condomino: (* Campi obbligatori)")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
-        N += 1
-        print(N)
+
         main_layout.addWidget(lbl_frase)
 
         existing_condomino_layout = QHBoxLayout()
@@ -197,11 +194,8 @@ class VistaCreateCondomino(QWidget):
         self.vista_nuovo_condomino.show()
 
     def add_condomino_esistente(self):
-        print(self.lbl_condomino_esistente.text().split(" (")[1].split(")"))
         condomino = Condomino.ricercaCondominoByCF(self.lbl_condomino_esistente.text().split(" (")[1].split(")")[0])
-        print(condomino, condomino.getDatiAnagraficiCondomino())
         titolo = self.input_lines["titolo"].currentText()
-        print(titolo)
 
         self.unitaImmobiliare.addCondomino(condomino, titolo)
 
@@ -265,11 +259,13 @@ class VistaCreateCondomino(QWidget):
                                 if self.input_lines['titolo'].currentIndex() > -1:
                                     self.lbl_condomino_esistente.setText(f"{condomino.cognome} {condomino.nome} ({condomino.codiceFiscale})")
                                     self.button_exist_stop.setDisabled(False)
+                                    self.error_exist.setVisible(False)
                                     if self.isIterable:
                                         self.button_exist_continue.setDisabled(False)
                                 else:
                                     self.lbl_condomino_esistente.setText(f"{condomino.cognome} {condomino.nome} ({condomino.codiceFiscale})")
                                     self.button_exist_stop.setDisabled(True)
+                                    self.error_exist.setVisible(True)
                                     if self.isIterable:
                                         self.button_exist_continue.setDisabled(True)
                             break
@@ -280,7 +276,6 @@ class VistaCreateCondomino(QWidget):
                             self.lbl_exist.setVisible(True)
                             self.lbl_condomino_esistente.setVisible(True)
                             self.button_exist_stop.setVisible(True)
-                            self.error_exist.setVisible(True)
                             if self.isIterable:
                                 self.button_exist_continue.setVisible(True)
                         else:
@@ -290,7 +285,6 @@ class VistaCreateCondomino(QWidget):
                         self.lbl_exist.setVisible(False)
                         self.lbl_condomino_esistente.setVisible(False)
                         self.button_exist_stop.setVisible(False)
-                        self.error_exist.setVisible(False)
                         if self.isIterable:
                             self.button_exist_continue.setVisible(False)
                 else:

@@ -1,3 +1,6 @@
+import os
+import webbrowser
+
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
@@ -6,8 +9,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListV
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaReadAssegnazione import VistaReadAssegnazione
 
@@ -191,7 +192,13 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.vista_dettaglio_assegnazione.show()
 
     def go_pdf_RegAn(self):
-        pass
+        pdf = GestoreRegistroAnagrafe.generaPDFRegistroAnagrafeCondominiale(self.immobile)
+        directory_files = os.path.dirname(os.path.abspath(__file__)).replace(
+            "Viste\\VisteRegistroAnagrafe\\VisteUnitaImmobiliari", "Dati\\pdf\\")
+        print(directory_files)
+
+        pdf.output(directory_files + self.immobile.sigla + "\\RegistroAnagrafeCondominiale.pdf")
+        webbrowser.open(directory_files + f"{self.immobile.sigla}\\RegistroAnagrafeCondominiale.pdf")
 
     def able_button(self):
         if not self.list_view_unitaImmobiliare.selectedIndexes():

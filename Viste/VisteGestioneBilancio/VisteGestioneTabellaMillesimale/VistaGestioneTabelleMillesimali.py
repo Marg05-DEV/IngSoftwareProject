@@ -63,27 +63,14 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print("crazione tabella")
         table = QTableWidget()
         self.unitaImmobiliari_immobile = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
-        table.setRowCount(len(self.unitaImmobiliari_immobile)+1)
         self.tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
+        table.setRowCount(len(self.unitaImmobiliari_immobile))
         table.setColumnCount(len(self.tabelle_millesimali))
-
-        print(self.unitaImmobiliari_immobile)
-        print(self.tabelle_millesimali)
-        print(self.unitaImmobiliari_immobile.values())
-        list_unitaImmobiliare = {}
-
-        for unita in self.unitaImmobiliari_immobile.values():
-            for key, value in unita.getInfoUnitaImmobiliare()["condomini"].items():
-                list_unitaImmobiliare[key] = value
-
-        print(list_unitaImmobiliare)
-        print(self.unitaImmobiliari_immobile)
         i = 0
         for unita in self.unitaImmobiliari_immobile.values():
             text_condomini = ""
             condomini = []
             print(unita.condomini.keys())
-            item = QStandardItem()
             for condo in unita.condomini.keys():
                 condomino = Condomino.ricercaCondominoByCF(condo)
                 nome_condo = f"{condomino.nome} {condomino.cognome}"
@@ -93,44 +80,33 @@ class VistaGestioneTabelleMillesimali(QWidget):
                 condomini.append(stringa)
             print(condomini)
             cont = 0
-            for i in condomini:
-                print(type(i))
-                if not cont:
-                    text_condomini = i
-                else:
-                    text_condomini = text_condomini + ",\n" + i
-                cont += 1
-            print("lista no problem")
-            item_text = f"Scala:{unita.scala} Int:{unita.interno}\n Condomini:{text_condomini}"
-            print(item_text)
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            print("ciao1")
+            if condomini:
+                for condomino in condomini:
+                    if not cont:
+                        text_condomini = condomino
+                    else:
+                        text_condomini = text_condomini + ",\n" + condomino
+                    cont += 1
+            else:
+                text_condomini = "Nessun condomino"
+
+            if unita.tipoUnitaImmobiliare == "Appartamento":
+                item_text = f"Scala:{unita.scala} Int:{unita.interno}\n Condomini:{text_condomini}"
+            else:
+                item_text = f"Tipo unità immobiliare:{unita.tipoUnitaImmobiliare}\n Condomini:{text_condomini}"
             item_table = QTableWidgetItem(item_text)
-            print("ciao2")
             item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-            print("ciao3")
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            print("ciao4")
             table.setVerticalHeaderItem(i, item_table)
-            print("ciao5")
             i += 1
         print(self.tabelle_millesimali)
+
         i = 0
         for tabelle in self.tabelle_millesimali.values():
             print("miao")
             print(tabelle.nome)
-            item = QStandardItem()
             item_text = f"{tabelle.nome}\n {tabelle.descrizione}"
             print(item_text)
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
             item_table = QTableWidgetItem(item_text)
             item_table.setFlags(Qt.ItemFlag.NoItemFlags)
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -141,10 +117,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.horizontalHeader().setStretchLastSection(True)
-        table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
-        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        print("create tabella")
+        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         table.resizeRowsToContents()
+        table.resizeColumnsToContents()
+        header = table.verticalHeader()
+        table.setMaximumHeight(header.length())
         print("create tabella")
         return table
 

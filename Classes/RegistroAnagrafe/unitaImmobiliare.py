@@ -1,6 +1,7 @@
 
 import os.path
 import pickle
+from datetime import datetime
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 #from immobile import Immobile
@@ -22,6 +23,7 @@ class UnitaImmobiliare:
         self.immobile = 0
         self.scala = 0
         self.ZC = ""
+        #self.scadenza = datetime.date(year=1970, month=1, day=1)
 
 
     def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):
@@ -192,23 +194,9 @@ class UnitaImmobiliare:
                             break
                 else:
                     print("nessun condomino da rimuovere")
-                with open(nome_file, "wb") as f:
-                    print("fine")
-                    pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-                    print("firn")
+            with open(nome_file, "wb") as f:
+                pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
 
-    def getCondominiAssociati(self):
-        condomini_associati = []
-        print("ci sono")
-        print("condomini: ", self.condomini)
-        print(self.codice)
-        ui = self.ricercaUnitaImmobiliareByCodice(self.codice)
-        if ui.condomini:
-            print("chiavi: ", ui.condomini.keys())
-            return list(ui.condomini.keys())
-        else:
-            print("Non ci sono condomini associati")
-            return []
 
 
