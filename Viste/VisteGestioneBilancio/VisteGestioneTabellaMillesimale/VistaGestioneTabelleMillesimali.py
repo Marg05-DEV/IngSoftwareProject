@@ -46,7 +46,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         main_layout.addLayout(message_layout)
 
         self.setLayout(main_layout)
-        self.resize(1200, 800)
+        self.resize(1200, 650)
         self.setWindowTitle("Gestione Immobile")
 
     def create_button(self, testo, action, disabled=False):
@@ -156,7 +156,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print(codice_tabella)
         self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella, callback=self.callback)
         self.vista_dettaglio_tabella_millesimale.show()
-
 
     def able_button(self, logicalIndex):
         print("ciao")

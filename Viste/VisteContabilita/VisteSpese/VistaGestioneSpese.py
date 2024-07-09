@@ -20,8 +20,8 @@ class VistaGestioneSpese(QWidget):
 
         find_layout = QGridLayout()
 
-        searchbar = QLineEdit()
-        searchbar.setPlaceholderText("Ricerca Spesa")
+        self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Ricerca Spesa")
         self.searchType = QComboBox()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
         self.searchType.activated.connect(self.debugComboBox1)
