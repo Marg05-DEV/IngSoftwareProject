@@ -42,7 +42,6 @@ class TabellaMillesimale:
     @staticmethod
     def getAllTabelleMillesimali():
         if os.path.isfile(nome_file):
-            print("esiste")
             with open(nome_file, "rb") as f:
                 try:
                     tabelleMillesimali = dict(pickle.load(f))
@@ -50,23 +49,16 @@ class TabellaMillesimale:
                     tabelleMillesimali = {}
                 return tabelleMillesimali
         else:
-            print("non esiste")
             return {}
 
     @staticmethod
     def getAllTabelleMillesimaliByImmobile(immobile):
         tabelleMillesimali = TabellaMillesimale.getAllTabelleMillesimali()
-        print("ciao bastardo")
-        print(tabelleMillesimali)
         if tabelleMillesimali:
-            print("i'm back")
             tabellaMillesimaleByImmobile = {}
             for key, value in tabelleMillesimali.items():
-                print("value immobile: ", value.immobile.id)
                 if value.immobile.id == immobile.id:
-                    print("sescesce")
                     tabellaMillesimaleByImmobile[key] = value
-                print(tabellaMillesimaleByImmobile)
             return tabellaMillesimaleByImmobile
         else:
             return {}
@@ -102,3 +94,10 @@ class TabellaMillesimale:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
         return msg
 
+    def addTipoSpesa(self, tipoSpesa):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                tabelleMillesimali = dict(pickle.load(f))
+                tabelleMillesimali[self.codice].tipologiaSpesa = tipoSpesa.nome
+        with open(nome_file, "wb") as f:
+            pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)

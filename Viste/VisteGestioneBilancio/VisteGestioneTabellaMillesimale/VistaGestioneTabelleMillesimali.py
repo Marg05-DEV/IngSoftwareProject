@@ -21,15 +21,14 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
         self.table_tabellaMillesimale = self.create_table()
         action_layout.addWidget(self.table_tabellaMillesimale)
-        self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.able_button)
-        self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.recupero_tabella)
+
         button_layout = QVBoxLayout()
         self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Tabella Millesimale", self.go_add_tabellaMillesimale))
-        button_layout.addWidget(self.create_button("Visualizza Tabella Millesimale", self.go_read_tabellaMillesimale,True))
+        button_layout.addWidget(self.create_button("Visualizza Tabella Millesimale", self.go_read_tabellaMillesimale, True))
         button_layout.addWidget(self.create_button("Rimuovi Tabella Millesimale", self.go_delete_tabellaMillesimale, True))
-
+        self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.able_button)
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
@@ -39,9 +38,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
-        print("ciao1")
 
-        print("ciao2")
         message_layout.addWidget(self.msg)
         action_layout.addLayout(button_layout)
 
@@ -118,6 +115,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.horizontalHeader().setStretchLastSection(True)
+        table.verticalHeader().setSectionsClickable(False)
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         table.resizeRowsToContents()
         table.resizeColumnsToContents()
@@ -126,42 +124,47 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print("create tabella")
 
         return table
-    def recupero_tabella(self):
-        row = self.table_tabellaMillesimale.currentItem().column()
-        selected_tabella = self.table_tabellaMillesimale.horizontalHeader(row)
-        nome_tabella = selected_tabella.text()
-        print(nome_tabella)
+
     def go_add_tabellaMillesimale(self):
         self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
         self.vista_nuovo_immobile.show()
 
     def go_read_tabellaMillesimale(self):
-        item = None
-        for index in self.tabelle_millesimali.selectedIndexes():
-            item = self.table_tabellaMillesimale.model().itemFromIndex(index)
-            print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_immobile = VistaReadTabellaMillesimale(sel_immobile, callback=self.callback)
-        self.vista_dettaglio_immobile.show()
+        print(self.logicalIndex)
+        item = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
+        print(item)
+        tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimali()
+        print(tabelle_millesimali.values())
+        codice_tabella = 0
+        for tabelle in tabelle_millesimali.values():
+            if item.text().split("\n")[0] == tabelle.nome:
+                codice_tabella = tabelle.codice
+        print(codice_tabella)
+        self.vista_dettaglio_tabella_millesimale = VistaReadTabellaMillesimale(codice_tabella, callback=self.callback)
+        self.vista_dettaglio_tabella_millesimale.show()
 
     def go_delete_tabellaMillesimale(self):
-        item = None
-        for index in self.tabelle_millesimali.selectedIndexes():
-            item = self.tabelle_millesimali.model().itemFromIndex(index)
-            print(item.text())
-            print("ciao")
-            print(int(item.text().split(" ")[0]))
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        print(sel_immobile, ": ", sel_immobile.getInfoImmobile())
-        self.vista_modifica_immobile = VistaDeleteTabellaMillesimale(sel_immobile, callback=self.callback)
-        self.vista_modifica_immobile.show()
+        print(self.logicalIndex)
+        item = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
+        print(item)
+        tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimali()
+        print(tabelle_millesimali.values())
+        codice_tabella = 0
+        for tabelle in tabelle_millesimali.values():
+            if item.text().split("\n")[0] == tabelle.nome:
+                codice_tabella = tabelle.codice
+        print(codice_tabella)
+        self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella, callback=self.callback)
+        self.vista_dettaglio_tabella_millesimale.show()
 
 
-
-    def able_button(self):
+    def able_button(self, logicalIndex):
         print("ciao")
-        print(self.tabelle_millesimali.selectionModel().selectedColumns())
-        if not bool(self.tabelle_millesimali.selectionModel().selectedColumns()):
+        print(logicalIndex)
+        self.logicalIndex = logicalIndex
+        header = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
+        print(header.text().split("\n")[0])
+        if not header:
             self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
         else:

@@ -172,7 +172,6 @@ class UnitaImmobiliare:
                 unitaImmobiliari[self.codice].condomini[condomino.codiceFiscale] = titolo
         with open(nome_file, "wb") as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
-        print("oh si")
 
     def modificaTitoloCondomino(self, condomino, titolo):
         if os.path.isfile(nome_file):
