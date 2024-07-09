@@ -9,25 +9,25 @@ from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 class VistaReadTabellaMillesimale(QWidget):
 
-    def __init__(self, sel_condomino, callback, fromUnitaImmobiliare, unita_immobiliare=None):
+    def __init__(self, codice_tabella, callback):
         super(VistaReadTabellaMillesimale, self).__init__()
         print("dentro a read condomino 1")
-        self.sel_condomino = sel_condomino
-        if fromUnitaImmobiliare:
-            self.unita_immobiliare = unita_immobiliare
+        #self.codice_tabella = codice_tabella
         self.callback = callback
+        tutte_le_tabelle = list(TabellaMillesimale.getAllTabelleMillesimali().values())
+        print(tutte_le_tabelle)
+        nome_tabella_millesimale = ""
+        for i in tutte_le_tabelle:
+            print(i.codice)
+            if i.codice == codice_tabella:
+                self.tabella_millesimale = i
+
+
         print("dentro a read condomino 2")
         main_layout = QVBoxLayout()
 
         main_layout.addLayout(self.pair_label("Nome", "nome"))
-        main_layout.addLayout(self.pair_label("Cognome", "cognome"))
-        main_layout.addLayout(self.pair_label("Codice Fiscale", "codiceFiscale"))
-        main_layout.addLayout(self.pair_label("Luogo di Nascita", "luogoDiNascita"))
-        main_layout.addLayout(self.pair_label("Provincia di Nascita", "provinciaDiNascita"))
-        main_layout.addLayout(self.pair_label("Data di Nascita", "dataDiNascita"))
-        main_layout.addLayout(self.pair_label("Residenza", "residenza"))
-        main_layout.addLayout(self.pair_label("Telefono", "telefono"))
-        main_layout.addLayout(self.pair_label("Email", "email"))
+        main_layout.addLayout(self.pair_label("Descrizione", "descrizione"))
 
         if fromUnitaImmobiliare:
             titolo_layout = QHBoxLayout()
