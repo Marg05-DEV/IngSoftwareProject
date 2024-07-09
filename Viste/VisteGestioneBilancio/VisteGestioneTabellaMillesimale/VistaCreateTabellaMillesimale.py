@@ -1,7 +1,7 @@
 import datetime
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QIntValidator, QStandardItemModel
+from PyQt6.QtGui import QIntValidator, QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, \
     QSizePolicy, QDateEdit, QComboBox, QListView, QCompleter
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -101,19 +101,12 @@ class VistaCreateTabellaMillesimale(QWidget):
         input_line = QLineEdit()
 
         input_line.textChanged.connect(self.input_validation)
-        print("ciao2")
         self.input_lines[index] = input_line
-        print("ciao4")
         self.input_errors[index] = error
-        print("ciao5")
         pair_layout.addWidget(label)
-        print("ciao6")
         pair_layout.addWidget(input_line)
-        print("ciao7")
         input_layout.addWidget(error)
-        print("ciao8")
         input_layout.addLayout(pair_layout)
-        print("ciao9")
         return input_layout
 
     def update_list(self):
@@ -159,12 +152,26 @@ class VistaCreateTabellaMillesimale(QWidget):
             input_line.clear()
 
     def input_validation(self):
-        tabelleMillesimale = TabellaMillesimale.getAllTabelleMillesimali()
+        tabelleMillesimale = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
         num_errors = 0
         num_writed_lines = 0
         required_fields = ['nome', 'descrizione']
         unique_fields = ['nome']
         there_is_unique_error = {}
+        there_is_unique_pair_error = False
+
+        for tabelle in tabelleMillesimale.values():
+            if self.input_lines['nome'].text() == tabelle.nome:
+                there_is_unique_pair_error = True
+                break
+        if there_is_unique_pair_error:
+            self.input_errors['nome'].setText("Nome della tabella millesimale già esistente")
+            self.input_errors["descrizione"].setText("")
+            self.input_errors['nome'].setVisible(True)
+            self.input_errors['descrizione'].setVisible(True)
+        else:
+            self.input_errors['nome'].setVisible(False)
+            self.input_errors['descrizione'].setVisible(False)
 
         for field in required_fields:
             if self.input_lines[field].text():
@@ -185,7 +192,7 @@ class VistaCreateTabellaMillesimale(QWidget):
             else:
                 self.input_errors[field].setVisible(False)
 
-        if (num_errors > 0 or num_writed_lines < len(required_fields)) and self.search_text:
+        if num_errors > 0 or num_writed_lines < len(required_fields) or not self.tipi_spesa:
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)
         else:
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(False)

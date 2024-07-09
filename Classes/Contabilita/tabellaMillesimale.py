@@ -78,6 +78,7 @@ class TabellaMillesimale:
         self.millesimi = {}
         del self
         return "Tabella millesimale rimossa"
+
     def modificaTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile, millesimi):
         msg = "La tabella millesimale dell'immobile " + immobile.denominazione + " è stata modificata"
         if os.path.isfile(nome_file):
@@ -93,11 +94,3 @@ class TabellaMillesimale:
         with open(nome_file, "wb") as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
         return msg
-
-    def addTipoSpesa(self, tipoSpesa):
-        if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
-                tabelleMillesimali = dict(pickle.load(f))
-                tabelleMillesimali[self.codice].tipologiaSpesa = tipoSpesa.nome
-        with open(nome_file, "wb") as f:
-            pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)

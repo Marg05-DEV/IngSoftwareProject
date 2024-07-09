@@ -158,7 +158,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.vista_dettaglio_tabella_millesimale.show()
 
     def able_button(self, logicalIndex):
-        print("ciao")
         print(logicalIndex)
         self.logicalIndex = logicalIndex
         header = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)

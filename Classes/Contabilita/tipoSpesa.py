@@ -67,19 +67,20 @@ class TipoSpesa:
                 return tipoSpese
         else:
             return {}
+
     @staticmethod
-    def getTipoSpesaByUi(tabella_millesimale):
+    def getTipoSpesaByTabellaMillesimale(tabella_millesimale):
         tipo_spesa = TipoSpesa.getAllTipoSpesa()
         if tipo_spesa:
-            tipoSpesaByUi ={}
+            tipoSpesaByTabellaMillesimale ={}
             for key, value in tipo_spesa.items():
                 if tabella_millesimale.tipologiaSpesa:
                     for tipo in tabella_millesimale.tipologiaSpesa:
                         if key.codice == tipo.codice:
-                            tipoSpesaByUi[key] = value
+                            tipoSpesaByTabellaMillesimale[key] = value
                 else:
                     return {}
-            return tipoSpesaByUi
+            return tipoSpesaByTabellaMillesimale
         else:
             return {}
 

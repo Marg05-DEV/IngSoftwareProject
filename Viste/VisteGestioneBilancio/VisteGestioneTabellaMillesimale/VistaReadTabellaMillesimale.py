@@ -29,32 +29,14 @@ class VistaReadTabellaMillesimale(QWidget):
         main_layout.addLayout(self.pair_label("Nome", "nome"))
         main_layout.addLayout(self.pair_label("Descrizione", "descrizione"))
 
-        if fromUnitaImmobiliare:
-            titolo_layout = QHBoxLayout()
 
-            lbl_desc = QLabel("Titolo nell'unità immobiliare: ")
-            lbl_content = QLabel(str(self.unita_immobiliare.condomini[self.sel_condomino.codiceFiscale]))
+        self.msg = QLabel("Non ci sono condomini assegnati")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
 
-            titolo_layout.addWidget(lbl_desc)
-            titolo_layout.addWidget(lbl_content)
-
-            main_layout.addLayout(titolo_layout)
-        else:
-            main_layout.addWidget(self.create_button("Modifica Dati Anagrafici Condomino", self.updateCondomino))
-
-            lbl_frase = QLabel("Immobili a cui il condomino è assegnato:")
-            lbl_frase.setStyleSheet("font-weight: bold;")
-            main_layout.addWidget(lbl_frase)
-
-            self.list_view_immobili = QListView()
-
-            self.msg = QLabel("Non ci sono condomini assegnati")
-            self.msg.setStyleSheet("color: red; font-weight: bold;")
-            self.msg.hide()
-
-            main_layout.addWidget(self.list_view_immobili)
-            main_layout.addWidget(self.msg)
-            self.update_list()
+        main_layout.addWidget()
+        main_layout.addWidget(self.msg)
+        self.update_list()
 
         self.setLayout(main_layout)
         self.resize(600, 400)
