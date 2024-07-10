@@ -125,7 +125,6 @@ class UnitaImmobiliare:
 
     @staticmethod
     def ricercaUnitaImmobiliareByCodice(codice):
-        nome_file = 'Dati/UnitaImmobiliari.pickle'
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
@@ -134,7 +133,6 @@ class UnitaImmobiliare:
                 for cod_ui in unitaImmobiliari.keys():
                     print(cod_ui)
                     if cod_ui == codice:
-                        print("dentor")
                         return unitaImmobiliari[cod_ui]
                 return None
         else:

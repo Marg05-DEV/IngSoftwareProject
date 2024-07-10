@@ -2,6 +2,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QLabel, QWidget, QTableWidget, QPushButton, \
     QSizePolicy
 
+from Classes.Contabilita.rata import Rata
 
 class VistaGestioneRate(QWidget):
 
@@ -11,7 +12,7 @@ class VistaGestioneRate(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QHBoxLayout()
-
+        
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
@@ -21,56 +22,54 @@ class VistaGestioneRate(QWidget):
 
         find_layout.addWidget(self.searchbar)
         find_layout.addWidget(self.searchType)
+        print("ciao")
+        sort_layout = QHBoxLayout()
 
         sortLabel = QLabel("Ordina per:")
         self.sortType = QComboBox()
 
         self.sortType.addItems(
-            ["Denominazione A -> Z", "Denominazione Z -> A", "Sigla A -> Z", "Sigla Z -> A", "Codice crescente",
-             "Codice decrescente"])
+            ["Ultimo inserimento", "Data di pagamento", "Denominazione Immobile A -> Z", "Denominazione Immobile Z -> A", "Nominativo versante A -> Z", "Nominativo versante Z -> A"])
         self.sortType.activated.connect(self.avvia_ordinamento)
-        find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
-        find_layout.addWidget(self.searchType, 0, 3)
-        find_layout.addWidget(sortLabel, 1, 0)
-        find_layout.addWidget(self.sortType, 1, 1)
+        sort_layout.addWidget(sortLabel)
+        sort_layout.addWidget(self.sortType)
+        print("ciao")
+        self.table_rate = QTableWidget()
 
-        action_layout = QHBoxLayout()
-
-        self.list_view_immobili = QTableWidget()
-
-        button_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Immobile", self.go_Create_immobile))
-        button_layout.addWidget(self.create_button("Visualizza Immobile", self.go_Read_immobile,True))
-        button_layout.addWidget(self.create_button("Modifica Immobile", self.go_Update_immobile, True))
-        button_layout.addWidget(self.create_button("Elimina Immobile", self.go_Delete_immobile, True))
-
-        action_layout.addWidget(self.list_view_immobili)
-
+        button_layout.addWidget(self.create_button("Aggiungi Rata", self.goCreateRata))
+        button_layout.addWidget(self.create_button("Visualizza Rata", self.goReadRata,True))
+        button_layout.addWidget(self.create_button("Modifica Rata", self.goUpdateRata, True))
+        button_layout.addWidget(self.create_button("Elimina Rata", self.goDeleteRata, True))
+        button_layout.addWidget(self.create_button("Visualizza Ricevuta", self.goReadRicevuta, True))
+        print("ciao")
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
-
+        print("ciao")
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
-
-        self.lista_immobili = []
-        self.update_list()
+        print("ciao")
+        self.lista_rate = []
+        self.update_table()
 
         message_layout.addWidget(self.msg)
-        action_layout.addLayout(button_layout)
-
+        print("ciao")
         main_layout.addLayout(find_layout)
-        main_layout.addLayout(action_layout)
+        main_layout.addLayout(sort_layout)
+        main_layout.addWidget(self.table_rate)
         main_layout.addLayout(message_layout)
-
+        main_layout.addLayout(button_layout)
+        print("ciao")
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Immobile")
+        print("ciao")
+        self.setWindowTitle("Gestione Rate")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -81,18 +80,23 @@ class VistaGestioneRate(QWidget):
         return button
 
     def avvia_ricerca(self):
+        """
         sorting, desc = self.ordina_lista(True)
-        self.update_list(sorting, desc, True)
+        self.update_table(sorting, desc, True)
+        """
 
     def avvia_ordinamento(self):
+        """
         if self.searchbar.text():
             sorting, desc = self.ordina_lista(True)
-            self.update_list(sorting, desc, True)
+            self.update_table(sorting, desc, True)
         else:
             self.ordina_lista(False)
+        """
 
 
     def ordina_lista(self, fromRicerca=False):
+        """
         if self.sortType.currentIndex() == 0:
             if fromRicerca:
                 return Immobile.ordinaImmobileByDenominazione, False
@@ -119,8 +123,12 @@ class VistaGestioneRate(QWidget):
             self.update_list(Immobile.ordinaImmobileByCodice, True)
         else:
             print("Altro")
+        """
+        pass
 
-    def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
+
+    def update_table(self): #, sorting_function=Rata.ordinaImmobileByDenominazione, decr=False, searchActivated=False ):
+        """
         self.lista_immobili = list(Immobile.getAllImmobili().values())
         print(Immobile.getAllImmobili().values())
         print(self.lista_immobili)
@@ -160,13 +168,18 @@ class VistaGestioneRate(QWidget):
         self.selectionModel = self.list_view_immobili.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
         print(type(self.selectionModel))
+        """
+        pass
 
-
-    def go_Create_immobile(self):
+    def goCreateRata(self):
+        """
         self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.callback)
         self.vista_nuovo_immobile.show()
+        """
+        pass
 
-    def go_Read_immobile(self):
+    def goReadRata(self):
+        """
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -174,8 +187,11 @@ class VistaGestioneRate(QWidget):
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile, callback=self.callback)
         self.vista_dettaglio_immobile.show()
+        """
+        pass
 
-    def go_Update_immobile(self):
+    def goUpdateRata(self):
+        """
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -186,8 +202,11 @@ class VistaGestioneRate(QWidget):
         print(sel_immobile, ": ", sel_immobile.getInfoImmobile())
         self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
         self.vista_modifica_immobile.show()
+        """
+        pass
 
-    def go_Delete_immobile(self):
+    def goDeleteRata(self):
+        """
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
@@ -195,17 +214,24 @@ class VistaGestioneRate(QWidget):
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.callback)
         self.vista_elimina_immobile.show()
+        """
+        pass
 
+    def goReadRicevuta(self):
+        pass
 
     def able_button(self):
-        if not self.list_view_immobili.selectedIndexes():
-            self.button_list["Visualizza Immobile"].setDisabled(True)
-            self.button_list["Modifica Immobile"].setDisabled(True)
-            self.button_list["Elimina Immobile"].setDisabled(True)
+        if not self.list_view_rate.selectedIndexes():
+            self.button_list["Visualizza Rata"].setDisabled(True)
+            self.button_list["Modifica Rata"].setDisabled(True)
+            self.button_list["Elimina Rata"].setDisabled(True)
+            self.button_list["Visualizza Ricevuta"].setDisabled(True)
         else:
-            self.button_list["Visualizza Immobile"].setDisabled(False)
-            self.button_list["Modifica Immobile"].setDisabled(False)
-            self.button_list["Elimina Immobile"].setDisabled(False)
+            self.button_list["Visualizza Rata"].setDisabled(False)
+            self.button_list["Modifica Rata"].setDisabled(False)
+            self.button_list["Elimina Rata"].setDisabled(False)
+            self.button_list["Visualizza Ricevuta"].setDisabled(False)
+
 
     def callback(self, msg):
         self.button_list["Visualizza Immobile"].setDisabled(True)

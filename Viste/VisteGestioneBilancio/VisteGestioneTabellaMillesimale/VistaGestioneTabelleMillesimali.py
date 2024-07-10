@@ -19,7 +19,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
         main_layout = QVBoxLayout()
         action_layout = QHBoxLayout()
 
-        self.table_tabellaMillesimale = self.create_table()
+        self.table_tabellaMillesimale = QTableWidget()
+        self.update_table()
         action_layout.addWidget(self.table_tabellaMillesimale)
 
         button_layout = QVBoxLayout()
@@ -57,13 +58,12 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.button_list[testo] = button
         return button
 
-    def create_table(self):
+    def update_table(self):
         print("crazione tabella")
-        table = QTableWidget()
         self.unitaImmobiliari_immobile = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
         self.tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
-        table.setRowCount(len(self.unitaImmobiliari_immobile))
-        table.setColumnCount(len(self.tabelle_millesimali))
+        self.table_tabellaMillesimale.setRowCount(len(self.unitaImmobiliari_immobile))
+        self.table_tabellaMillesimale.setColumnCount(len(self.tabelle_millesimali))
         i = 0
         for unita in self.unitaImmobiliari_immobile.values():
             text_condomini = ""
@@ -95,7 +95,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
             item_table = QTableWidgetItem(item_text)
             item_table.setFlags(Qt.ItemFlag.NoItemFlags)
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            table.setVerticalHeaderItem(i, item_table)
+            self.table_tabellaMillesimale.setVerticalHeaderItem(i, item_table)
             i += 1
         print(self.tabelle_millesimali)
 
@@ -108,19 +108,19 @@ class VistaGestioneTabelleMillesimali(QWidget):
             item_table = QTableWidgetItem(item_text)
             item_table.setFlags(Qt.ItemFlag.NoItemFlags)
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            table.setHorizontalHeaderItem(i, item_table)
+            self.table_tabellaMillesimale.setHorizontalHeaderItem(i, item_table)
             i += 1
 
         print("create tabella")
-        table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        table.horizontalHeader().setStretchLastSection(True)
-        table.verticalHeader().setSectionsClickable(False)
-        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        table.resizeRowsToContents()
-        table.resizeColumnsToContents()
-        header = table.verticalHeader()
-        table.setMaximumHeight(header.length())
+        self.table_tabellaMillesimale.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table_tabellaMillesimale.horizontalHeader().setStretchLastSection(True)
+        self.table_tabellaMillesimale.verticalHeader().setSectionsClickable(False)
+        self.table_tabellaMillesimale.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.table_tabellaMillesimale.resizeRowsToContents()
+        self.table_tabellaMillesimale.resizeColumnsToContents()
+        header = self.table_tabellaMillesimale.verticalHeader()
+        self.table_tabellaMillesimale.setMaximumHeight(header.height())
         print("create tabella")
 
         return self.table_tabellaMillesimale
@@ -170,6 +170,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(False)
 
     def callback(self, msg):
+        print(" callback chiamata", msg)
         self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
         self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
         self.update_table()

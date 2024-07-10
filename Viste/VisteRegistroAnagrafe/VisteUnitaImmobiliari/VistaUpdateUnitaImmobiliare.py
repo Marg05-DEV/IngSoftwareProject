@@ -200,7 +200,7 @@ class VistaUpdateUnitaImmobiliare(QWidget):
 
         for unita in unitaImmobiliari.values():
             if not unita.codice == self.sel_unitaImmobiliare.codice:
-                if scala == str(unita.interno) and interno == str(unita.scala):
+                if scala == unita.scala and interno == unita.interno:
                     there_is_unique_pair_error = True
                     break
 

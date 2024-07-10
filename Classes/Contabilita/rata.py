@@ -9,20 +9,20 @@ class Rata:
     saldoCassa = 0
 
     def __init__(self):
-        self.codice = 0
-        self.dataPagamento = datetime.datetime(year=1970, month=1, day=1)
+        self.codice = 1
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
         self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = None
+        self.versante = ""
 
 
 
-    def aggiungiRata(self, codice, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare):
+    def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
         Rata.numRateRegistrate += 1
-        self.codice = codice
         self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.importo = importo
@@ -30,12 +30,16 @@ class Rata:
         self.pagata = pagata
         self.tipoPagamento = tipoPagamento
         self.unitaImmobiliare = unitaImmobiliare
+        self.versante = versante
 
         rate = {}
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = dict(pickle.load(f))
-        rate[codice] = self
+                if rate.keys():
+                    print(max(rate.keys()))
+                    self.codice = max(rate.keys()) + 1
+        rate[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
 

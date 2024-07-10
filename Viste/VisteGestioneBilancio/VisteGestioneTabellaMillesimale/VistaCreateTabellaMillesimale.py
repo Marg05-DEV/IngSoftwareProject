@@ -40,11 +40,9 @@ class VistaCreateTabellaMillesimale(QWidget):
         action_layout2 = QHBoxLayout()
         completer_list = sorted([item.nome for item in TipoSpesa.getAllTipoSpesa().values()])
         print(completer_list)
-        self.searchbar = QLineEdit()
-        self.searchbar.setPlaceholderText("Ricerca tipo spesa")
-        self.tipoSpesa_completer = QCompleter(completer_list)
-        self.tipoSpesa_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.searchbar.setCompleter(self.tipoSpesa_completer)
+        self.searchbar = QComboBox()
+        self.searchbar.setPlaceholderText("Ricerca un tipo di spesa ...")
+        self.searchbar.addItems(completer_list)
         print("sisi")
 
         lbl_frase1 = QLabel("Aggiungi un tipo di spesa esistente:")
@@ -126,9 +124,10 @@ class VistaCreateTabellaMillesimale(QWidget):
             self.msg.hide()
         print("ciao6")
         listview_model = QStandardItemModel(self.list_view_tipi_spesa)
+
         for tipi_spesa in self.tipi_spesa:
             item = QStandardItem()
-            tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(tipi_spesa)
+            tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipi_spesa)
             item_text = f"Nome:{tipo_spesa.nome}\nDescrizione:{tipo_spesa.descrizione}"
             item.setText(item_text)
             item.setEditable(False)
@@ -155,19 +154,23 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.close()
 
     def seleziona_tipo_spesa(self):
-        self.search_text = self.searchbar.text()
+        self.search_text = self.searchbar.currentText()
         tipo_spesa = None
         if self.search_text:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(self.search_text)
         if tipo_spesa:
             self.tipi_spesa.append(tipo_spesa.codice)
+        print(self.tipi_spesa)
         self.input_validation()
+        self.update_list()
 
     def nuovo_tipo_spesa(self):
-        self.tipo_spesa = VistaCreateTipoSpesa()
-        self.tipi_spesa.append(self.tipo_spesa)
+        pass
+        """
+        tipo_spesa = VistaCreateTipoSpesa()
         self.input_validation()
         self.tipo_spesa.show()
+        """
 
     def reset(self):
         for input_line in self.input_lines.values():

@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBoxLayout
 
+from Viste.VisteContabilita.VisteRate.VistaGestioneRate import VistaGestioneRate
 from Viste.VisteContabilita.VisteSpese.VistaGestioneSpese import VistaGestioneSpese
 
 
@@ -58,7 +59,9 @@ class VistaGestioneContabilita(QWidget):
         self.vista_spese.show()
 
     def goGestioneRate(self):
-        pass
+        self.vista_rate = VistaGestioneRate()
+        self.vista_rate.show()
+
     def goVisualizzaSaldoCassa(self):
        pass
 
