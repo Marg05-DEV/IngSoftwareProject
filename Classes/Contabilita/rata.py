@@ -2,11 +2,9 @@ import datetime
 import os.path
 import pickle
 
-nome_file= 'Dati/Rate.pickle'
+nome_file = 'Dati/Rate.pickle'
 
 class Rata:
-    numRateRegistrate = 0
-    saldoCassa = 0
 
     def __init__(self):
         self.codice = 1
@@ -19,10 +17,7 @@ class Rata:
         self.unitaImmobiliare = None
         self.versante = ""
 
-
-
     def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
-        Rata.numRateRegistrate += 1
         self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.importo = importo
@@ -43,6 +38,22 @@ class Rata:
         with open(nome_file, 'wb') as f:
             pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
 
+    def modificaRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                rate = dict(pickle.load(f))
+                rate[self.codice].dataPagamento = dataPagamento
+                rate[self.codice].descrizione = descrizione
+                rate[self.codice].importo = importo
+                rate[self.codice].numeroRicevuta = numeroRicevuta
+                rate[self.codice].pagata = pagata
+                rate[self.codice].tipoPagamento = tipoPagamento
+                rate[self.codice].unitaImmobiliare = unitaImmobiliare
+                rate[self.codice].versante = versante
+        with open(nome_file, "wb") as f:
+            pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
+        return "La rata è stata modificata"
+
     def rimuoviRata(self):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -58,9 +69,36 @@ class Rata:
         self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = None
+        self.versante = ""
         del self
 
-    def ricercaRataByDataPagamento(self, data):
+    def getInfoRata(self):
+        return {
+            "codice": self.codice,
+            "dataPagamento": self.dataPagamento,
+            "descrizione": self.descrizione,
+            "importo": self.importo,
+            "numeroRicevuta": self.numeroRicevuta,
+            "pagata": self.pagata,
+            "tipoPagamento": self.tipoPagamento,
+            "unitaImmobiliare": self.unitaImmobiliare,
+            "versante": self.versante
+        }
+
+    @staticmethod
+    def getAllRate():
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                try:
+                    rate = dict(pickle.load(f))
+                except EOFError:
+                    rate = {}
+                return rate
+        else:
+            return {}
+
+    @staticmethod
+    def ricercaRataByDataPagamento(data):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
@@ -71,7 +109,8 @@ class Rata:
         else:
             return "File non esistente"
 
-    def ricercaRataByCodice(self, codice):
+    @staticmethod
+    def ricercaRataByCodice(codice):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 rate = pickle.load(f)
@@ -82,41 +121,5 @@ class Rata:
         else:
             return "File non esistente"
 
-
-    def getRata(self):
-        if self.pagata:
-            pagata = "si"
-        else:
-            pagata = "no"
-
-        return {
-            "codice": self.codice,
-            "dataPagamento": self.dataPagamento,
-            "descrizione": self.descrizione,
-            "importo": self.importo,
-            "numeroRicevuta": self.numeroRicevuta,
-            "Pagata": pagata,
-            "tipoPagamento": self.tipoPagamento,
-            "unitaImmobiliare": self.unitaImmobiliare
-        }
-
-    def modificaRata(self, codice = None, dataPagamento = None, descrizione = None, importo = None, numeroRicevuta = None,
-                     pagata = None, tipoPagamento = None, unitaImmobiliare = None):
-        if codice is not None:
-            self.codice = codice
-        if dataPagamento is not None:
-            self.dataPagamento = dataPagamento
-        if descrizione is not None:
-            self.descrizione = descrizione
-        if importo is not None:
-            self.importo = importo
-        if numeroRicevuta is not None:
-            self.numeroRicevuta = numeroRicevuta
-        if pagata is not None:
-            self.pagata = pagata
-        if tipoPagamento is not None:
-            self.tipoPagamento = tipoPagamento
-        if unitaImmobiliare is not None:
-            self.unitaImmobiliare = unitaImmobiliare
 
 

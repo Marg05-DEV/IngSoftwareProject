@@ -1,8 +1,13 @@
-from PyQt6.QtCore import QTimer
+import datetime
+
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QLabel, QWidget, QTableWidget, QPushButton, \
-    QSizePolicy
+    QSizePolicy, QTableWidgetItem, QAbstractItemView
 
 from Classes.Contabilita.rata import Rata
+from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+
 
 class VistaGestioneRate(QWidget):
 
@@ -12,7 +17,7 @@ class VistaGestioneRate(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QHBoxLayout()
-        
+
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca...")
         self.searchType = QComboBox()
@@ -22,7 +27,7 @@ class VistaGestioneRate(QWidget):
 
         find_layout.addWidget(self.searchbar)
         find_layout.addWidget(self.searchType)
-        print("ciao")
+
         sort_layout = QHBoxLayout()
 
         sortLabel = QLabel("Ordina per:")
@@ -33,7 +38,7 @@ class VistaGestioneRate(QWidget):
         self.sortType.activated.connect(self.avvia_ordinamento)
         sort_layout.addWidget(sortLabel)
         sort_layout.addWidget(self.sortType)
-        print("ciao")
+
         self.table_rate = QTableWidget()
 
         button_layout = QHBoxLayout()
@@ -50,25 +55,24 @@ class VistaGestioneRate(QWidget):
         self.msg = QLabel("Messaggio")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
-        print("ciao")
+
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
-        print("ciao")
+
         self.lista_rate = []
         self.update_table()
 
         message_layout.addWidget(self.msg)
-        print("ciao")
+
         main_layout.addLayout(find_layout)
         main_layout.addLayout(sort_layout)
         main_layout.addWidget(self.table_rate)
         main_layout.addLayout(message_layout)
         main_layout.addLayout(button_layout)
-        print("ciao")
+
         self.setLayout(main_layout)
         self.resize(600, 400)
-        print("ciao")
         self.setWindowTitle("Gestione Rate")
 
     def create_button(self, testo, action, disabled=False):
@@ -80,148 +84,134 @@ class VistaGestioneRate(QWidget):
         return button
 
     def avvia_ricerca(self):
-        """
-        sorting, desc = self.ordina_lista(True)
-        self.update_table(sorting, desc, True)
-        """
+        self.update_table(True)
 
     def avvia_ordinamento(self):
-        """
-        if self.searchbar.text():
-            sorting, desc = self.ordina_lista(True)
-            self.update_table(sorting, desc, True)
-        else:
-            self.ordina_lista(False)
-        """
-
-
-    def ordina_lista(self, fromRicerca=False):
-        """
         if self.sortType.currentIndex() == 0:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByDenominazione, False
-            self.update_list()
+            self.table_rate.sortItems(0, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 1:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByDenominazione, True
-            self.update_list(decr=True)
+            self.table_rate.sortItems(3)
         elif self.sortType.currentIndex() == 2:
-            if fromRicerca:
-                return Immobile.ordinaImmobileBySigla, False
-            self.update_list(Immobile.ordinaImmobileBySigla)
+            self.table_rate.sortItems(1, Qt.SortOrder.AscendingOrder)
         elif self.sortType.currentIndex() == 3:
-            if fromRicerca:
-                return Immobile.ordinaImmobileBySigla, True
-            self.update_list(Immobile.ordinaImmobileBySigla, True)
+            self.table_rate.sortItems(1, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 4:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByCodice, False
-            self.update_list(Immobile.ordinaImmobileByCodice)
+            self.table_rate.sortItems(2, Qt.SortOrder.AscendingOrder)
         elif self.sortType.currentIndex() == 5:
-            if fromRicerca:
-                return Immobile.ordinaImmobileByCodice, True
-            self.update_list(Immobile.ordinaImmobileByCodice, True)
+            self.table_rate.sortItems(2, Qt.SortOrder.DescendingOrder)
         else:
             print("Altro")
-        """
-        pass
 
+    def update_table(self, searchActivated=False ):
+        self.rate = list(Rata.getAllRate().values())
 
-    def update_table(self): #, sorting_function=Rata.ordinaImmobileByDenominazione, decr=False, searchActivated=False ):
-        """
-        self.lista_immobili = list(Immobile.getAllImmobili().values())
-        print(Immobile.getAllImmobili().values())
-        print(self.lista_immobili)
+        print("update")
+
         if searchActivated and self.searchbar.text():
-            if self.searchType.currentIndex() == 0: # ricerca per denominazione
-                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.denominazione.upper()]
-            elif self.searchType.currentIndex() == 1: # ricerca per sigla
-                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.sigla.upper()]
-            elif self.searchType.currentIndex() == 2: # ricerca per codice
-                self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text() in str(item.codice)]
-
-        sorting_function(self.lista_immobili, decr)
-
-        if not self.lista_immobili:
+            print("in ricerca")
+            if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per denominazione
+                day, month, year = [int(x) for x in self.searchbar.text().split("/")]
+                data = datetime.date(year, month, day)
+                self.rate = [item for item in self.rate if data == item.dataPagamento]
+            elif self.searchType.currentIndex() == 1:  # ricerca per immobile
+                self.rate = [item for item in self.rate if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item.unitaImmobiliare).immobile)).denominazione.upper()]
+            elif self.searchType.currentIndex() == 2:  # ricerca per nome versante
+                self.rate = [item for item in self.rate if self.searchbar.text().upper() in item.versante.upper()]
+        print("cacca")
+        if not self.rate:
+            print("vuoto")
             if searchActivated:
-                self.msg.setText("Nessun immobile corrisponde alla ricerca")
+                self.msg.setText("Nessuna rata corrisponde alla ricerca")
             else:
-                self.msg.setText("Non sono presenti immobili")
+                self.msg.setText("Non sono presenti rate")
             self.msg.show()
         elif not self.timer.isActive():
             self.msg.hide()
 
-        listview_model = QStandardItemModel(self.list_view_immobili)
+        self.table_rate.setRowCount(len(self.rate))
+        self.table_rate.setColumnCount(7)
 
-        for immobile in self.lista_immobili:
-            item = QStandardItem()
-            item_text = f"{immobile.codice} {immobile.sigla} - {immobile.denominazione}"
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            listview_model.appendRow(item)
+        print("aiuto")
 
-        self.list_view_immobili.setModel(listview_model)
+        self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo"])
+        self.table_rate.verticalHeader().setVisible(False)
 
-        self.selectionModel = self.list_view_immobili.selectionModel()
-        self.selectionModel.selectionChanged.connect(self.able_button)
-        print(type(self.selectionModel))
-        """
-        pass
+        i = 0
+        for rata in self.rate:
+            print(rata, rata.getInfoRata())
+            self.table_rate.setItem(i, 0, QTableWidgetItem(str(rata.codice)))
+            print("i")
+            self.table_rate.setItem(i, 1, QTableWidgetItem((Immobile.ricercaImmobileById((UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)).immobile)).denominazione))
+            print("ii")
+            self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
+            print("iii")
+            self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%d/%m/%Y")))
+            print("iiii")
+            self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
+            self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
+            self.table_rate.setItem(i, 6, QTableWidgetItem(str(rata.importo)))
+            i += 1
+
+        print("qui")
+        self.table_rate.resizeColumnToContents(0)
+        self.table_rate.resizeColumnToContents(5)
+        self.table_rate.sortItems(0, Qt.SortOrder.DescendingOrder)
+        self.table_rate.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.table_rate.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_rate.selectionModel().selectionChanged.connect(self.able_button)
 
     def goCreateRata(self):
-        """
-        self.vista_nuovo_immobile = VistaCreateImmobile(callback=self.callback)
-        self.vista_nuovo_immobile.show()
-        """
-        pass
+        print("creazione rata")
+        return
+
+        self.vista_nuova_rata = VistaCreateRate(callback=self.callback)
+        self.vista_nuovo_rata.show()
 
     def goReadRata(self):
-        """
-        item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile, callback=self.callback)
-        self.vista_dettaglio_immobile.show()
-        """
-        pass
+        print("visualizzazione rata")
+        rata_selezionata = None
+        codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+        rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
+        print(codice_rata, ": ", rata_selezionata.getInfoRata())
+        return
+
+        self.vista_dettaglio_rata = VistaReadRata(rata_selezionata, callback=self.callback)
+        self.vista_dettaglio_rata.show()
+
 
     def goUpdateRata(self):
-        """
-        item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
-            print("ciao")
-            print(int(item.text().split(" ")[0]))
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        print(sel_immobile, ": ", sel_immobile.getInfoImmobile())
-        self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
-        self.vista_modifica_immobile.show()
-        """
-        pass
+        print("modifica rata")
+        rata_selezionata = None
+        codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+        rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
+        print(codice_rata, ": ", rata_selezionata.getInfoRata())
+        return
+
+        self.vista_modifica_rata = VistaUpdateRata(rata_selezionata, callback=self.callback)
+        self.vista_modifica_rata.show()
 
     def goDeleteRata(self):
-        """
-        item = None
-        for index in self.list_view_immobili.selectedIndexes():
-            item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
-        sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.callback)
-        self.vista_elimina_immobile.show()
-        """
-        pass
+        print("modifica rata")
+        rata_selezionata = None
+        codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+        rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
+        print(codice_rata, ": ", rata_selezionata.getInfoRata())
+        return
+
+        self.vista_elimina_rata = VistaDeleteRata(rata_selezionata, callback=self.callback)
+        self.vista_elimina_rata.show()
 
     def goReadRicevuta(self):
-        pass
+        print("vis ricevuta rata")
+        rata_selezionata = None
+        codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+        rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
+        print(codice_rata, ": ", rata_selezionata.getInfoRata())
+        return
+
 
     def able_button(self):
-        if not self.list_view_rate.selectedIndexes():
+        if not self.table_rate.verticalHeader().selectionModel().selectedRows():
             self.button_list["Visualizza Rata"].setDisabled(True)
             self.button_list["Modifica Rata"].setDisabled(True)
             self.button_list["Elimina Rata"].setDisabled(True)

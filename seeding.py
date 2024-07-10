@@ -2,6 +2,7 @@ import datetime
 import os
 import shutil
 
+from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -103,6 +104,13 @@ def up():
     tipo_spesa.aggiungiTipoSpesa("Spese per il riscaldamento centralizzato", "Riscaldamento")
     tipo_spesa.aggiungiTipoSpesa("Spese per l'illuminazione delle aree comuni", "Illuminazione Comune")
     tipo_spesa.aggiungiTipoSpesa("Spese per la pulizia delle aree comuni", "Pulizia")
+
+    #seeding rate
+    rata = Rata()
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 50.55, 1, True, "Contanti", 1, "Verdi Maria")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 120.60, 2, True, "Contanti", 3, "Gialli Laura")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 150.60, 1, True, "Contanti", 2, "Bianchi Elena")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 90.30, 3, True, "Assegno Bancario", 4, "Rossi Roberto")
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))
