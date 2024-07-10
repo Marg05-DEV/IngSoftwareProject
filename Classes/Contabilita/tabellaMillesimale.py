@@ -28,10 +28,10 @@ class TabellaMillesimale:
         tabelleMillesimali[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
-        return "Tabella millesimale aggiunta"
+        return "Tabella millesimale aggiunta", self
 
 
-    def getTabellaMillesimale(self):
+    def getInfoTabellaMillesimale(self):
         return {
             "nome": self.nome,
             "tipologiaSpesa": self.tipologiaSpesa,

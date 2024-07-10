@@ -49,6 +49,19 @@ class TipoSpesa:
         else:
             return None
 
+    @staticmethod
+    def ricercaTipoSpesaByCodice(codice):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                tipiSpesa = pickle.load(f)
+                print(type(tipiSpesa))
+                for tipoSpesa in tipiSpesa.values():
+                    if tipoSpesa.codice == codice:
+                        return tipoSpesa
+                return None
+        else:
+            return None
+
 
     def getTipoSpesa(self):
         return {
@@ -84,7 +97,3 @@ class TipoSpesa:
         else:
             return {}
 
-if __name__ == "__main__":
-    tipoSpesa1 = TipoSpesa()
-
-    print(tipoSpesa1.getTipoSpesa())

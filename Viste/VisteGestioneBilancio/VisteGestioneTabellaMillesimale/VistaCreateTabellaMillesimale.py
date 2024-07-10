@@ -1,6 +1,6 @@
 import datetime
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QIntValidator, QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, \
     QSizePolicy, QDateEdit, QComboBox, QListView, QCompleter
@@ -52,7 +52,7 @@ class VistaCreateTabellaMillesimale(QWidget):
 
         action_layout2.addWidget(self.searchbar)
         action_layout2.addWidget(self.create_button("Aggiungi", self.seleziona_tipo_spesa))
-
+        print("ciao2")
         action_layout3 = QHBoxLayout()
 
         lbl_frase2 = QLabel("Aggiungi un tipo di spesa esistente:")
@@ -60,9 +60,17 @@ class VistaCreateTabellaMillesimale(QWidget):
 
         action_layout3.addWidget(lbl_frase2)
         action_layout3.addWidget(self.create_button("Aggiungi Tipo di Spesa", self.nuovo_tipo_spesa))
-
+        print("ciao3")
         self.list_view_tipi_spesa = QListView()
         self.list_view_tipi_spesa.setAlternatingRowColors(True)
+        print("ciao4")
+        self.msg = QLabel("Non ci sono condomini assegnati")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
+        print("ciao8")
+        self.timer = QTimer(self)
+        self.timer.setInterval(5000)
+        self.timer.timeout.connect(self.hide_message)
 
         main_layout.addLayout(action_layout1)
         main_layout.addWidget(lbl_frase1)
@@ -70,9 +78,9 @@ class VistaCreateTabellaMillesimale(QWidget):
         main_layout.addLayout(action_layout3)
         main_layout.addWidget(self.list_view_tipi_spesa)
 
-        self.update_list()
-
         main_layout.addWidget(self.create_button("Aggiungi Tabella Millesimale", self.aggiungiTabellaMillesimale))
+        self.update_list()
+        main_layout.addWidget(self.msg)
         self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)
         self.setLayout(main_layout)
 
@@ -110,12 +118,13 @@ class VistaCreateTabellaMillesimale(QWidget):
         return input_layout
 
     def update_list(self):
+        print("ciao5")
         if not self.tipi_spesa:
             self.msg.setText("Non ci sono tipi di spesa assegnati alla tabella millesimale")
             self.msg.show()
         else:
             self.msg.hide()
-
+        print("ciao6")
         listview_model = QStandardItemModel(self.list_view_tipi_spesa)
         for tipi_spesa in self.tipi_spesa:
             item = QStandardItem()
@@ -132,7 +141,14 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.list_view_tipi_spesa.setModel(listview_model)
 
     def aggiungiTabellaMillesimale(self):
-        pass
+        nome = self.input_lines["nome"].text()
+        descrizione = self.input_lines["descrizione"].text()
+        tipologiaSpesa = self.tipi_spesa
+        immobile = self.immobile
+
+        temp_tabellaMillesimale = TabellaMillesimale()
+        msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(
+            nome, tipologiaSpesa, descrizione, immobile, {})
 
     def seleziona_tipo_spesa(self):
         self.search_text = self.searchbar.text()
@@ -144,14 +160,17 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.input_validation()
 
     def nuovo_tipo_spesa(self):
-        self.new_tipo_spesa = VistaCreateTipoSpesa()
-        self.new_tipo_spesa.show()
+        self.tipo_spesa = VistaCreateTipoSpesa()
+        self.tipi_spesa.append(self.tipo_spesa)
+        self.input_validation()
+        self.tipo_spesa.show()
 
     def reset(self):
         for input_line in self.input_lines.values():
             input_line.clear()
 
     def input_validation(self):
+        print("ciao7")
         tabelleMillesimale = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
         num_errors = 0
         num_writed_lines = 0
@@ -180,7 +199,9 @@ class VistaCreateTabellaMillesimale(QWidget):
                     there_is_unique_error[field] = False
                     print(field)
                     for tabella in tabelleMillesimale.values():
-                        if self.input_lines[field].text().upper() == str(tabella.getInfoImmobile()[field]).upper():
+                        print(self.input_lines[field].text().upper())
+                        print(str(tabella.getInfoTabellaMillesimale()[field]).upper())
+                        if self.input_lines[field].text().upper() == str(tabella.getInfoTabellaMillesimale()[field]).upper():
                             num_errors += 1
                             there_is_unique_error[field] = True
                             break
@@ -196,3 +217,10 @@ class VistaCreateTabellaMillesimale(QWidget):
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)
         else:
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(False)
+
+    def hide_message(self):
+        self.msg.hide()
+        self.timer.stop()
+        if not self.tipi_spesa:
+            self.msg.setText("Non ci sono tipi di spesa asseganti alla tabella millesimale")
+            self.msg.show()
