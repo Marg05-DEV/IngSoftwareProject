@@ -123,11 +123,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         table.setMaximumHeight(header.length())
         print("create tabella")
 
-        return table
+        return self.table_tabellaMillesimale
 
     def go_add_tabellaMillesimale(self):
-        self.vista_nuovo_immobile = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
-        self.vista_nuovo_immobile.show()
+        self.vista_nuova_tabella_millesimale = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
+        self.vista_nuova_tabella_millesimale.show()
 
     def go_read_tabellaMillesimale(self):
         print(self.logicalIndex)
@@ -172,7 +172,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
     def callback(self, msg):
         self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
         self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
-        self.create_table()
+        self.update_table()
         if msg:
             self.msg.setText(msg)
             self.msg.show()

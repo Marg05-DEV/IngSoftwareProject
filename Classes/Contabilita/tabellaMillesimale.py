@@ -94,3 +94,23 @@ class TabellaMillesimale:
         with open(nome_file, "wb") as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
         return msg
+
+    @staticmethod
+    def ricercaTabelleMillesimaliByCodice(codice):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                tabelleMillesimali = dict(pickle.load(f))
+                for cod_tm in tabelleMillesimali.keys():
+                    if cod_tm == codice:
+                        return tabelleMillesimali[cod_tm]
+                return None
+        else:
+            return None
+
+    def removeTipoSpesa(self, tipo_spesa):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                tabelle_millesimali = dict(pickle.load(f))
+                removed = tabelle_millesimali[self.codice].tipologiaSpesa.pop(tipo_spesa.codice)
+            with open(nome_file, "wb") as f:
+                pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)

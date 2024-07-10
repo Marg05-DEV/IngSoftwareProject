@@ -1,6 +1,7 @@
 import os.path
 import pickle
 
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 nome_file = 'Dati/tipiSpesa.pickle'
 class TipoSpesa:
 
@@ -35,6 +36,7 @@ class TipoSpesa:
         self.descrizione = ""
         self.nome = ""
         del self
+        return "Tipo spesa rimosso definitivamente"
 
     @staticmethod
     def ricercaTipoSpesaByNome(nome):
@@ -97,3 +99,19 @@ class TipoSpesa:
         else:
             return {}
 
+    def getTabelleMillesimaliAssociate(self):
+        tabelle_millesimali_associate = []
+        flag = False
+        tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimali().values())
+        for tabella in tabelle_millesimali:
+            for tabellaAssociata in tabelle_millesimali_associate:
+                if tabellaAssociata.codice == tabella.codice:
+                    flag = True
+            if not flag:
+                for tipo_spesa_codice in tabelle_millesimali.tipologiaSpesa:
+                    if tipo_spesa_codice == self.codice:
+                        tabelle_millesimali_associate.append(TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tipo_spesa_codice))
+            else:
+                flag = False
+
+        return tabelle_millesimali_associate

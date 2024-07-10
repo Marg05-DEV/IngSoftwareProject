@@ -150,6 +150,10 @@ class VistaCreateTabellaMillesimale(QWidget):
         msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(
             nome, tipologiaSpesa, descrizione, immobile, {})
 
+        print(msg, tm)
+        self.callback(msg)
+        self.close()
+
     def seleziona_tipo_spesa(self):
         self.search_text = self.searchbar.text()
         tipo_spesa = None

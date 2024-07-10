@@ -1,30 +1,30 @@
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit
 
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 class VistaDeleteTabellaMillesimale(QWidget):
 
-    def __init__(self, sel_condomino, unita_immobiliare, callback):
+    def __init__(self, tabella_millesimale, callback):
         super(VistaDeleteTabellaMillesimale, self).__init__()
         self.callback = callback
-        self.sel_condomino = sel_condomino
-        self.unita_immobiliare = unita_immobiliare
+        self.tabella_millesimale = tabella_millesimale
         main_layout = QGridLayout()
 
-        lbl_frase = QLabel("Sei sicuro di voler rimuovere il condomino?")
+        lbl_frase = QLabel("Sei sicuro di voler rimuovere la tabella millesimale?")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
         main_layout.addWidget(lbl_frase, 0, 0, 1, 2)
 
-        main_layout.addWidget(self.create_button("Procedi", self.deleteCondomino), 1, 0)
+        main_layout.addWidget(self.create_button("Procedi", self.delete_tabella_millesimale), 1, 0)
         main_layout.addWidget(self.create_button("Annulla", self.close), 1, 1)
 
 
         message_layout = QHBoxLayout()
 
-        self.msg = QLabel("Il condomino è stato rimosso")
+        self.msg = QLabel("La tabella millesimale è stata rimossa")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
@@ -38,7 +38,7 @@ class VistaDeleteTabellaMillesimale(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Rimuovi Condomino")
+        self.setWindowTitle("Rimuovi Tabella Millesimale")
 
     @staticmethod
     def create_button(testo, action):
@@ -48,13 +48,14 @@ class VistaDeleteTabellaMillesimale(QWidget):
         button.clicked.connect(action)
         return button
 
-    def deleteCondomino(self):
+    def delete_tabella_millesimale(self):
         msg = ""
-        self.unita_immobiliare.removeCondomino(self.sel_condomino)
-        msg = "Il condomino è stato disassegnato dall'unità immobiliare"
-        print("dissasociato", self.sel_condomino.getImmobiliAssociati())
-        if not self.sel_condomino.getImmobiliAssociati():
-            msg = self.sel_condomino.rimuoviCondomino()
+        for tipi_spesa_codici in self.tabella_millesimale.tipologiaSpesa:
+            tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipi_spesa_codici)
+            self.tabella_millesimale.removeTipoSpesa(tipo_spesa)
+            if not tipo_spesa.getTabelleMillesimaliAssociate():
+                msg = tipo_spesa.rimuoviTipoSpesa()
+        msg = self.tabella_millesimale.rimuoviTabellaMillesimale()
         self.callback(msg)
         self.close()
 
