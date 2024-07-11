@@ -9,6 +9,7 @@ from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Viste.VisteGestioneBilancio.VisteGestioneTabellaMillesimale.VistaCreateTipoSpesa import VistaCreateTipoSpesa
 from Viste.VisteGestioneBilancio.VisteGestioneTabellaMillesimale.VistaDeleteTabellaMillesimale import VistaDeleteTabellaMillesimale
+from Viste.VisteGestioneBilancio.VisteGestioneTabellaMillesimale.VistaDeleteTipoSpesa import VistaDeleteTipoSpesa
 
 
 class VistaReadTabellaMillesimale(QWidget):
@@ -102,11 +103,17 @@ class VistaReadTabellaMillesimale(QWidget):
         self.selectionModel.selectionChanged.connect(self.able_button)
 
     def nuovo_tipo_spesa(self):
-        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.callback)
+        print("dentro nuovo_tipo_spesa")
+        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.callback, None)
         self.new_tipo_spesa.show()
 
     def delete_tipo_spesa(self):
-        pass
+        item = None
+        for index in self.list_view_tipi_spesa.selectedIndexes():
+            item = self.list_view_tipi_spesa.model().iteFromIndex(index)
+        sel_tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(item.text().split("\n")[0].split(":")[1])
+        self.remuve_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.callback)
+        self.remuve_tipo_spesa.show()
 
     def delete_tabella_millesimale(self):
         self.rimuovi_tabella_millesimale = VistaDeleteTabellaMillesimale(self.tabella_millesimale, self.callback)

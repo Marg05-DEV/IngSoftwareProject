@@ -31,11 +31,17 @@ class TabellaMillesimale:
         return "Tabella millesimale aggiunta", self
 
     def addTipoSpesa(self, tipo_spesa):
+        print("dentro add")
+        print(tipo_spesa)
         if os.path.isfile(nome_file):
+            print("il file esiste")
             with(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
+                print("qui ci si arriva facile")
                 tabelleMillesimali[self.codice].tipologiaSpesa.append(tipo_spesa.codice)
+                print("qui è impossibile")
         with open(nome_file, "wb") as f:
+            print("il file non esiste")
             pickle.dump((tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL))
     def getInfoTabellaMillesimale(self):
         return {

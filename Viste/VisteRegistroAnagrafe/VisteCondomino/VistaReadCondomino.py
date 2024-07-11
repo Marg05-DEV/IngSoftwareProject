@@ -111,8 +111,3 @@ class VistaReadCondomino(QWidget):
         print("ciao ciao")
         self.close()
         self.vista_modifica_condomino.show()
-
-
-    def hide_message(self):
-        self.msg.hide()
-        self.timer.stop()

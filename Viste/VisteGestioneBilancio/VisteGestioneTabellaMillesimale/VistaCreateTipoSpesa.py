@@ -95,16 +95,19 @@ class VistaCreateTipoSpesa(QWidget):
 
 
     def aggiungi_tipo_spesa(self):
+        print("figlio")
         nome = self.input_lines["nome"].text()
         descrizione = self.input_lines["descrizione"].text()
 
         temp_tipo_spesa = TipoSpesa()
         msg, ts = temp_tipo_spesa.aggiungiTipoSpesa(descrizione, nome)
+        print(msg, ts)
         if self.tabella_millesimale != None:
+            print("una buona")
             self.tabella_millesimale.addTipoSpesa(ts)
         else:
             self.callback_append_tipo_spesa(ts)
-        print(msg, ts)
+
         self.callback(msg)
         self.close()
 
@@ -119,7 +122,6 @@ class VistaCreateTipoSpesa(QWidget):
         self.lbl_tipo_spesa_esistente.setVisible(False)
         self.button_exist.setVisible(False)
     def input_validation(self):
-        print("ciao7")
         all_tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
         tipo_spesa = []
         if self.tabella_millesimale != None:

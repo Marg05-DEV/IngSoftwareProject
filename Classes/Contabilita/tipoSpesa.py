@@ -13,7 +13,6 @@ class TipoSpesa:
     def aggiungiTipoSpesa(self, descrizione, nome):
         self.descrizione = descrizione
         self.nome = nome
-
         tipiSpesa = {}
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -23,7 +22,7 @@ class TipoSpesa:
         tipiSpesa[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(tipiSpesa, f, pickle.HIGHEST_PROTOCOL)
-        return "Il tipo di spesa è stato aggiunto"
+        return "Il tipo di spesa è stato aggiunto", self
 
     def rimuoviTipoSpesa(self):
         if os.path.isfile(nome_file):
