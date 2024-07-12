@@ -64,7 +64,7 @@ class TipoSpesa:
             return None
 
 
-    def getTipoSpesa(self):
+    def getInfoTipoSpesa(self):
         return {
             "descrizione": self.descrizione,
             "nome": self.nome
@@ -84,19 +84,19 @@ class TipoSpesa:
 
     @staticmethod
     def getTipoSpesaByTabellaMillesimale(tabella_millesimale):
-        tipo_spesa = TipoSpesa.getAllTipoSpesa()
+        tipo_spesa = TipoSpesa.getAllTipoSpesa().values()
         if tipo_spesa:
-            tipoSpesaByTabellaMillesimale ={}
-            for key, value in tipo_spesa.items():
+            tipoSpesaByTabellaMillesimale =[]
+            for tipo in tipo_spesa:
                 if tabella_millesimale.tipologiaSpesa:
-                    for tipo in tabella_millesimale.tipologiaSpesa:
-                        if key.codice == tipo.codice:
-                            tipoSpesaByTabellaMillesimale[key] = value
+                    for tipologia in tabella_millesimale.tipologiaSpesa:
+                        if tipo.codice == tipologia:
+                            tipoSpesaByTabellaMillesimale.append(tipologia)
                 else:
-                    return {}
+                    return []
             return tipoSpesaByTabellaMillesimale
         else:
-            return {}
+            return []
 
     def getTabelleMillesimaliAssociate(self):
         tabelle_millesimali_associate = []

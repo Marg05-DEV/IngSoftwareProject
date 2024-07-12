@@ -61,7 +61,7 @@ class VistaCreateTipoSpesa(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuovo Condomino")
+        self.setWindowTitle("Inserimento Nuovo tipo Spesa")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
@@ -72,7 +72,6 @@ class VistaCreateTipoSpesa(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
-        print("ciao1")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -107,7 +106,7 @@ class VistaCreateTipoSpesa(QWidget):
             self.tabella_millesimale.addTipoSpesa(ts)
         else:
             self.callback_append_tipo_spesa(ts)
-
+        print("esco")
         self.callback(msg)
         self.close()
 
@@ -122,10 +121,19 @@ class VistaCreateTipoSpesa(QWidget):
         self.lbl_tipo_spesa_esistente.setVisible(False)
         self.button_exist.setVisible(False)
     def input_validation(self):
+        print("dentro la validazione")
         all_tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
+        for t in all_tipo_spesa:
+            print(t.getInfoTipoSpesa())
         tipo_spesa = []
+        tipi_spesa_associati_alla_tabella = []
         if self.tabella_millesimale != None:
-            tipo_spesa = list(TipoSpesa.getTipoSpesaByTabellaMillesimale(self.tabella_millesimale))
+            print("stai qui")
+            tipi_spesa_associati_alla_tabella = list(TipoSpesa.getTipoSpesaByTabellaMillesimale(self.tabella_millesimale))
+            for tipo in tipi_spesa_associati_alla_tabella:
+                value = TipoSpesa.ricercaTipoSpesaByCodice(tipo)
+                tipo_spesa.append(value)
+            print("tipi: ", tipo_spesa)
         num_errors = 0
         num_writed_lines = 0
         required_fields = ['nome', 'descrizione']
@@ -144,7 +152,7 @@ class VistaCreateTipoSpesa(QWidget):
                                 if self.input_lines['nome'].text().upper() == tipo.nome.upper():
                                     same_tb = True
                             if not same_tb:
-                                self.lbl_tipo_spesa_esistente.setText(f"{all_tipo_spesa.nome} {all_tipo_spesa.descrizione}")
+                                self.lbl_tipo_spesa_esistente.setText(f"{all_tipi.nome} {all_tipi.descrizione}")
                                 self.button_exist.setDisabled(False)
                         break
         if there_is_unique_pair_error:

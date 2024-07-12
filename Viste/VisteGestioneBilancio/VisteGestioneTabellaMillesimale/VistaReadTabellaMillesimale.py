@@ -39,10 +39,8 @@ class VistaReadTabellaMillesimale(QWidget):
         button_layout.addWidget(self.create_button("Aggiungi tipo spesa", self.nuovo_tipo_spesa))
         button_layout.addWidget(self.create_button("Rimuovi tipo spesa", self.delete_tipo_spesa, True))
         action_layout2.addLayout(button_layout)
-        print("c")
         self.button_list["Aggiungi tipo spesa"].setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         self.button_list["Rimuovi tipo spesa"].setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        print("d")
         self.msg = QLabel("Non ci sono condomini assegnati")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
@@ -105,12 +103,16 @@ class VistaReadTabellaMillesimale(QWidget):
     def nuovo_tipo_spesa(self):
         print("dentro nuovo_tipo_spesa")
         self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.callback, None)
+        print("sono qui ora")
         self.new_tipo_spesa.show()
 
     def delete_tipo_spesa(self):
+        print("dentro alla funzione delete_tipo_spesa")
+        print(self.list_view_tipi_spesa.selectedIndexes())
         item = None
         for index in self.list_view_tipi_spesa.selectedIndexes():
-            item = self.list_view_tipi_spesa.model().iteFromIndex(index)
+            item = self.list_view_tipi_spesa.model().itemFromIndex(index)
+        print(item.text().split("\n")[0].split(":")[1])
         sel_tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(item.text().split("\n")[0].split(":")[1])
         self.remuve_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.callback)
         self.remuve_tipo_spesa.show()

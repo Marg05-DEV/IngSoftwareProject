@@ -31,18 +31,12 @@ class TabellaMillesimale:
         return "Tabella millesimale aggiunta", self
 
     def addTipoSpesa(self, tipo_spesa):
-        print("dentro add")
-        print(tipo_spesa)
         if os.path.isfile(nome_file):
-            print("il file esiste")
-            with(nome_file, "rb") as f:
+            with open(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
-                print("qui ci si arriva facile")
                 tabelleMillesimali[self.codice].tipologiaSpesa.append(tipo_spesa.codice)
-                print("qui è impossibile")
-        with open(nome_file, "wb") as f:
-            print("il file non esiste")
-            pickle.dump((tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL))
+            with open(nome_file, "wb") as f:
+                pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
     def getInfoTabellaMillesimale(self):
         return {
             "nome": self.nome,
@@ -120,9 +114,13 @@ class TabellaMillesimale:
             return None
 
     def removeTipoSpesa(self, tipo_spesa):
+        print("dentro la funzione removeTipoSpesa")
+        print(tipo_spesa.codice)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
+                print("prima del dict")
                 tabelle_millesimali = dict(pickle.load(f))
-                removed = tabelle_millesimali[self.codice].tipologiaSpesa.pop(tipo_spesa.codice)
+                print(tabelle_millesimali[self.codice].tipologiaSpesa)
+                tabelle_millesimali[self.codice].tipologiaSpesa.remove(tipo_spesa.codice)
             with open(nome_file, "wb") as f:
                 pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)

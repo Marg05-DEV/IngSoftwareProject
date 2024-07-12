@@ -9,6 +9,7 @@ class VistaDeleteTipoSpesa(QWidget):
 
     def __init__(self, tipo_spesa, tabella_millesimale, callback):
         super(VistaDeleteTipoSpesa, self).__init__()
+        print("siamo in vistaDeleteTipoSpesa")
         self.callback = callback
         self.tabella_millesimale = tabella_millesimale
         self.tipo_spesa = tipo_spesa
@@ -50,8 +51,11 @@ class VistaDeleteTipoSpesa(QWidget):
         return button
 
     def delete_tipo_spesa(self):
+        print("pronto per l'eliminazione")
         msg = ""
+        print(self.tabella_millesimale.tipologiaSpesa)
         self.tabella_millesimale.removeTipoSpesa(self.tipo_spesa)
+        print(self.tabella_millesimale.tipologiaSpesa)
         if not self.tipo_spesa.getTabelleMillesimaliAssociate():
             msg = self.tipo_spesa.rimuoviTipoSpesa()
         self.callback(msg)
