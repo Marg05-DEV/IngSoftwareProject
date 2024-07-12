@@ -58,7 +58,7 @@ class VistaReadTabellaMillesimale(QWidget):
         print("g")
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Dettaglio Condomino")
+        self.setWindowTitle("Dettaglio Tabella millesimale")
 
     def create_button(self, testo, action, disabled = False):
         button = QPushButton(testo)
@@ -84,9 +84,11 @@ class VistaReadTabellaMillesimale(QWidget):
 
         print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_tipi_spesa)
+
         for tipo_spesa_codice in self.tabella_millesimale.tipologiaSpesa:
             item = QStandardItem()
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipo_spesa_codice)
+            print(tipo_spesa.codice)
             item_text = f"Nome:{tipo_spesa.nome}\nDescrizione:{tipo_spesa.descrizione}"
             item.setText(item_text)
             item.setEditable(False)
@@ -102,7 +104,7 @@ class VistaReadTabellaMillesimale(QWidget):
 
     def nuovo_tipo_spesa(self):
         print("dentro nuovo_tipo_spesa")
-        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.callback, None)
+        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.lista_tipi_spesa_callback, None)
         print("sono qui ora")
         self.new_tipo_spesa.show()
 
@@ -114,7 +116,8 @@ class VistaReadTabellaMillesimale(QWidget):
             item = self.list_view_tipi_spesa.model().itemFromIndex(index)
         print(item.text().split("\n")[0].split(":")[1])
         sel_tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(item.text().split("\n")[0].split(":")[1])
-        self.remuve_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.callback)
+        print(sel_tipo_spesa.codice)
+        self.remuve_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.lista_tipi_spesa_callback)
         self.remuve_tipo_spesa.show()
 
     def delete_tabella_millesimale(self):
@@ -130,6 +133,13 @@ class VistaReadTabellaMillesimale(QWidget):
         else:
             self.button_list["Rimuovi tipo spesa"].setDisabled(False)
 
+    def lista_tipi_spesa_callback(self, msg):
+        print("entriamo", msg)
+        self.tabella_millesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(self.tabella_millesimale.codice)
+        self.update_list()
+        self.msg.setText(msg)
+        self.msg.show()
+        self.timer.start()
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()

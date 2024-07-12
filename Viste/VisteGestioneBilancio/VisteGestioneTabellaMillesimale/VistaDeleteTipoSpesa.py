@@ -56,8 +56,11 @@ class VistaDeleteTipoSpesa(QWidget):
         print(self.tabella_millesimale.tipologiaSpesa)
         self.tabella_millesimale.removeTipoSpesa(self.tipo_spesa)
         print(self.tabella_millesimale.tipologiaSpesa)
+        msg = "Il tipo di spesa è stato dissociato"
+        print(self.tipo_spesa.codice)
         if not self.tipo_spesa.getTabelleMillesimaliAssociate():
             msg = self.tipo_spesa.rimuoviTipoSpesa()
+        print("prima della callback")
         self.callback(msg)
         self.close()
 

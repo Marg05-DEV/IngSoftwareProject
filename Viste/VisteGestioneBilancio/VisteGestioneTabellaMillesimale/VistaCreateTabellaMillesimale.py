@@ -83,7 +83,7 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuovo Condomino")
+        self.setWindowTitle("Inserimento Nuova tabella Millesimale")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
@@ -232,3 +232,4 @@ class VistaCreateTabellaMillesimale(QWidget):
     def callback_for_append_tipo_spesa(self, tipo_spesa):
         self.tipi_spesa.append(tipo_spesa.codice)
         self.update_list()
+        self.input_validation()

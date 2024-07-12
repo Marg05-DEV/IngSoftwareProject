@@ -111,8 +111,16 @@ class VistaCreateTipoSpesa(QWidget):
         self.close()
 
     def add_tipo_spesa_esistente(self):
-        tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(self.lbl_tipo_spesa_esistente.text().split(" ")[0])
-        self.tabella_millesimale.addTipoSpesa(tipo_spesa)
+        tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(self.lbl_tipo_spesa_esistente.text().split("\n")[0].split(":")[1])
+        print(tipo_spesa)
+        if self.tabella_millesimale != None:
+            print("wow")
+            self.tabella_millesimale.addTipoSpesa(tipo_spesa)
+        else:
+            print("wowow")
+            self.callback_append_tipo_spesa(tipo_spesa)
+        self.callback("Spesa aggiunta")
+        self.close()
 
     def reset(self):
         for input_line in self.input_lines.values():
@@ -123,8 +131,7 @@ class VistaCreateTipoSpesa(QWidget):
     def input_validation(self):
         print("dentro la validazione")
         all_tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
-        for t in all_tipo_spesa:
-            print(t.getInfoTipoSpesa())
+
         tipo_spesa = []
         tipi_spesa_associati_alla_tabella = []
         if self.tabella_millesimale != None:
@@ -134,6 +141,7 @@ class VistaCreateTipoSpesa(QWidget):
                 value = TipoSpesa.ricercaTipoSpesaByCodice(tipo)
                 tipo_spesa.append(value)
             print("tipi: ", tipo_spesa)
+
         num_errors = 0
         num_writed_lines = 0
         required_fields = ['nome', 'descrizione']
@@ -151,16 +159,15 @@ class VistaCreateTipoSpesa(QWidget):
                             for tipo in tipo_spesa:
                                 if self.input_lines['nome'].text().upper() == tipo.nome.upper():
                                     same_tb = True
-                            if not same_tb:
-                                self.lbl_tipo_spesa_esistente.setText(f"{all_tipi.nome} {all_tipi.descrizione}")
-                                self.button_exist.setDisabled(False)
+                        if not same_tb:
+                            self.lbl_tipo_spesa_esistente.setText(f"Nome:{all_tipi.nome}\nDescrizione:{all_tipi.descrizione}")
+                            self.button_exist.setDisabled(False)
                         break
         if there_is_unique_pair_error:
             self.input_errors['nome'].setVisible(True)
             self.input_errors['descrizione'].setVisible(True)
             if not same_tb:
                 self.input_errors['nome'].setText(f"Nome del tipo è esistente ma non in questa tabella millesimale")
-                self.input_errors["descrizione"].setText("")
                 self.lbl_exist.setVisible(True)
                 self.lbl_tipo_spesa_esistente.setVisible(True)
                 self.button_exist.setVisible(True)
@@ -170,6 +177,9 @@ class VistaCreateTipoSpesa(QWidget):
         else:
             self.input_errors['nome'].setVisible(False)
             self.input_errors['descrizione'].setVisible(False)
+            self.lbl_exist.setVisible(False)
+            self.lbl_tipo_spesa_esistente.setVisible(False)
+            self.button_exist.setVisible(False)
 
         if num_errors > 0 or num_writed_lines < len(required_fields):
             self.buttons["Aggiungi Tipo Spesa"].setDisabled(True)

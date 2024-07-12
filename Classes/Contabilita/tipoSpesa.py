@@ -99,6 +99,7 @@ class TipoSpesa:
             return []
 
     def getTabelleMillesimaliAssociate(self):
+        print(self.codice)
         tabelle_millesimali_associate = []
         flag = False
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimali().values())
@@ -107,10 +108,15 @@ class TipoSpesa:
                 if tabellaAssociata.codice == tabella.codice:
                     flag = True
             if not flag:
-                for tipo_spesa_codice in tabelle_millesimali.tipologiaSpesa:
+                for tipo_spesa_codice in tabella.tipologiaSpesa:
+                    print("valore1: ", tipo_spesa_codice)
+                    print("valore2:", self.codice)
+                    print(tipo_spesa_codice == self.codice)
                     if tipo_spesa_codice == self.codice:
-                        tabelle_millesimali_associate.append(TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tipo_spesa_codice))
+                        valore = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
+                        print(valore)
+                        tabelle_millesimali_associate.append(TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice))
             else:
                 flag = False
-
+        print(tabelle_millesimali_associate)
         return tabelle_millesimali_associate
