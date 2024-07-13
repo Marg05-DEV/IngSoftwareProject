@@ -115,7 +115,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
         for t in self.tabelle_millesimali.values():
             if not t.millesimi:
                 millesimo = 0
-                print("dentro la function")
                 for j in range(len(self.unitaImmobiliari_immobile)):
                     print(j)
                     self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(millesimo)))
