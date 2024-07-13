@@ -18,7 +18,6 @@ class VistaCreateTipoSpesa(QWidget):
         self.tabella_millesimale = tabella_millesimale
         self.callback = callback
         self.callback_append_tipo_spesa = callback_append_tipo_spesa
-        #self.tipi_spesa = tipi_spesa
         self.input_lines = {}
         self.input_errors = {}
         self.buttons = {}
@@ -94,7 +93,6 @@ class VistaCreateTipoSpesa(QWidget):
 
 
     def aggiungi_tipo_spesa(self):
-        print("figlio")
         nome = self.input_lines["nome"].text()
         descrizione = self.input_lines["descrizione"].text()
 
@@ -102,11 +100,9 @@ class VistaCreateTipoSpesa(QWidget):
         msg, ts = temp_tipo_spesa.aggiungiTipoSpesa(descrizione, nome)
         print(msg, ts)
         if self.tabella_millesimale != None:
-            print("una buona")
             self.tabella_millesimale.addTipoSpesa(ts)
         else:
             self.callback_append_tipo_spesa(ts)
-        print("esco")
         self.callback(msg)
         self.close()
 
@@ -165,7 +161,6 @@ class VistaCreateTipoSpesa(QWidget):
                         break
         if there_is_unique_pair_error:
             self.input_errors['nome'].setVisible(True)
-            self.input_errors['descrizione'].setVisible(True)
             if not same_tb:
                 self.input_errors['nome'].setText(f"Nome del tipo è esistente ma non in questa tabella millesimale")
                 self.lbl_exist.setVisible(True)
@@ -176,7 +171,6 @@ class VistaCreateTipoSpesa(QWidget):
 
         else:
             self.input_errors['nome'].setVisible(False)
-            self.input_errors['descrizione'].setVisible(False)
             self.lbl_exist.setVisible(False)
             self.lbl_tipo_spesa_esistente.setVisible(False)
             self.button_exist.setVisible(False)

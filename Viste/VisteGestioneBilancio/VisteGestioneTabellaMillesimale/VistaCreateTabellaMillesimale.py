@@ -21,6 +21,7 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.input_lines = {}
         self.input_errors = {}
         self.buttons = {}
+        self.tabella_aggiunta = False
         main_layout = QVBoxLayout()
 
         self.tipi_spesa = []
@@ -30,12 +31,30 @@ class VistaCreateTabellaMillesimale(QWidget):
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
         main_layout.addWidget(lbl_frase)
+        existing_tabella_millesimale_layout = QHBoxLayout()
+        existing_tabella_millesimale_data_layout = QVBoxLayout()
+        existing_tabella_millesimale_button_layout = QVBoxLayout()
+        self.lbl_exist = QLabel("La tabella millesimale esistente è: ")
+        self.lbl_tabella_millesimale_esistente = QLabel()
+        self.lbl_tabella_millesimale_esistente.setStyleSheet("font-weight: bold;")
+        self.button_exist = self.create_button("Assegna Tabella millesimale", self.add_tabella_millesimale_esistente)
+        self.button_exist.setVisible(False)
+        self.lbl_exist.setVisible(False)
+        self.lbl_tabella_millesimale_esistente.setVisible(False)
+
+        existing_tabella_millesimale_data_layout.addWidget(self.lbl_exist,
+                                                  alignment=Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignLeft)
+        existing_tabella_millesimale_data_layout.addWidget(self.lbl_tabella_millesimale_esistente,
+                                                  alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        existing_tabella_millesimale_button_layout.addWidget(self.button_exist)
+
+        existing_tabella_millesimale_layout.addLayout(existing_tabella_millesimale_data_layout)
+        existing_tabella_millesimale_layout.addLayout(existing_tabella_millesimale_button_layout)
+        main_layout.addLayout(existing_tabella_millesimale_layout)
+
         action_layout1 = QVBoxLayout()
-        print("ciao pidocchio 1")
         action_layout1.addLayout(self.pairLabelInput("Nome", "nome"))
-        print("ciao3")
         action_layout1.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
-        print("ciao pidocchio 2")
 
         action_layout2 = QHBoxLayout()
         completer_list = sorted([item.nome for item in TipoSpesa.getAllTipoSpesa().values()])
@@ -169,53 +188,65 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.input_validation()
         self.nuovo_tipo_spesa.show()
 
+    def add_tabella_millesimale_esistente(self):
+        tabella_millesimale = TabellaMillesimale.ricercaTabelleMillesimaliByNome(self.lbl_tabella_millesimale_esistente.text().split("\n")[0].split(":")[1])
+        self.input_lines['nome'].setText(tabella_millesimale.nome)
+        self.input_lines['descrizione'].setText(tabella_millesimale.descrizione)
+        self.tabella_aggiunta = True
+        self.input_validation()
     def reset(self):
         for input_line in self.input_lines.values():
             input_line.clear()
 
     def input_validation(self):
         print("ciao7")
-        tabelleMillesimale = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
+        all_tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimali().values())
+        tabellaMillesimale = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
         num_errors = 0
         num_writed_lines = 0
         required_fields = ['nome', 'descrizione']
         unique_fields = ['nome']
         there_is_unique_error = {}
         there_is_unique_pair_error = False
-
-        for tabelle in tabelleMillesimale.values():
-            if self.input_lines['nome'].text() == tabelle.nome:
-                there_is_unique_pair_error = True
-                break
-        if there_is_unique_pair_error:
-            self.input_errors['nome'].setText("Nome della tabella millesimale già esistente")
-            self.input_errors["descrizione"].setText("")
-            self.input_errors['nome'].setVisible(True)
-            self.input_errors['descrizione'].setVisible(True)
-        else:
-            self.input_errors['nome'].setVisible(False)
-            self.input_errors['descrizione'].setVisible(False)
+        same_immo = False
 
         for field in required_fields:
             if self.input_lines[field].text():
                 num_writed_lines += 1
-                if field in unique_fields:
-                    there_is_unique_error[field] = False
-                    print(field)
-                    for tabella in tabelleMillesimale.values():
-                        print(self.input_lines[field].text().upper())
-                        print(str(tabella.getInfoTabellaMillesimale()[field]).upper())
-                        if self.input_lines[field].text().upper() == str(tabella.getInfoTabellaMillesimale()[field]).upper():
-                            num_errors += 1
-                            there_is_unique_error[field] = True
-                            break
-                    if there_is_unique_error[field]:
-                        self.input_errors[field].setText(f"{field} già esistente")
-                        self.input_errors[field].setVisible(True)
-                    else:
-                        self.input_errors[field].setVisible(False)
+                for all_tabelle in all_tabelle_millesimali:
+                    if self.input_lines['nome'].text().upper() == all_tabelle.nome.upper():
+                        num_errors += 1
+                        there_is_unique_pair_error = True
+                        if tabellaMillesimale:
+                            for tabella in tabellaMillesimale:
+                                if self.input_lines['nome'].text().upper() == tabella.nome.upper():
+                                    same_immo = True
+                        if not same_immo:
+                            self.lbl_tabella_millesimale_esistente.setText(f"Nome:{all_tabelle.nome}\nDescrizione:{all_tabelle.descrizione}")
+                            self.button_exist.setDisabled(False)
+                        break
+        if there_is_unique_pair_error:
+            self.input_errors['nome'].setVisible(True)
+            if not same_immo:
+                self.input_errors['nome'].setText(f"Nome della tabella millesimale è esistente ma non in questo immobile")
+                self.lbl_exist.setVisible(True)
+                self.lbl_tabella_millesimale_esistente.setVisible(True)
+                self.button_exist.setVisible(True)
             else:
-                self.input_errors[field].setVisible(False)
+                self.input_errors['nome'].setText(f"Nome della tabella millesimale già esistente nell'immobile")
+
+        else:
+            self.input_errors['nome'].setVisible(False)
+            self.lbl_exist.setVisible(False)
+            self.lbl_tabella_millesimale_esistente.setVisible(False)
+            self.button_exist.setVisible(False)
+        print("tabtab")
+        if self.tabella_aggiunta:
+            self.input_errors['nome'].setVisible(False)
+            self.lbl_exist.setVisible(False)
+            self.lbl_tabella_millesimale_esistente.setVisible(False)
+            self.button_exist.setVisible(False)
+            num_errors = 0
 
         if num_errors > 0 or num_writed_lines < len(required_fields) or not self.tipi_spesa:
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)

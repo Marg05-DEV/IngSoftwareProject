@@ -10,7 +10,7 @@ class VistaDeleteTabellaMillesimale(QWidget):
     def __init__(self, tabella_millesimale, callback):
         super(VistaDeleteTabellaMillesimale, self).__init__()
         self.callback = callback
-        self.tabella_millesimale = tabella_millesimale
+        self.tabella_millesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella_millesimale)
         main_layout = QGridLayout()
 
         lbl_frase = QLabel("Sei sicuro di voler rimuovere la tabella millesimale?")
@@ -49,12 +49,18 @@ class VistaDeleteTabellaMillesimale(QWidget):
         return button
 
     def delete_tabella_millesimale(self):
-        msg = ""
+        print("funzione di eliminazione")
+        print(self.tabella_millesimale)
+        if self.tabella_millesimale.tipologiaSpesa:
+            print(self.tabella_millesimale.tipologiaSpesa)
+        else:
+            print("è vuota")
         for tipi_spesa_codici in self.tabella_millesimale.tipologiaSpesa:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipi_spesa_codici)
             self.tabella_millesimale.removeTipoSpesa(tipo_spesa)
             if not tipo_spesa.getTabelleMillesimaliAssociate():
                 msg = tipo_spesa.rimuoviTipoSpesa()
+        print("uscito dal for dei tipi")
         msg = self.tabella_millesimale.rimuoviTabellaMillesimale()
         self.callback(msg)
         self.close()

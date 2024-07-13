@@ -82,7 +82,7 @@ class TabellaMillesimale:
         self.codice = -1
         self.nome = ""
         self.tipologiaSpesa = []
-        self.descrizione = ()
+        self.descrizione = ""
         self.immobile = None
         self.millesimi = {}
         del self
@@ -112,6 +112,18 @@ class TabellaMillesimale:
                 for cod_tm in tabelleMillesimali.keys():
                     if cod_tm == codice:
                         return tabelleMillesimali[cod_tm]
+                return None
+        else:
+            return None
+
+    @staticmethod
+    def ricercaTabelleMillesimaliByNome(nome):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                tabelleMillesimali = dict(pickle.load(f))
+                for tabella in tabelleMillesimali.values():
+                    if tabella.nome == nome:
+                        return tabella
                 return None
         else:
             return None
