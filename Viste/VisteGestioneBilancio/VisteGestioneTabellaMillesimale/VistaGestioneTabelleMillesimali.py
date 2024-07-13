@@ -110,7 +110,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
             item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.table_tabellaMillesimale.setHorizontalHeaderItem(i, item_table)
             i += 1
-        """
+
         i = 0
         for t in self.tabelle_millesimali.values():
             if not t.millesimi:
@@ -118,9 +118,9 @@ class VistaGestioneTabelleMillesimali(QWidget):
                 print("dentro la function")
                 for j in range(len(self.unitaImmobiliari_immobile)):
                     print(j)
-                    self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(millesimo))
+                    self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(millesimo)))
                 i += 1
-        """
+
         self.table_tabellaMillesimale.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_tabellaMillesimale.horizontalHeader().setStretchLastSection(True)
