@@ -140,3 +140,11 @@ class TabellaMillesimale:
                 print(tabelle_millesimali[self.codice].tipologiaSpesa)
             with open(nome_file, "wb") as f:
                 pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
+
+    def addMillesimo(self, ui, valore_millesimo):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                tabelleMillesimali = dict(pickle.load(f))
+                tabelleMillesimali[self.codice].mllesimi[ui.codice] = valore_millesimo
+        with open(nome_file, "wb") as f:
+            pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)

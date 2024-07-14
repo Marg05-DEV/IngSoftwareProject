@@ -64,8 +64,10 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
         self.table_tabellaMillesimale.setRowCount(len(self.unitaImmobiliari_immobile))
         self.table_tabellaMillesimale.setColumnCount(len(self.tabelle_millesimali))
+        self.codice_ui = []
         i = 0
         for unita in self.unitaImmobiliari_immobile.values():
+            self.codice_ui.append(unita.codice)
             text_condomini = ""
             condomini = []
             print(unita.condomini.keys())
@@ -112,13 +114,25 @@ class VistaGestioneTabelleMillesimali(QWidget):
             i += 1
 
         i = 0
+
         for t in self.tabelle_millesimali.values():
-            if not t.millesimi:
-                millesimo = 0
-                for j in range(len(self.unitaImmobiliari_immobile)):
-                    print(j)
+            millesimo = 0
+            for j in range(len(self.unitaImmobiliari_immobile)):
+                print(j)
+                flag = False
+                if not t.millesimi:
                     self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(millesimo)))
-                i += 1
+                else:
+                    for cod in self.codice_ui:
+                        for key in t.millesimi.keys():
+                            if cod == key:
+                                self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(t.millesimi[key])))
+                                flag = True
+                                break
+                        if flag:
+                            break
+            i += 1
+
 
         self.table_tabellaMillesimale.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
