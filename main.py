@@ -7,6 +7,7 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.Contabilita.tipoSpesa import TipoSpesa
+from Classes.Contabilita.bilancio import Bilancio
 
 
 from Viste.VistaHome import VistaHome

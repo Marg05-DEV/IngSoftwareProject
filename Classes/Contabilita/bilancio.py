@@ -19,9 +19,8 @@ class Bilancio:
         self.numeroRate = 0
         self.ratePreventivate = {} # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
         
-    def aggiungiBilancio(self, codice, fineEsercizio, immobile, importiDaVersare, inizioEsercizio, numeroRate, ratePreventivate, ripartizioneConguaglio,
+    def aggiungiBilancio(self, fineEsercizio, immobile, importiDaVersare, inizioEsercizio, numeroRate, ratePreventivate, ripartizioneConguaglio,
                          ripartizioneSpeseConsuntivate, ripartizioneSpesePreventivate, speseConsuntivate, spesePreventivate):
-        self.codice = codice
         self.fineEsercizio = fineEsercizio
         self.immobile = immobile
         self.importiDaVersare = importiDaVersare
@@ -38,9 +37,12 @@ class Bilancio:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 bilanci = dict(pickle.load(f))
-        bilanci[codice] = self
+                if bilanci.keys():
+                    self.codice = max(bilanci.keys()) + 1
+        bilanci[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+        return "Il bilancio è stato creato", self
 
     def getInfoBilancio(self):
         return {
@@ -58,4 +60,15 @@ class Bilancio:
             "spesePreventivate": self.spesePreventivate
         }
 
+    @staticmethod
+    def getAllBilanci():
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                try:
+                    bilanci = dict(pickle.load(f))
+                except EOFError:
+                    bilanci = {}
+                return bilanci
+        else:
+            return {}
 
