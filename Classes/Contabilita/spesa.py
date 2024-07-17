@@ -1,16 +1,16 @@
+import datetime
 import os.path
 import pickle
-from datetime import datetime
 
 nome_file = 'Dati/spese.pickle'
 class Spesa:
-    numSpeseRegistrate = 0
+    #numSpeseRegistrate = 0
 
     def __init__(self):
-        self.codice = 0
-        self.dataFattura = datetime(year=1970, month=1, day=1)
-        self.dataRegistrazione = datetime(year=1970, month=1, day=1)
-        self.dataPagamento = datetime(year=1970, month=1, day=1)
+        self.codice = 1
+        self.dataFattura = datetime.date(year=1970, month=1, day=1)
+        self.dataRegistrazione = datetime.date(year=1970, month=1, day=1)
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
         self.descrizione = ""
         self.fornitore = None
         self.importo = 0.0
@@ -22,9 +22,8 @@ class Spesa:
 
 
 
-    def aggiungiSpesa(self, descrizione, fornitore, importo, codice, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
-        Spesa.numSpeseRegistrate += 1
-        self.codice = codice
+    def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
+        #Spesa.numSpeseRegistrate += 1
         self.dataFattura = dataFattura
         self.dataRegistrazione = dataRegistrazione
         self.dataPagamento = dataPagamento
@@ -41,36 +40,33 @@ class Spesa:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 spese = pickle.load(f)
-        spese[codice] = self
+                if spese.keys():
+                    self.codice = max(spese.keys())+1
+        spese[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
+        return "Spesa aggiunta", self
 
-    def modificaSpesa(self, descrizione = None, fornitore = None, importo = None, codice = None, tipoSpesa = None, immobile = None,
-                      pagata = None, dataPagamento = None, dataFattura = None, dataRegistrazione = None, isRitenuta = None, numeroFattura = None):
-        if descrizione is not None:
-            self.descrizione = descrizione
-        if fornitore is not None:
-            self.fornitore = fornitore
-        if codice is not None:
-            self.codice = codice
-        if importo is not None:
-            self.importo = importo
-        if tipoSpesa is not None:
-            self.tipoSpesa = tipoSpesa
-        if immobile is not None:
-            self.immobile = immobile
-        if pagata is not None:
-            self.pagata = pagata
-        if dataPagamento is not None:
-            self.dataPagamento = dataPagamento
-        if dataFattura is not None:
-            self.dataFattura = dataFattura
-        if dataRegistrazione is not None:
-            self.dataRegistrazione = dataRegistrazione
-        if isRitenuta is not None:
-            self.isRitenuta = isRitenuta
-        if numeroFattura is not None:
-            self.numeroFattura = numeroFattura
+    def modificaSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile,
+                      pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                spese = dict(pickle.load(f))
+                spese[self.codice].descrizione = descrizione
+                spese[self.codice].fornitore = fornitore
+                spese[self.codice].importo = importo
+                spese[self.codice].tipoSpesa = tipoSpesa
+                spese[self.codice].pagata = pagata
+                spese[self.codice].immobile = immobile
+                spese[self.codice].pagata = pagata
+                spese[self.codice].dataPagamento = dataPagamento
+                spese[self.codice].dataFattura = dataFattura
+                spese[self.codice].dataRegistrazione = dataRegistrazione
+                spese[self.codice].isRitenuta = isRitenuta
+                spese[self.codice].numeroFattura = numeroFattura
+        with open(nome_file, "wb") as f:
+            pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
+        return "La rata è stata modificata"
 
     def rimuoviSpesa(self):
         if os.path.isfile(nome_file):
@@ -80,9 +76,9 @@ class Spesa:
             with open(nome_file,'"wb') as f:
                 pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
         self.codice = -1
-        self.dataFattura = datetime(year=1970, month=1, day=1)
-        self.dataRegistrazione = datetime(year=1970, month=1, day=1)
-        self.dataPagamento = datetime(year=1970, month=1, day=1)
+        self.dataFattura = datetime.date(year=1970, month=1, day=1)
+        self.dataRegistrazione = datetime.date(year=1970, month=1, day=1)
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
         self.descrizione = ""
         self.fornitore = None
         self.importo = 0.0
@@ -92,7 +88,7 @@ class Spesa:
         self.pagata = False
         self.numeroFattura = 0
         del self
-
+        return "Spesa rimossa"
     @staticmethod
     def ricercaSpesaByDataPagamento(dataPagamento):
         if os.path.isfile(nome_file):

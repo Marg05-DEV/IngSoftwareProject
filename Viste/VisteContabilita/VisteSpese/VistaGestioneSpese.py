@@ -30,7 +30,7 @@ class VistaGestioneSpese(QWidget):
             ["Data Di pagamento", "Tipo di Spesa A -> Z", "tipo di Spesa Z -> A", "Immobile A -> Z","Immobile Z -> A", "Fornitore A -> Z",
              "Fornitore Z -> A"])
         self.sortType.activated.connect(self.debugComboBox2)
-        find_layout.addWidget(searchbar, 0, 0, 1, 3)
+        find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
         find_layout.addWidget(self.searchType, 0, 3)
         find_layout.addWidget(sortLabel, 1, 0)
         find_layout.addWidget(self.sortType, 1, 1)

@@ -36,6 +36,7 @@ class Rata:
         rate[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
+        return "Rata aggiunta", self
 
     def modificaRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
         if os.path.isfile(nome_file):
@@ -70,7 +71,7 @@ class Rata:
         self.unitaImmobiliare = None
         self.versante = ""
         del self
-
+        return "Rata rimossa"
     def getInfoRata(self):
         return {
             "codice": self.codice,
