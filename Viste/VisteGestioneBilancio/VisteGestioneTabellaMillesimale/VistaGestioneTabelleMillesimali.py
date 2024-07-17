@@ -119,18 +119,18 @@ class VistaGestioneTabelleMillesimali(QWidget):
             millesimo = 0
             for j in range(len(self.unitaImmobiliari_immobile)):
                 print(j)
-                flag = False
                 if not t.millesimi:
                     self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(millesimo)))
                 else:
+                    z = j
                     for cod in self.codice_ui:
                         for key in t.millesimi.keys():
                             if cod == key:
-                                self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(t.millesimi[key])))
-                                flag = True
+                                self.table_tabellaMillesimale.setItem(z, i, QTableWidgetItem(str(t.millesimi[key])))
                                 break
-                        if flag:
-                            break
+                        z += 1
+                    if z == range(len(self.unitaImmobiliari_immobile)):
+                        break
             i += 1
 
 

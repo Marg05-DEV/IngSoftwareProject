@@ -8,10 +8,10 @@ class Bilancio:
 
     def __init__(self):
         self.codice = 0
-        self.fineEsercizio = datetime.datetime(year=1970, month=1, day=1)
+        self.fineEsercizio = datetime.date(year=1970, month=1, day=1)
         self.immobile = None
         self.importiDaVersare = {}
-        self.inizioEsercizio = datetime.datetime(year=1970, month=1, day=1)
+        self.inizioEsercizio = datetime.date(year=1970, month=1, day=1)
         self.numeroRate = 0
         self.ratePreventivate = {}
         self.ripartizioneConguaglio = {}

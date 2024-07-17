@@ -138,7 +138,7 @@ class VistaMenuGestioneBilancio(QWidget):
                 print("imm: ", immobile)
         if immobile != None:
             print("si")
-            self.vista_gestione_bilancio = VistaBilancio()
+            self.vista_gestione_bilancio = VistaBilancio(immobile)
             self.vista_gestione_bilancio.show()
         else:
             print("no")

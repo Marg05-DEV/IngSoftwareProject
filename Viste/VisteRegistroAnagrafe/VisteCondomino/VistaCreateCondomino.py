@@ -222,6 +222,11 @@ class VistaCreateCondomino(QWidget):
         num_writed_lines = 0
         required_fields = ['nome', 'cognome', 'codiceFiscale', 'luogoDiNascita', 'provinciaDiNascita', 'residenza',
                            'telefono', 'email', 'titolo']
+        """
+        Qui ho messo anche la data di nasciata come campo richiesto, perchè non lo abbiamo inserito come richiesto?
+        required_fields = ['nome', 'cognome', 'codiceFiscale', 'luogoDiNascita', 'provinciaDiNascita', 'residenza', 'dataDiNascita'
+                           'telefono', 'email', 'titolo']
+        """
         unique_fields = ['codiceFiscale']
         there_is_unique_error = {}
         same_ui = False
