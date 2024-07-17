@@ -1,10 +1,11 @@
+import datetime
 import os
 import webbrowser
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
-    QPushButton, QSizePolicy, QSpacerItem
+    QPushButton, QSizePolicy, QSpacerItem, QDateEdit
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
@@ -19,6 +20,7 @@ class VistaGestisciBilancio(QWidget):
 
     def __init__(self, immobile):
         super(VistaGestisciBilancio, self).__init__()
+        print("ciao1")
         self.immobile = immobile
         self.input_lines = {}
         self.input_errors = {}
@@ -41,35 +43,70 @@ class VistaGestisciBilancio(QWidget):
         self.msg = QLabel("Non ci sono Esercizi")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
-        self.update_list()
+
         self.timer = QTimer(self)
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
         main_layout.addLayout(action_layout)
         main_layout.addLayout(action_data)
-        main_layout.addLayout(self.msg)
+        main_layout.addWidget(self.msg)
+
+        self.update_list()
 
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Bilancio")
 
     def create_button(self, testo, action, disabled=False):
+        print("bottone in")
         button = QPushButton(testo)
         button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
+        print("botton ok")
         return button
+    def pairLabelInput(self, testo, index):
+        print("dentro pair")
+        input_layout = QVBoxLayout()
+        pair_layout = QHBoxLayout()
+
+        error = QLabel("placeholder")
+        error.setStyleSheet("color: red; font-style: italic;")
+        error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        error.setVisible(False)
+
+        label = QLabel(testo + "*: ")
+        input_line = QDateEdit()
+        input_line.dateChanged.connect(self.input_validation)
+        print("dopo il richiamo della validazione in pair")
+        self.input_lines[index] = input_line
+        self.input_errors[index] = error
+
+        pair_layout.addWidget(label)
+        pair_layout.addWidget(input_line)
+
+        input_layout.addWidget(error)
+        input_layout.addLayout(pair_layout)
+        print("fine del pair")
+        return input_layout
 
     def update_list(self):
-        self.all_bilanci = Bilancio.getAllBilanci().values()
+        print("dentro update list")
+        self.all_bilanci = list(Bilancio.getAllBilanciByImmobile(self.immobile).values())
+        Bilancio.ordinaBilancioByDataInizio(self.all_bilanci)
+        print("dopo la funzione di ordinamento")
+
         if not self.all_bilanci:
             self.msg.setText("Non ci sono bilanci definiti")
             self.msg.show()
-
+        elif not self.timer.isActive():
+            self.msg.hide()
+        print("prima del for in update")
         listview_model = QStandardItemModel(self.list_view_bilanci)
         for bilancio in self.all_bilanci:
+            print("dentro al for in update")
             item = QStandardItem()
             item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio}"
             item.setText(item_text)
@@ -80,52 +117,72 @@ class VistaGestisciBilancio(QWidget):
             listview_model.appendRow(item)
 
         self.list_view_bilanci.setModel(listview_model)
-
+        print("prima di aver selezionato la riga")
         self.selectionModel = self.list_view_bilanci.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
+        print("fuoir update")
 
 
     def goBilancio(self):
-        self.choose_bilancio = VistaBilancio(self.immobile)
+        print("dentro a goBilancio")
+        item = None
+        for index in self.list_view_bilanci.selectedIndexes():
+            item = self.list_view_bilanci.model().itemFromIndex(index)
+        bilancio = Bilancio.ricercaBilancioByDataInizio(item.text().split(" ")[1], self.immobile)
+        self.choose_bilancio = VistaBilancio(self.immobile, bilancio)
         self.choose_bilancio.show()
 
     def goNuovoEsercizio(self):
-        self.nuovo_esercizio = VistaBilancio(self.immobile)
+        print("dentro nuovo esercizio")
+        data_inizio = self.input_lines["inizioEsercizio"].text()
+        data_inizio = data_inizio.split("/")
+        data_inizio = datetime.date(int(data_inizio[2]), int(data_inizio[1]), int(data_inizio[0]))
+
+        data_fine = self.input_lines["fineEsercizio"].text()
+        data_fine = data_fine.split("/")
+        data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
+        print("prima dell'aggiunta del bilancio")
+        temp_bilancio = Bilancio()
+        msg, bilancio = temp_bilancio.aggiungiBilancio(data_fine, self.immobile, {}, data_inizio, 0,
+                                                       {}, {}, {}, {}, {}, {})
+        print("dopo l'aggiunta di un nuovo bilancio")
+        self.callback(msg)
+        self.nuovo_esercizio = VistaBilancio(self.immobile, bilancio)
         self.nuovo_esercizio.show()
 
-    def pairLabelInput(self, testo, index):
-        input_layout = QVBoxLayout()
-        pair_layout = QHBoxLayout()
 
-        error = QLabel("placeholder")
-        error.setStyleSheet("color: red; font-style: italic;")
-        error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        error.setVisible(False)
-
-        label = QLabel(testo + "*: ")
-        input_line = QLineEdit()
-
-        input_line.textChanged.connect(self.input_validation)
-        self.input_lines[index] = input_line
-        self.input_errors[index] = error
-
-        pair_layout.addWidget(label)
-        pair_layout.addWidget(input_line)
-
-        input_layout.addWidget(error)
-        input_layout.addLayout(pair_layout)
-
-        return input_layout
     def able_button(self):
+        print("dentro ad able_button")
         if not self.list_view_bilanci.selectedIndexes():
             self.button_list["Vai al bilancio"].setDisabled(True)
         else:
             self.button_list["Vai al bilancio"].setDisabled(False)
 
     def input_validation(self):
-        pass
+        print("dentro la validazione")
+        print("1")
+        print(self.input_lines["inizioEsercizio"].text())
+        data_inizio = self.input_lines["inizioEsercizio"].text()
+        print(data_inizio)
+        data_inizio = data_inizio.split("/")[2]
+        print(data_inizio)
+
+        data_fine = self.input_lines["fineEsercizio"].text()
+        data_fine = data_fine.split("/")[2]
+
+
+        differenza = int(data_fine)-int(data_inizio)
+        print(int(data_inizio) > int(data_fine) and differenza != 1)
+        print("maggiore: ", int(data_inizio) > int(data_fine))
+        print("diff: ", differenza != 1)
+
+        if int(data_inizio) >= int(data_fine) and differenza != 1:
+            self.button_list["Nuovo Esercizio"].setDisabled(True)
+        else:
+            self.button_list["Nuovo Esercizio"].setDisabled(False)
 
     def callback(self, msg=""):
+        print("sono nella callback")
         self.button_list["Vai al bilancio"].setDisabled(True)
         self.button_list["Nuovo Esercizio"].setDisabled(True)
         self.update_list()
@@ -138,5 +195,5 @@ class VistaGestisciBilancio(QWidget):
         self.msg.hide()
         self.timer.stop()
         if not self.all_bilanci:
-            self.msg.setText("Non ci sono unità bilanci definiti")
+            self.msg.setText("Non ci sono bilanci definiti")
             self.msg.show()

@@ -193,11 +193,8 @@ class VistaReadAssegnazione(QWidget):
         print(self.list_view_condomini.selectedIndexes())
         for index in self.list_view_condomini.selectedIndexes():
             item = self.list_view_condomini.model().itemFromIndex(index)
-        print(item.text().split(" (")[0].split(" - ")[1])
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])
-        print("si va a modificare", sel_condomino)
         self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, self.lista_condomini_callback, self.sel_unitaImmobiliare, onlyAnagrafica=False)
-        print("si va a modificare")
         self.vista_modifica_condomino.show()
 
     def readCondomino(self):

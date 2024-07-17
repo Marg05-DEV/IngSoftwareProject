@@ -6,7 +6,7 @@ nome_file = 'Dati/Bilanci.pickle'
 class Bilancio:
 
     def __init__(self):
-        self.codice = 0
+        self.codice = 1
         self.immobile = None
         self.inizioEsercizio = datetime.date(year=1970, month=1, day=1)
         self.fineEsercizio = datetime.date(year=1970, month=1, day=1)
@@ -46,7 +46,6 @@ class Bilancio:
 
     def getInfoBilancio(self):
         return {
-            "codice": self.codice,
             "fineEsercizio": self.fineEsercizio,
             "immobile": self.immobile,
             "importiDaVersore": self.importiDaVersare,
@@ -71,4 +70,47 @@ class Bilancio:
                 return bilanci
         else:
             return {}
+
+    @staticmethod
+    def getAllBilanciByImmobile(immobile):
+        bilanci = Bilancio.getAllBilanci()
+        if bilanci:
+            bilanciByImmobile = {}
+            for key, value in bilanci.items():
+                if value.immobile.id == immobile.id:
+                    bilanciByImmobile[key] = value
+            return bilanciByImmobile
+        else:
+            return {}
+
+    @staticmethod
+    def ricercaBilancioByDataInizio(data_inizio, immobile):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                bilanci = dict(pickle.load(f))
+                for bilancio in bilanci.values():
+                    print(str(bilancio.inizioEsercizio))
+                    print(data_inizio)
+                    print(str(bilancio.inizioEsercizio) == data_inizio and bilancio.immobile.codice == immobile.codice)
+                    print(bilancio.immobile, " --- ", immobile)
+                    if str(bilancio.inizioEsercizio) == data_inizio and bilancio.immobile.codice == immobile.codice:
+                        return bilancio
+                return None
+        else:
+            return None
+    @staticmethod
+    def ordinaBilancioByDataInizio(list_bilanci):
+        sorted_data_inizio = []
+        for bilancio in list_bilanci:
+            sorted_data_inizio.append(bilancio.inizioEsercizio)
+        sorted_data_inizio.sort(reverse=True)
+
+        sorted_bilanci = []
+        for inizio_esercizio in sorted_data_inizio:
+            for bilancio in list_bilanci:
+                if bilancio.inizioEsercizio == inizio_esercizio:
+                    sorted_bilanci.append(bilancio)
+                    break
+        for i in range(len(list_bilanci)):
+            list_bilanci[i] = sorted_bilanci[i]
 

@@ -12,10 +12,11 @@ from Viste.VisteGestioneBilancio.VisteBilancio.VistaRipartizionePreventivo impor
 
 class VistaBilancio(QWidget):
 
-    def __init__(self, immobile):
+    def __init__(self, immobile, bilancio):
         print("ciao")
         super(VistaBilancio, self).__init__()
         self.immobile = immobile
+        self.bilancio = bilancio
         self.setWindowTitle("Gestione Bilancio")
         self.input_lines = {}
         self.input_errors = {}

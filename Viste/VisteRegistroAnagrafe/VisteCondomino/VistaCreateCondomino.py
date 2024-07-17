@@ -63,7 +63,7 @@ class VistaCreateCondomino(QWidget):
         main_layout.addLayout(existing_condomino_layout)
 
         main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"))
-        main_layout.addLayout(self.pairLabelInput("Nome", "nome", ))
+        main_layout.addLayout(self.pairLabelInput("Nome", "nome"))
         main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"))
 
         nascita_layout = QHBoxLayout()
