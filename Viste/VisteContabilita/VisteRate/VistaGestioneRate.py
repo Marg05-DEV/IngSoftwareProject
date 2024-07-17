@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QLab
 from Classes.Contabilita.rata import Rata
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+from Viste.VisteContabilita.VisteRate.VistaCreateRata import VistaCreateRata
 
 
 class VistaGestioneRate(QWidget):
@@ -77,7 +78,8 @@ class VistaGestioneRate(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        button.setMinimumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -102,7 +104,7 @@ class VistaGestioneRate(QWidget):
         else:
             print("Altro")
 
-    def update_table(self, searchActivated=False ):
+    def update_table(self, searchActivated=False):
         self.rate = list(Rata.getAllRate().values())
 
         print("update")
@@ -162,9 +164,7 @@ class VistaGestioneRate(QWidget):
 
     def goCreateRata(self):
         print("creazione rata")
-        return
-
-        self.vista_nuova_rata = VistaCreateRate(callback=self.callback)
+        self.vista_nuova_rata = VistaCreateRata(callback=self.callback)
         self.vista_nuovo_rata.show()
 
     def goReadRata(self):

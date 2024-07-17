@@ -5,7 +5,6 @@ import pickle
 nome_file = 'Dati/Rate.pickle'
 
 class Rata:
-
     def __init__(self):
         self.codice = 1
         self.dataPagamento = datetime.date(year=1970, month=1, day=1)
