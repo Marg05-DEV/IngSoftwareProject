@@ -49,6 +49,17 @@ class Fornitore:
                 return None
         return None
 
+    @staticmethod
+    def ricercaFornitoreByDenominazione(denominazione):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                fornitori = dict(pickle.load(f))
+                for fornitore in fornitori.values():
+                    if fornitore.denominazione == denominazione:
+                        return fornitore
+                return None
+        return None
+
     def rimuoviFornitore(self):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -76,3 +87,15 @@ class Fornitore:
         with open(nome_file, "wb") as f:
             pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
         return "Il fornitore è stato modificato"
+
+    @staticmethod
+    def getAllFornitore():
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                try:
+                    fornitori = dict(pickle.load(f))
+                except EOFError:
+                    fornitori = {}
+                return fornitori
+        else:
+            return {}
