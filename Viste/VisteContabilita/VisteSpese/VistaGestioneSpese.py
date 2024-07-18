@@ -17,11 +17,6 @@ from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 
-
-class VistaReadUnitaImmobiliare:
-    pass
-
-
 class VistaGestioneSpese(QWidget):
     def __init__(self, parent=None, sortLabel=None):
         super(VistaGestioneSpese, self).__init__(parent)

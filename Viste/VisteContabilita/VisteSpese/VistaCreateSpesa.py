@@ -91,7 +91,7 @@ class VistaCreateSpesa(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText("denominazione")
             input_line.textChanged.connect(self.input_validation)
-            
+
         elif index == "cittaSede":
             input_line = QLineEdit()
             input_line.setPlaceholderText("cittaSede")

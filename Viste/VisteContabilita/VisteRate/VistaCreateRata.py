@@ -10,7 +10,6 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
-
 class VistaCreateRata(QWidget):
 
     def __init__(self, callback):
@@ -92,7 +91,7 @@ class VistaCreateRata(QWidget):
             input_line.textChanged.connect(self.input_validation)
         elif index == "importo":
             input_line = QLineEdit()
-            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[1-9][0-9]*[.,][0-9]{0,2}")))
+            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
             input_line = QDateEdit()
@@ -164,7 +163,6 @@ class VistaCreateRata(QWidget):
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
-                print("immobile cambiato")
                 self.input_lines['unitaImmobiliare'].clear()
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)

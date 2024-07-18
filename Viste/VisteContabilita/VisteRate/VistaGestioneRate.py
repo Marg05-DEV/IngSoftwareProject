@@ -8,6 +8,7 @@ from Classes.Contabilita.rata import Rata
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Viste.VisteContabilita.VisteRate.VistaCreateRata import VistaCreateRata
+from Viste.VisteContabilita.VisteRate.VistaUpdateRata import VistaUpdateRata
 
 
 class VistaGestioneRate(QWidget):
@@ -92,7 +93,7 @@ class VistaGestioneRate(QWidget):
         if self.sortType.currentIndex() == 0:
             self.table_rate.sortItems(0, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 1:
-            self.table_rate.sortItems(3)
+            self.table_rate.sortItems(3, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 2:
             self.table_rate.sortItems(1, Qt.SortOrder.AscendingOrder)
         elif self.sortType.currentIndex() == 3:
@@ -141,13 +142,9 @@ class VistaGestioneRate(QWidget):
         for rata in self.rate:
             print(rata, rata.getInfoRata())
             self.table_rate.setItem(i, 0, QTableWidgetItem(str(rata.codice)))
-            print("i")
             self.table_rate.setItem(i, 1, QTableWidgetItem((Immobile.ricercaImmobileById((UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)).immobile)).denominazione))
-            print("ii")
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
-            print("iii")
             self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%d/%m/%Y")))
-            print("iiii")
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
             self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
             self.table_rate.setItem(i, 6, QTableWidgetItem(str(rata.importo)))
@@ -180,14 +177,10 @@ class VistaGestioneRate(QWidget):
 
 
     def goUpdateRata(self):
-        print("modifica rata")
-        rata_selezionata = None
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
-        print(codice_rata, ": ", rata_selezionata.getInfoRata())
-        return
 
-        self.vista_modifica_rata = VistaUpdateRata(rata_selezionata, callback=self.callback)
+        self.vista_modifica_rata = VistaUpdateRata(self.callback, rata_selezionata)
         self.vista_modifica_rata.show()
 
     def goDeleteRata(self):
