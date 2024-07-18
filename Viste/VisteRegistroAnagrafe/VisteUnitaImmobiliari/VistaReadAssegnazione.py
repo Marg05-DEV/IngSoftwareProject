@@ -130,14 +130,10 @@ class VistaReadAssegnazione(QWidget):
         table.verticalHeader().setVisible(False)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        table.horizontalHeader().setStretchLastSection(True)
+        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        table.resizeRowsToContents()
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
-        vertical_header = table.verticalHeader()
-        table.setMaximumHeight(vertical_header.height())
-        print("create tabella")
-        table.resizeRowsToContents()
-        print("create tabella")
         return table
 
     def new_label(self, testo, index):

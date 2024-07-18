@@ -132,6 +132,7 @@ class Spesa:
                 return "Spesa non Trovata"
         return "File non esistente"
 
+    @staticmethod
     def getAllSpese():
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:

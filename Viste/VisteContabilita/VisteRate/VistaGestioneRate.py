@@ -2,7 +2,7 @@ import datetime
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QLabel, QWidget, QTableWidget, QPushButton, \
-    QSizePolicy, QTableWidgetItem, QAbstractItemView
+    QSizePolicy, QTableWidgetItem, QAbstractItemView, QHeaderView
 
 from Classes.Contabilita.rata import Rata
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -73,7 +73,7 @@ class VistaGestioneRate(QWidget):
         main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
+        self.resize(800, 540)
         self.setWindowTitle("Gestione Rate")
 
     def create_button(self, testo, action, disabled=False):
@@ -119,7 +119,6 @@ class VistaGestioneRate(QWidget):
                 self.rate = [item for item in self.rate if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item.unitaImmobiliare).immobile)).denominazione.upper()]
             elif self.searchType.currentIndex() == 2:  # ricerca per nome versante
                 self.rate = [item for item in self.rate if self.searchbar.text().upper() in item.versante.upper()]
-        print("cacca")
         if not self.rate:
             print("vuoto")
             if searchActivated:
@@ -156,7 +155,8 @@ class VistaGestioneRate(QWidget):
 
         print("qui")
         self.table_rate.resizeColumnToContents(0)
-        self.table_rate.resizeColumnToContents(5)
+        self.table_rate.resizeColumnToContents(6)
+        self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_rate.sortItems(0, Qt.SortOrder.DescendingOrder)
         self.table_rate.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_rate.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -165,7 +165,7 @@ class VistaGestioneRate(QWidget):
     def goCreateRata(self):
         print("creazione rata")
         self.vista_nuova_rata = VistaCreateRata(callback=self.callback)
-        self.vista_nuovo_rata.show()
+        self.vista_nuova_rata.show()
 
     def goReadRata(self):
         print("visualizzazione rata")
@@ -224,14 +224,14 @@ class VistaGestioneRate(QWidget):
 
 
     def callback(self, msg):
-        self.button_list["Visualizza Immobile"].setDisabled(True)
-        self.button_list["Modifica Immobile"].setDisabled(True)
-        self.button_list["Elimina Immobile"].setDisabled(True)
+        self.button_list["Visualizza Rata"].setDisabled(True)
+        self.button_list["Modifica Rata"].setDisabled(True)
+        self.button_list["Elimina Rata"].setDisabled(True)
         self.searchbar.clear()
         self.searchType.clear()
-        self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        sort, desc = self.ordina_lista(True)
-        self.update_list(sort, desc)
+        self.searchType.addItems(["Ricerca per data di pagamento", "Ricerca per denominazione dell'immobile", "Ricerca per nome del versante"])
+        self.update_table()
+        self.avvia_ordinamento()
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
