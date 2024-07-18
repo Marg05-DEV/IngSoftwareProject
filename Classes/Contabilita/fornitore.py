@@ -5,13 +5,14 @@ nome_file = 'Dati/Fornitori.pickle'
 class Fornitore:
 
     def __init__(self):
+        self.codice = 1
         self.cittaSede = ""
         self.denominazione = ""
         self.indirizzoSede = ""
         self.partitaIva = ""
         self.tipoProfessione = ""
 
-    def aggiungiFornitore(self , cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
+    def aggiungiFornitore(self, cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
         self.cittaSede = cittaSede
         self.denominazione = denominazione
         self.indirizzoSede = indirizzoSede
@@ -22,12 +23,15 @@ class Fornitore:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
-        fornitori[denominazione] = self
+                if fornitori.keys():
+                    self.codice = max(fornitori.keys())+1
+        fornitori[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
-
+        return "Fornitore aggiunto", self
     def getFornitore(self):
         return {
+            "codice": self.codice,
             "cittaSede": self.cittaSede,
             "denominazione": self.denominazione,
             "indirizzoSede": self.indirizzoSede,
@@ -40,33 +44,35 @@ class Fornitore:
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
                 for fornitore in fornitori.values():
-                    fornitore.partitaIVA = partitaIva
-                    return fornitore
-                return "fornitore non trovato"
-        return "File non trovato"
+                    if fornitore.partitaIVA == partitaIva:
+                        return fornitore
+                return None
+        return None
 
     def rimuoviFornitore(self):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
                 del fornitori[self.partitaIva]
-            with open(nome_file, 'wb+') as f:
-                pickle.load(fornitori, f, pickle.HIGHEST_PROTOCOL)
+            with open(nome_file, 'wb') as f:
+                pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
+        self.codice = -1
         self.cittaSede = ""
         self.denominazione = ""
         self.indirizzoSede = ""
         self.partitaIva = ""
         self.tipoProfessione = ""
         del self
-
-    def modificaFornitore(self, cittaSede = None, denominazione = None, indirizzoSede = None, partitaIva = None, tipoProfessione = None):
-        if cittaSede is not None:
-            self.cittaSede = cittaSede
-        if denominazione is not None:
-            self.denominazione = denominazione
-        if partitaIva is not None:
-            self.partitaIva = partitaIva
-        if tipoProfessione is not None:
-            self.tipoProfessione = tipoProfessione
-        if indirizzoSede is not None:
-            self.indirizzoSede = indirizzoSede
+        return "Fornitore rimosso"
+    def modificaFornitore(self, cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                fornitori = pickle.load(f)
+                fornitori[self.codice].cittaSede = cittaSede
+                fornitori[self.codice].denominazione = denominazione
+                fornitori[self.codice].indirizzoSede = indirizzoSede
+                fornitori[self.codice].partitaIva = partitaIva
+                fornitori[self.codice].tipoProfessione = tipoProfessione
+        with open(nome_file, "wb") as f:
+            pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
+        return "Il fornitore è stato modificato"

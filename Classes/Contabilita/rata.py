@@ -105,10 +105,9 @@ class Rata:
                 for rata in rate.values():
                     if rata.dataPagamento == data:
                         return rata
-                return "Rata non trovata"
+                return None
         else:
-            return "File non esistente"
-
+            return None
     @staticmethod
     def ricercaRataByCodice(codice):
         if os.path.isfile(nome_file):
@@ -117,9 +116,9 @@ class Rata:
                 for rata in rate.values():
                     if rata.codice == codice:
                         return rata
-                return "Rata non trovata"
+                return None
         else:
-            return "File non esistente"
+            return None
 
 
 

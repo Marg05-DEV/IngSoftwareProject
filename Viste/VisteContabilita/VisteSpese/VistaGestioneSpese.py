@@ -1,9 +1,20 @@
-from PyQt6.QtCore import QTimer
+import datetime
+
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
-    QPushButton
+    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView
+
+from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.spesa import Spesa
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
+from Classes.RegistroAnagrafe.immobile import Immobile
+from Viste.VisteContabilita.VisteSpese.VistaCreateSpesa import VistaCreateSpesa
+from Viste.VisteContabilita.VisteSpese.VistaDeleteSpesa import VistaDeleteSpesa
+from Viste.VisteContabilita.VisteSpese.VistaReadFattura import VistaReadFattura
+from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
+from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 
@@ -23,37 +34,36 @@ class VistaGestioneSpese(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Spesa")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
-        self.searchType.activated.connect(self.debugComboBox1)
+        self.searchType.addItems(["Ricerca per dataPagamento", "Ricerca per tipoSpesa", "Ricerca per Immobile", "Ricerca per fornitore"])
+        self.searchType.activated.connect(self.avvia_ricerca)
+        self.searchbar.textChanged.connect(self.avvia_ricerca)
+
+        find_layout.addWidget(self.searchbar)
+        find_layout.addWidget(self.searchType)
+
+        sort_layout = QHBoxLayout()
+
+        sortLabel = QLabel("Ordina per:")
+        self.sortType = QComboBox()
 
         self.sortType.addItems(
             ["Data Di pagamento", "Tipo di Spesa A -> Z", "tipo di Spesa Z -> A", "Immobile A -> Z","Immobile Z -> A", "Fornitore A -> Z",
              "Fornitore Z -> A"])
-        self.sortType.activated.connect(self.debugComboBox2)
-        find_layout.addWidget(self.searchbar, 0, 0, 1, 3)
-        find_layout.addWidget(self.searchType, 0, 3)
-        find_layout.addWidget(sortLabel, 1, 0)
-        find_layout.addWidget(self.sortType, 1, 1)
+        self.sortType.activated.connect(self.avvia_ordinamento)
+        sort_layout.addWidget(sortLabel)
+        sort_layout.addWidget(self.sortType)
 
-        action_layout = QHBoxLayout()
+        self.table_spese = QTableWidget()
+        self.lista_spese = []
 
-        self.list_view_spese = QListView()
-
-        button_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
         self.button_list = {}
 
-        button_layout.addWidget(self.create_button("Aggiungi Spesa", self.go_Create_spesa))
-        button_layout.addWidget(self.create_button("Visualizza Spesa", self.go_Read_spesa, True))
-        button_layout.addWidget(self.create_button("Modifica Spesa", self.go_Update_spesa, True))
-        button_layout.addWidget(self.create_button("Elimina Spesa", self.go_Delete_spesa, True))
-
-        action_layout.addWidget(self.list_view_spesa)
-
-        self.update_list()
-
-        self.selectionModel = self.list_view_spesa.selectionModel()
-        self.selectionModel.selectionChanged.connect(self.able_button)
-
+        button_layout.addWidget(self.create_button("Aggiungi Spesa", self.goCreateSpesa))
+        button_layout.addWidget(self.create_button("Visualizza Spesa", self.goReadSpesa, True))
+        button_layout.addWidget(self.create_button("Modifica Spesa", self.goUpdateSpesa, True))
+        button_layout.addWidget(self.create_button("Elimina Spesa", self.goDeleteSpesa, True))
+        button_layout.addWidget(self.create_button("Visualizza Fattura", self.goReadFattura, True))
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
@@ -64,12 +74,14 @@ class VistaGestioneSpese(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
+        self.update_table()
         message_layout.addWidget(self.msg)
-        action_layout.addLayout(button_layout)
 
         main_layout.addLayout(find_layout)
-        main_layout.addLayout(action_layout)
+        main_layout.addLayout(sort_layout)
+        main_layout.addWidget(self.table_spese)
         main_layout.addLayout(message_layout)
+        main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -83,79 +95,153 @@ class VistaGestioneSpese(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
-    
-    def debugComboBox1(self, combo):
-        print("pre")
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
-        print("post")
 
-    def debugComboBox2(self, combo):
-        print("pre")
-        print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
-        print("post")
+    def avvia_ricerca(self):
+        self.update_table(True)
 
-    def update_list(self):
-        self.lista_spese = []
-        self.lista_spese = list(Spesa.getAllSpese().values())
-        listview_model = QStandardItemModel(self.list_view_spese)
+    def avvia_ordinamento(self):
+        if self.sortType.currentIndex() == 0:
+            self.table_spese.sortItems(0)
+        elif self.sortType.currentIndex() == 1:
+            self.table_spese.sortItems(3)
+        elif self.sortType.currentIndex() == 2:
+            self.table_spese.sortItems(1, Qt.SortOrder.AscendingOrder)
+        elif self.sortType.currentIndex() == 3:
+            self.table_spese.sortItems(1, Qt.SortOrder.DescendingOrder)
+        elif self.sortType.currentIndex() == 4:
+            self.table_spese.sortItems(2, Qt.SortOrder.AscendingOrder)
+        elif self.sortType.currentIndex() == 5:
+            self.table_spese.sortItems(2, Qt.SortOrder.DescendingOrder)
+        else:
+            print("Altro")
 
-        for spese in self.lista_spese:
-            item = QStandardItem()
-            item_text = f"{unitaImmobiliare.interno} {unitaImmobiliare.immobile} - {unitaImmobiliare.condomini}"
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            listview_model.appendRow(item)
+    def update_table(self, searchActivated=False):
+        self.spese = list(Spesa.getAllSpese().values())
 
-        self.list_view_unitaImmobiliare.setModel(listview_model)
+        print("update")
 
-    def go_Create_unitaImmobiliare(self):
-        self.vista_nuovo_unitaImmobiliare = VistaCreateUnitaImmobiliare(callback=self.callback)
-        self.vista_nuovo_unitaImmobiliare.show()
+        if searchActivated and self.searchbar.text():
+            print("in ricerca")
+            if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per data Pagamento
+                day, month, year = [int(x) for x in self.searchbar.text().split("/")]
+                data = datetime.date(year, month, day)
+                self.spese = [item for item in self.spese if data == item.dataPagamento]
+            elif self.searchType.currentIndex() == 1:  # ricerca per tipo Spesa
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (TipoSpesa.ricercaTipoSpesaByCodice(item.tipoSpesa.codice)).nome.upper()]
+            elif self.searchType.currentIndex() == 2:  # ricerca per Immobile
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(item.immobile.id)).denominazione.upper()]
+            elif self.searchType.currentIndex() == 3:  # ricerca per nome versante
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Fornitore.ricercaFornitoreByPartitaIVA(item.fornitore.partitaIva)).denominazione.upper()]
+        if not self.spese:
+            print("vuoto")
+            if searchActivated:
+                self.msg.setText("Nessuna spesa corrisponde alla ricerca")
+            else:
+                self.msg.setText("Non sono presenti spese")
+            self.msg.show()
+        elif not self.timer.isActive():
+            self.msg.hide()
 
-    def go_Read_unitaImmobiliare(self):
-        item = None
-        for index in self.list_view_unitaImmobiliare.selectedIndexes():
-            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
-        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_dettaglio_unitaImmobiliare = VistaReadUnitaImmobiliare(sel_unitaImmobiliare)
-        self.vista_dettaglio_unitaImmobiliare.show()
+        self.table_spese.setRowCount(len(self.spese))
+        self.table_spese.setColumnCount(10)
 
-    def go_Update_unitaImmobiliare(self):
-        item = None
-        for index in self.list_view_unitaImmobiliare.selectedIndexes():
-            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
-        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_modifica_immobile = VistaUpdateUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
-        self.vista_modifica_unitaImmobiliare.show()
+        print("aiuto")
 
-    def go_Delete_unitaImmobiliare(self):
-        item = None
-        for index in self.list_view_unitaImmobiliare.selectedIndexes():
-            item = self.list_view_unitaImmobiliare.model().itemFromIndex(index)
-            print(item.text())
-        sel_unitaImmobiliare = GestoreRegistroAnagrafe.ricercaUnitaImmobiliareInterno(int(item.text().split(" ")[0]))
-        self.vista_elimina_unitaImmobiliare = VistaDeleteUnitaImmobiliare(sel_unitaImmobiliare, callback=self.callback)
-        self.vista_elimina_unitaImmobiliare.show()
+        self.table_spese.setHorizontalHeaderLabels(
+            ["Cod.", "Immobile", "Tipo spesa", "Data registrazione", "Data Pagamento", "Data Fattura", "N° Fattura", "Descrizione", "Fornitore", "Importo"])
+        self.table_spese.verticalHeader().setVisible(False)
 
+        i = 0
+        for spesa in self.spese:
+            print(spesa, spesa.getInfoSpesa())
+            self.table_spese.setItem(i, 0, QTableWidgetItem(str(spesa.codice)))
+            print("i")
+            self.table_spese.setItem(i, 1, QTableWidgetItem(Immobile.ricercaImmobileById(spesa.immobile.id).denominazione))
+            print("ii")
+            self.table_spese.setItem(i, 2, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa.codice).nome))
+            print("iii")
+            self.table_spese.setItem(i, 3, QTableWidgetItem(spesa.dataRegistrazione.strftime("%d/%m/%Y")))
+            self.table_spese.setItem(i, 4, QTableWidgetItem(spesa.dataPagamento.strftime("%d/%m/%Y")))
+            self.table_spese.setItem(i, 5, QTableWidgetItem(spesa.dataFattura.strftime("%d/%m/%Y")))
+            print("iiii")
+            self.table_spese.setItem(i, 6, QTableWidgetItem(str(spesa.numeroFattura)))
+            self.table_spese.setItem(i, 7, QTableWidgetItem(spesa.descrizione))
+            self.table_spese.setItem(i, 8, QTableWidgetItem(Fornitore.ricercaFornitoreByPartitaIVA(spesa.fornitore.partitaIva).denominazione))
+            self.table_spese.setItem(i, 9, QTableWidgetItem(str(spesa.importo)))
+            i += 1
+
+        print("qui")
+        self.table_spese.resizeColumnToContents(0)
+        self.table_spese.resizeColumnToContents(9)
+        self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table_spese.sortItems(0, Qt.SortOrder.DescendingOrder)
+        self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_spese.selectionModel().selectionChanged.connect(self.able_button)
+
+    def goCreateSpesa(self):
+        print("creazione rata")
+        self.vista_nuova_spesa = VistaCreateSpesa(callback=self.callback)
+        self.vista_nuova_spesa.show()
+
+    def goReadSpesa(self):
+        print("visualizzazione rata")
+        spesa_selezionata = None
+        codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
+        spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
+        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
+        self.vista_dettaglio_spesa = VistaReadSpesa(spesa_selezionata, callback=self.callback)
+        self.vista_dettaglio_spesa.show()
+
+    def goUpdateSpesa(self):
+        print("modifica rata")
+        spesa_selezionata = None
+        codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
+        spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
+        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
+        self.vista_modifica_spesa = VistaUpdateSpesa(spesa_selezionata, callback=self.callback)
+        self.vista_modifica_spesa.show()
+
+    def goDeleteSpesa(self):
+        print("modifica rata")
+        spesa_selezionata = None
+        codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
+        spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
+        print(codice_spesa, ": ", spesa_selezionata.getInforSpesa())
+        self.vista_elimina_spesa = VistaDeleteSpesa(spesa_selezionata, callback=self.callback)
+        self.vista_elimina_spesa.show()
+
+    def goReadFattura(self):
+        print("vis ricevuta rata")
+        spesa_selezionata = None
+        codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
+        spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
+        print(codice_spesa, ": ", spesa_selezionata.getInfoRata())
+        self.vista_leggi_fattura = VistaReadFattura(spesa_selezionata, callback=self.callback)
+        self.vista_leggi_fattura.show()
 
     def able_button(self):
-        print("selezione cambiata")
-        if not self.list_view_unitaImmobiliare.selectedIndexes():
-            self.button_list["Visualizza Unità Immobiliare"].setDisabled(True)
-            self.button_list["Modifica Unità Immobiliare"].setDisabled(True)
-            self.button_list["Elimina Unità Immobiliare"].setDisabled(True)
+        if not self.table_spese.verticalHeader().selectionModel().selectedRows():
+            self.button_list["Visualizza Spesa"].setDisabled(True)
+            self.button_list["Modifica Spesa"].setDisabled(True)
+            self.button_list["Elimina Spesa"].setDisabled(True)
+            self.button_list["Visualizza Fattura"].setDisabled(True)
         else:
-            self.button_list["Visualizza Unità Immobiliare"].setDisabled(False)
-            self.button_list["Modifica Unità Immobiliare"].setDisabled(False)
-            self.button_list["Elimina Unità Immobiliare"].setDisabled(False)
+            self.button_list["Visualizza Spesa"].setDisabled(False)
+            self.button_list["Modifica Spesa"].setDisabled(False)
+            self.button_list["Elimina Spesa"].setDisabled(False)
+            self.button_list["Visualizza Fattura"].setDisabled(False)
 
     def callback(self, msg):
-        self.update_list()
+        self.button_list["Visualizza Spesa"].setDisabled(True)
+        self.button_list["Modifica Spesa"].setDisabled(True)
+        self.button_list["Elimina Spesa"].setDisabled(True)
+        self.button_list["Visualizza Fattura"].setDisabled(True)
+        self.searchbar.clear()
+        self.searchType.clear()
+        self.searchType.addItems(["Ricerca per dataPagamento", "Ricerca per tipoSpesa", "Ricerca per Immobile", "Ricerca per fornitore"])
+        self.update_table()
+        self.avvia_ordinamento()
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()

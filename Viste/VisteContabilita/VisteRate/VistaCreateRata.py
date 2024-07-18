@@ -151,7 +151,7 @@ class VistaCreateRata(QWidget):
         tipoPagamento = self.input_lines["tipoPagamento"].currentText()
 
         temp_rata = Rata()
-        msg = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
+        msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
                                            unitaImmobiliare, versante)
 
         print("fatto")

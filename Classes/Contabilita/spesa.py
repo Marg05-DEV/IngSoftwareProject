@@ -89,6 +89,17 @@ class Spesa:
         self.numeroFattura = 0
         del self
         return "Spesa rimossa"
+
+    @staticmethod
+    def ricercaSpesaByCodice(codice):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                spese = dict(pickle.load(f))
+                for spesa in spese.values():
+                    if spesa.codice == codice:
+                        return spesa
+                return None
+        return None
     @staticmethod
     def ricercaSpesaByDataPagamento(dataPagamento):
         if os.path.isfile(nome_file):
@@ -97,8 +108,8 @@ class Spesa:
                 for spesa in spese.values():
                     if spesa.dataPagamento == dataPagamento:
                         return spesa
-                return "Spesa non Trovata"
-        return "File non esistente"
+                return None
+        return None
 
     @staticmethod
     def ricercaSpesaByTipoSpesa(tipo):
@@ -106,10 +117,10 @@ class Spesa:
             with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
-                    if spesa.tipoSpesa == tipo:
+                    if spesa.tipoSpesa.codice == tipo.codice:
                         return spesa
-                return "Spesa non Trovata"
-        return "File non esistente"
+                return None
+        return None
 
     @staticmethod
     def ricercaSpesaByImmobile(nomeImmobile):
@@ -117,20 +128,20 @@ class Spesa:
             with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
-                    if spesa.immobile == nomeImmobile:
+                    if spesa.immobile.codice == nomeImmobile.codice:
                         return spesa
-                return "Spesa non Trovata"
-        return "File non esistente"
+                return None
+        return None
     @staticmethod
     def ricercaSpesaByFornitore(fornitore):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 spese = dict(pickle.load(f))
                 for spesa in spese.values():
-                    if spesa.fornitore == fornitore:
+                    if spesa.fornitore.codice == fornitore.codice:
                         return spesa
-                return "Spesa non Trovata"
-        return "File non esistente"
+                return None
+        return None
 
     @staticmethod
     def getAllSpese():
@@ -221,13 +232,9 @@ class Spesa:
             return None
 
 
-    def getSpesa(self):
-        if self.pagata:
-            pagata = "si"
-        else:
-            pagata = "no"
+    def getInfoSpesa(self):
         return {
-        "Numero spese Registrate" : Spesa.numSpeseRegistrate,
+        #"Numero spese Registrate" : Spesa.numSpeseRegistrate,
         "Codice" : self.codice,
         "Data Fattura" : self.dataFattura,
         "Data Registrazione" : self.dataRegistrazione,
@@ -238,7 +245,7 @@ class Spesa:
         "Immobile" : self.immobile,
         "IsRitenuta" : self.isRitenuta,
         "TipoSpesa" : self.tipoSpesa,
-        "Pagata" : pagata,
+        "Pagata" : self.pagata,
         "NumeroFattura" : self.numeroFattura
         }
         

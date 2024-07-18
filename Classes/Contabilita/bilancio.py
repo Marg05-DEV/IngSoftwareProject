@@ -46,6 +46,7 @@ class Bilancio:
 
     def getInfoBilancio(self):
         return {
+            "codice": self.codice,
             "fineEsercizio": self.fineEsercizio,
             "immobile": self.immobile,
             "importiDaVersore": self.importiDaVersare,
