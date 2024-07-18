@@ -190,8 +190,6 @@ class VistaUpdateRata(QWidget):
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
                                            unitaImmobiliare, versante)
 
-        print("fatto")
-
         self.callback(msg)
         self.close()
 
