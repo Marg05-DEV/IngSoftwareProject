@@ -1,6 +1,9 @@
-from PyQt6.QtCore import Qt
+import datetime
+
+from PyQt6.QtCore import Qt, QDate, QRegularExpression
+from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy, QHBoxLayout, QComboBox, QLineEdit, \
-    QCompleter
+    QCompleter, QDateEdit
 
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
@@ -41,8 +44,27 @@ class VistaCreateSpesa(QWidget):
         main_layout.addLayout(self.pairLabelInput("CF/PartitaIVA", "partitaIva"))
         main_layout.addLayout(self.pairLabelInput("Tipologia", "tipoProfessione"))
 
+        lbl_frase2 = QLabel("Dati Fattura: (* Campi obbligatori)")
+        lbl_frase2.setStyleSheet("font-weight: bold;")
+        lbl_frase2.setFixedSize(lbl_frase.sizeHint())
+
+        main_layout.addWidget(lbl_frase2)
+
+        main_layout.addLayout(self.create_button("Numero Fattura","numeroFattura"))
+        main_layout.addLayout(self.create_button("Data Fattura", "dataFattura"))
+
+        lbl_frase3 = QLabel("Dati Pagamento: (* Campi obbligatori)")
+        lbl_frase3.setStyleSheet("font-weight: bold;")
+        lbl_frase3.setFixedSize(lbl_frase.sizeHint())
+
+        main_layout.addWidget(lbl_frase3)
+
+        main_layout.addLayout(self.create_button("Importo", "importo"))
+        main_layout.addLayout(self.create_button("Pagamento", "Pagamento"))
+        main_layout.addLayout(self.create_button("Data Pagamento", "dataPagamento"))
+
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
-        main_layout.addWidget(self.create_button("Aggiungi Rata", self.createRata))
+        main_layout.addWidget(self.create_button("Aggiungi Spesa", self.createSpesa))
 
         self.buttons["Aggiungi Rata"].setDisabled(True)
         self.setLayout(main_layout)
@@ -96,43 +118,47 @@ class VistaCreateSpesa(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText("cittaSede")
             input_line.textChanged.connect(self.input_validation)
-            input_line.setVisible(False)
-            label.setVisible(False)
+
         elif index == "indirizzoSede":
             input_line = QLineEdit()
             input_line.setPlaceholderText("indirizzoSede")
             input_line.textChanged.connect(self.input_validation)
-            input_line.setVisible(False)
-            label.setVisible(False)
+
         elif index == "partitaIva":
             input_line = QLineEdit()
             input_line.setPlaceholderText("partitaIva")
             input_line.textChanged.connect(self.input_validation)
-            input_line.setVisible(False)
-            label.setVisible(False)
+
         elif index == "tipoProfessione":
             input_line = QLineEdit()
             input_line.setPlaceholderText("tipoProfessione")
             input_line.textChanged.connect(self.input_validation)
-            input_line.setVisible(False)
-            label.setVisible(False)
-        elif index == "numeroRicevuta":
+
+        elif index == "numeroFattura":
             input_line = QLineEdit()
             input_line.setValidator(QIntValidator())
             input_line.textChanged.connect(self.input_validation)
+
+        elif index == "dataFattura":
+            input_line = QDateEdit()
+            input_line.setDate(QDate.currentDate())
+            input_line.dateChanged.connect(self.input_validation)
+
         elif index == "importo":
             input_line = QLineEdit()
             input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[1-9][0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
+
+        elif index == "Pagamento":
+            input_line = QComboBox()
+            input_line.setPlaceholderText("Seleziona...")
+            input_line.addItems(["pagata", "ritenuta"])
+            input_line.activated.connect(self.input_validation)
+
         elif index == "dataPagamento":
             input_line = QDateEdit()
             input_line.setDate(QDate.currentDate())
             input_line.dateChanged.connect(self.input_validation)
-        elif index == "tipoPagamento":
-            input_line = QComboBox()
-            input_line.setPlaceholderText("Seleziona la tipologia di pagamento...")
-            input_line.addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
-            input_line.activated.connect(self.input_validation)
         else:
             input_line = QLineEdit()
             input_line.textChanged.connect(self.input_validation)
@@ -154,33 +180,46 @@ class VistaCreateSpesa(QWidget):
             input_line.clear()
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
-        self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
+        self.input_lines['Pagamento'].addItems(["pagata", 'ritenuta'])
+
         print('reset')
-        self.input_lines['versante'].setVisible(False)
-        self.input_labels['versante'].setVisible(False)
-        print('reset')
-        self.input_lines['unitaImmobiliare'].setVisible(False)
-        self.input_labels['unitaImmobiliare'].setVisible(False)
+        self.input_lines['tipoSpesa'].setVisible(False)
+        self.input_labels['tipoSpesa'].setVisible(False)
         print('reset')
 
         self.sel_immobile = None
-        self.sel_unita = None
 
-    def createRata(self):
+    def createSpesa(self):
         print("in crea")
-        unitaImmobiliare = self.input_lines["unitaImmobiliare"].currentData()
-        versante = self.input_lines["versante"].text()
+        immobile = self.input_lines["immobile"].currentData()
+        tipoSpesa = self.input_lines["tipoSpesa"].currentData()
         descrizione = self.input_lines["descrizione"].text()
-        numeroRicevuta = int(self.input_lines["numeroRicevuta"].text())
+        denominazione = self.input_lines["numeroRicevuta"].currentData()
+        cittaSede = self.input_lines['cittaSede'].text()
+        indirizzoSede = self.input_lines['indirizzoSede'].text()
+        partitaIva = self.input_lines['partitaIva'].text()
+        tipoProfessione = self.input_lines['tipoProfessione'].text()
+        numeroFattura = int(self.input_lines['numeroFattura'].text())
+        dataFattura = self.input_lines["dataFattura"].text()
+        dataFattura = dataFattura.split("/")
+        dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
         importo = float((self.input_lines["importo"].text()).replace(",", "."))
+        Pagamento = self.input_lines["Pagamento"].currentText()
         print(importo)
         dataPagamento = self.input_lines["dataPagamento"].text()
         dataPagamento = dataPagamento.split("/")
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
+        print(dataPagamento)
+        print(type(dataPagamento))
 
-        tipoPagamento = self.input_lines["tipoPagamento"].currentText()
+        input_line = QDateEdit()
+        dataRegistrazione = input_line.setDate(QDate.currentDate())
+        print(dataRegistrazione)
+        print(type(dataRegistrazione))
+        dataRegistrazione = dataRegistrazione.split("/")
+        dataRegistrazione = datetime.date(int(dataRegistrazione[2]), int(dataRegistrazione[1]), int(dataRegistrazione[0]))
 
-        temp_rata = Rata()
+        temp_Spesa = Rata()
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
                                            unitaImmobiliare, versante)
 
@@ -191,7 +230,8 @@ class VistaCreateSpesa(QWidget):
 
     def input_validation(self):
         required_fields = ['immobile','tipoSpesa', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
-                           'partitaIva', 'tipoProfessione']
+                           'partitaIva', 'tipoProfessione', 'numeroFattura', 'dataFattura',
+                           'importo', 'Pagamento', 'dataPagamento']
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
@@ -206,33 +246,25 @@ class VistaCreateSpesa(QWidget):
                 self.input_lines['tipoSpesa'].setVisible(True)
                 self.input_labels['tipoSpesa'].setVisible(True)
 
-        list_fornitori = [item.denominazione for item in Fornitore.getAllFornitore().values()]
-        completer = QCompleter(list_fornitori)
-        completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        completer.setFilterMode(Qt.MatchFlag.MatchContains)
-        self.input_lines['denominazione'].setCompleter(completer)
+        if self.input_lines['denominazione'].currentText():
+            list_fornitori = [item.denominazione for item in Fornitore.getAllFornitore().values()]
+            completer = QCompleter(list_fornitori)
+            completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+            completer.setFilterMode(Qt.MatchFlag.MatchContains)
+            self.input_lines['denominazione'].setCompleter(completer)
 
-        for fornitore in list_fornitori:
-            if self.input_lines['denominazione'].currentText().upper() != fornitore:
-                self.input_lines['cittaSede'].setVisible(True)
-                self.input_labels['cittaSede'].setVisible(True)
-                self.input_lines['indirizzoSede'].setVisible(True)
-                self.input_labels['indirizzoSede'].setVisible(True)
-                self.input_lines['partitaIva'].setVisible(True)
-                self.input_labels['partitaIva'].setVisible(True)
-                self.input_lines['tipoProfessione'].setVisible(True)
-                self.input_labels['tipoProfessione'].setVisible(True)
-            else:
-                oggetto_fornitore = Fornitore.ricercaFornitoreByDenominazione(fornitore)
-                self.input_lines['cittaSede'].setText(oggetto_fornitore.cittaSede)
-                self.input_lines['cittaSede'].setText(oggetto_fornitore.indirizzoSede)
-                self.input_lines['cittaSede'].setText(oggetto_fornitore.partitaIva)
-                self.input_lines['cittaSede'].setText(oggetto_fornitore.tipoProfessione)
+            for fornitore in list_fornitori:
+                if self.input_lines['denominazione'].currentText().upper() == fornitore.upper():
+                    oggetto_fornitore = Fornitore.ricercaFornitoreByDenominazione(fornitore)
+                    self.input_lines['cittaSede'].setText(oggetto_fornitore.cittaSede)
+                    self.input_lines['indirizzoSede'].setText(oggetto_fornitore.indirizzoSede)
+                    self.input_lines['partitaIva'].setText(oggetto_fornitore.partitaIva)
+                    self.input_lines['tipoProfessione'].setText(oggetto_fornitore.tipoProfessione)
 
         num_writed_lines = 0
 
         for field in required_fields:
-            if field == 'tipoPagamento':
+            if field == 'Pagamento':
                 if self.input_lines[field].currentText():
                     num_writed_lines += 1
             else:
