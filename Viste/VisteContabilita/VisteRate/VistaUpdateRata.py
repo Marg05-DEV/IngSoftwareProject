@@ -116,7 +116,7 @@ class VistaUpdateRata(QWidget):
         elif index == "importo":
             input_line = QLineEdit()
             input_line.setPlaceholderText(str(self.rata_selezionata.importo))
-            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*[.,][0-9]{0,2}")))
+            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("(-){0,1}[0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
             input_line = QDateEdit()

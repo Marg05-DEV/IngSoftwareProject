@@ -144,6 +144,7 @@ class VistaStatoPatrimoniale(QWidget):
             return None
 
     def update_list(self):
+        self.rate = Rata.get
 
     def hide_message(self):
         self.msg.hide()
