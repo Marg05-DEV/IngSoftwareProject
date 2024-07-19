@@ -120,5 +120,7 @@ class Rata:
         else:
             return None
 
-
+    @staticmethod
+    def getRateByImmobile(immobile):
+        rate = Rata.getAllRate()
 

@@ -2,6 +2,7 @@ from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
     QPushButton, QListView
 
+from Classes.Contabilita.rata import Rata
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
