@@ -62,7 +62,7 @@ class Rata:
             with open(nome_file, 'wb') as f:
                 pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
         self.codice = -1
-        self.dataPagamento = datetime.datetime(year=1970, month=1, day=1)
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0

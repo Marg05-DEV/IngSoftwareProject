@@ -2,7 +2,9 @@ import datetime
 import os
 import shutil
 
+from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
+from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -111,6 +113,20 @@ def up():
     rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 120.60, 2, True, "Contanti", 3, "Gialli Laura")
     rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 150.60, 1, True, "Contanti", 2, "Bianchi Elena")
     rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 90.30, 3, True, "Assegno Bancario", 4, "Rossi Roberto")
+
+    #seeding fornitore
+    fornitore = Fornitore()
+    fornitore.aggiungiFornitore("Ascoli Piceno", "Uisp srl", "Via Roma", "90014578212", "Ditta")
+    fornitore.aggiungiFornitore("Roma", "Acciarri srl", "Via Gianni", "90018745693", "Ditta")
+    fornitore.aggiungiFornitore("Firenze", "Marcucci srl", "Via Tesino", "90004785123", "Professionista")
+    fornitore.aggiungiFornitore("Pescara", "Porto srl", "Via Trento", "90014589634", "AC")
+
+    # seeding spese
+    spesa = Spesa()
+    spesa.aggiungiSpesa("descrizione 1", 1, 12.60, 1, 1, True, datetime.date.today(), datetime.date.today(), datetime.date.today(), True, 1)
+    spesa.aggiungiSpesa("descrizione 2", 2, 122.60, 1, 1, False, datetime.date.today(), datetime.date.today(), datetime.date.today(), True, 2)
+    spesa.aggiungiSpesa("descrizione 3", 3, 102.60, 2, 2, True, datetime.date.today(), datetime.date.today(), datetime.date.today(), False, 1)
+    spesa.aggiungiSpesa("descrizione 4", 4, 1.60, 3, 1, False, datetime.date.today(), datetime.date.today(), datetime.date.today(), False, 3)
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))

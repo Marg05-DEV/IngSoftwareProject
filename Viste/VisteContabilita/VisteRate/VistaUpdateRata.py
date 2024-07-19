@@ -13,7 +13,7 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 class VistaUpdateRata(QWidget):
 
-    def __init__(self, callback, rata_sel):
+    def __init__(self, rata_sel, callback):
         super(VistaUpdateRata, self).__init__()
         self.callback = callback
         self.rata_selezionata = rata_sel

@@ -235,17 +235,17 @@ class Spesa:
     def getInfoSpesa(self):
         return {
         #"Numero spese Registrate" : Spesa.numSpeseRegistrate,
-        "Codice" : self.codice,
-        "Data Fattura" : self.dataFattura,
-        "Data Registrazione" : self.dataRegistrazione,
-        "Data Pagamento" : self.dataPagamento,
-        "Descrizione" : self.descrizione,
-        "Fornitore" : self.fornitore,
-        "Importo" : self.importo,
-        "Immobile" : self.immobile,
-        "IsRitenuta" : self.isRitenuta,
-        "TipoSpesa" : self.tipoSpesa,
-        "Pagata" : self.pagata,
-        "NumeroFattura" : self.numeroFattura
+        "codice" : self.codice,
+        "dataFattura" : self.dataFattura,
+        "dataRegistrazione" : self.dataRegistrazione,
+        "dataPagamento" : self.dataPagamento,
+        "descrizione" : self.descrizione,
+        "fornitore" : self.fornitore,
+        "importo" : self.importo,
+        "immobile" : self.immobile,
+        "isRitenuta" : self.isRitenuta,
+        "tipoSpesa" : self.tipoSpesa,
+        "pagata" : self.pagata,
+        "numeroFattura" : self.numeroFattura
         }
         
