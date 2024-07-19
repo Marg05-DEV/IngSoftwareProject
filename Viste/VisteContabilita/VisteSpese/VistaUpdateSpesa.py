@@ -69,7 +69,9 @@ class VistaUpdateSpesa(QWidget):
         main_layout.addWidget(self.drawLine())
         main_layout.addWidget(lbl_frase3)
         main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
-        main_layout.addWidget(self.create_checkbox("L'importo si riferisce ad una ritenuta di una spesa", 'ritenuta'))
+        print("miao")
+        main_layout.addWidget(self.create_checkbox("L'importo si riferisce ad una ritenuta di una spesa", 'isRitenuta'))
+        print("bau")
         pagata_layout = QHBoxLayout()
         pagata_layout.addWidget(self.create_checkbox("La spesa è stata pagata", 'pagata'))
         pagata_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
@@ -81,11 +83,12 @@ class VistaUpdateSpesa(QWidget):
 
         self.resize(600, 400)
         self.setWindowTitle("Modifica Spesa")
+
     def create_checkbox(self, testo, index):
         checkbox = QCheckBox(testo)
-        self.checkboxes[index] = checkbox
         if self.spesa.getInfoSpesa()[index]:
-            checkbox.checkStateSet()
+            checkbox.setChecked(True)
+        self.checkboxes[index] = checkbox
         return checkbox
 
     def drawLine(self):
@@ -154,6 +157,21 @@ class VistaUpdateSpesa(QWidget):
             completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             input_line.setCompleter(completer)
             input_line.textChanged.connect(self.input_validation)
+        elif index == "cittaSede":
+            input_line = QLineEdit()
+            fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+            input_line.setPlaceholderText(str(fornitore.cittaSede))
+            input_line.textChanged.connect(self.input_validation)
+        elif index == "indirizzoSede":
+            input_line = QLineEdit()
+            fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+            input_line.setPlaceholderText(str(fornitore.indirizzoSede))
+            input_line.textChanged.connect(self.input_validation)
+        elif index == "partitaIva":
+            input_line = QLineEdit()
+            fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+            input_line.setPlaceholderText(str(fornitore.partitaIva))
+            input_line.textChanged.connect(self.input_validation)
         elif index == "tipoProfessione":
             input_line = QComboBox()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore).tipoProfessione
@@ -184,12 +202,18 @@ class VistaUpdateSpesa(QWidget):
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
         self.input_lines['immobile'].setCurrentText(Immobile.ricercaImmobileById(self.spesa.immobile).denominazione)
 
-        for tabelle in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.spesa.immobile)).values():
-            for tipo in tabelle:
-                if tipo.tipologiaSpesa:
-                    self.input_lines['tipoSpesa'].addItems
-        self.input_lines['tipoSpesa'].setVisible(False)
-        self.input_labels['tipoSpesa'].setVisible(False)
+        self.sel_immobile = self.input_lines['immobile'].currentText()
+        print("disabilizazione")
+        tipi_spesa = []
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+            tipi_spesa.extend(tabella.tipologiaSpesa)
+        for tipo in tipi_spesa:
+            self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+
+        self.input_lines['tipoSpesa'].setCurrentText(TipoSpesa.ricercaTipoSpesaByCodice(self.spesa.tipoSpesa).nome)
+
+        self.input_lines['tipoSpesa'].setVisible(True)
+        self.input_labels['tipoSpesa'].setVisible(True)
         print('reset')
         fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
@@ -214,52 +238,48 @@ class VistaUpdateSpesa(QWidget):
 
 
     def updateSpesa(self):
-        print("in crea")
-        immobile = Immobile.ricercaImmobileByDenominazione(self.input_lines["immobile"].currentText()).id
-        print("ciao")
-        tipoSpesa = self.input_lines["tipoSpesa"].currentData()
-        print("ciao")
-        descrizione = self.input_lines["descrizione"].text()
-        print("ciao")
-        denominazione = self.input_lines["denominazione"].text()
-        cittaSede = self.input_lines['cittaSede'].text()
-        indirizzoSede = self.input_lines['indirizzoSede'].text()
-        partitaIva = self.input_lines['partitaIva'].text()
-        tipoProfessione = self.input_lines['tipoProfessione'].currentText()
+        temp_spesa = {}
+        temp_fornitore = {}
+        print("si modifica")
+        for attributo in self.spesa.getInfoSpesa().keys():
+            print("si modifica", attributo)
+            if attributo == "immobile" or attributo == "tipoSpesa":
+                temp_spesa[attributo] = self.input_lines[attributo].currentText()
+            elif attributo in ["codice", "pagata", "isRitenuta"] or not self.input_lines[attributo].text():
+                temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
+            else:
+                temp_spesa[attributo] = self.input_lines[attributo].text()
+        fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+        for attributo in fornitore.getInfoFornitore.keys():
+            if attributo == "tipoProfessione":
+                temp_fornitore[attributo] = self.input_lines[attributo].currentText()
+            elif not self.input_lines[attributo].text():
+                temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
+            else:
+                temp_fornitore[attributo] = self.input_lines[attributo].text()
+        print(temp_spesa)
 
-        numeroFattura = int(self.input_lines['numeroFattura'].text())
-        dataFattura = self.input_lines["dataFattura"].text()
-        dataFattura = dataFattura.split("/")
-        dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
-        importo = float((self.input_lines["importo"].text()).replace(",", "."))
-        dataPagamento = self.input_lines["dataPagamento"].text()
-        dataPagamento = dataPagamento.split("/")
+        dataPagamento = temp_spesa["dataPagamento"].split('/')
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
+        dataFattura = temp_spesa["dataFattura"].split('/')
+        dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
+        dataRegistrazione = temp_spesa["dataRegistrazione"].split('/')
+        dataRegistrazione = datetime.date(int(dataRegistrazione[2]), int(dataRegistrazione[1]), int(dataRegistrazione[0]))
 
-        fornitore_esistente = False
-        for fornitore in Fornitore.getAllFornitore().values():
-            if fornitore.denominazione == denominazione:
-                fornitore_esistente = True
+        msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"],temp_spesa["importo"],
+                                       temp_spesa["tipoSpesa"],temp_spesa["immobile"],temp_spesa["pagata"],
+                                       dataPagamento, dataFattura, dataRegistrazione,
+                                       temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
-        if fornitore_esistente:
-            fornitore = Fornitore.ricercaFornitoreByDenominazione(denominazione)
-        else:
-            temp_fornitore = Fornitore()
-            msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
-                                                              tipoProfessione)
-
-        temp_spesa = Spesa()
-        msg, spesa = temp_spesa.aggiungiSpesa(descrizione, fornitore.codice, importo, tipoSpesa, immobile,
-                                              self.checkboxes['pagata'].isChecked(), dataPagamento, dataFattura,
-                                              datetime.date.today(), self.checkboxes['ritenuta'].isChecked(),
-                                              numeroFattura)
-        self.callback(msg)
+        msg1 = fornitore.modificaFornitore(temp_fornitore["cittaSede"], temp_fornitore["denominazione"], temp_fornitore["indirizzoSede"],
+                                           temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
+        msg_unico = msg + " e " + msg1
+        self.callback(msg_unico)
         self.close()
 
     def input_validation(self):
         print("dentro la validazione")
-        required_fields = ['immobile', 'tipoSpesa', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
-                           'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
+        required_fields = []
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             print("immobile modificato")
@@ -278,7 +298,6 @@ class VistaUpdateSpesa(QWidget):
                     for tipo in tipi_spesa:
                         self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
                 else:
-
                     self.input_lines['tipoSpesa'].clear()
                     self.input_lines['tipoSpesa'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile")
 
@@ -304,17 +323,3 @@ class VistaUpdateSpesa(QWidget):
                 self.isFornitoreTrovatoNow = False
 
         print("fine controlli inserimento - inizio required")
-        num_writed_lines = 0
-
-        for field in required_fields:
-            if field in ['immobile', 'tipoSpesa', 'tipoProfessione']:
-                if self.input_lines[field].currentText():
-                    num_writed_lines += 1
-            else:
-                if self.input_lines[field].text():
-                    num_writed_lines += 1
-
-        if num_writed_lines < len(required_fields):
-            self.buttons["Aggiungi Spesa"].setDisabled(True)
-        else:
-            self.buttons["Aggiungi Spesa"].setDisabled(False)

@@ -206,7 +206,7 @@ class VistaGestioneSpese(QWidget):
         spesa_selezionata = None
         codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
         spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
-        print(codice_spesa, ": ", spesa_selezionata.getInforSpesa())
+        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
         self.vista_elimina_spesa = VistaDeleteSpesa(spesa_selezionata, callback=self.callback)
         self.vista_elimina_spesa.show()
 

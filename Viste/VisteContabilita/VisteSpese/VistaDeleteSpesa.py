@@ -33,7 +33,7 @@ class VistaDeleteSpesa(QWidget):
         button.clicked.connect(action)
         return button
 
-    def deleteRata(self):
+    def deleteSpesa(self):
         msg = self.spesa_selezionata.rimuoviSpesa()
         self.callback(msg)
         self.close()

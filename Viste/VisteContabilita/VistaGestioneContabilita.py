@@ -2,6 +2,10 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBo
 
 from Viste.VisteContabilita.VisteRate.VistaGestioneRate import VistaGestioneRate
 from Viste.VisteContabilita.VisteSpese.VistaGestioneSpese import VistaGestioneSpese
+from Viste.VisteContabilita.VisteVisualizzazione.VistaCreditoCondomino import VistaCreditoCondomino
+from Viste.VisteContabilita.VisteVisualizzazione.VistaDebitoFornitore import VistaDebitoFornitore
+from Viste.VisteContabilita.VisteVisualizzazione.VistaSaldoCassa import VistaSaldoCassa
+from Viste.VisteContabilita.VisteVisualizzazione.VistaStatoPatrimoniale import VistaStatoPatrimoniale
 
 
 class VistaGestioneContabilita(QWidget):
@@ -63,13 +67,17 @@ class VistaGestioneContabilita(QWidget):
         self.vista_rate.show()
 
     def goVisualizzaSaldoCassa(self):
-       pass
+        self.vista_saldo_cassa = VistaSaldoCassa()
+        self.vista_saldo_cassa.show()
 
     def goVisualizzaStatoPatrimoniale(self):
-        pass
+        self.vista_stato_patrimoniale = VistaStatoPatrimoniale()
+        self.vista_stato_patrimoniale.show()
 
     def goVisualizzaDebitoFornitore(self):
-        pass
+        self.vista_debito_fornitore = VistaDebitoFornitore()
+        self.vista_debito_fornitore.show()
 
     def goVisualizzaCreditoCondomino(self):
-        pass
+        self.vista_credito_condomino = VistaCreditoCondomino()
+        self.vista_credito_condomino.show()

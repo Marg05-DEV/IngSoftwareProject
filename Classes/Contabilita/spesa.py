@@ -71,7 +71,7 @@ class Spesa:
             with (open(nome_file, 'rb') as f):
                spese = dict(pickle.load(f))
                del spese[self.codice]
-            with open(nome_file,'"wb') as f:
+            with open(nome_file,'wb') as f:
                 pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)
         self.codice = -1
         self.dataFattura = datetime.date(year=1970, month=1, day=1)
