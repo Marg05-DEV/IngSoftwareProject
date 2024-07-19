@@ -212,22 +212,15 @@ class VistaUpdateRata(QWidget):
         required_fields = []
         print('validation')
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
-            print("immobile diverso da quello precedente")
             if self.input_lines['immobile'].currentText():
-                print("immobile non vuoto")
                 self.input_lines['unitaImmobiliare'].clear()
-                print('i')
                 self.input_lines['unitaImmobiliare'].setPlaceholderText("Seleziona l'unità immobiliare per cui si versa la rata...")
-                print('i.1')
                 required_fields.append('versante')
-                print('ii')
                 self.sel_unita = None
-                print('iii')
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
                 self.input_lines['versante'].setVisible(False)
                 self.input_labels['versante'].setVisible(False)
-                print('iiii')
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
