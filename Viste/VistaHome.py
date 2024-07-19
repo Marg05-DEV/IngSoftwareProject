@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteContabilita.VistaGestioneContabilita import VistaGestioneContabilita
-from Viste.VisteGestioneBilancio.VistaMenuGestioneBilancio import VistaMenuGestioneBilancio
+from Viste.VisteBilancio.VistaMenuGestioneBilancio import VistaMenuGestioneBilancio
 from Viste.VisteImmobile.VistaGestioneImmobile import VistaGestioneImmobile
 from Viste.VisteRegistroAnagrafe.VistaMenuRegistroAnagrafe import VistaMenuRegistroAnagrafe
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaGestioneCondomini import VistaGestioneCondomini

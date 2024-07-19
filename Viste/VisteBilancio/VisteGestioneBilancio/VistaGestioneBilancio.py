@@ -1,20 +1,20 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QLineEdit
 
 from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaCalcolaBilancio import VistaCalcolaBilancio
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaProspettiEsercizio import VistaProspettiEsercizio
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaRipartizionePreventivo import VistaRipartizionePreventivo
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcolaBilancio import VistaCalcolaBilancio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaProspettiEsercizio import VistaProspettiEsercizio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizionePreventivo import VistaRipartizionePreventivo
 
 
-class VistaBilancio(QWidget):
+class VistaGestioneBilancio(QWidget):
 
     def __init__(self, immobile, bilancio):
         print("ciao")
-        super(VistaBilancio, self).__init__()
+        super(VistaGestioneBilancio, self).__init__()
         self.immobile = immobile
         self.bilancio = bilancio
         self.setWindowTitle("Gestione Bilancio")

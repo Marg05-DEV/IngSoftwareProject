@@ -11,15 +11,15 @@ from Classes.Contabilita.bilancio import Bilancio
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaBilancio import VistaBilancio
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneBilancio import VistaGestioneBilancio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaReadAssegnazione import VistaReadAssegnazione
 
-class VistaGestisciBilancio(QWidget):
+class VistaGestioneEsercizi(QWidget):
 
     def __init__(self, immobile):
-        super(VistaGestisciBilancio, self).__init__()
+        super(VistaGestioneEsercizi, self).__init__()
         print("ciao1")
         self.immobile = immobile
         self.input_lines = {}
@@ -129,7 +129,7 @@ class VistaGestisciBilancio(QWidget):
         for index in self.list_view_bilanci.selectedIndexes():
             item = self.list_view_bilanci.model().itemFromIndex(index)
         bilancio = Bilancio.ricercaBilancioByDataInizio(item.text().split(" ")[1], self.immobile)
-        self.choose_bilancio = VistaBilancio(self.immobile, bilancio)
+        self.choose_bilancio = VistaGestioneBilancio(self.immobile, bilancio)
         self.choose_bilancio.show()
 
     def goNuovoEsercizio(self):
@@ -147,7 +147,7 @@ class VistaGestisciBilancio(QWidget):
                                                        {}, {}, {}, {}, {}, {})
         print("dopo l'aggiunta di un nuovo bilancio")
         self.callback(msg)
-        self.nuovo_esercizio = VistaBilancio(self.immobile, bilancio)
+        self.nuovo_esercizio = VistaGestioneBilancio(self.immobile, bilancio)
         self.nuovo_esercizio.show()
 
 

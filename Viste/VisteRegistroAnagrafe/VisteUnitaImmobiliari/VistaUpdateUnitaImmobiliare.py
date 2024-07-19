@@ -118,11 +118,8 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         return input_layout
 
     def updateUnitaImmobiliare(self):
-        print("inizio update condomino")
         temp_unitaImmobiliare = {}
-        print(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare().keys())
         for attributo in self.sel_unitaImmobiliare.getInfoUnitaImmobiliare().keys():
-            print("attr1: ", attributo)
             if attributo == "tipoUnitaImmobiliare":
                 temp_unitaImmobiliare[attributo] = self.input_lines[attributo].currentText()
             elif attributo == "codice" or attributo == "condomini" or attributo == "immobile" or self.input_lines[attributo].text() == "":
@@ -145,7 +142,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
                                                    Immobile.ricercaImmobileById(self.sel_unitaImmobiliare.immobile),
                                                    int(temp_unitaImmobiliare["scala"]),
                                                    temp_unitaImmobiliare["ZC"])
-        print("fine update condomino")
         self.callback(msg)
         self.close()
 

@@ -1,13 +1,19 @@
 import datetime
+import os
+import shutil
+import webbrowser
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QLabel, QWidget, QTableWidget, QPushButton, \
-    QSizePolicy, QTableWidgetItem, QAbstractItemView, QHeaderView
+    QSizePolicy, QTableWidgetItem, QAbstractItemView, QHeaderView, QTableView
 
 from Classes.Contabilita.rata import Rata
+from Classes.Gestione.gestoreContabilita import GestoreContabilita
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Viste.VisteContabilita.VisteRate.VistaCreateRata import VistaCreateRata
+from Viste.VisteContabilita.VisteRate.VistaDeleteRata import VistaDeleteRata
+from Viste.VisteContabilita.VisteRate.VistaReadRata import VistaReadRata
 from Viste.VisteContabilita.VisteRate.VistaUpdateRata import VistaUpdateRata
 
 
@@ -47,11 +53,10 @@ class VistaGestioneRate(QWidget):
         self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Rata", self.goCreateRata))
-        button_layout.addWidget(self.create_button("Visualizza Rata", self.goReadRata,True))
+        button_layout.addWidget(self.create_button("Visualizza Rata", self.goReadRata, True))
         button_layout.addWidget(self.create_button("Modifica Rata", self.goUpdateRata, True))
         button_layout.addWidget(self.create_button("Elimina Rata", self.goDeleteRata, True))
         button_layout.addWidget(self.create_button("Visualizza Ricevuta", self.goReadRicevuta, True))
-        print("ciao")
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
@@ -62,7 +67,7 @@ class VistaGestioneRate(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
-        self.lista_rate = []
+        self.rate = []
         self.update_table()
 
         message_layout.addWidget(self.msg)
@@ -108,8 +113,6 @@ class VistaGestioneRate(QWidget):
     def update_table(self, searchActivated=False):
         self.rate = list(Rata.getAllRate().values())
 
-        print("update")
-
         if searchActivated and self.searchbar.text():
             print("in ricerca")
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per denominazione
@@ -121,7 +124,6 @@ class VistaGestioneRate(QWidget):
             elif self.searchType.currentIndex() == 2:  # ricerca per nome versante
                 self.rate = [item for item in self.rate if self.searchbar.text().upper() in item.versante.upper()]
         if not self.rate:
-            print("vuoto")
             if searchActivated:
                 self.msg.setText("Nessuna rata corrisponde alla ricerca")
             else:
@@ -141,22 +143,25 @@ class VistaGestioneRate(QWidget):
         i = 0
         for rata in self.rate:
             print(rata, rata.getInfoRata())
-            self.table_rate.setItem(i, 0, QTableWidgetItem(str(rata.codice)))
+            self.table_rate.setItem(i, 0, QTableWidgetItem())
+            self.table_rate.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, rata.codice)
+            self.table_rate.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.table_rate.setItem(i, 1, QTableWidgetItem((Immobile.ricercaImmobileById((UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)).immobile)).denominazione))
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
             self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%d/%m/%Y")))
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
             self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
-            self.table_rate.setItem(i, 6, QTableWidgetItem(str(rata.importo)))
+            self.table_rate.item(i, 5).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+            self.table_rate.setItem(i, 6, QTableWidgetItem("%.2f" % rata.importo))
+            self.table_rate.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
             i += 1
 
-        print("qui")
-        self.table_rate.resizeColumnToContents(0)
-        self.table_rate.resizeColumnToContents(6)
-        self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table_rate.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
         self.table_rate.sortItems(0, Qt.SortOrder.DescendingOrder)
         self.table_rate.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_rate.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_rate.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table_rate.selectionModel().selectionChanged.connect(self.able_button)
 
     def goCreateRata(self):
@@ -165,13 +170,10 @@ class VistaGestioneRate(QWidget):
         self.vista_nuova_rata.show()
 
     def goReadRata(self):
-        print("visualizzazione rata")
         rata_selezionata = None
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
         print(codice_rata, ": ", rata_selezionata.getInfoRata())
-        return
-
         self.vista_dettaglio_rata = VistaReadRata(rata_selezionata, callback=self.callback)
         self.vista_dettaglio_rata.show()
 
@@ -184,23 +186,25 @@ class VistaGestioneRate(QWidget):
         self.vista_modifica_rata.show()
 
     def goDeleteRata(self):
-        print("modifica rata")
-        rata_selezionata = None
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
-        print(codice_rata, ": ", rata_selezionata.getInfoRata())
-        return
 
         self.vista_elimina_rata = VistaDeleteRata(rata_selezionata, callback=self.callback)
         self.vista_elimina_rata.show()
 
     def goReadRicevuta(self):
-        print("vis ricevuta rata")
         rata_selezionata = None
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
-        print(codice_rata, ": ", rata_selezionata.getInfoRata())
-        return
+        directory_file = os.path.dirname(os.path.abspath(__file__)).replace("\\Viste\\VisteContabilita\\VisteRate", "\\Dati\\pdf\\")
+        if os.path.isdir(directory_file + "temp"):
+            shutil.rmtree(directory_file + "temp")
+        if not os.path.isdir(directory_file + "temp"):
+            os.makedirs(directory_file + "temp")
+        pdf = GestoreContabilita.generaRicevuta(rata_selezionata)
+        pdf.output(directory_file + "temp\\ricevuta.pdf")
+        webbrowser.open(directory_file + "temp\\ricevuta.pdf")
+
 
 
     def able_button(self):
@@ -224,15 +228,19 @@ class VistaGestioneRate(QWidget):
         self.searchType.clear()
         self.searchType.addItems(["Ricerca per data di pagamento", "Ricerca per denominazione dell'immobile", "Ricerca per nome del versante"])
         self.update_table()
+        print("table aggio")
         self.avvia_ordinamento()
+        print("table aggio")
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
+        print("table aggio")
 
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
-        if not self.lista_immobili:
+        print("table aggio")
+        if not self.rate:
             self.msg.setText("Non sono presenti immobili")
             self.msg.show()
 

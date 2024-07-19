@@ -34,8 +34,10 @@ class VistaCreateRata(QWidget):
         main_layout.addLayout(self.pairLabelInput("Versante", "versante"))
         main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
         main_layout.addLayout(self.pairLabelInput("Numero Ricevuta", "numeroRicevuta"))
-        main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
-        main_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
+        pagamento_layout = QHBoxLayout()
+        pagamento_layout.addLayout(self.pairLabelInput("Importo", "importo"))
+        pagamento_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
+        main_layout.addLayout(pagamento_layout)
         main_layout.addLayout(self.pairLabelInput("Tipologia Pagamento", "tipoPagamento"))
 
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
@@ -50,6 +52,7 @@ class VistaCreateRata(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(True)
+        button.setMinimumHeight(40)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
         self.buttons[testo] = button
@@ -136,7 +139,6 @@ class VistaCreateRata(QWidget):
         self.sel_unita = None
 
     def createRata(self):
-        print("in crea")
         unitaImmobiliare = self.input_lines["unitaImmobiliare"].currentData()
         versante = self.input_lines["versante"].text()
         descrizione = self.input_lines["descrizione"].text()

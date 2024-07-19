@@ -2,7 +2,7 @@ import datetime
 import os.path
 import pickle
 
-nome_file = 'Dati/spese.pickle'
+nome_file = 'Dati/Spese.pickle'
 class Spesa:
     #numSpeseRegistrate = 0
 
@@ -19,8 +19,6 @@ class Spesa:
         self.tipoSpesa = None
         self.pagata = False
         self.numeroFattura = 0
-
-
 
     def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
         #Spesa.numSpeseRegistrate += 1

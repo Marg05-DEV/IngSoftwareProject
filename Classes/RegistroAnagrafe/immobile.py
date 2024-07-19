@@ -2,7 +2,7 @@ import os.path
 import pickle
 import shutil
 
-file_name = 'Dati/Immobile.pickle'
+file_name = 'Dati/Immobili.pickle'
 directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Classes\RegistroAnagrafe", "Dati\\pdf\\")
 #file_name = '../../Dati/Immobile.pickle'
 

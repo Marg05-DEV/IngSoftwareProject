@@ -3,9 +3,9 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCombo
     QCompleter
 
 from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaGestisciBilancio import VistaGestisciBilancio
-from Viste.VisteGestioneBilancio.VisteGestioneTabellaMillesimale.VistaGestioneTabelleMillesimali import VistaGestioneTabelleMillesimali
-from Viste.VisteGestioneBilancio.VisteBilancio.VistaBilancio import VistaBilancio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneEsercizi import VistaGestioneEsercizi
+from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaGestioneTabelleMillesimali import VistaGestioneTabelleMillesimali
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneBilancio import VistaGestioneBilancio
 class VistaMenuGestioneBilancio(QWidget):
     def __init__(self, parent=None):
 
@@ -139,7 +139,7 @@ class VistaMenuGestioneBilancio(QWidget):
                 print("imm: ", immobile)
         if immobile != None:
             print("si")
-            self.vista_gestione_bilancio = VistaGestisciBilancio(immobile)
+            self.vista_gestione_bilancio = VistaGestioneEsercizi(immobile)
             self.vista_gestione_bilancio.show()
         else:
             print("no")

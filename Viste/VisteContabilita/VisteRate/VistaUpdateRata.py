@@ -95,10 +95,18 @@ class VistaUpdateRata(QWidget):
                 input_line.addItem(item, unita.codice)
                 if unita.codice == self.rata_selezionata.unitaImmobiliare:
                     input_line.setCurrentText(item)
+
+            input_line.setItemData(input_line.currentIndex(), self.rata_selezionata.unitaImmobiliare)
             input_line.activated.connect(self.input_validation)
+
         elif index == "versante":
             input_line = QLineEdit()
             input_line.setPlaceholderText(self.rata_selezionata.versante)
+            advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).condomini.keys()]
+            completer = QCompleter(advisable_versanti_list)
+            completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+            completer.setFilterMode(Qt.MatchFlag.MatchContains)
+            input_line.setCompleter(completer)
             input_line.textChanged.connect(self.input_validation)
         elif index == "numeroRicevuta":
             input_line = QLineEdit()
@@ -136,12 +144,9 @@ class VistaUpdateRata(QWidget):
         return input_layout
 
     def reset(self):
-        print('reset')
         for key in self.input_lines.keys():
             print("si", key, self.input_lines[key])
             self.input_lines[key].clear()
-
-        print('reset')
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
         self.input_lines['immobile'].setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
@@ -171,35 +176,58 @@ class VistaUpdateRata(QWidget):
             self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
 
         self.input_lines['dataPagamento'].setDate(self.rata_selezionata.dataPagamento)
+        self.input_lines['versante'].setPlaceholderText(self.rata_selezionata.versante)
 
     def updateRata(self):
-        print("in crea")
-        unitaImmobiliare = self.input_lines["unitaImmobiliare"].currentData()
-        versante = self.input_lines["versante"].text()
-        descrizione = self.input_lines["descrizione"].text()
-        numeroRicevuta = int(self.input_lines["numeroRicevuta"].text())
-        importo = float((self.input_lines["importo"].text()).replace(",", "."))
-        print(importo)
-        dataPagamento = self.input_lines["dataPagamento"].text()
-        dataPagamento = dataPagamento.split("/")
+        temp_rata = {}
+        print("si modifica")
+        for attributo in self.rata_selezionata.getInfoRata().keys():
+            print("si modifica", attributo)
+            if attributo == "unitaImmobiliare":
+                temp_rata[attributo] = self.input_lines[attributo].currentData()
+            elif attributo == "tipoPagamento":
+                temp_rata[attributo] = self.input_lines[attributo].currentText()
+            elif attributo in ["codice", "pagata"] or not self.input_lines[attributo].text():
+                temp_rata[attributo] = self.rata_selezionata.getInfoRata()[attributo]
+            else:
+                temp_rata[attributo] = self.input_lines[attributo].text()
+
+        print(temp_rata)
+
+        dataPagamento = temp_rata["dataPagamento"].split('/')
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
 
-        tipoPagamento = self.input_lines["tipoPagamento"].currentText()
-
-        temp_rata = Rata()
-        msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
-                                           unitaImmobiliare, versante)
-
+        msg = self.rata_selezionata.modificaRata(dataPagamento,
+                                                 temp_rata['descrizione'],
+                                                 float(temp_rata['importo']),
+                                                 int(temp_rata['numeroRicevuta']),
+                                                 True,
+                                                 temp_rata['tipoPagamento'],
+                                                 int(temp_rata['unitaImmobiliare']),
+                                                 temp_rata['versante'])
         self.callback(msg)
         self.close()
 
     def input_validation(self):
+        required_fields = []
+        print('validation')
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
+            print("immobile diverso da quello precedente")
+            if self.input_lines['immobile'].currentText():
+                print("immobile non vuoto")
                 self.input_lines['unitaImmobiliare'].clear()
+                print('i')
+                self.input_lines['unitaImmobiliare'].setPlaceholderText("Seleziona l'unità immobiliare per cui si versa la rata...")
+                print('i.1')
+                required_fields.append('versante')
+                print('ii')
+                self.sel_unita = None
+                print('iii')
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
                 self.input_lines['versante'].setVisible(False)
                 self.input_labels['versante'].setVisible(False)
+                print('iiii')
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
@@ -208,12 +236,12 @@ class VistaUpdateRata(QWidget):
                     else:
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
                         self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
-                self.input_lines['unitaImmobiliare'].setVisible(True)
-                self.input_labels['unitaImmobiliare'].setVisible(True)
 
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:
             if self.input_lines['unitaImmobiliare'].currentText():
                 self.input_lines['versante'].clear()
+                self.input_lines['versante'].setPlaceholderText("cognome nome")
+                required_fields.append('versante')
                 self.sel_unita = self.input_lines['unitaImmobiliare'].currentText()
                 advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
                 completer = QCompleter(advisable_versanti_list)
@@ -222,3 +250,18 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setCompleter(completer)
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
+
+        num_writed_lines = 0
+
+        for field in required_fields:
+            if field == 'tipoPagamento':
+                if self.input_lines[field].currentText():
+                    num_writed_lines += 1
+            else:
+                if self.input_lines[field].text():
+                    num_writed_lines += 1
+        print(num_writed_lines)
+        if num_writed_lines < len(required_fields):
+            self.buttons["Modifica Rata"].setDisabled(True)
+        else:
+            self.buttons["Modifica Rata"].setDisabled(False)

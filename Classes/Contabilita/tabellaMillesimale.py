@@ -1,13 +1,14 @@
 import os.path
 import pickle
 
-nome_file = 'Dati/tabelleMillesimali.pickle'
+nome_file = 'Dati/TabelleMillesimali.pickle'
+
 class TabellaMillesimale:
 
     def __init__(self):
         self.codice = 1
         self.nome = ""
-        self.tipologiaSpesa =[]
+        self.tipologiaSpesa = []
         self.descrizione = ""
         self.immobile = 0
         self.millesimi = {}  # {unita immobiliare: millesimo}

@@ -9,7 +9,7 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
-from Viste.VisteGestioneBilancio.VisteGestioneTabellaMillesimale.VistaCreateTipoSpesa import VistaCreateTipoSpesa
+from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaCreateTipoSpesa import VistaCreateTipoSpesa
 
 
 class VistaCreateTabellaMillesimale(QWidget):

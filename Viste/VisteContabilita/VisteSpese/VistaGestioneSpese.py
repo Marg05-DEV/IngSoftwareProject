@@ -3,19 +3,16 @@ import datetime
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
-    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView
+    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy
 
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
-from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteContabilita.VisteSpese.VistaCreateSpesa import VistaCreateSpesa
 from Viste.VisteContabilita.VisteSpese.VistaDeleteSpesa import VistaDeleteSpesa
 from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
 from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaDeleteUnitaImmobiliare import VistaDeleteUnitaImmobiliare
-from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaUpdateUnitaImmobiliare import VistaUpdateUnitaImmobiliare
 
 class VistaGestioneSpese(QWidget):
     def __init__(self, parent=None, sortLabel=None):
@@ -23,12 +20,12 @@ class VistaGestioneSpese(QWidget):
 
         main_layout = QVBoxLayout()
 
-        find_layout = QGridLayout()
+        find_layout = QHBoxLayout()
 
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Spesa")
         self.searchType = QComboBox()
-        self.searchType.addItems(["Ricerca per dataPagamento", "Ricerca per tipoSpesa", "Ricerca per Immobile", "Ricerca per fornitore"])
+        self.searchType.addItems(["Ricerca per data di pagamento", "Ricerca per tipologia di spesa", "Ricerca per immobile", "Ricerca per fornitore"])
         self.searchType.activated.connect(self.avvia_ricerca)
         self.searchbar.textChanged.connect(self.avvia_ricerca)
 
@@ -41,8 +38,7 @@ class VistaGestioneSpese(QWidget):
         self.sortType = QComboBox()
 
         self.sortType.addItems(
-            ["Data Di pagamento", "Tipo di Spesa A -> Z", "tipo di Spesa Z -> A", "Immobile A -> Z", "Immobile Z -> A", "Fornitore A -> Z",
-             "Fornitore Z -> A"])
+            ["Ultimo inserito", "Data di pagamento", "Tipo di spesa A -> Z", "Tipo di spesa Z -> A", "Denominazione Immobile A -> Z", "Denominazione Immobile Z -> A", "Denominazione Fornitore A -> Z", "Denomianzione Fornitore Z -> A"])
         self.sortType.activated.connect(self.avvia_ordinamento)
         sort_layout.addWidget(sortLabel)
         sort_layout.addWidget(self.sortType)
@@ -77,12 +73,13 @@ class VistaGestioneSpese(QWidget):
         main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
+        self.resize(800, 540)
         self.setWindowTitle("Gestione Spese")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(110, 55)
+        button.setMinimumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         button.setCheckable(True)
         button.clicked.connect(action)
         button.setDisabled(disabled)
@@ -94,18 +91,20 @@ class VistaGestioneSpese(QWidget):
 
     def avvia_ordinamento(self):
         if self.sortType.currentIndex() == 0:
-            self.table_spese.sortItems(0)
+            self.table_spese.sortItems(0, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 1:
-            self.table_spese.sortItems(4, Qt.SortOrder.AscendingOrder)
+            self.table_spese.sortItems(2, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 2:
-            self.table_spese.sortItems(4, Qt.SortOrder.DescendingOrder)
+            self.table_spese.sortItems(4, Qt.SortOrder.AscendingOrder)
         elif self.sortType.currentIndex() == 3:
-            self.table_spese.sortItems(1, Qt.SortOrder.AscendingOrder)
+            self.table_spese.sortItems(4, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 4:
-            self.table_spese.sortItems(1, Qt.SortOrder.DescendingOrder)
+            self.table_spese.sortItems(1, Qt.SortOrder.AscendingOrder)
         elif self.sortType.currentIndex() == 5:
-            self.table_spese.sortItems(5, Qt.SortOrder.AscendingOrder)
+            self.table_spese.sortItems(1, Qt.SortOrder.DescendingOrder)
         elif self.sortType.currentIndex() == 6:
+            self.table_spese.sortItems(5, Qt.SortOrder.AscendingOrder)
+        elif self.sortType.currentIndex() == 7:
             self.table_spese.sortItems(5, Qt.SortOrder.DescendingOrder)
         else:
             print("Altro")
@@ -120,13 +119,13 @@ class VistaGestioneSpese(QWidget):
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per data Pagamento
                 day, month, year = [int(x) for x in self.searchbar.text().split("/")]
                 data = datetime.date(year, month, day)
-                self.spese = [item for item in self.spese if data == item.dataPagamento]
+                self.spese = [item for item in self.spese if data == item.dataPagamento and item.pagata]
             elif self.searchType.currentIndex() == 1:  # ricerca per tipo Spesa
-                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (TipoSpesa.ricercaTipoSpesaByCodice(item.tipoSpesa.codice)).nome.upper()]
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (TipoSpesa.ricercaTipoSpesaByCodice(item.tipoSpesa)).nome.upper()]
             elif self.searchType.currentIndex() == 2:  # ricerca per Immobile
-                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(item.immobile.id)).denominazione.upper()]
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(item.immobile)).denominazione.upper()]
             elif self.searchType.currentIndex() == 3:  # ricerca per denominazione fornitore
-                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Fornitore.ricercaFornitoreByPartitaIVA(item.fornitore.partitaIva)).denominazione.upper()]
+                self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Fornitore.ricercaFornitoreByCodice(item.fornitore)).denominazione.upper()]
         if not self.spese:
             print("vuoto")
             if searchActivated:
@@ -138,40 +137,45 @@ class VistaGestioneSpese(QWidget):
             self.msg.hide()
 
         self.table_spese.setRowCount(len(self.spese))
-        self.table_spese.setColumnCount(10)
+        self.table_spese.setColumnCount(8)
 
         print("aiuto")
 
-        self.table_spese.setHorizontalHeaderLabels(
-            ["Cod.", "Immobile", "Data Pagamento", "Descrizione", "Tipo Spesa", "Fornitore", "Importo", "Pagata"])
+        self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
         self.table_spese.verticalHeader().setVisible(False)
 
         i = 0
         for spesa in self.spese:
             print(spesa, spesa.getInfoSpesa())
-            self.table_spese.setItem(i, 0, QTableWidgetItem(str(spesa.codice)))
-            self.table_spese.setItem(i, 1, QTableWidgetItem(Immobile.ricercaImmobileById(spesa.immobile.id).denominazione))
+            self.table_spese.setItem(i, 0, QTableWidgetItem())
+            self.table_spese.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, spesa.codice)
+            self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+            self.table_spese.setItem(i, 1, QTableWidgetItem(Immobile.ricercaImmobileById(spesa.immobile).denominazione))
             if spesa.pagata:
-                self.table_spese.setItem(i, 2, QTableWidgetItem(spesa.dataPagamento.strftime("%d/%m/%Y")))
+                self.table_spese.setItem(i, 2, QTableWidgetItem(spesa.dataPagamento.strftime("%Y/%m/%d")))
             else:
-                self.table_spese.setItem(i, 2, QTableWidgetItem(" "))
+                self.table_spese.setItem(i, 2, QTableWidgetItem(""))
             self.table_spese.setItem(i, 3, QTableWidgetItem(spesa.descrizione))
-            self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa.codice).nome))
-            self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByPartitaIVA(spesa.fornitore.partitaIva).denominazione))
-            self.table_spese.setItem(i, 6, QTableWidgetItem(str(spesa.importo)))
+            self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
+            self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+            self.table_spese.setItem(i, 6, QTableWidgetItem("%.2f" % spesa.importo))
+            self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
+            self.table_spese.setItem(i, 7, QTableWidgetItem())
             if spesa.pagata:
-                self.table_spese.setItem(i, 7, QTableWidgetItem("Si"))
+                self.table_spese.item(i, 7).setData(10, 2)
             else:
-                self.table_spese.setItem(i, 7, QTableWidgetItem("No"))
+                self.table_spese.item(i, 7).setData(10, 0)
+            self.table_spese.item(i, 7).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             i += 1
 
-        print("qui")
-        self.table_spese.resizeColumnToContents(0)
-        self.table_spese.resizeColumnToContents(2)
-        self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table_spese.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        self.table_spese.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+
         self.table_spese.sortItems(0, Qt.SortOrder.DescendingOrder)
         self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table_spese.selectionModel().selectionChanged.connect(self.able_button)
 
     def goCreateSpesa(self):

@@ -77,11 +77,9 @@ class VistaMenuRegistroAnagrafe(QWidget):
             print("imm: ", immobile)
 
         if immobile != None:
-            print("immobile trovato")
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
             self.select_button.setEnabled(True)
         else:
-            print("Nessun immobile trovato")
             self.immobile_selezionato.setText("Nessun immobile selezionato")
             self.select_button.setEnabled(False)
 
@@ -95,10 +93,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
             lista_completamento = sorted([item.sigla for item in Immobile.getAllImmobili().values()])
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             lista_completamento = sorted([str(item.codice) for item in Immobile.getAllImmobili().values()])
-        print("ciao1")
-        print("Lista completamento", lista_completamento)
         self.immobili_completer.setModel(QStringListModel(lista_completamento))
-        print("ciao2")
         self.selectioning()
 
     def go_Gestione_UnitaImmobiliare(self):

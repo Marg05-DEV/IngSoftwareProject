@@ -2,7 +2,8 @@ import os.path
 import pickle
 
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
-nome_file = 'Dati/tipiSpesa.pickle'
+nome_file = 'Dati/TipiSpesa.pickle'
+
 class TipoSpesa:
 
     def __init__(self):
