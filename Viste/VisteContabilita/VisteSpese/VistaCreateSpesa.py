@@ -70,7 +70,7 @@ class VistaCreateSpesa(QWidget):
         main_layout.addWidget(self.drawLine())
         main_layout.addWidget(lbl_frase3)
         main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
-        main_layout.addWidget(self.create_checkbox("L'importo si riferisce ad una ritenuta di una spesa", 'ritenuta'))
+        main_layout.addWidget(self.create_checkbox("L'importo si riferisce ad una ritenuta di una spesa", 'isRitenuta'))
         pagata_layout = QHBoxLayout()
         pagata_layout.addWidget(self.create_checkbox("La spesa è stata pagata", 'pagata'))
         pagata_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
@@ -221,7 +221,7 @@ class VistaCreateSpesa(QWidget):
         temp_spesa = Spesa()
         msg, spesa = temp_spesa.aggiungiSpesa(descrizione, fornitore.codice, importo, tipoSpesa, immobile,
                                               self.checkboxes['pagata'].isChecked(), dataPagamento, dataFattura,
-                                              datetime.date.today(), self.checkboxes['ritenuta'].isChecked(),
+                                              datetime.date.today(), self.checkboxes['isRitenuta'].isChecked(),
                                               numeroFattura)
         self.callback(msg)
         self.close()

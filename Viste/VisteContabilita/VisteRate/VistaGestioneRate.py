@@ -193,14 +193,21 @@ class VistaGestioneRate(QWidget):
         self.vista_elimina_rata.show()
 
     def goReadRicevuta(self):
-        rata_selezionata = None
+        print('daidaidai')
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+        print('daidaidai')
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
+        print('daidaidai')
         directory_file = os.path.dirname(os.path.abspath(__file__)).replace("\\Viste\\VisteContabilita\\VisteRate", "\\Dati\\pdf\\")
-        if os.path.isdir(directory_file + "temp"):
-            shutil.rmtree(directory_file + "temp")
-        if not os.path.isdir(directory_file + "temp"):
-            os.makedirs(directory_file + "temp")
+        print(directory_file, directory_file + 'temp')
+        if os.path.isdir(directory_file + "temp\\"):
+            print("data")
+            shutil.rmtree(directory_file + "temp\\")
+            print("data")
+        print('daidaidai')
+        if not os.path.isdir(directory_file + "temp\\"):
+            os.makedirs(directory_file + "temp\\")
+        print('daidaidai')
         pdf = GestoreContabilita.generaRicevuta(rata_selezionata)
         pdf.output(directory_file + "temp\\ricevuta.pdf")
         webbrowser.open(directory_file + "temp\\ricevuta.pdf")

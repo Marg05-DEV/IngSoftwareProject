@@ -49,7 +49,7 @@ class Immobile:
         immobili[self.id] = self
         with open(file_name, 'wb') as f:
             pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-        return "Il nuovo immobile " + denominazione + " è stato inserito"
+        return "Il nuovo immobile " + denominazione + " è stato inserito", self
 
     def modificaImmobile(self,  codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
         print("dentro modifica")

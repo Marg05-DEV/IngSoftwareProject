@@ -1,6 +1,7 @@
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton, QSizePolicy
 
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
@@ -75,7 +76,7 @@ class VistaCreateImmobile(QWidget):
 
     def createImmobile(self):
         temp_immobile = Immobile()
-        msg = temp_immobile.aggiungiImmobile(int(self.input_lines["codice"].text()),
+        msg, immobile = temp_immobile.aggiungiImmobile(int(self.input_lines["codice"].text()),
                                        self.input_lines["sigla"].text(),
                                        self.input_lines["denominazione"].text(),
                                        self.input_lines["codiceFiscale"].text(),
@@ -83,6 +84,10 @@ class VistaCreateImmobile(QWidget):
                                        self.input_lines["provincia"].text(),
                                        self.input_lines["cap"].text(),
                                        self.input_lines["via"].text())
+
+        temp_tabellaMillesimale = TabellaMillesimale()
+        m, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale('Tab A', [], 'Spese generali', immobile.id, {})
+
         print(msg)
         self.callback(msg)
         self.close()

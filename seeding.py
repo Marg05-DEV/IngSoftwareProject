@@ -91,14 +91,6 @@ def up():
 
     print("\n ------------------------------------------------- \n")
 
-    #seeding tabelle millesimali
-    tabellaMillesimale = TabellaMillesimale()
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [], "Spesa generale", Immobile.ricercaImmobileByCodice(1), {})
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [], "Spesa relative all'uso dell'ascensore", Immobile.ricercaImmobileByCodice(1), {})
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [], "Spesa impianto giardino", Immobile.ricercaImmobileByCodice(1), {})
-
-    print("\n ------------------------------------------------- \n")
-
     # seeding tipi di spesa
     tipo_spesa = TipoSpesa()
     tipo_spesa.aggiungiTipoSpesa("Spese per la manutenzione ordinaria delle aree comuni", "Manutenzione Ordinaria")
@@ -106,6 +98,17 @@ def up():
     tipo_spesa.aggiungiTipoSpesa("Spese per il riscaldamento centralizzato", "Riscaldamento")
     tipo_spesa.aggiungiTipoSpesa("Spese per l'illuminazione delle aree comuni", "Illuminazione Comune")
     tipo_spesa.aggiungiTipoSpesa("Spese per la pulizia delle aree comuni", "Pulizia")
+
+    # seeding tabelle millesimali
+    tabellaMillesimale = TabellaMillesimale()
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [1, 4], "Spesa generale", Immobile.ricercaImmobileByCodice(1),
+                                                  {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [2, 5], "Spesa relative all'uso dell'ascensore",
+                                                  Immobile.ricercaImmobileByCodice(1), {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [3], "Spesa impianto giardino",
+                                                  Immobile.ricercaImmobileByCodice(1), {})
+
+    print("\n ------------------------------------------------- \n")
 
     #seeding rate
     rata = Rata()

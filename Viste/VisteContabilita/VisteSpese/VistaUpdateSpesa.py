@@ -17,6 +17,7 @@ class VistaUpdateSpesa(QWidget):
         super(VistaUpdateSpesa, self).__init__()
         self.spesa = spesa
         self.callback = callback
+        self.sel_immobile = Immobile.ricercaImmobileById(self.spesa.immobile).denominazione
         self.input_lines = {}
         self.input_labels = {}
         self.input_errors = {}
@@ -122,12 +123,9 @@ class VistaUpdateSpesa(QWidget):
             input_line.activated.connect(self.input_validation)
         elif index == "tipoSpesa":
             input_line = QComboBox()
-            print(self.spesa.tipoSpesa)
             tipo = TipoSpesa.ricercaTipoSpesaByCodice(self.spesa.tipoSpesa).nome
             input_line.setPlaceholderText(tipo)
             input_line.activated.connect(self.input_validation)
-            input_line.setVisible(False)
-            label.setVisible(False)
         elif index == "numeroFattura":
             input_line = QLineEdit()
             input_line.setPlaceholderText(str(self.spesa.numeroFattura))
@@ -164,6 +162,7 @@ class VistaUpdateSpesa(QWidget):
             input_line.activated.connect(self.input_validation)
         else:
             input_line = QLineEdit()
+            input_line.setPlaceholderText(str(self.spesa.getInfoSpesa()[index]))
             input_line.textChanged.connect(self.input_validation)
 
         self.input_lines[index] = input_line
@@ -192,8 +191,27 @@ class VistaUpdateSpesa(QWidget):
         self.input_lines['tipoSpesa'].setVisible(False)
         self.input_labels['tipoSpesa'].setVisible(False)
         print('reset')
+        fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+        self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
+        self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
+        print('fine reset')
 
-        self.sel_immobile = None
+        if self.spesa.pagata:
+            self.checkboxes['pagata'].setCheckState(Qt.CheckState.Checked)
+        else:
+            print('non pagata')
+            print(self.checkboxes['pagata'])
+            self.checkboxes['pagata'].setCheckState(Qt.CheckState.Unchecked)
+        print("fineprimo check")
+        if self.spesa.isRitenuta:
+            self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Checked)
+        else:
+            self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Unchecked)
+        print("fine fcheck")
+        self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
+        self.input_lines['dataFattura'].setDate(self.spesa.dataFattura)
+        print("fine fine rest")
+
 
     def updateSpesa(self):
         print("in crea")
@@ -244,7 +262,9 @@ class VistaUpdateSpesa(QWidget):
                            'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
+            print("immobile modificato")
             if self.input_lines['immobile'].currentText():
+                print("immobile valido")
                 self.input_lines['tipoSpesa'].clear()
                 self.input_lines['tipoSpesa'].setVisible(True)
                 self.input_labels['tipoSpesa'].setVisible(True)
@@ -266,9 +286,7 @@ class VistaUpdateSpesa(QWidget):
                 self.input_labels['tipoSpesa'].setVisible(True)
 
         if self.input_lines['denominazione'].text():
-            print("scritto den")
             denominazioni_fornitori = [item.denominazione.upper() for item in Fornitore.getAllFornitore().values()]
-            print("den", denominazioni_fornitori)
             if self.input_lines['denominazione'].text().upper() in denominazioni_fornitori:
                 print("den trovata")
                 fornitore = Fornitore.ricercaFornitoreByDenominazione(self.input_lines['denominazione'].text())
@@ -276,10 +294,6 @@ class VistaUpdateSpesa(QWidget):
                 self.input_lines['indirizzoSede'].setText(fornitore.indirizzoSede)
                 self.input_lines['partitaIva'].setText(fornitore.partitaIva)
                 self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
-                self.input_lines['cittaSede'].setDisabled(True)
-                self.input_lines['indirizzoSede'].setDisabled(True)
-                self.input_lines['partitaIva'].setDisabled(True)
-                self.input_lines['tipoProfessione'].setDisabled(True)
                 self.isFornitoreTrovatoNow = True
             elif (not (self.input_lines['denominazione'].text().upper() in denominazioni_fornitori)) and self.isFornitoreTrovatoNow:
                 print("denn non trovata dopo che era trovata")
@@ -287,10 +301,6 @@ class VistaUpdateSpesa(QWidget):
                 self.input_lines['indirizzoSede'].setText("")
                 self.input_lines['partitaIva'].setText("")
                 self.input_lines['tipoProfessione'].setCurrentText("")
-                self.input_lines['cittaSede'].setDisabled(False)
-                self.input_lines['indirizzoSede'].setDisabled(False)
-                self.input_lines['partitaIva'].setDisabled(False)
-                self.input_lines['tipoProfessione'].setDisabled(False)
                 self.isFornitoreTrovatoNow = False
 
         print("fine controlli inserimento - inizio required")
