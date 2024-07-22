@@ -250,7 +250,8 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setCompleter(completer)
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
-        print("prima della ricevuta")
+
+        """
         if self.input_lines['numeroRicevuta'].text():
             rate = Rata.getAllRateByImmobile(Immobile.ricercaImmobileByDenominazione(self.input_lines['immobile'].currentText())).values()
             for rata in rate:
@@ -272,7 +273,7 @@ class VistaUpdateRata(QWidget):
                 self.input_errors["numeroRicevuta"].setVisible(True)
             else:
                 self.input_errors["numeroRicevuta"].setVisible(False)
-
+        """
         num_writed_lines = 0
 
         for field in required_fields:
