@@ -101,12 +101,12 @@ def up():
 
     # seeding tabelle millesimali
     tabellaMillesimale = TabellaMillesimale()
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [1, 4], "Spesa generale", Immobile.ricercaImmobileByCodice(1),
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [1, 4], "Spesa generale", Immobile.ricercaImmobileByCodice(1).id,
                                                   {})
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [2, 5], "Spesa relative all'uso dell'ascensore",
-                                                  Immobile.ricercaImmobileByCodice(1), {})
+                                                  Immobile.ricercaImmobileByCodice(1).id, {})
     tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [3], "Spesa impianto giardino",
-                                                  Immobile.ricercaImmobileByCodice(1), {})
+                                                  Immobile.ricercaImmobileByCodice(1).id, {})
 
     print("\n ------------------------------------------------- \n")
 

@@ -14,10 +14,15 @@ class TabellaMillesimale:
         self.millesimi = {}  # {unita immobiliare: millesimo}
 
     def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile, millesimi):
+        print("in aggiunta tabella millesimale")
         self.nome = nome
+        print("nome fatto")
         self.tipologiaSpesa = tipologieSpesa
+        print("tipo fatto")
         self.descrizione = descrizione
+        print("desc fatto")
         self.immobile = immobile
+        print("immobile fatto")
         self.millesimi = millesimi
 
         tabelleMillesimali = {}
@@ -66,8 +71,9 @@ class TabellaMillesimale:
         tabelleMillesimali = TabellaMillesimale.getAllTabelleMillesimali()
         if tabelleMillesimali:
             tabellaMillesimaleByImmobile = {}
+            print(tabelleMillesimali)
             for key, value in tabelleMillesimali.items():
-                if value.immobile.id == immobile.id:
+                if value.immobile == immobile.id:
                     tabellaMillesimaleByImmobile[key] = value
             return tabellaMillesimaleByImmobile
         else:

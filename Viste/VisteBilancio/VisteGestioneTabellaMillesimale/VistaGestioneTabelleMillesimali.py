@@ -1,7 +1,5 @@
 from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
-    QPushButton, QTableWidget, QTableWidgetItem, QAbstractItemView, QSizePolicy, QHeaderView
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QSizePolicy, QHeaderView
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -10,6 +8,7 @@ from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaCreateTabellaMillesimale import VistaCreateTabellaMillesimale
 from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaReadTabellaMillesimale import VistaReadTabellaMillesimale
 from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaDeleteTabellaMillesimale import VistaDeleteTabellaMillesimale
+
 
 class VistaGestioneTabelleMillesimali(QWidget):
 
@@ -59,9 +58,11 @@ class VistaGestioneTabelleMillesimali(QWidget):
         return button
 
     def update_table(self):
-        print("crazione tabella")
+        print("crazione tabella", self.immobile, type(self.immobile))
         self.unitaImmobiliari_immobile = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
+        print("prese ui")
         self.tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
+        print("prese tab millesimali")
         self.table_tabellaMillesimale.setRowCount(len(self.unitaImmobiliari_immobile))
         self.table_tabellaMillesimale.setColumnCount(len(self.tabelle_millesimali))
         self.codice_ui = []

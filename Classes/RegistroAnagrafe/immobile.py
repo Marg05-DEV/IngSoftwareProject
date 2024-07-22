@@ -30,9 +30,7 @@ class Immobile:
         self.via = via
 
         os.makedirs(directory_files + sigla +"\\")
-
         self.files_path = directory_files + sigla + "\\"
-
         print(self.files_path)
 
         immobili = {}
