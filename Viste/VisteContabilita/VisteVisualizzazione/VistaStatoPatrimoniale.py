@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompl
 
 from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
@@ -159,7 +160,8 @@ class VistaStatoPatrimoniale(QWidget):
         listview_model = QStandardItemModel(self.list_view_spese)
         for spesa in self.spese.values():
             item = QStandardItem()
-            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino_cf} ({titolo.upper()})"
+            nome_tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome
+            item_text = f"{nome_tipoSpesa}: Spesa {spesa.pagata}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
