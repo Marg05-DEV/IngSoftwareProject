@@ -32,10 +32,8 @@ class VistaSaldoCassa(QWidget):
         self.timer.timeout.connect(self.hide_message)
 
         main_layout.addWidget(self.msg)
-        print("busso2")
         main_layout.addWidget(self.saldo("Saldo in Contanti", "Contanti"))
         main_layout.addWidget(self.saldo("Saldo in Assegni Bancari ", "Assegno Bancario"))
-        print("busso3")
         self.setLayout(main_layout)
         self.resize(1200, 650)
         self.setWindowTitle("Proposta Preventivo")

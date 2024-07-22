@@ -130,7 +130,10 @@ class Rata:
             rateByImmobile = {}
             if rate:
                 for key, value in rate.items():
-                    if unita.codice == value.unitaImmobiliare.codice:
+                    print("vannvann")
+                    print(unita.codice, " ", value.unitaImmobiliare)
+                    unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(value.unitaImmobiliare)
+                    if unita.codice == unita_immo.codice:
                         rateByImmobile[key] = value
                 return rateByImmobile
             else:

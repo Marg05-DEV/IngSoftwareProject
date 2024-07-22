@@ -15,11 +15,16 @@ class VistaUpdateRata(QWidget):
 
     def __init__(self, rata_sel, callback):
         super(VistaUpdateRata, self).__init__()
+        print("mimi")
         self.callback = callback
         self.rata_selezionata = rata_sel
         main_layout = QVBoxLayout()
+        print(self.rata_selezionata)
+        print(self.rata_selezionata.unitaImmobiliare)
+        print(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)
         self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
         unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
+        print("uuu")
         if unita.tipoUnitaImmobiliare == "Appartamento":
             proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
             self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
@@ -65,6 +70,7 @@ class VistaUpdateRata(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
+        print("2")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -76,7 +82,7 @@ class VistaUpdateRata(QWidget):
         label = QLabel(testo + "*: ")
 
         self.input_labels[index] = label
-
+        print("aio")
         if index == "immobile":
             input_line = QComboBox()
             input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -131,7 +137,7 @@ class VistaUpdateRata(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText(self.rata_selezionata.getInfoRata()[index])
             input_line.textChanged.connect(self.input_validation)
-
+        print("cici")
         self.input_lines[index] = input_line
         self.input_errors[index] = error
 
@@ -210,6 +216,8 @@ class VistaUpdateRata(QWidget):
 
     def input_validation(self):
         required_fields = []
+        num_errors = 0
+        there_is_unique_error = {}
         print('validation')
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
@@ -243,6 +251,28 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setCompleter(completer)
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
+        print("prima della ricevuta")
+        if self.input_lines['numeroRicevuta'].text():
+            rate = Rata.getAllRateByImmobile(Immobile.ricercaImmobileByDenominazione(self.input_lines['immobile'].currentText())).values()
+            for rata in rate:
+                print(rata)
+                there_is_unique_error["numeroRicevuta"] = False
+
+                print(str(rata.getInfoRata()["numeroRicevuta"]))
+                print(str(self.rata_selezionata.getInfoRata()["numeroRicevuta"]))
+                print(self.input_lines["numeroRicevuta"].text())
+                print(str(rata.getInfoRata()["numeroRicevuta"]))
+
+                if str(rata.getInfoRata()["numeroRicevuta"]) != str(self.rata_selezionata.getInfoRata()["numeroRicevuta"]):
+                    if self.input_lines["numeroRicevuta"].text() == str(rata.getInfoRata["numeroRicevuta"]):
+                        num_errors += 1
+                        there_is_unique_error["numeroRicevuta"] = True
+                        break
+            if there_is_unique_error["numeroRicevuta"]:
+                self.input_errors["numeroRicevuta"].setText(f"nuemero ricevuta già esistente")
+                self.input_errors["numeroRicevuta"].setVisible(True)
+            else:
+                self.input_errors["numeroRicevuta"].setVisible(False)
 
         num_writed_lines = 0
 

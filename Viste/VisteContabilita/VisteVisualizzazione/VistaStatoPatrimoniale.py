@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView
+    QPushButton, QListView, QFrame
 
 from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
@@ -16,6 +16,7 @@ class VistaStatoPatrimoniale(QWidget):
 
         super(VistaStatoPatrimoniale, self).__init__()
         self.buttons = {}
+        self.immobile = None
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
@@ -44,47 +45,54 @@ class VistaStatoPatrimoniale(QWidget):
         find_layout.addWidget(self.immobile_selezionato, 2, 1, 1, 3)
 
         self.button_layout = QHBoxLayout()
-
+        print("u")
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_stato_patrimoniale))
-
         self.searchbar.textChanged.connect(self.selectioning)
+        print("c")
+        spesa_layout = QVBoxLayout()
+        self.lbl_frase = QLabel("Spese:")
+        self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
+        self.list_view_spese = QListView()
+        self.list_view_spese.setAlternatingRowColors(True)
+        self.lbl_frase.setVisible(False)
+        self.list_view_spese.setVisible(False)
+        spesa_layout.addWidget(self.lbl_frase)
+        spesa_layout.addWidget(self.list_view_spese)
+        print("d")
+        spesa_layout.addWidget(self.newLabel("Debito verso fornitori dell'immobile", True))
+        print("e")
+
+        rata_layout = QVBoxLayout()
+        self.lbl_frase1 = QLabel("Rate:")
+        self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
+        self.list_view_rate = QListView()
+        self.list_view_rate.setAlternatingRowColors(True)
+        self.lbl_frase1.setVisible(False)
+        self.list_view_rate.setVisible(False)
+        rata_layout.addWidget(self.lbl_frase)
+        rata_layout.addWidget(self.list_view_rate)
+        rata_layout.addWidget(self.newLabel("credito verso condomini dell'immobile", False))
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
+        main_layout.addLayout(spesa_layout)
+        main_layout.addLayout(rata_layout)
+        self.msg = QLabel("")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
 
-        if self.view_stato_patrimoniale():
-            lbl_frase = QLabel("Spese:")
-            lbl_frase.setStyleSheet("font-weight: bold;")
-            lbl_frase.setFixedSize(lbl_frase.sizeHint())
-
-            main_layout.addWidget(lbl_frase)
-            spese_layout = QHBoxLayout()
-            self.list_view_spese = QListView()
-            self.list_view_spese.setAlternatingRowColors(True)
-            spese_layout.addWidget(self.list_view_spese)
-
-            lbl_frase1 = QLabel("Rate:")
-            lbl_frase1.setStyleSheet("font-weight: bold;")
-            main_layout.addWidget(lbl_frase1)
-
-            rate_layout = QHBoxLayout()
-
-            self.list_view_rate = QListView()
-            self.list_view_rate.setAlternatingRowColors(True)
-            rate_layout.addWidget(self.list_view_rate)
-            self.update_list()
-            self.msg = QLabel("")
-            self.msg.setStyleSheet("color: red; font-weight: bold;")
-            self.msg.hide()
-
-            self.timer = QTimer(self)
-            self.timer.setInterval(5000)
-            self.timer.timeout.connect(self.hide_message)
+        self.timer = QTimer(self)
+        self.timer.setInterval(5000)
+        self.timer.timeout.connect(self.hide_message)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Stato Patrimoniale")
-
+    def drawLine(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
+        return line
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setFixedSize(275, 55)
@@ -92,7 +100,32 @@ class VistaStatoPatrimoniale(QWidget):
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
-
+    def newLabel(self, testo, isSpesa):
+        print("qui")
+        label = ""
+        if self.immobile != None:
+            print(self.immobile)
+            print("xaxa")
+            self.speseByImmobile = Spesa.getAllSpeseByImmobile(self.immobile)
+            print("xuxu")
+            self.rateByImmobile = Rata.getAllRateByImmobile(self.immobile)
+            print("xixi")
+            importo_totale = 0.0
+            if isSpesa:
+                print("dentro")
+                print(self.speseByImmobile.values())
+                for spesa in self.speseByImmobile.values():
+                    print(spesa.importo)
+                    if not spesa.pagata:
+                      importo_totale += spesa.importo
+                print(importo_totale)
+            else:
+                for rata in self.rateByImmobile.values():
+                    if not rata.pagata:
+                        importo_totale += rata.importo
+            label = QLabel(testo + "....." + importo_totale)
+        print("quo")
+        return label
     def selectioning(self):
         immobile = None
 
@@ -142,12 +175,13 @@ class VistaStatoPatrimoniale(QWidget):
                 self.immobile = Immobile.ricercaImmobileByCodice(search_text)
                 print("imm: ", self.immobile)
         if self.immobile != None:
-            return True
+            self.update_list()
         else:
             print("no")
             return None
 
     def update_list(self):
+        print(self.immobile)
         self.rate = Rata.getAllRateByImmobile(self.immobile)
         self.spese = Spesa.getAllSpeseByImmobile(self.immobile)
         if not self.rate:
@@ -160,8 +194,13 @@ class VistaStatoPatrimoniale(QWidget):
         listview_model = QStandardItemModel(self.list_view_spese)
         for spesa in self.spese.values():
             item = QStandardItem()
-            nome_tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome
-            item_text = f"{nome_tipoSpesa}: Spesa {spesa.pagata}"
+            non_pagata = ""
+            tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa)
+            if spesa.pagata:
+                pagata = "La spesa è stata pagata"
+            else:
+                non_pagata= "La spesa non è stata pagata"
+            item_text = f"{tipoSpesa.nome}: Spesa {non_pagata}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -170,7 +209,33 @@ class VistaStatoPatrimoniale(QWidget):
             listview_model.appendRow(item)
 
         print("qui finisce")
-        self.list_view_condomini.setModel(listview_model)
+        self.list_view_spese.setModel(listview_model)
+        if self.spese.values():
+            self.lbl_frase.setVisible(True)
+            self.list_view_spese.setVisible(True)
+
+
+        listview_model1 = QStandardItemModel(self.list_view_rate)
+        for rata in self.rate.values():
+            item = QStandardItem()
+            non_versata = ""
+            if rata.pagata:
+                versata = "versata"
+            else:
+                non_versata = "non versata"
+            item_text = f"La Rata {rata.numeroRicevuta} risulta {non_versata}"
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model1.appendRow(item)
+
+        print("qui finisce")
+        self.list_view_rate.setModel(listview_model1)
+        if self.rate.values():
+            self.lbl_frase1.setVisible(True)
+            self.list_view_rate.setVisible(True)
 
     def hide_message(self):
         self.msg.hide()

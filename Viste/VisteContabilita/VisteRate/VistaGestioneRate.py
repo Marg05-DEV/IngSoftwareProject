@@ -182,7 +182,7 @@ class VistaGestioneRate(QWidget):
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
 
-        self.vista_modifica_rata = VistaUpdateRata(self.callback, rata_selezionata)
+        self.vista_modifica_rata = VistaUpdateRata(rata_selezionata, self.callback)
         self.vista_modifica_rata.show()
 
     def goDeleteRata(self):

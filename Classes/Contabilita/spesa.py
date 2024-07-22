@@ -2,6 +2,8 @@ import datetime
 import os.path
 import pickle
 
+from Classes.RegistroAnagrafe.immobile import Immobile
+
 nome_file = 'Dati/Spese.pickle'
 class Spesa:
     #numSpeseRegistrate = 0
@@ -251,9 +253,13 @@ class Spesa:
     def getAllSpeseByImmobile(immobile):
         spese = Spesa.getAllSpese()
         if spese:
+            print("serio")
             speseByImmobile = {}
             for key, value in spese.items():
-                if value.immobile == immobile.id:
+                print("bii")
+                print(value.immobile)
+                immo = Immobile.ricercaImmobileByCodice(value.immobile)
+                if immo.id == immobile.id:
                     speseByImmobile[key] = value
             return speseByImmobile
         else:
