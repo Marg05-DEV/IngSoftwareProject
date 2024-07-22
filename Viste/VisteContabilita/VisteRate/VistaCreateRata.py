@@ -127,13 +127,12 @@ class VistaCreateRata(QWidget):
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
         self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
-        print('reset')
         self.input_lines['versante'].setVisible(False)
         self.input_labels['versante'].setVisible(False)
-        print('reset')
         self.input_lines['unitaImmobiliare'].setVisible(False)
         self.input_labels['unitaImmobiliare'].setVisible(False)
-        print('reset')
+
+        self.input_lines["dataPagamento"].setDate(datetime.date.today())
 
         self.sel_immobile = None
         self.sel_unita = None
@@ -144,7 +143,7 @@ class VistaCreateRata(QWidget):
         descrizione = self.input_lines["descrizione"].text()
         numeroRicevuta = int(self.input_lines["numeroRicevuta"].text())
         importo = float((self.input_lines["importo"].text()).replace(",", "."))
-        print(importo)
+
         dataPagamento = self.input_lines["dataPagamento"].text()
         dataPagamento = dataPagamento.split("/")
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
@@ -154,8 +153,6 @@ class VistaCreateRata(QWidget):
         temp_rata = Rata()
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, True, tipoPagamento,
                                            unitaImmobiliare, versante)
-
-        print("fatto")
 
         self.callback(msg)
         self.close()
@@ -201,7 +198,7 @@ class VistaCreateRata(QWidget):
             else:
                 if self.input_lines[field].text():
                     num_writed_lines += 1
-        print(num_writed_lines)
+
         if num_writed_lines < len(required_fields):
             self.buttons["Aggiungi Rata"].setDisabled(True)
         else:

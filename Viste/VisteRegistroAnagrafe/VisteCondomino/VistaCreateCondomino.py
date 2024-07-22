@@ -120,9 +120,9 @@ class VistaCreateCondomino(QWidget):
             input_line = QComboBox()
             input_line.setPlaceholderText("Scegli un titolo per il condomino...")
             if 'Proprietario' in self.unitaImmobiliare.condomini.values():
-                input_line.addItems(["Coproprietario", "Inquilino"])
+                input_line.addItems(["Comproprietario", "Inquilino"])
             else:
-                input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
+                input_line.addItems(["Proprietario", "Comproprietario", "Inquilino"])
             input_line.activated.connect(self.input_validation)
         else:
             input_line = QLineEdit()
@@ -204,9 +204,11 @@ class VistaCreateCondomino(QWidget):
             input_line.clear()
 
         if 'Proprietario' in self.unitaImmobiliare.condomini.values():
-            self.input_lines['titolo'].addItems(["Coproprietario", "Inquilino"])
+            self.input_lines['titolo'].addItems(["Comproprietario", "Inquilino"])
         else:
-            self.input_lines['titolo'].addItems(["Proprietario", "Coproprietario", "Inquilino"])
+            self.input_lines['titolo'].addItems(["Proprietario", "Comproprietario", "Inquilino"])
+
+        self.input_lines["dataDiNascita"].setDate(datetime.date(2000, 1, 1))
 
         self.lbl_exist.setVisible(False)
         self.lbl_condomino_esistente.setVisible(False)

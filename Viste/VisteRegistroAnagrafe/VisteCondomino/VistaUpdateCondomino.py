@@ -80,9 +80,9 @@ class VistaUpdateCondomino(QWidget):
         elif index == "titolo":
             input_line = QComboBox()
             if 'Proprietario' in self.ui.condomini.values():
-                input_line.addItems(["Coproprietario", "Inquilino"])
+                input_line.addItems(["Comproprietario", "Inquilino"])
             else:
-                input_line.addItems(["Proprietario", "Coproprietario", "Inquilino"])
+                input_line.addItems(["Proprietario", "Comproprietario", "Inquilino"])
             input_line.setCurrentText(str(self.ui.condomini[self.sel_condomino.codiceFiscale]))
             input_line.activated.connect(self.input_validation)
         else:
@@ -143,10 +143,12 @@ class VistaUpdateCondomino(QWidget):
             input_line.clear()
         if not self.onlyAnagrafica:
             if 'Proprietario' in self.ui.condomini.values():
-                self.input_lines['titolo'].addItems(["Coproprietario", "Inquilino"])
+                self.input_lines['titolo'].addItems(["Comproprietario", "Inquilino"])
             else:
-                self.input_lines['titolo'].addItems(["Proprietario", "Coproprietario", "Inquilino"])
+                self.input_lines['titolo'].addItems(["Proprietario", "Comproprietario", "Inquilino"])
             self.input_lines['titolo'].setCurrentText(self.ui.condomini[self.sel_condomino.codiceFiscale])
+
+        self.input_lines["dataDiNascita"].setDate(self.sel_condomino.dataDiNascita)
 
     def input_validation(self):
         print("scrivendo ...")

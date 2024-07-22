@@ -186,7 +186,7 @@ class UnitaImmobiliare:
                 removed = unitaImmobiliari[self.codice].condomini.pop(condomino.codiceFiscale)
                 if removed == "Proprietario" and len(unitaImmobiliari[self.codice].condomini) > 0:
                     for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
-                        if unitaImmobiliari[self.codice].condomini[condomino_assoc] == "Coproprietario":
+                        if unitaImmobiliari[self.codice].condomini[condomino_assoc] == "Comproprietario":
                             unitaImmobiliari[self.codice].condomini[condomino_assoc] = "Proprietario"
                             break
                 else:

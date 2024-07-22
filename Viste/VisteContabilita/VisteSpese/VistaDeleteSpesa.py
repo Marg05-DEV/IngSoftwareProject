@@ -22,14 +22,14 @@ class VistaDeleteSpesa(QWidget):
         main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
-        self.resize(300, 200)
+        self.resize(350, 150)
         self.setWindowTitle("Rimuovi Spesa")
 
-    @staticmethod
-    def create_button(testo, action):
+    def create_button(self, testo, action):
         button = QPushButton(testo)
-        button.setCheckable(True)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setCheckable(False)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         return button
 

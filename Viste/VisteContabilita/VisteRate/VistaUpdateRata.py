@@ -63,14 +63,13 @@ class VistaUpdateRata(QWidget):
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
 
     def pairLabelInput(self, testo, index):
-        print("2")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -82,7 +81,7 @@ class VistaUpdateRata(QWidget):
         label = QLabel(testo + "*: ")
 
         self.input_labels[index] = label
-        print("aio")
+
         if index == "immobile":
             input_line = QComboBox()
             input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -137,7 +136,7 @@ class VistaUpdateRata(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText(self.rata_selezionata.getInfoRata()[index])
             input_line.textChanged.connect(self.input_validation)
-        print("cici")
+
         self.input_lines[index] = input_line
         self.input_errors[index] = error
 

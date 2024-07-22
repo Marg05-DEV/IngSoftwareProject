@@ -68,7 +68,7 @@ def up():
     print("\n ------------------------------------------------- \n")
     # Seeding Unità Immobiliari
     unitaImmobiliare = UnitaImmobiliare()
-    unitaImmobiliare.aggiungiUnitaImmobiliare(1, 1, {"VRDMRA75M12C023P": "Proprietario", "BNCGIO80T03H123Q": "Coproprietario"}, 1, 1, "Appartamento", "A/2",
+    unitaImmobiliare.aggiungiUnitaImmobiliare(1, 1, {"VRDMRA75M12C023P": "Proprietario", "BNCGIO80T03H123Q": "Comproprietario"}, 1, 1, "Appartamento", "A/2",
                                                 1, Immobile.ricercaImmobileByCodice(1), 1, "A")
 
     unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {"BNCELNA88A06T321G": "Proprietario"}, 2, 2, "Appartamento", "A/2",
@@ -77,13 +77,13 @@ def up():
     unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {"GLRLRA95N17T654R": "Proprietario"}, 3, 0, "Box", "B/1",
                                                 3, Immobile.ricercaImmobileByCodice(1), 0, "C")
 
-    unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {"RSSRBTO72D18H789P": "Proprietario", "GLLLUC65I12H123Q": "Coproprietario"}, 3, 0, "Negozio", "B/1",
+    unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {"RSSRBTO72D18H789P": "Proprietario", "GLLLUC65I12H123Q": "Comproprietario"}, 3, 0, "Negozio", "B/1",
                                               3, Immobile.ricercaImmobileByCodice(1), 0, "C")
 
     unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {"BNCGIO80T03H123Q": "Proprietario"}, 2, 4, "Appartamento", "A/2",
                                               2, Immobile.ricercaImmobileByCodice(3), 1, "B")
 
-    unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {"VRDMRA75M12C023P": "Proprietario", "BNCGIO80T03H123Q": "Coproprietario"}, 2, 0, "Negozio", "A/2",
+    unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {"VRDMRA75M12C023P": "Proprietario", "BNCGIO80T03H123Q": "Comproprietario"}, 2, 0, "Negozio", "A/2",
                                               2, Immobile.ricercaImmobileByCodice(3), 0, "B")
     print("tutti unità immobiliari inseriti")
     for unitaImmobiliare in UnitaImmobiliare.getAllUnitaImmobiliari().values():

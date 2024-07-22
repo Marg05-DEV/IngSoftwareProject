@@ -206,7 +206,7 @@ class GestoreRegistroAnagrafe:
             proprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Proprietario']
             if len(proprietari) > 0:
                 proprietario = proprietari[0]
-            comproprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Coproprietario']
+            comproprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Comproprietario']
             inquilini = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Inquilino']
 
             print("PROPRIETARIO")

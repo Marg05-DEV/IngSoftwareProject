@@ -176,21 +176,19 @@ class VistaCreateSpesa(QWidget):
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
 
-        print('reset')
         self.input_lines['tipoSpesa'].setVisible(False)
         self.input_labels['tipoSpesa'].setVisible(False)
-        print('reset')
+
+        self.input_lines["dataPagamento"].setDate(datetime.date.today())
+        self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
 
         self.sel_immobile = None
 
     def createSpesa(self):
-        print("in crea")
         immobile = Immobile.ricercaImmobileByDenominazione(self.input_lines["immobile"].currentText()).id
-        print("ciao")
+
         tipoSpesa = self.input_lines["tipoSpesa"].currentData()
-        print("ciao")
         descrizione = self.input_lines["descrizione"].text()
-        print("ciao")
         denominazione = self.input_lines["denominazione"].text()
         cittaSede = self.input_lines['cittaSede'].text()
         indirizzoSede = self.input_lines['indirizzoSede'].text()
@@ -198,10 +196,13 @@ class VistaCreateSpesa(QWidget):
         tipoProfessione = self.input_lines['tipoProfessione'].currentText()
 
         numeroFattura = int(self.input_lines['numeroFattura'].text())
+
         dataFattura = self.input_lines["dataFattura"].text()
         dataFattura = dataFattura.split("/")
         dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
+
         importo = float((self.input_lines["importo"].text()).replace(",", "."))
+
         dataPagamento = self.input_lines["dataPagamento"].text()
         dataPagamento = dataPagamento.split("/")
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))

@@ -196,14 +196,13 @@ class VistaUpdateSpesa(QWidget):
 
     def reset(self):
         for key in self.input_lines.keys():
-            print("si", key, self.input_lines[key])
             self.input_lines[key].clear()
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
         self.input_lines['immobile'].setCurrentText(Immobile.ricercaImmobileById(self.spesa.immobile).denominazione)
 
         self.sel_immobile = self.input_lines['immobile'].currentText()
-        print("disabilizazione")
+
         tipi_spesa = []
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
             tipi_spesa.extend(tabella.tipologiaSpesa)
@@ -214,27 +213,23 @@ class VistaUpdateSpesa(QWidget):
 
         self.input_lines['tipoSpesa'].setVisible(True)
         self.input_labels['tipoSpesa'].setVisible(True)
-        print('reset')
+
         fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
         self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
-        print('fine reset')
 
         if self.spesa.pagata:
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Checked)
         else:
-            print('non pagata')
-            print(self.checkboxes['pagata'])
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Unchecked)
-        print("fineprimo check")
+
         if self.spesa.isRitenuta:
             self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Checked)
         else:
             self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Unchecked)
-        print("fine fcheck")
+
         self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
         self.input_lines['dataFattura'].setDate(self.spesa.dataFattura)
-        print("fine fine rest")
 
 
     def updateSpesa(self):
