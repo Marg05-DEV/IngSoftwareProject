@@ -1,8 +1,10 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
     QPushButton, QListView
 
 from Classes.Contabilita.rata import Rata
+from Classes.Contabilita.spesa import Spesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
@@ -126,30 +128,54 @@ class VistaStatoPatrimoniale(QWidget):
     def view_stato_patrimoniale(self):
         search_text = self.searchbar.text()
         print(f"Testo della barra di ricerca: {search_text}")
-        immobile = 0
+        self.immobile = 0
         if search_text:
             print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-                immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", immobile)
+                self.immobile = Immobile.ricercaImmobileByDenominazione(search_text)
+                print("imm: ", self.immobile)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-                immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", immobile)
+                self.immobile = Immobile.ricercaImmobileBySigla(search_text)
+                print("imm: ", self.immobile)
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
-                immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", immobile)
-        if immobile != None:
+                self.immobile = Immobile.ricercaImmobileByCodice(search_text)
+                print("imm: ", self.immobile)
+        if self.immobile != None:
             return True
         else:
             print("no")
             return None
 
     def update_list(self):
-        self.rate = Rata.get
+        self.rate = Rata.getAllRateByImmobile(self.immobile)
+        self.spese = Spesa.getAllSpeseByImmobile(self.immobile)
+        if not self.rate:
+            self.msg.setText("Non ci sono rate per questo immobile")
+            self.msg.show()
+        if not self.spese:
+            self.msg.setText("Non ci sono sepse per questo immobile")
+            self.msg.show()
+
+        listview_model = QStandardItemModel(self.list_view_spese)
+        for spesa in self.spese.values():
+            item = QStandardItem()
+            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino_cf} ({titolo.upper()})"
+            item.setText(item_text)
+            item.setEditable(False)
+            font = item.font()
+            font.setPointSize(12)
+            item.setFont(font)
+            listview_model.appendRow(item)
+
+        print("qui finisce")
+        self.list_view_condomini.setModel(listview_model)
 
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
-        if not self.sel_unitaImmobiliare.condomini:
-            self.msg.setText("Non ci sono condomini assegnati all'unità immobiliare")
+        if not self.rate:
+            self.msg.setText("Non ci sono rate per questo immobile")
+            self.msg.show()
+        if not self.spese:
+            self.msg.setText("Non ci sono sepse per questo immobile")
             self.msg.show()

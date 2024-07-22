@@ -246,4 +246,15 @@ class Spesa:
         "pagata" : self.pagata,
         "numeroFattura" : self.numeroFattura
         }
-        
+
+    @staticmethod
+    def getAllSpeseByImmobile(immobile):
+        spese = Spesa.getAllSpese()
+        if spese:
+            speseByImmobile = {}
+            for key, value in spese.items():
+                if value.immobile == immobile.id:
+                    speseByImmobile[key] = value
+            return speseByImmobile
+        else:
+            return {}

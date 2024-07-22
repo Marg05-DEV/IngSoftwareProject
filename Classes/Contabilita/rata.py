@@ -2,6 +2,8 @@ import datetime
 import os.path
 import pickle
 
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+
 nome_file = 'Dati/Rate.pickle'
 
 class Rata:
@@ -121,6 +123,15 @@ class Rata:
             return None
 
     @staticmethod
-    def getRateByImmobile(immobile):
+    def getAllRateByImmobile(immobile):
         rate = Rata.getAllRate()
-
+        unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile)
+        for unita in unitaImmobiliari.values():
+            rateByImmobile = {}
+            if rate:
+                for key, value in rate.items():
+                    if unita.codice == value.unitaImmobiliare.codice:
+                        rateByImmobile[key] = value
+                return rateByImmobile
+            else:
+                return {}
