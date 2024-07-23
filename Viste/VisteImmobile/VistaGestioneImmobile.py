@@ -78,6 +78,7 @@ class VistaGestioneImmobile(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
+        button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)

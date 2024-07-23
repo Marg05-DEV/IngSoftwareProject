@@ -58,7 +58,7 @@ class VistaMenuRegistroAnagrafe(QWidget):
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setFixedSize(275, 55)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         return button

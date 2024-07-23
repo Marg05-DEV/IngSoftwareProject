@@ -62,7 +62,7 @@ class VistaReadTabellaMillesimale(QWidget):
 
     def create_button(self, testo, action, disabled = False):
         button = QPushButton(testo)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
         button.setDisabled(disabled)

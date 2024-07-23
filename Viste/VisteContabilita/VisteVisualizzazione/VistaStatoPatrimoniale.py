@@ -137,7 +137,7 @@ class VistaStatoPatrimoniale(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setFixedSize(275, 55)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

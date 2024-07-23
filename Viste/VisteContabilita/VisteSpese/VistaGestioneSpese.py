@@ -80,7 +80,7 @@ class VistaGestioneSpese(QWidget):
         button = QPushButton(testo)
         button.setMinimumHeight(40)
         button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

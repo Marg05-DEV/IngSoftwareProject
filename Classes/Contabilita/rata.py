@@ -17,6 +17,7 @@ class Rata:
         self.tipoPagamento = ""
         self.unitaImmobiliare = 0
         self.versante = ""
+        self.isLast = False
 
     def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
         self.dataPagamento = dataPagamento
@@ -35,6 +36,11 @@ class Rata:
                 if rate.keys():
                     print(max(rate.keys()))
                     self.codice = max(rate.keys()) + 1
+        if numeroRicevuta > 0:
+            for rata in rate.values():
+                if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare).immobile == UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare).immobile:
+                    rata.isLast = False
+            self.isLast = True
         rate[self.codice] = self
         with open(nome_file, 'wb') as f:
             pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
@@ -84,7 +90,8 @@ class Rata:
             "pagata": self.pagata,
             "tipoPagamento": self.tipoPagamento,
             "unitaImmobiliare": self.unitaImmobiliare,
-            "versante": self.versante
+            "versante": self.versante,
+            "isLast": self.isLast
         }
 
     @staticmethod
@@ -126,21 +133,24 @@ class Rata:
     def getAllRateByImmobile(immobile):
         rate = Rata.getAllRate()
         print(rate)
-        unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile)
-        if unitaImmobiliari:
-            for unita in unitaImmobiliari.values():
-                rateByImmobile = {}
-                if rate:
-                    for key, value in rate.items():
-                        print("zozi:", value.unitaImmobiliare)
-                        if value.unitaImmobiliare > 0:
-                            unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(value.unitaImmobiliare)
-                            if unita.codice == unita_immo.codice:
-                                print("ii")
-                                rateByImmobile[key] = value
-                    print("perche", rateByImmobile)
-                    return rateByImmobile
-                else:
-                    return {}
+        print("immobile selezionato", immobile)
+        rateByImmobile = {}
+        if rate:
+            for cod_rata, rata in rate.items():
+                if rata.unitaImmobiliare > 0:
+                    obj_unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)
+                    if immobile.id == obj_unitaImmobiliare.immobile:
+                        rateByImmobile[cod_rata] = rata
+            return rateByImmobile
         else:
             return {}
+
+    @staticmethod
+    def lastNumeroRicevuta(immobile):
+        #{1: cardinalità di 1, 2: cardinalità di 2, ..., n: cardinalità di n}
+        print(immobile)
+        rate_immobile = Rata.getAllRateByImmobile(immobile)
+        print("dai dai")
+        for rata in rate_immobile.values():
+            print(rata.getInfoRata())
+        return [item for item in rate_immobile.values() if item.isLast][0].numeroRicevuta

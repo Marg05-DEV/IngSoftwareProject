@@ -61,7 +61,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.buttons[testo] = button
         button.clicked.connect(action)

@@ -99,7 +99,6 @@ class Immobile:
             return {}
     @staticmethod
     def ricercaImmobileByDenominazione(denominazione):
-        print("denominazione: " + denominazione)
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))

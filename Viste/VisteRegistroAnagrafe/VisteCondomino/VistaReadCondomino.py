@@ -64,7 +64,7 @@ class VistaReadCondomino(QWidget):
     @staticmethod
     def create_button(testo, action):
         button = QPushButton(testo)
-        button.setCheckable(True)
+        button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         button.clicked.connect(action)
         return button

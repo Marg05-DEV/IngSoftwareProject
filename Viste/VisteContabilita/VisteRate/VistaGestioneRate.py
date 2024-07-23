@@ -84,6 +84,7 @@ class VistaGestioneRate(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
+        button.setCheckable(False)
         button.setMinimumHeight(40)
         button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         button.clicked.connect(action)
@@ -133,11 +134,11 @@ class VistaGestioneRate(QWidget):
             self.msg.hide()
 
         self.table_rate.setRowCount(len(self.rate))
-        self.table_rate.setColumnCount(7)
+        self.table_rate.setColumnCount(8)
 
         print("aiuto")
 
-        self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo"])
+        self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo", "Pagata"])
         self.table_rate.verticalHeader().setVisible(False)
 
         i = 0
@@ -151,15 +152,23 @@ class VistaGestioneRate(QWidget):
             else:
                 self.table_rate.setItem(i, 1, QTableWidgetItem(""))
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
-            self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
+            if rata.pagata:
+                self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
+            else:
+                self.table_rate.setItem(i, 3, QTableWidgetItem())
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
             if rata.numeroRicevuta > 0:
                 self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
             else:
-                self.table_rate.setItem(i, 5, QTableWidgetItem(""))
+                self.table_rate.setItem(i, 5, QTableWidgetItem())
             self.table_rate.item(i, 5).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.table_rate.setItem(i, 6, QTableWidgetItem("%.2f" % rata.importo))
             self.table_rate.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
+            self.table_rate.setItem(i, 7, QTableWidgetItem())
+            if rata.pagata:
+                self.table_rate.item(i, 7).setData(10, 2)
+            else:
+                self.table_rate.item(i, 7).setData(10, 0)
             i += 1
 
         self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
