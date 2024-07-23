@@ -125,16 +125,20 @@ class Rata:
     @staticmethod
     def getAllRateByImmobile(immobile):
         rate = Rata.getAllRate()
+        print(rate)
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile)
         if unitaImmobiliari:
             for unita in unitaImmobiliari.values():
                 rateByImmobile = {}
                 if rate:
                     for key, value in rate.items():
+                        print("zozi:", value.unitaImmobiliare)
                         if value.unitaImmobiliare > 0:
                             unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(value.unitaImmobiliare)
                             if unita.codice == unita_immo.codice:
+                                print("ii")
                                 rateByImmobile[key] = value
+                    print("perche", rateByImmobile)
                     return rateByImmobile
                 else:
                     return {}
