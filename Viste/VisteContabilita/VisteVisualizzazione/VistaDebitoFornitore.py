@@ -1,4 +1,13 @@
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtCore import Qt, QStringListModel, QTimer
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
+    QPushButton, QListView, QFrame
+
+from Classes.Contabilita.fornitore import Fornitore
+from Classes.Contabilita.rata import Rata
+from Classes.Contabilita.spesa import Spesa
+from Classes.Contabilita.tipoSpesa import TipoSpesa
+from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class VistaDebitoFornitore(QWidget):

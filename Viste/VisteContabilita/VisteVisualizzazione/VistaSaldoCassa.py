@@ -119,7 +119,6 @@ class VistaSaldoCassa(QWidget):
         return self.table_rate
     def new_label(self, testo):
         label = QLabel(testo + "   " + str(datetime.date.today()))
-        label.setWindowFlag()
         return label
 
     def saldo(self, testo, tipo_pagamento):
@@ -128,6 +127,15 @@ class VistaSaldoCassa(QWidget):
         elif tipo_pagamento == "Assegno Bancario":
             label = QLabel(testo + " ..... " + str("%.2f" % self.saldo_assegni))
         return label
+    """
+    importo_totale = 0.0
+        for rate in self.all_rate.values():
+            if rate.pagata:
+                if rate.tipoPagamento == tipo_pagameto:
+                    importo_totale += rate.importo
+        label = QLabel(testo + " ..... " + str("%.2f" % importo_totale))
+        return label
+    """
     def callback(self, msg, tab):
         print("callback chiamata", msg)
         self.update_table()

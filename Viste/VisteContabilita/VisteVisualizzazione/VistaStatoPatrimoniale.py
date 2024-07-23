@@ -57,17 +57,20 @@ class VistaStatoPatrimoniale(QWidget):
         """ ------------------------------ SEZIONE SPESE ---------------------------- """
 
         self.spese_section = {}
-        print("che cazzo vuoi")
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
         self.list_view_spese = QListView()
         self.list_view_spese.setAlternatingRowColors(True)
+        self.error_no_spese = QLabel("")
+        self.error_no_spese.setStyleSheet("font-weight: bold;")
         self.spese_section["frase"] = self.lbl_frase
         self.spese_section["lista_spese"] = self.list_view_spese
-
+        self.spese_section["no_spese"] = self.error_no_spese
+        self.spese_section["no_spese"].setVisible(False)
         spesa_layout.addWidget(self.lbl_frase)
         spesa_layout.addWidget(self.list_view_spese)
+        spesa_layout.addWidget(self.error_no_spese)
 
         totale_spese_layout = QHBoxLayout()
         lbl_frase_totale_spese = QLabel("Debito verso fornitori dell'immobile")
@@ -88,10 +91,15 @@ class VistaStatoPatrimoniale(QWidget):
         self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
         self.list_view_rate = QListView()
         self.list_view_rate.setAlternatingRowColors(True)
+        self.error_no_rate = QLabel("")
+        self.error_no_rate.setStyleSheet("font-weight: bold;")
         self.rate_section["frase"] = self.lbl_frase1
         self.rate_section["lista_rate"] = self.list_view_rate
+        self.rate_section["no_rate"] = self.error_no_rate
+        self.rate_section["no_rate"].setVisible(False)
         rata_layout.addWidget(self.lbl_frase1)
         rata_layout.addWidget(self.list_view_rate)
+        rata_layout.addWidget(self.error_no_rate)
 
         totale_rate_layout = QHBoxLayout()
         lbl_frase_totale_rate = QLabel("Credito verso condomini dell'immobile")
@@ -112,10 +120,6 @@ class VistaStatoPatrimoniale(QWidget):
         self.msg = QLabel("")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
-
-        self.timer = QTimer(self)
-        self.timer.setInterval(5000)
-        self.timer.timeout.connect(self.hide_message)
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
@@ -205,14 +209,33 @@ class VistaStatoPatrimoniale(QWidget):
         print("rata:", self.rate)
         print("spesa", self.spese)
         if not self.spese and not self.rate:
-            self.msg.setText("Non ci sono nè spese nè rate per questo immobile")
-            self.msg.show()
+            print("yes")
+            self.rate_section["lista_rate"].setVisible(False)
+            self.rate_section["totale"].setVisible(False)
+            self.rate_section["frase_totale"].setVisible(False)
+            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
+            self.rate_section["no_rate"].setVisible(True)
+
+            self.spese_section["lista_spese"].setVisible(False)
+            self.spese_section["totale"].setVisible(False)
+            self.spese_section["frase_totale"].setVisible(False)
+            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
+            self.spese_section["no_spese"].setVisible(True)
+
         elif not self.rate:
-            self.msg.setText("Non ci sono rate per questo immobile")
-            self.msg.show()
+            self.rate_section["lista_rate"].setVisible(False)
+            self.rate_section["totale"].setVisible(False)
+            self.rate_section["frase_totale"].setVisible(False)
+
+            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
+            self.rate_section["no_rate"].setVisible(True)
         elif not self.spese:
-            self.msg.setText("Non ci sono spese per questo immobile")
-            self.msg.show()
+            self.spese_section["lista_spese"].setVisible(False)
+            self.spese_section["totale"].setVisible(False)
+            self.spese_section["frase_totale"].setVisible(False)
+
+            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
+            self.spese_section["no_spese"].setVisible(True)
 
         listview_model = QStandardItemModel(self.list_view_spese)
         for spesa in self.spese:
@@ -229,7 +252,7 @@ class VistaStatoPatrimoniale(QWidget):
 
         print("spese fatee in list -....")
         self.list_view_spese.setModel(listview_model)
-        if self.list_view_spese:
+        if self.spese:
             for spesa in self.spese:
                 if not spesa.pagata:
                     importo_totale += spesa.importo
@@ -253,23 +276,10 @@ class VistaStatoPatrimoniale(QWidget):
         importo_totale = 0.00
         print("qui finisce")
         self.list_view_rate.setModel(listview_model1)
-        if self.list_view_rate:
+        if self.rate:
             for rata in self.rate:
                 if not rata.pagata:
                     importo_totale += rata.importo
             self.rate_section["totale"].setText(str("%.2f" % importo_totale))
             for rate in self.rate_section.values():
                 rate.setVisible(True)
-
-    def hide_message(self):
-        self.msg.hide()
-        self.timer.stop()
-        if not self.spese and not self.rate:
-            self.msg.setText("Non ci sono nè spese nè rate per questo immobile")
-            self.msg.show()
-        elif not self.rate:
-            self.msg.setText("Non ci sono rate per questo immobile")
-            self.msg.show()
-        elif not self.spese:
-            self.msg.setText("Non ci sono spese per questo immobile")
-            self.msg.show()
