@@ -15,7 +15,7 @@ class Rata:
         self.numeroRicevuta = 0
         self.pagata = False
         self.tipoPagamento = ""
-        self.unitaImmobiliare = None
+        self.unitaImmobiliare = 0
         self.versante = ""
 
     def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
@@ -70,7 +70,7 @@ class Rata:
         self.numeroRicevuta = 0
         self.pagata = False
         self.tipoPagamento = ""
-        self.unitaImmobiliare = None
+        self.unitaImmobiliare = 0
         self.versante = ""
         del self
         return "Rata rimossa"
@@ -126,15 +126,17 @@ class Rata:
     def getAllRateByImmobile(immobile):
         rate = Rata.getAllRate()
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile)
-        for unita in unitaImmobiliari.values():
-            rateByImmobile = {}
-            if rate:
-                for key, value in rate.items():
-                    print("vannvann")
-                    print(unita.codice, " ", value.unitaImmobiliare)
-                    unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(value.unitaImmobiliare)
-                    if unita.codice == unita_immo.codice:
-                        rateByImmobile[key] = value
-                return rateByImmobile
-            else:
-                return {}
+        if unitaImmobiliari:
+            for unita in unitaImmobiliari.values():
+                rateByImmobile = {}
+                if rate:
+                    for key, value in rate.items():
+                        if value.unitaImmobiliare > 0:
+                            unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(value.unitaImmobiliare)
+                            if unita.codice == unita_immo.codice:
+                                rateByImmobile[key] = value
+                    return rateByImmobile
+                else:
+                    return {}
+        else:
+            return {}

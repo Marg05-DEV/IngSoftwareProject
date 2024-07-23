@@ -251,7 +251,6 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
 
-
         num_writed_lines = 0
 
         for field in required_fields:

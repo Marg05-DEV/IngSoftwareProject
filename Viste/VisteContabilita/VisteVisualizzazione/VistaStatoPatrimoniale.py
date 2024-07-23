@@ -46,37 +46,68 @@ class VistaStatoPatrimoniale(QWidget):
 
         self.button_layout = QHBoxLayout()
         print("u")
+
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_stato_patrimoniale))
+        self.buttons["Seleziona"].setEnabled(False)
         self.searchbar.textChanged.connect(self.selectioning)
         print("c")
+
+        """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
+        """ ------------------------------ SEZIONE SPESE ---------------------------- """
+
+        self.spese_section = {}
+        print("che cazzo vuoi")
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
         self.list_view_spese = QListView()
         self.list_view_spese.setAlternatingRowColors(True)
-        self.lbl_frase.setVisible(False)
-        self.list_view_spese.setVisible(False)
+        self.spese_section["frase"] = self.lbl_frase
+        self.spese_section["lista_spese"] = self.list_view_spese
+
         spesa_layout.addWidget(self.lbl_frase)
         spesa_layout.addWidget(self.list_view_spese)
-        print("d")
-        spesa_layout.addWidget(self.newLabel("Debito verso fornitori dell'immobile", True))
-        print("e")
+
+        totale_spese_layout = QHBoxLayout()
+        lbl_frase_totale_spese = QLabel("Debito verso fornitori dell'immobile")
+        lbl_totale_spese = QLabel("0.00")
+
+        self.spese_section["frase_totale"] = lbl_frase_totale_spese
+        self.spese_section["totale"] = lbl_totale_spese
+        totale_spese_layout.addWidget(lbl_frase_totale_spese)
+        totale_spese_layout.addWidget(lbl_totale_spese)
+        spesa_layout.addLayout(totale_spese_layout)
+
+        """ ------------------------------ SEZIONE RATE ---------------------------- """
+
+        self.rate_section = {}
 
         rata_layout = QVBoxLayout()
         self.lbl_frase1 = QLabel("Rate:")
         self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
         self.list_view_rate = QListView()
         self.list_view_rate.setAlternatingRowColors(True)
-        self.lbl_frase1.setVisible(False)
-        self.list_view_rate.setVisible(False)
+        self.rate_section["frase"] = self.lbl_frase1
+        self.rate_section["lista_rate"] = self.list_view_rate
         rata_layout.addWidget(self.lbl_frase1)
         rata_layout.addWidget(self.list_view_rate)
-        rata_layout.addWidget(self.newLabel("credito verso condomini dell'immobile", False))
 
-        main_layout.addLayout(find_layout)
-        main_layout.addLayout(self.button_layout)
-        main_layout.addLayout(spesa_layout)
-        main_layout.addLayout(rata_layout)
+        totale_rate_layout = QHBoxLayout()
+        lbl_frase_totale_rate = QLabel("Credito verso condomini dell'immobile")
+        lbl_totale_rate = QLabel("0.00")
+
+        self.rate_section["frase_totale"] = lbl_frase_totale_rate
+        self.rate_section["totale"] = lbl_totale_rate
+        totale_rate_layout.addWidget(lbl_frase_totale_rate)
+        totale_rate_layout.addWidget(lbl_totale_rate)
+        rata_layout.addLayout(totale_rate_layout)
+
+        for widget in self.rate_section.values():
+            widget.setVisible(False)
+
+        for widget in self.spese_section.values():
+            widget.setVisible(False)
+
         self.msg = QLabel("")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
@@ -85,14 +116,23 @@ class VistaStatoPatrimoniale(QWidget):
         self.timer.setInterval(5000)
         self.timer.timeout.connect(self.hide_message)
 
+        main_layout.addLayout(find_layout)
+        main_layout.addLayout(self.button_layout)
+        main_layout.addLayout(spesa_layout)
+        self.drawLine()
+        main_layout.addLayout(rata_layout)
+        main_layout.addWidget(self.msg)
+
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Stato Patrimoniale")
+
     def drawLine(self):
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
         line.setFrameShadow(QFrame.Shadow.Sunken)
         return line
+
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setFixedSize(275, 55)
@@ -100,32 +140,7 @@ class VistaStatoPatrimoniale(QWidget):
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
-    def newLabel(self, testo, isSpesa):
-        print("qui")
-        label = QLabel("")
-        if self.immobile != None:
-            print(self.immobile)
-            print("xaxa")
-            self.speseByImmobile = Spesa.getAllSpeseByImmobile(self.immobile)
-            print("xuxu")
-            self.rateByImmobile = Rata.getAllRateByImmobile(self.immobile)
-            print("xixi")
-            importo_totale = 0.0
-            if isSpesa:
-                print("dentro")
-                print(self.speseByImmobile.values())
-                for spesa in self.speseByImmobile.values():
-                    print(spesa.importo)
-                    if not spesa.pagata:
-                      importo_totale += spesa.importo
-                print(importo_totale)
-            else:
-                for rata in self.rateByImmobile.values():
-                    if not rata.pagata:
-                        importo_totale += rata.importo
-            label = QLabel(testo + "....." + importo_totale)
-        print("quo")
-        return label
+
     def selectioning(self):
         immobile = None
 
@@ -182,16 +197,23 @@ class VistaStatoPatrimoniale(QWidget):
 
     def update_list(self):
         print(self.immobile)
-        self.rate = Rata.getAllRateByImmobile(self.immobile)
-        self.spese = Spesa.getAllSpeseByImmobile(self.immobile)
-        if not self.rate:
+        importo_totale = 0.00
+        print("inizio")
+
+        self.rate = [item for item in Rata.getAllRateByImmobile(self.immobile).values() if not item.pagata]
+        print("rate prese")
+        self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
+        print("rata:", self.rate)
+        print("spesa", self.spese)
+        if not self.spese and not self.rate:
+            self.msg.setText("Non ci sono nè spese nè rate per questo immobile")
+            self.msg.show()
+        elif not self.rate:
             self.msg.setText("Non ci sono rate per questo immobile")
             self.msg.show()
-        if not self.spese:
-            self.msg.setText("Non ci sono sepse per questo immobile")
+        elif not self.spese:
+            self.msg.setText("Non ci sono spese per questo immobile")
             self.msg.show()
-        spesa_non_pagata = False
-        rata_non_pagata = False
 
         listview_model = QStandardItemModel(self.list_view_spese)
         for spesa in self.spese.values():
@@ -207,20 +229,26 @@ class VistaStatoPatrimoniale(QWidget):
                 font.setPointSize(12)
                 item.setFont(font)
                 listview_model.appendRow(item)
-                spesa_non_pagata = True
 
-        print("qui finisce")
+        print("spese fatee in list -....")
         self.list_view_spese.setModel(listview_model)
-        if spesa_non_pagata:
-            self.lbl_frase.setVisible(True)
-            self.list_view_spese.setVisible(True)
-
+        print("hahah", self.list_view_spese)
+        if self.list_view_spese:
+            for spesa in self.spese.values():
+                print(spesa.importo)
+                if not spesa.pagata:
+                    importo_totale += spesa.importo
+            self.spese_section["totale"].setText = importo_totale
+            for spese in self.spese_section.values():
+                spese.setVisible(True)
 
         listview_model1 = QStandardItemModel(self.list_view_rate)
         for rata in self.rate.values():
             item = QStandardItem()
             non_versata = ""
+            print(rata.getInfoRata())
             if not rata.pagata:
+                print("non versata:", rata.getInfoRata())
                 non_versata = "non versata"
                 item_text = f"La Rata {rata.numeroRicevuta} risulta {non_versata}"
                 item.setText(item_text)
@@ -229,21 +257,53 @@ class VistaStatoPatrimoniale(QWidget):
                 font.setPointSize(12)
                 item.setFont(font)
                 listview_model1.appendRow(item)
-                rata_non_pagata = True
-
 
         print("qui finisce")
         self.list_view_rate.setModel(listview_model1)
-        if rata_non_pagata:
-            self.lbl_frase1.setVisible(True)
-            self.list_view_rate.setVisible(True)
+        print(self.list_view_rate)
+        if self.list_view_rate:
+            for rata in self.rate.values():
+                if not rata.pagata:
+                    importo_totale += rata.importo
+            self.rate_section["totale"].setText = importo_totale
+            for rate in self.rate_section.values():
+                rate.setVisible(True)
+
+    def setTotale(self, testo, isSpesa):
+        label = QLabel("")
+        if self.immobile != None:
+            print(self.immobile)
+            self.speseByImmobile = Spesa.getAllSpeseByImmobile(self.immobile)
+            self.rateByImmobile = Rata.getAllRateByImmobile(self.immobile)
+            print("xixi")
+            importo_totale = 0.0
+            if isSpesa:
+                print("dentro")
+                print(self.speseByImmobile.values())
+                for spesa in self.speseByImmobile.values():
+                    print(spesa.importo)
+                    if not spesa.pagata:
+                        importo_totale += spesa.importo
+                self.spese_section["totale"].setText = importo_totale
+                print(importo_totale)
+            else:
+                for rata in self.rateByImmobile.values():
+                    if not rata.pagata:
+                        importo_totale += rata.importo
+                self.rate_section["totale"].setText = importo_totale
+            label = QLabel(testo + "....." + importo_totale)
+        print("quo")
+        return label
 
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
-        if not self.rate:
+        if not self.spese and not self.rate:
+            self.msg.setText("Non ci sono nè spese nè rate per questo immobile")
+            self.msg.show()
+        elif not self.rate:
             self.msg.setText("Non ci sono rate per questo immobile")
             self.msg.show()
-        if not self.spese:
-            self.msg.setText("Non ci sono sepse per questo immobile")
+        elif not self.spese:
+            self.msg.setText("Non ci sono spese per questo immobile")
             self.msg.show()

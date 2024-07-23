@@ -146,11 +146,17 @@ class VistaGestioneRate(QWidget):
             self.table_rate.setItem(i, 0, QTableWidgetItem())
             self.table_rate.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, rata.codice)
             self.table_rate.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
-            self.table_rate.setItem(i, 1, QTableWidgetItem((Immobile.ricercaImmobileById((UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)).immobile)).denominazione))
+            if rata.unitaImmobiliare > 0:
+                self.table_rate.setItem(i, 1, QTableWidgetItem((Immobile.ricercaImmobileById((UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare)).immobile)).denominazione))
+            else:
+                self.table_rate.setItem(i, 1, QTableWidgetItem(""))
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
-            self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%d/%m/%Y")))
+            self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
-            self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
+            if rata.numeroRicevuta > 0:
+                self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
+            else:
+                self.table_rate.setItem(i, 5, QTableWidgetItem(""))
             self.table_rate.item(i, 5).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.table_rate.setItem(i, 6, QTableWidgetItem("%.2f" % rata.importo))
             self.table_rate.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
@@ -244,6 +250,7 @@ class VistaGestioneRate(QWidget):
         print("table aggio")
 
     def hide_message(self):
+        print("ora di nascondere")
         self.msg.hide()
         self.timer.stop()
         print("table aggio")
