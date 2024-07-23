@@ -50,22 +50,45 @@ class VistaSaldoCassa(QWidget):
 
         self.table_rate.setHorizontalHeaderLabels(["Rata", "Importo", "A/B o Contanti"])
         i = 0
+        importo_totale = 0.0
         for rata in rate_pagate:
             rata_pagata = Rata.ricercaRataByCodice(rata)
-            item_text = f"Versante:{rata_pagata.versante}\n"
-            item_table = QTableWidgetItem(item_text)
+            if i == 0:
+                yesterday = datetime.date.today() - datetime.timedelta(days=1)
+                item_text = f"Rimanenze del giorno {yesterday}"
+                item_table = QTableWidgetItem(item_text)
+                for r in rate_pagate:
+                    singola_rata = Rata.ricercaRataByCodice(r)
+                    if yesterday >= singola_rata.dataPagamento:
+                        importo_totale += singola_rata.importo
+                importo_totale = str("%.2f" % importo_totale)
+                item_text1 = f"{importo_totale}"
+                item_table1 = QTableWidgetItem(item_text1)
 
-            item_text1 = f"{rata_pagata.importo}"
-            item_table1 = QTableWidgetItem(item_text1)
+                item_text2 = f"-"
+                item_table2 = QTableWidgetItem(item_text2)
 
-            item_text2 = f"{rata_pagata.tipoPagamento}"
-            item_table2 = QTableWidgetItem(item_text2)
+                item_table.setFlags(Qt.ItemFlag.NoItemFlags)
+                item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.table_rate.setItem(i, 0, item_table)
+                self.table_rate.setItem(i, 1, item_table1)
+                self.table_rate.setItem(i, 2, item_table2)
+            else:
+                item_text = f"Versante:{rata_pagata.versante}\n"
+                item_table = QTableWidgetItem(item_text)
 
-            item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-            item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table_rate.setItem(i, 0, item_table)
-            self.table_rate.setItem(i, 1, item_table1)
-            self.table_rate.setItem(i, 2, item_table2)
+                importo = str("%.2f" % rata_pagata.importo)
+                item_text1 = f"{importo}"
+                item_table1 = QTableWidgetItem(item_text1)
+
+                item_text2 = f"{rata_pagata.tipoPagamento}"
+                item_table2 = QTableWidgetItem(item_text2)
+
+                item_table.setFlags(Qt.ItemFlag.NoItemFlags)
+                item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.table_rate.setItem(i, 0, item_table)
+                self.table_rate.setItem(i, 1, item_table1)
+                self.table_rate.setItem(i, 2, item_table2)
             i += 1
 
         self.table_rate.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -91,7 +114,7 @@ class VistaSaldoCassa(QWidget):
             if rate.pagata:
                 if rate.tipoPagamento == tipo_pagameto:
                     importo_totale += rate.importo
-        label = QLabel(testo + " ..... " + str(importo_totale))
+        label = QLabel(testo + " ..... " + str("%.2f" % importo_totale))
         return label
     def callback(self, msg, tab):
         print(" callback chiamata", msg)

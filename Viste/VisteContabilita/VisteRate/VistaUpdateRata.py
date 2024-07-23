@@ -251,29 +251,7 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
 
-        """
-        if self.input_lines['numeroRicevuta'].text():
-            rate = Rata.getAllRateByImmobile(Immobile.ricercaImmobileByDenominazione(self.input_lines['immobile'].currentText())).values()
-            for rata in rate:
-                print(rata)
-                there_is_unique_error["numeroRicevuta"] = False
 
-                print(str(rata.getInfoRata()["numeroRicevuta"]))
-                print(str(self.rata_selezionata.getInfoRata()["numeroRicevuta"]))
-                print(self.input_lines["numeroRicevuta"].text())
-                print(str(rata.getInfoRata()["numeroRicevuta"]))
-
-                if str(rata.getInfoRata()["numeroRicevuta"]) != str(self.rata_selezionata.getInfoRata()["numeroRicevuta"]):
-                    if self.input_lines["numeroRicevuta"].text() == str(rata.getInfoRata["numeroRicevuta"]):
-                        num_errors += 1
-                        there_is_unique_error["numeroRicevuta"] = True
-                        break
-            if there_is_unique_error["numeroRicevuta"]:
-                self.input_errors["numeroRicevuta"].setText(f"nuemero ricevuta già esistente")
-                self.input_errors["numeroRicevuta"].setVisible(True)
-            else:
-                self.input_errors["numeroRicevuta"].setVisible(False)
-        """
         num_writed_lines = 0
 
         for field in required_fields:

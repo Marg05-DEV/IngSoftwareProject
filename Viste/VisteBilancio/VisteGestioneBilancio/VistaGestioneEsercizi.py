@@ -159,24 +159,13 @@ class VistaGestioneEsercizi(QWidget):
             self.button_list["Vai al bilancio"].setDisabled(False)
 
     def input_validation(self):
-        print("dentro la validazione")
-        print("1")
-        print(self.input_lines["inizioEsercizio"].text())
         data_inizio = self.input_lines["inizioEsercizio"].text()
-        print(data_inizio)
         data_inizio = data_inizio.split("/")[2]
-        print(data_inizio)
 
         data_fine = self.input_lines["fineEsercizio"].text()
         data_fine = data_fine.split("/")[2]
 
-
-        differenza = int(data_fine)-int(data_inizio)
-        print(int(data_inizio) > int(data_fine) and differenza != 1)
-        print("maggiore: ", int(data_inizio) > int(data_fine))
-        print("diff: ", differenza != 1)
-
-        if int(data_inizio) >= int(data_fine) and differenza != 1:
+        if int(data_inizio) > int(data_fine):
             self.button_list["Nuovo Esercizio"].setDisabled(True)
         else:
             self.button_list["Nuovo Esercizio"].setDisabled(False)

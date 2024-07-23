@@ -69,7 +69,7 @@ class VistaStatoPatrimoniale(QWidget):
         self.list_view_rate.setAlternatingRowColors(True)
         self.lbl_frase1.setVisible(False)
         self.list_view_rate.setVisible(False)
-        rata_layout.addWidget(self.lbl_frase)
+        rata_layout.addWidget(self.lbl_frase1)
         rata_layout.addWidget(self.list_view_rate)
         rata_layout.addWidget(self.newLabel("credito verso condomini dell'immobile", False))
 
@@ -102,7 +102,7 @@ class VistaStatoPatrimoniale(QWidget):
         return button
     def newLabel(self, testo, isSpesa):
         print("qui")
-        label = ""
+        label = QLabel("")
         if self.immobile != None:
             print(self.immobile)
             print("xaxa")
@@ -190,27 +190,28 @@ class VistaStatoPatrimoniale(QWidget):
         if not self.spese:
             self.msg.setText("Non ci sono sepse per questo immobile")
             self.msg.show()
+        spesa_non_pagata = False
+        rata_non_pagata = False
 
         listview_model = QStandardItemModel(self.list_view_spese)
         for spesa in self.spese.values():
             item = QStandardItem()
             non_pagata = ""
             tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa)
-            if spesa.pagata:
-                pagata = "La spesa è stata pagata"
-            else:
-                non_pagata= "La spesa non è stata pagata"
-            item_text = f"{tipoSpesa.nome}: Spesa {non_pagata}"
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            listview_model.appendRow(item)
+            if not spesa.pagata:
+                non_pagata = "La spesa non è stata pagata"
+                item_text = f"{tipoSpesa.nome}: {non_pagata}"
+                item.setText(item_text)
+                item.setEditable(False)
+                font = item.font()
+                font.setPointSize(12)
+                item.setFont(font)
+                listview_model.appendRow(item)
+                spesa_non_pagata = True
 
         print("qui finisce")
         self.list_view_spese.setModel(listview_model)
-        if self.spese.values():
+        if spesa_non_pagata:
             self.lbl_frase.setVisible(True)
             self.list_view_spese.setVisible(True)
 
@@ -219,21 +220,21 @@ class VistaStatoPatrimoniale(QWidget):
         for rata in self.rate.values():
             item = QStandardItem()
             non_versata = ""
-            if rata.pagata:
-                versata = "versata"
-            else:
+            if not rata.pagata:
                 non_versata = "non versata"
-            item_text = f"La Rata {rata.numeroRicevuta} risulta {non_versata}"
-            item.setText(item_text)
-            item.setEditable(False)
-            font = item.font()
-            font.setPointSize(12)
-            item.setFont(font)
-            listview_model1.appendRow(item)
+                item_text = f"La Rata {rata.numeroRicevuta} risulta {non_versata}"
+                item.setText(item_text)
+                item.setEditable(False)
+                font = item.font()
+                font.setPointSize(12)
+                item.setFont(font)
+                listview_model1.appendRow(item)
+                rata_non_pagata = True
+
 
         print("qui finisce")
         self.list_view_rate.setModel(listview_model1)
-        if self.rate.values():
+        if rata_non_pagata:
             self.lbl_frase1.setVisible(True)
             self.list_view_rate.setVisible(True)
 
