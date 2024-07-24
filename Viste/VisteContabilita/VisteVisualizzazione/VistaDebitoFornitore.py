@@ -78,12 +78,20 @@ class VistaDebitoFornitore(QWidget):
         self.spese_totale.setStyleSheet("font-weight: bold;")
         self.spese_totale_importo = QLabel("")
         self.spese_totale_importo.setStyleSheet("font-weight: bold;")
+        self.lbl_spese_totale_importo = QLabel("Debito totale verso il fornitore selezionato")
+        self.lbl_spese_totale_importo.setStyleSheet("font-weight: bold;")
         self.spese_debito_totale_section["all_debito_spese"] = self.spese_totale
         self.spese_debito_totale_section["importo_totale"] = self.spese_totale_importo
+        self.spese_debito_totale_section["frase_all_debito"] = self.lbl_spese_totale_importo
+        self.spese_debito_totale_section["frase_all_debito"].setVisible(False)
         self.spese_debito_totale_section["importo_totale"].setVisible(False)
         self.spese_debito_totale_section["all_debito_spese"].setVisible(False)
         main_layout.addWidget(self.spese_totale)
-        main_layout.addWidget(self.spese_totale_importo)
+
+        debito_totale_layout = QHBoxLayout()
+        debito_totale_layout.addWidget(self.lbl_spese_totale_importo)
+        debito_totale_layout.addWidget(self.spese_totale_importo)
+        main_layout.addLayout(debito_totale_layout)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -153,6 +161,7 @@ class VistaDebitoFornitore(QWidget):
             return None
 
     def update_list(self):
+        self.debito_totale = 0.00
         self.spese_non_pagate = []
         self.spese_fornitore = Spesa.getAllSpeseByFornitore(self.fornitore)
         for spesa in self.spese_fornitore.values():
@@ -166,13 +175,18 @@ class VistaDebitoFornitore(QWidget):
             self.tree_widget.setVisible(False)
             self.spese_debito_section["no_spese"].setText("Non ci sono debiti con questo fornitore")
             self.spese_debito_section["no_spese"].setVisible(True)
+            self.spese_debito_totale_section["frase_all_debito"].setVisible(False)
+            self.spese_debito_totale_section["importo_totale"].setVisible(False)
 
+        self.tree_widget.clear()
         list_immobili_con_debito = []
         for immobile in Immobile.getAllImmobili().values():
             for spese in self.spese_non_pagate:
+                print("if degli immobili: ", immobile.id == spese.immobile)
                 if immobile.id == spese.immobile:
                     list_immobili_con_debito.append(immobile)
 
+        print("immobili: ", list_immobili_con_debito)
         for immobile in list_immobili_con_debito:
             importo_debito_immobile = 0.00
             for spesa in self.spese_non_pagate:
@@ -180,13 +194,18 @@ class VistaDebitoFornitore(QWidget):
                     importo_debito_immobile += spesa.importo
             item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_debito_immobile)])
             for spese_debito in self.spese_non_pagate:
-                if spese_debito.immobile == list_immobili_con_debito.id:
-                    child = QTreeWidgetItem(
-                        ["Relativo all'" + immobile.denominazione, str("%.2f" % spese_debito.importo)])
+                print(immobile.id)
+                if spese_debito.immobile == immobile.id:
+                    child = QTreeWidgetItem([spese_debito.descrizione, str("%.2f" % spese_debito.importo)])
                     item.addChild(child)
             self.tree_widget.addTopLevelItem(item)
 
+        for i in range(self.tree_widget.columnCount()):
+            print(i)
+            self.tree_widget.resizeColumnToContents(i)
+
         if self.spese_non_pagate:
             self.spese_debito_totale_section["all_debito_spese"].setVisible(True)
+            self.spese_debito_totale_section["frase_all_debito"].setVisible(True)
             self.spese_debito_totale_section["importo_totale"].setText(str("%.2f" % self.debito_totale))
             self.spese_debito_totale_section["importo_totale"].setVisible(True)
