@@ -83,21 +83,6 @@ class TipoSpesa:
         else:
             return {}
 
-    @staticmethod
-    def getTipoSpesaByTabellaMillesimale(tabella_millesimale):
-        tipo_spesa = TipoSpesa.getAllTipoSpesa().values()
-        if tipo_spesa:
-            tipoSpesaByTabellaMillesimale =[]
-            for tipo in tipo_spesa:
-                if tabella_millesimale.tipologiaSpesa:
-                    for tipologia in tabella_millesimale.tipologiaSpesa:
-                        if tipo.codice == tipologia:
-                            tipoSpesaByTabellaMillesimale.append(tipologia)
-                else:
-                    return []
-            return tipoSpesaByTabellaMillesimale
-        else:
-            return []
 
     def getTabelleMillesimaliAssociate(self):
         print(self.codice)

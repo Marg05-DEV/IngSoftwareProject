@@ -129,14 +129,10 @@ class VistaCreateTipoSpesa(QWidget):
         all_tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
 
         tipo_spesa = []
-        tipi_spesa_associati_alla_tabella = []
         if self.tabella_millesimale != None:
-            print("stai qui")
-            tipi_spesa_associati_alla_tabella = list(TipoSpesa.getTipoSpesaByTabellaMillesimale(self.tabella_millesimale))
-            for tipo in tipi_spesa_associati_alla_tabella:
+            for tipo in self.tabella_millesimale.tipologiaSpesa:
                 value = TipoSpesa.ricercaTipoSpesaByCodice(tipo)
                 tipo_spesa.append(value)
-            print("tipi: ", tipo_spesa)
 
         num_errors = 0
         num_writed_lines = 0

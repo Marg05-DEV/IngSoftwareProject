@@ -3,7 +3,6 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
     QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem
 
-from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
@@ -21,7 +20,7 @@ class VistaCreditoCondomino(QWidget):
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
-        completer_list = sorted([(item.codiceFiscale, item.nome, item.cognome) for item in Condomino.getAllCondomini().values()])
+        completer_list = sorted([item.codiceFiscale + " " + item.cognome + " " + item.nome for item in Condomino.getAllCondomini().values()])
         print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
@@ -29,6 +28,19 @@ class VistaCreditoCondomino(QWidget):
         self.condomini_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         print(self.condomini_completer.completionModel())
         self.searchbar.setCompleter(self.condomini_completer)
+
+        """
+        in bilancio abbiamo il dict importiDaVersare che è {ui1: totale da versare di ui1, ui2: ..., uin:...}
+        Questi importi sono da versare dopo una certa data (data di conferma bilancio) 
+        servirebbe un dict che dice ad oggi (datetime.date.today()) quanto ogni unita immobiliare ha versato
+        {ui1: totale versato fino a today(), ...}  1 marzo 2023 500
+                                                        -> today() 300 -> in credito condomino scrivi 200
+                                                  15 marzo 2024 650
+                                                        -> 450      
+        """
+
+
+
         """
         self.lbl_search = QLabel("Ricerca fornitore da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")

@@ -242,14 +242,22 @@ class VistaCreateSpesa(QWidget):
                 tipi_spesa = []
                 for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     tipi_spesa.extend(tabella.tipologiaSpesa)
+
+                print(tipi_spesa)
+
                 if tipi_spesa:
+                    print("dentro if")
                     self.input_lines['tipoSpesa'].setPlaceholderText("Seleziona la tipologia di spesa...")
                     for tipo in tipi_spesa:
-                        self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
-                else:
+                        print("dentro for", tipo)
+                        print(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome)
 
+                        self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+                        print("aggiunto all' combo", TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome)
+                else:
                     self.input_lines['tipoSpesa'].clear()
                     self.input_lines['tipoSpesa'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile")
+                print("fine if riga 252")
 
                 self.input_lines['tipoSpesa'].setVisible(True)
                 self.input_labels['tipoSpesa'].setVisible(True)
