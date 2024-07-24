@@ -254,11 +254,8 @@ class Spesa:
     def getAllSpeseByImmobile(immobile):
         spese = Spesa.getAllSpese()
         if spese:
-            print("serio")
             speseByImmobile = {}
             for key, value in spese.items():
-                print("bii")
-                print(value.immobile)
                 immo = Immobile.ricercaImmobileByCodice(value.immobile)
                 if immo.id == immobile.id:
                     speseByImmobile[key] = value
@@ -270,13 +267,10 @@ class Spesa:
     def getAllSpeseByFornitore(fornitore):
         spese = Spesa.getAllSpese()
         if spese:
-            print("serio")
             speseByFornitore = {}
             for key, value in spese.items():
-                print("bii")
-                print(value.immobile)
                 forni = Fornitore.ricercaFornitoreByCodice(value.fornitore)
-                if forni.id == fornitore.id:
+                if forni.codice == fornitore.codice:
                     speseByFornitore[key] = value
             return speseByFornitore
         else:
