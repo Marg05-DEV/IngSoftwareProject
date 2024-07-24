@@ -16,6 +16,7 @@ class VistaDebitoFornitore(QWidget):
         super(VistaDebitoFornitore, self).__init__()
         self.buttons = {}
         self.immobile = None
+        self.debito_totale = 0.00
         main_layout = QVBoxLayout()
 
         find_layout = QGridLayout()
@@ -52,9 +53,11 @@ class VistaDebitoFornitore(QWidget):
         print("c")
 
         """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
-        """ ------------------------------ SEZIONE SPESE ---------------------------- """
-
+        print("d")
+        self.drawLine()
+        print("e")
         self.spese_section = {}
+        self.debito_fornitore_totale = {}
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
@@ -71,7 +74,7 @@ class VistaDebitoFornitore(QWidget):
         spesa_layout.addWidget(self.error_no_spese)
 
         totale_spese_layout = QHBoxLayout()
-        lbl_frase_totale_spese = QLabel("Debito verso fornitori dell'immobile")
+        lbl_frase_totale_spese = QLabel("Debito dell'immobile")
         lbl_totale_spese = QLabel("0.00")
 
         self.spese_section["frase_totale"] = lbl_frase_totale_spese
@@ -80,55 +83,30 @@ class VistaDebitoFornitore(QWidget):
         totale_spese_layout.addWidget(lbl_totale_spese)
         spesa_layout.addLayout(totale_spese_layout)
 
-        """ ------------------------------ SEZIONE RATE ---------------------------- """
-
-        self.rate_section = {}
-
-        rata_layout = QVBoxLayout()
-        self.lbl_frase1 = QLabel("Rate:")
-        self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
-        self.list_view_rate = QListView()
-        self.list_view_rate.setAlternatingRowColors(True)
-        self.error_no_rate = QLabel("")
-        self.error_no_rate.setStyleSheet("font-weight: bold;")
-        self.rate_section["frase"] = self.lbl_frase1
-        self.rate_section["lista_rate"] = self.list_view_rate
-        self.rate_section["no_rate"] = self.error_no_rate
-        self.rate_section["no_rate"].setVisible(False)
-        rata_layout.addWidget(self.lbl_frase1)
-        rata_layout.addWidget(self.list_view_rate)
-        rata_layout.addWidget(self.error_no_rate)
-
-        totale_rate_layout = QHBoxLayout()
-        lbl_frase_totale_rate = QLabel("Credito verso condomini dell'immobile")
-        lbl_totale_rate = QLabel("0.00")
-
-        self.rate_section["frase_totale"] = lbl_frase_totale_rate
-        self.rate_section["totale"] = lbl_totale_rate
-        totale_rate_layout.addWidget(lbl_frase_totale_rate)
-        totale_rate_layout.addWidget(lbl_totale_rate)
-        rata_layout.addLayout(totale_rate_layout)
-
-        for widget in self.rate_section.values():
-            widget.setVisible(False)
-
         for widget in self.spese_section.values():
             widget.setVisible(False)
 
-        self.msg = QLabel("")
-        self.msg.setStyleSheet("color: red; font-weight: bold;")
-        self.msg.hide()
+        debito_totale_layout = QHBoxLayout()
+        frase_debito = QLabel("Debito verso il fornitore selezionato")
+        totale_debito = QLabel("0.00")
+        self.debito_fornitore_totale["frase_debito_totale"] = frase_debito
+        self.debito_fornitore_totale["totale_debito"] = totale_debito
+        debito_totale_layout.addWidget(frase_debito)
+        debito_totale_layout.addWidget(totale_debito)
+
+        for widget in self.debito_fornitore_totale.values():
+            widget.setVisible(False)
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
         main_layout.addLayout(spesa_layout)
         self.drawLine()
-        main_layout.addLayout(rata_layout)
-        main_layout.addWidget(self.msg)
+        main_layout.addLayout(debito_totale_layout)
+
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Stato Patrimoniale")
+        self.setWindowTitle("Debito Fornitore")
 
     def drawLine(self):
         line = QFrame()
@@ -145,23 +123,20 @@ class VistaDebitoFornitore(QWidget):
         return button
 
     def selectioning(self):
-        immobile = None
+        fornitore = None
 
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-            immobile = Immobile.ricercaImmobileByDenominazione(self.searchbar.text())
-            print("imm: ", immobile)
-        elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-            immobile = Immobile.ricercaImmobileBySigla(self.searchbar.text())
-            print("imm: ", immobile)
-        elif self.searchType.currentIndex() == 2:  # ricerca per codice
-            immobile = Immobile.ricercaImmobileByCodice(self.searchbar.text())
-            print("imm: ", immobile)
+            fornitore = Fornitore.ricercaFornitoreByDenominazione(self.searchbar.text())
+            print("imm: ", fornitore)
+        elif self.searchType.currentIndex() == 1:  # ricerca per partita iva
+            fornitore = Fornitore.ricercaFornitoreByPartitaIVA(self.searchbar.text())
+            print("imm: ", fornitore)
 
-        if immobile != None:
-            self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
+        if fornitore != None:
+            self.fornitore_selezionato.setText(f"{fornitore.codice} - {fornitore.denominazione} - {fornitore.partitaIva}")
             self.buttons["Seleziona"].setEnabled(True)
         else:
-            self.immobile_selezionato.setText("Nessun immobile selezionato")
+            self.fornitore_selezionato.setText("Nessun fornitore selezionato")
             self.buttons["Seleziona"].setEnabled(False)
 
     def sel_tipo_ricerca(self):
@@ -169,30 +144,32 @@ class VistaDebitoFornitore(QWidget):
             self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-            lista_completamento = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
+            lista_completamento = sorted([item.denominazione for item in Fornitore.getAllFornitore().values()])
         elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-            lista_completamento = sorted([item.sigla for item in Immobile.getAllImmobili().values()])
-        elif self.searchType.currentIndex() == 2:  # ricerca per codice
-            lista_completamento = sorted([str(item.codice) for item in Immobile.getAllImmobili().values()])
-        self.immobili_completer.setModel(QStringListModel(lista_completamento))
+            lista_completamento = sorted([item.partitaIva for item in Fornitore.getAllFornitore().values()])
+
+        self.fornitori_completer.setModel(QStringListModel(lista_completamento))
         self.selectioning()
 
-    def view_stato_patrimoniale(self):
+    def view_debito_fornitore(self):
         search_text = self.searchbar.text()
         print(f"Testo della barra di ricerca: {search_text}")
-        self.immobile = 0
+        self.fornitore = 0
         if search_text:
             print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-                self.immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", self.immobile)
+                self.fornitore = Fornitore.ricercaFornitoreByDenominazione(search_text)
+                print("imm: ", self.fornitore)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-                self.immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", self.immobile)
-            elif self.searchType.currentIndex() == 2:  # ricerca per codice
-                self.immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", self.immobile)
-        if self.immobile != None:
+                self.fornitore = Fornitore.ricercaFornitoreByPartitaIVA(search_text)
+                print("imm: ", self.fornitore)
+
+        if self.fornitore != None:
+            """
+            for immobile in Immobile.getAllImmobili().values():
+                for spesa in Spesa.getAllSpeseByImmobile(immobile):
+                    if spesa.fornitore.codice == self.fornitore.codice:
+            """
             self.update_list()
         else:
             print("no")
@@ -202,82 +179,50 @@ class VistaDebitoFornitore(QWidget):
         importo_totale = 0.00
         print("inizio")
 
-        self.rate = [item for item in Rata.getAllRateByImmobile(self.immobile).values() if not item.pagata]
-        self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
-        print("rata:", self.rate)
-        print("spesa", self.spese)
-        if not self.spese and not self.rate:
-            print("yes")
-            self.rate_section["lista_rate"].setVisible(False)
-            self.rate_section["totale"].setVisible(False)
-            self.rate_section["frase_totale"].setVisible(False)
-            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
-            self.rate_section["no_rate"].setVisible(True)
+        self.spesa_debito = [item for item in Spesa.getAllSpeseByFornitore(self.fornitore).values() if not item.pagata]
 
+        for spese in self.spesa_debito:
+            self.debito_totale += spese.importo
+        if self.spesa_debito:
+            self.debito_fornitore_totale["frase_debito_totale"].setVisible(True)
+            self.debito_fornitore_totale["totale_debito"].setText(str("%.2f" % self.debito_totale))
+            self.debito_fornitore_totale["totale_debito"].setVisible(True)
+        print("rata:", self.spesa_debito)
+        if not self.spesa_debito:
             self.spese_section["lista_spese"].setVisible(False)
             self.spese_section["totale"].setVisible(False)
             self.spese_section["frase_totale"].setVisible(False)
-            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
+            self.debito_fornitore_totale["frase_debito_totale"].setVisible(False)
+            self.debito_fornitore_totale["totale_debito"].setVisible(False)
+
+            self.spese_section["no_spese"].setText("Non ci sono spese a debito per questo fornitore")
             self.spese_section["no_spese"].setVisible(True)
 
-        elif not self.rate:
-            self.rate_section["lista_rate"].setVisible(False)
-            self.rate_section["totale"].setVisible(False)
-            self.rate_section["frase_totale"].setVisible(False)
+        for immobile in Immobile.getAllImmobili().values():
+            for spese_a_debito_per_immobile in Spesa.getAllSpeseByImmobile(immobile).values():
+                listview_model = QStandardItemModel(self.list_view_spese)
+                for spesa in self.spesa_debito:
+                    item = QStandardItem()
+                    if not spesa.pagata and spesa.immobile == spese_a_debito_per_immobile.codice:
+                        importo = str("%.2f" % spesa.importo)
+                        item_text = f"{importo}€ verso {Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione}"
+                        item.setText(item_text)
+                        item.setEditable(False)
+                        font = item.font()
+                        font.setPointSize(12)
+                        item.setFont(font)
+                        listview_model.appendRow(item)
 
-            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
-            self.rate_section["no_rate"].setVisible(True)
-        elif not self.spese:
-            self.spese_section["lista_spese"].setVisible(False)
-            self.spese_section["totale"].setVisible(False)
-            self.spese_section["frase_totale"].setVisible(False)
+                print("spese fatee in list -....")
+                self.list_view_spese.setModel(listview_model)
+                if self.spesa_debito:
+                    for spesa in self.spesa_debito:
+                        if not spesa.pagata and spesa.immobile == spese_a_debito_per_immobile.codice:
+                            importo_totale += spesa.importo
+                    self.spese_section["totale"].setText(str("%.2f" % importo_totale))
+                    for spese in self.spese_section.values():
+                        spese.setVisible(True)
 
-            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
-            self.spese_section["no_spese"].setVisible(True)
-
-        listview_model = QStandardItemModel(self.list_view_spese)
-        for spesa in self.spese:
-            item = QStandardItem()
-            if not spesa.pagata:
-                importo = str("%.2f" % spesa.importo)
-                item_text = f"{importo} verso {Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model.appendRow(item)
-
-        print("spese fatee in list -....")
-        self.list_view_spese.setModel(listview_model)
-        if self.spese:
-            for spesa in self.spese:
-                if not spesa.pagata:
-                    importo_totale += spesa.importo
-            self.spese_section["totale"].setText(str("%.2f" % importo_totale))
-            for spese in self.spese_section.values():
-                spese.setVisible(True)
-
-        listview_model1 = QStandardItemModel(self.list_view_rate)
-        for rata in self.rate:
-            item = QStandardItem()
-            if not rata.pagata:
-                importo = str("%.2f" % rata.importo)
-                item_text = f"{importo}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model1.appendRow(item)
-
-        importo_totale = 0.00
-        print("qui finisce")
-        self.list_view_rate.setModel(listview_model1)
-        if self.rate:
-            for rata in self.rate:
-                if not rata.pagata:
-                    importo_totale += rata.importo
-            self.rate_section["totale"].setText(str("%.2f" % importo_totale))
-            for rate in self.rate_section.values():
-                rate.setVisible(True)
+    def saldo(self, testo):
+        label = QLabel(testo + " ..... " + str("%.2f" % self.debito_totale))
+        return label

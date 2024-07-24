@@ -2,6 +2,7 @@ import datetime
 import os.path
 import pickle
 
+from Classes.Contabilita.fornitore import Fornitore
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 nome_file = 'Dati/Spese.pickle'
@@ -262,5 +263,21 @@ class Spesa:
                 if immo.id == immobile.id:
                     speseByImmobile[key] = value
             return speseByImmobile
+        else:
+            return {}
+
+    @staticmethod
+    def getAllSpeseByFornitore(fornitore):
+        spese = Spesa.getAllSpese()
+        if spese:
+            print("serio")
+            speseByFornitore = {}
+            for key, value in spese.items():
+                print("bii")
+                print(value.immobile)
+                forni = Fornitore.ricercaFornitoreByCodice(value.fornitore)
+                if forni.id == fornitore.id:
+                    speseByFornitore[key] = value
+            return speseByFornitore
         else:
             return {}

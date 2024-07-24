@@ -75,15 +75,6 @@ class VistaSaldoCassa(QWidget):
 
                 self.saldo_contanti += rimanenza
 
-                """
-                item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                item_table1.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                item_table2.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                """
-
             if n > 0:
                 print(rate_pagate_oggi[n-1].getInfoRata())
 
@@ -96,25 +87,12 @@ class VistaSaldoCassa(QWidget):
                 elif rate_pagate_oggi[n-1].tipoPagamento == "Assegno Bancario":
                     self.saldo_assegni += rate_pagate_oggi[n-1].importo
 
-                """
-                item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                item_table1.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                item_table2.setFlags(Qt.ItemFlag.NoItemFlags)
-                item_table2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                """
-
         self.table_rate.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_rate.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.table_rate.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.table_rate.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.table_rate.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        """
-        header = self.table_rate.verticalHeader()
-        self.table_rate.setMaximumHeight(header.height())
-        """
 
         return self.table_rate
     def new_label(self, testo):
@@ -122,20 +100,13 @@ class VistaSaldoCassa(QWidget):
         return label
 
     def saldo(self, testo, tipo_pagamento):
+        label = QLabel("")
         if tipo_pagamento == "Contanti":
             label = QLabel(testo + " ..... " + str("%.2f" % self.saldo_contanti))
         elif tipo_pagamento == "Assegno Bancario":
             label = QLabel(testo + " ..... " + str("%.2f" % self.saldo_assegni))
         return label
-    """
-    importo_totale = 0.0
-        for rate in self.all_rate.values():
-            if rate.pagata:
-                if rate.tipoPagamento == tipo_pagameto:
-                    importo_totale += rate.importo
-        label = QLabel(testo + " ..... " + str("%.2f" % importo_totale))
-        return label
-    """
+
     def callback(self, msg, tab):
         print("callback chiamata", msg)
         self.update_table()
