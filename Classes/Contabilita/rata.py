@@ -34,12 +34,17 @@ class Rata:
             with open(nome_file, 'rb') as f:
                 rate = dict(pickle.load(f))
                 if rate.keys():
-                    print(max(rate.keys()))
                     self.codice = max(rate.keys()) + 1
+        print(rate)
         if numeroRicevuta > 0:
             for rata in rate.values():
-                if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare).immobile == UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare).immobile:
-                    rata.isLast = False
+                print("------------------------ALTrO CICLO in rate.py-----------------------")
+                print("codice unità immobiliare", self.unitaImmobiliare, " - codice unità immobilare che scorre delle rate", rata.unitaImmobiliare)
+                if rata.unitaImmobiliare > 0:
+                    if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare).immobile == UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare).immobile:
+                        print("altra rata stesso immobile")
+                        rata.isLast = False
+                    print("fuori if")
             self.isLast = True
         rate[self.codice] = self
         with open(nome_file, 'wb') as f:
@@ -151,6 +156,9 @@ class Rata:
         print(immobile)
         rate_immobile = Rata.getAllRateByImmobile(immobile)
         print("dai dai")
+        if not rate_immobile:
+            return 0
         for rata in rate_immobile.values():
             print(rata.getInfoRata())
+
         return [item for item in rate_immobile.values() if item.isLast][0].numeroRicevuta

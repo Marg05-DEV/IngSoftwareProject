@@ -15,23 +15,25 @@ class VistaUpdateRata(QWidget):
 
     def __init__(self, rata_sel, callback):
         super(VistaUpdateRata, self).__init__()
-        print("mimi")
+
         self.callback = callback
         self.rata_selezionata = rata_sel
+
         main_layout = QVBoxLayout()
-        print(self.rata_selezionata)
-        print(self.rata_selezionata.unitaImmobiliare)
-        print(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)
-        self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
-        unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
-        print("uuu")
-        if unita.tipoUnitaImmobiliare == "Appartamento":
-            proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-            self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+        if self.rata_selezionata.unitaImmobiliare > 0:
+            self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
+            unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
+
+            if unita.tipoUnitaImmobiliare == "Appartamento":
+                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+            else:
+                proprietario = Condomino.ricercaCondominoByCF(
+                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
         else:
-            proprietario = Condomino.ricercaCondominoByCF(
-                [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-            self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+            self.sel_immobile = None
+            self.sel_unita = None
         self.input_lines = {}
         self.input_labels = {}
         self.input_errors = {}
@@ -42,17 +44,25 @@ class VistaUpdateRata(QWidget):
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
         main_layout.addWidget(lbl_frase)
-        print("i")
-        main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
-        print("i")
-        main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
-        main_layout.addLayout(self.pairLabelInput("Versante", "versante"))
-        main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
-        main_layout.addLayout(self.pairLabelInput("Numero Ricevuta", "numeroRicevuta"))
-        main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
-        main_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
-        main_layout.addLayout(self.pairLabelInput("Tipologia Pagamento", "tipoPagamento"))
-        print("ii")
+        if self.rata_selezionata.importo < 0:
+            print("------------------creando form per modifica PRELIEVO----------------")
+            main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
+            main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
+            main_layout.addLayout(self.pairLabelInput("Prelevante", "versante"))
+            main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
+            main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
+            main_layout.addLayout(self.pairLabelInput("Data Prelievo", "dataPagamento"))
+        elif self.rata_selezionata.importo > 0:
+            print("------------------creando form per modifica VERSAMENTO----------------")
+            main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
+            main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
+            main_layout.addLayout(self.pairLabelInput("Versante", "versante"))
+            main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
+            main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
+            main_layout.addLayout(self.pairLabelInput("Data Versamento", "dataPagamento"))
+            main_layout.addLayout(self.pairLabelInput("Numero Ricevuta", "numeroRicevuta"))
+            main_layout.addLayout(self.pairLabelInput("Tipologia Pagamento", "tipoPagamento"))
+
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
         main_layout.addWidget(self.create_button("Modifica Rata", self.updateRata))
         print("iii")
@@ -64,7 +74,8 @@ class VistaUpdateRata(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
@@ -84,30 +95,41 @@ class VistaUpdateRata(QWidget):
 
         if index == "immobile":
             input_line = QComboBox()
-            input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
-            input_line.setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
+            if self.rata_selezionata.unitaImmobiliare > 0:
+                input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+                input_line.setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
+            else:
+                input_line.setPlaceholderText("Scegli l'immobile del nuovo prelevante...")
+                input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
             input_line.activated.connect(self.input_validation)
         elif index == "unitaImmobiliare":
             input_line = QComboBox()
-            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).values():
-                if unita.tipoUnitaImmobiliare == "Appartamento":
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
-                else:
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+            if self.rata_selezionata.unitaImmobiliare > 0:
+                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).values():
+                    if unita.tipoUnitaImmobiliare == "Appartamento":
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                        item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                    else:
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                        item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
 
-                input_line.addItem(item, unita.codice)
-                if unita.codice == self.rata_selezionata.unitaImmobiliare:
-                    input_line.setCurrentText(item)
+                    input_line.addItem(item, unita.codice)
+                    if unita.codice == self.rata_selezionata.unitaImmobiliare:
+                        input_line.setCurrentText(item)
 
-            input_line.setItemData(input_line.currentIndex(), self.rata_selezionata.unitaImmobiliare)
+                input_line.setItemData(input_line.currentIndex(), self.rata_selezionata.unitaImmobiliare)
+            else:
+                input_line.setVisible(False)
+                label.setVisible(False)
             input_line.activated.connect(self.input_validation)
 
         elif index == "versante":
             input_line = QLineEdit()
             input_line.setPlaceholderText(self.rata_selezionata.versante)
-            advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).condomini.keys()]
+            if self.rata_selezionata.unitaImmobiliare > 0:
+                advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).condomini.keys()]
+            else:
+                advisable_versanti_list = []
             completer = QCompleter(advisable_versanti_list)
             completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
@@ -153,32 +175,42 @@ class VistaUpdateRata(QWidget):
             print("si", key, self.input_lines[key])
             self.input_lines[key].clear()
 
-        self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
-        self.input_lines['immobile'].setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
+        if self.rata_selezionata.unitaImmobiliare > 0:
+            self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+            self.input_lines['immobile'].setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
+            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(
+                    UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
+                            self.rata_selezionata.unitaImmobiliare).immobile)).values():
+                if unita.tipoUnitaImmobiliare == "Appartamento":
+                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                    item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                else:
+                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                    item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
 
-        for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).values():
+                self.input_lines['unitaImmobiliare'].addItem(item, unita.codice)
+                if unita.codice == self.rata_selezionata.unitaImmobiliare:
+                    self.input_lines['unitaImmobiliare'].setCurrentText(item)
+
+            if self.rata_selezionata.importo > 0:
+                self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
+                self.input_lines['tipoPagamento'].setCurrentText(self.rata_selezionata.tipoPagamento)
+
+            self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
+                self.rata_selezionata.unitaImmobiliare).immobile).denominazione
+            unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                proprietario = Condomino.ricercaCondominoByCF(
+                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
             else:
-                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
-
-            self.input_lines['unitaImmobiliare'].addItem(item, unita.codice)
-            if unita.codice == self.rata_selezionata.unitaImmobiliare:
-                self.input_lines['unitaImmobiliare'].setCurrentText(item)
-
-        self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
-        self.input_lines['tipoPagamento'].setCurrentText(self.rata_selezionata.tipoPagamento)
-
-        self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
-        unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
-        if unita.tipoUnitaImmobiliare == "Appartamento":
-            proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-            self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                proprietario = Condomino.ricercaCondominoByCF(
+                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
         else:
-            proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-            self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+            self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+            self.input_lines['unitaImmobiliare'].setVisible(False)
+            self.input_labels['unitaImmobiliare'].setVisible(False)
 
         self.input_lines['dataPagamento'].setDate(self.rata_selezionata.dataPagamento)
         self.input_lines['versante'].setPlaceholderText(self.rata_selezionata.versante)

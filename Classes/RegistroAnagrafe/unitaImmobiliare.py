@@ -98,7 +98,6 @@ class UnitaImmobiliare:
             return "L'assegnazione è stata eliminata"
 
     def getInfoUnitaImmobiliare(self):
-        print("cont: ")
         return{
             "interno": self.interno,
             "foglio": self.foglio,
@@ -128,11 +127,10 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                print(unitaImmobiliari)
-                print(codice)
                 for cod_ui in unitaImmobiliari.keys():
-                    print(cod_ui)
+                    print("cod che scorre:", cod_ui, " - codice inserito", codice)
                     if cod_ui == codice:
+                        print("corrispondenza dell'unità", unitaImmobiliari[cod_ui].getInfoUnitaImmobiliare())
                         return unitaImmobiliari[cod_ui]
                 return None
         else:

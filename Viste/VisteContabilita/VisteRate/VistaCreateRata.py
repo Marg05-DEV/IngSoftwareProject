@@ -258,6 +258,7 @@ class VistaCreateRata(QWidget):
         temp_rata = Rata()
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento,
                                             unitaImmobiliare, versante)
+        print("inserito")
 
         self.callback(msg)
         self.close()
@@ -277,7 +278,10 @@ class VistaCreateRata(QWidget):
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 ultima_ricevuta = Rata.lastNumeroRicevuta(Immobile.ricercaImmobileByDenominazione(self.sel_immobile))
                 print("dai")
-                self.input_lines['numeroRicevuta'].setPlaceholderText("L'ultima ricevuta inserita è la n° " + str(ultima_ricevuta))
+                if ultima_ricevuta > 0:
+                    self.input_lines['numeroRicevuta'].setPlaceholderText("L'ultima ricevuta inserita è la n° " + str(ultima_ricevuta))
+                else:
+                    self.input_lines['numeroRicevuta'].setPlaceholderText("Non ci sono ricevute precedenti")
                 print("ciao")
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
@@ -308,8 +312,10 @@ class VistaCreateRata(QWidget):
                 self.input_labels["tipoPagamento"].setVisible(True)
                 self.input_lines["numeroRicevuta"].setVisible(True)
                 self.input_labels["numeroRicevuta"].setVisible(True)
-                self.required_fields.append("tipoPagamento")
-                self.required_fields.append("numeroRicevuta")
+                if "tipoPagamento" not in self.required_fields:
+                    self.required_fields.append("tipoPagamento")
+                if "numeroRicevuta" not in self.required_fields:
+                    self.required_fields.append("numeroRicevuta")
             else:
                 self.input_lines["dataPagamento"].setVisible(False)
                 self.input_labels["dataPagamento"].setVisible(False)
@@ -321,6 +327,7 @@ class VistaCreateRata(QWidget):
                     self.required_fields.remove("tipoPagamento")
                 if "numeroRicevuta" in self.required_fields:
                     self.required_fields.remove("numeroRicevuta")
+                print(self.required_fields)
 
         num_writed_lines = 0
 

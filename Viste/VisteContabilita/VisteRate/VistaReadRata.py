@@ -19,16 +19,30 @@ class VistaReadRata(QWidget):
         main_layout = QVBoxLayout()
         print("ciaociao")
         main_layout.addLayout(self.pair_label("Codice", "codice"))
-        main_layout.addLayout(self.pair_label("Immobile", "immobile"))
-        print("ciao")
-        main_layout.addLayout(self.pair_label("Unità Immobiliare", "unitaImmobiliare"))
-        print("bho")
+
+        if rata.unitaImmobiliare > 0:
+            main_layout.addLayout(self.pair_label("Immobile", "immobile"))
+            main_layout.addLayout(self.pair_label("Unità Immobiliare", "unitaImmobiliare"))
+
+        if rata.importo > 0:
+            main_layout.addLayout(self.pair_label("Versante", "versante"))
+        elif rata.importo < 0:
+            main_layout.addLayout(self.pair_label("Prelevante", "versante"))
         main_layout.addLayout(self.pair_label("Descrizione", "descrizione"))
-        main_layout.addLayout(self.pair_label("Numero Ricevuta", "numeroRicevuta"))
         main_layout.addLayout(self.pair_label("Importo", "importo"))
-        main_layout.addLayout(self.pair_label("Versante", "versante"))
-        main_layout.addLayout(self.pair_label("Data pagamento", "dataPagamento"))
-        main_layout.addLayout(self.pair_label("Tipologia pagamento", "tipoPagamento"))
+
+        if rata.pagata:
+            if rata.importo > 0:
+                main_layout.addWidget(QLabel("La rata è stata versata"))
+                main_layout.addLayout(self.pair_label("Numero Ricevuta", "numeroRicevuta"))
+                main_layout.addLayout(self.pair_label("Data versamento", "dataPagamento"))
+                main_layout.addLayout(self.pair_label("Tipologia pagamento", "tipoPagamento"))
+            elif rata.importo < 0:
+                main_layout.addWidget(QLabel("Il prelievo è stato effettuato"))
+                main_layout.addLayout(self.pair_label("Data prelievo", "dataPagamento"))
+                main_layout.addLayout(self.pair_label("Tipologia prelievo", "tipoPagamento"))
+        else:
+            main_layout.addWidget(QLabel("La rata non è stata versata"))
 
         main_layout.addWidget(self.create_button("Modifica Rata", self.updateRata))
         main_layout.addWidget(self.create_button("Rimuovi Rata", self.deleteRata))
@@ -42,7 +56,8 @@ class VistaReadRata(QWidget):
     def create_button(testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         return button
 
