@@ -235,40 +235,67 @@ class VistaUpdateSpesa(QWidget):
     def updateSpesa(self):
         temp_spesa = {}
         temp_fornitore = {}
-        denominazione_fornitore = ""
-        fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-        for attributo in fornitore.getInfoFornitore().keys():
-            print("attributo: ", attributo)
-            if attributo == "tipoProfessione":
-                print(self.input_lines[attributo].currentText())
-                temp_fornitore[attributo] = self.input_lines[attributo].currentText()
-            elif attributo == "denominazione":
-                print(self.input_lines[attributo].text())
-                temp_fornitore[attributo] = self.input_lines[attributo].text()
-                denominazione_fornitore = self.input_lines[attributo].text()
-            elif attributo in ["codice"]:
-                temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
-            else:
-                print(self.input_lines[attributo].text())
-                temp_fornitore[attributo] = self.input_lines[attributo].text()
+        fornitore_esistente = False
+        codice_fornitore = ""
+        msg1 = ""
+
+        if self.cambio_fornitore:
+            for fornitore in Fornitore.getAllFornitore().values():
+                if self.input_lines["denominazione"].text() == fornitore.denominazione:
+                    fornitore_esistente = True
+                    codice_fornitore = fornitore.codice
+                    fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+                    for attributo in fornitore.getInfoFornitore().keys():
+                        print("attributo: ", attributo)
+                        if attributo == "tipoProfessione":
+                            temp_fornitore[attributo] = self.input_lines[attributo].currentText()
+                        elif attributo == "codice" or self.input_lines[attributo].text() == "":
+                            temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
+                        else:
+                            temp_fornitore[attributo] = self.input_lines[attributo].text()
+
+                    msg1 = fornitore.modificaFornitore(temp_fornitore["cittaSede"], temp_fornitore["denominazione"],
+                                                       temp_fornitore["indirizzoSede"],
+                                                       temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
+            if not fornitore_esistente:
+                denominazione = self.input_lines["denominazione"].text()
+                cittaSede = self.input_lines["cittaSede"].text()
+                indirizzoSede = self.input_lines["indirizzoSede"].text()
+                partitaIva = self.input_lines["partitaIva"].text()
+                tipoProfessione = self.input_lines["tipoProfessione"].currentText()
+
+                temp_fornitore = Fornitore()
+                msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
+                                                                  tipoProfessione)
+                codice_fornitore = fornitore.codice
+
+        elif not self.cambio_fornitore:
+            fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
+            for attributo in fornitore.getInfoFornitore().keys():
+                print("attributo: ", attributo)
+                if attributo == "tipoProfessione":
+                    temp_fornitore[attributo] = self.input_lines[attributo].currentText()
+                elif attributo == "codice" or self.input_lines[attributo].text() == "":
+                    temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
+                else:
+                    temp_fornitore[attributo] = self.input_lines[attributo].text()
+
+            msg1 = fornitore.modificaFornitore(temp_fornitore["cittaSede"], temp_fornitore["denominazione"],
+                                               temp_fornitore["indirizzoSede"],
+                                               temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
+            codice_fornitore = fornitore.getInfoFornitore()["codice"]
 
         for attributo in self.spesa.getInfoSpesa().keys():
-            print("si modifica", attributo)
-            print(attributo, " ", self.spesa.getInfoSpesa()[attributo])
             if attributo == "immobile" or attributo == "tipoSpesa":
                 temp_spesa[attributo] = self.input_lines[attributo].currentText()
             elif attributo == "fornitore":
-                print("dentro attributo fornitore")
-                print(denominazione_fornitore)
-                for fornitore in Fornitore.getAllFornitore().values():
-                    if denominazione_fornitore == fornitore.denominazione:
-                        temp_spesa[attributo] = Fornitore.ricercaFornitoreByDenominazione(denominazione_fornitore).codice
-                    else:
-                        temp_fornitore = Fornitore()
-                        msg, fornitore = temp_fornitore.aggiungiFornitore(self.input_lines["cittaSede"].text(), self.input_lines["denominazione"].text(), self.input_lines["indirizzoSede"].text(),
-                                                                          self.input_lines["partitaIva"].text(), self.input_lines["tipoProfessione"].currentText())
-
-            elif attributo in ["codice", "pagata", "isRitenuta", "dataRegistrazione"] or not self.input_lines[attributo].text():
+                temp_spesa[attributo] = codice_fornitore
+            elif attributo in ["pagata", "isRitenuta"]:
+                if self.checkboxes[attributo].isChecked():
+                    temp_spesa[attributo] = True
+                else:
+                    temp_spesa[attributo] = False
+            elif attributo in ["codice", "dataRegistrazione"] or self.input_lines[attributo].text() == "":
                 temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
             else:
                 print(self.input_lines[attributo].text())
