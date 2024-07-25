@@ -16,6 +16,7 @@ class VistaUpdateSpesa(QWidget):
     def __init__(self, spesa, callback):
         super(VistaUpdateSpesa, self).__init__()
         self.spesa = spesa
+        self.cambio_fornitore = False
         self.callback = callback
         self.sel_immobile = Immobile.ricercaImmobileById(self.spesa.immobile).denominazione
         self.input_lines = {}
@@ -40,6 +41,7 @@ class VistaUpdateSpesa(QWidget):
 
         main_layout.addWidget(self.drawLine())
         main_layout.addWidget(lbl_frase1)
+        main_layout.addWidget(self.create_button("Cambia fornitore", self.changeFornitore))
         main_layout.addLayout(self.pairLabelInput("Denominazione", "denominazione"))
         luogo_fornitore_layout = QHBoxLayout()
         luogo_fornitore_layout.addLayout(self.pairLabelInput("Città", "cittaSede"))
@@ -150,7 +152,7 @@ class VistaUpdateSpesa(QWidget):
         elif index == 'denominazione':
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore).denominazione
-            input_line.setPlaceholderText(str(fornitore))
+            input_line.setText(str(fornitore))
             fornitori_list = [item.denominazione for item in Fornitore.getAllFornitore().values()]
             completer = QCompleter(fornitori_list)
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
@@ -160,17 +162,17 @@ class VistaUpdateSpesa(QWidget):
         elif index == "cittaSede":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setPlaceholderText(str(fornitore.cittaSede))
+            input_line.setText(str(fornitore.cittaSede))
             input_line.textChanged.connect(self.input_validation)
         elif index == "indirizzoSede":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setPlaceholderText(str(fornitore.indirizzoSede))
+            input_line.setText(str(fornitore.indirizzoSede))
             input_line.textChanged.connect(self.input_validation)
         elif index == "partitaIva":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setPlaceholderText(str(fornitore.partitaIva))
+            input_line.setText(str(fornitore.partitaIva))
             input_line.textChanged.connect(self.input_validation)
         elif index == "tipoProfessione":
             input_line = QComboBox()
@@ -193,6 +195,13 @@ class VistaUpdateSpesa(QWidget):
         input_layout.addLayout(pair_layout)
 
         return input_layout
+    def changeFornitore(self):
+        self.input_lines["denominazione"].setText("")
+        self.input_lines["cittaSede"].setText("")
+        self.input_lines["indirizzoSede"].setText("")
+        self.input_lines["partitaIva"].setText("")
+        self.cambio_fornitore = True
+        self.buttons["Cambia fornitore"].setDisabled(True)
 
     def reset(self):
         for key in self.input_lines.keys():
@@ -315,8 +324,7 @@ class VistaUpdateSpesa(QWidget):
                                        dataPagamento, dataFattura, dataRegistrazione,
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
-        msg1 = fornitore.modificaFornitore(temp_fornitore["cittaSede"], temp_fornitore["denominazione"], temp_fornitore["indirizzoSede"],
-                                           temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
+
         msg_unico = msg + " e " + msg1
         self.callback(msg_unico)
         self.close()

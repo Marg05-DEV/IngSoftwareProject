@@ -48,8 +48,8 @@ class VistaDeleteTabellaMillesimale(QWidget):
         for tipi_spesa_codici in self.tabella_millesimale.tipologiaSpesa:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipi_spesa_codici)
             self.tabella_millesimale.removeTipoSpesa(tipo_spesa)
-            if not tipo_spesa.getTabelleMillesimaliAssociate():
-                msg = tipo_spesa.rimuoviTipoSpesa()
+            #if not tipo_spesa.getTabelleMillesimaliAssociate():
+                # msg = tipo_spesa.rimuoviTipoSpesa()
         print("uscito dal for dei tipi")
         msg = self.tabella_millesimale.rimuoviTabellaMillesimale()
         self.callback(msg)
