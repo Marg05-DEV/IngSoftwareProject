@@ -86,7 +86,7 @@ class VistaCreateImmobile(QWidget):
                                        self.input_lines["via"].text())
 
         temp_tabellaMillesimale = TabellaMillesimale()
-        m, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale('Tab A', [], 'Spese generali', immobile.id, {})
+        m, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale('Tab A', [], 'Spese generali', immobile.id)
 
         print(msg)
         self.callback(msg)

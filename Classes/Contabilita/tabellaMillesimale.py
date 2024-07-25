@@ -1,6 +1,9 @@
 import os.path
 import pickle
 
+from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+
 nome_file = 'Dati/TabelleMillesimali.pickle'
 
 class TabellaMillesimale:
@@ -13,17 +16,13 @@ class TabellaMillesimale:
         self.immobile = 0
         self.millesimi = {}  # {unita immobiliare: millesimo}
 
-    def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile, millesimi):
-        print("in aggiunta tabella millesimale")
+    def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile):
         self.nome = nome
-        print("nome fatto")
         self.tipologiaSpesa = tipologieSpesa
-        print("tipo fatto")
         self.descrizione = descrizione
-        print("desc fatto")
         self.immobile = immobile
-        print("immobile fatto")
-        self.millesimi = millesimi
+        for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(immobile)).values():
+            self.millesimi[unita.codice] = 0.00
 
         tabelleMillesimali = {}
         if os.path.isfile(nome_file):
@@ -148,11 +147,13 @@ class TabellaMillesimale:
             with open(nome_file, "wb") as f:
                 pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
 
-    def addMillesimo(self, ui, valore_millesimo):
+    def addMillesimo(self, unita, valore):
+        print("dentro addMillesimo")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
-                tabelleMillesimali[self.codice].mllesimi[ui.codice] = valore_millesimo
+                tabelleMillesimali[self.codice].millesimi[unita.codice] = valore
+                print(tabelleMillesimali[self.codice].millesimi)
         with open(nome_file, "wb") as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
 

@@ -165,8 +165,7 @@ class VistaCreateTabellaMillesimale(QWidget):
         immobile = self.immobile
 
         temp_tabellaMillesimale = TabellaMillesimale()
-        msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(
-            nome, tipologiaSpesa, descrizione, immobile, {})
+        msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(nome, tipologiaSpesa, descrizione, immobile)
 
         print(msg, tm)
         self.callback(msg)

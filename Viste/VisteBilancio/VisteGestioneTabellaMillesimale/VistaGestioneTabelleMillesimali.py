@@ -1,5 +1,8 @@
+import re
+
 from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QSizePolicy, QHeaderView
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, \
+    QSizePolicy, QHeaderView, QAbstractItemView
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -58,96 +61,46 @@ class VistaGestioneTabelleMillesimali(QWidget):
         return button
 
     def update_table(self):
-        print("crazione tabella", self.immobile, type(self.immobile))
-        self.unitaImmobiliari_immobile = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
-        print("prese ui")
-        self.tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
-        print("prese tab millesimali")
-        self.table_tabellaMillesimale.setRowCount(len(self.unitaImmobiliari_immobile))
-        self.table_tabellaMillesimale.setColumnCount(len(self.tabelle_millesimali))
-        self.codice_ui = []
-        i = 0
-        for unita in self.unitaImmobiliari_immobile.values():
-            self.codice_ui.append(unita.codice)
-            text_condomini = ""
-            condomini = []
-            print(unita.condomini.keys())
-            for condo in unita.condomini.keys():
-                condomino = Condomino.ricercaCondominoByCF(condo)
-                nome_condo = f"{condomino.nome} {condomino.cognome}"
-                titolo = unita.condomini[condo]
-                print(titolo)
-                stringa = f"{nome_condo} {titolo}"
-                condomini.append(stringa)
-            print(condomini)
-            cont = 0
-            if condomini:
-                for condomino in condomini:
-                    if not cont:
-                        text_condomini = condomino
-                    else:
-                        text_condomini = text_condomini + ",\n" + condomino
-                    cont += 1
-            else:
-                text_condomini = "Nessun condomino"
+        print("dentro update")
+        unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
+        print("unita dell'immobile sel tm", unita_immobiliari)
+        tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
+        print("tab mil immobile", tabelle_millesimali)
 
+        self.table_tabellaMillesimale.setRowCount(len(unita_immobiliari))
+        self.table_tabellaMillesimale.setColumnCount(len(tabelle_millesimali))
+
+        self.table_tabellaMillesimale.setHorizontalHeaderLabels([f"{tabella.nome}\n{tabella.descrizione}" for tabella in tabelle_millesimali])
+        print("prima del for")
+        i = 0
+        for unita in unita_immobiliari:
+            print(unita.getInfoUnitaImmobiliare())
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                item_text = f"Scala:{unita.scala} Int:{unita.interno}\n Condomini:{text_condomini}"
+                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
             else:
-                item_text = f"Tipo unità immobiliare:{unita.tipoUnitaImmobiliare}\n Condomini:{text_condomini}"
-            item_table = QTableWidgetItem(item_text)
-            item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-            item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table_tabellaMillesimale.setVerticalHeaderItem(i, item_table)
+                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+            j = 0
+            for tabella in tabelle_millesimali:
+                print(tabella.millesimi)
+                if unita.codice not in tabella.millesimi:
+                    print("prima della chiamata addMillesimo")
+                    tabella.addMillesimo(unita, 0.00)
+                    print("dopo la chiamata addMillesimo")
+                self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
+                self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole, [unita.codice, tabella.codice])
+                j += 1
             i += 1
-        print(self.tabelle_millesimali)
+        print("fine for")
 
-        i = 0
-        for tabelle in self.tabelle_millesimali.values():
-            print("miao")
-            print(tabelle.nome)
-            item_text = f"{tabelle.nome}\n{tabelle.descrizione}"
-            print(item_text)
-            item_table = QTableWidgetItem(item_text)
-            item_table.setFlags(Qt.ItemFlag.NoItemFlags)
-            item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table_tabellaMillesimale.setHorizontalHeaderItem(i, item_table)
-            i += 1
-
-        i = 0
-
-        for t in self.tabelle_millesimali.values():
-            millesimo = 0
-            for j in range(len(self.unitaImmobiliari_immobile)):
-                print(j)
-                if not t.millesimi:
-                    self.table_tabellaMillesimale.setItem(j, i, QTableWidgetItem(str(millesimo)))
-                else:
-                    z = j
-                    for cod in self.codice_ui:
-                        for key in t.millesimi.keys():
-                            if cod == key:
-                                self.table_tabellaMillesimale.setItem(z, i, QTableWidgetItem(str(t.millesimi[key])))
-                                break
-                        z += 1
-                    if z == range(len(self.unitaImmobiliari_immobile)):
-                        break
-            i += 1
-
-        self.table_tabellaMillesimale.cellChanged.connect(self.changeCell)
-        self.table_tabellaMillesimale.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.table_tabellaMillesimale.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.table_tabellaMillesimale.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table_tabellaMillesimale.horizontalHeader().setStretchLastSection(True)
-        self.table_tabellaMillesimale.verticalHeader().setSectionsClickable(False)
         self.table_tabellaMillesimale.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.table_tabellaMillesimale.resizeRowsToContents()
-        self.table_tabellaMillesimale.resizeColumnsToContents()
-        header = self.table_tabellaMillesimale.verticalHeader()
-        self.table_tabellaMillesimale.setMaximumHeight(header.height())
-        print("create tabella")
+        self.table_tabellaMillesimale.cellChanged.connect(self.saveMatrix)
 
-        return self.table_tabellaMillesimale
-    def changeCell(self, row, column):
+    def saveMatrix(self, row, column):
         print("cella cambiata: ", row, column)
         print(self.table_tabellaMillesimale.item(row, column).data(Qt.ItemDataRole.UserRole))
 

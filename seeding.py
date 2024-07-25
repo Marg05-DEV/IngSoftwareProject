@@ -16,8 +16,7 @@ def up():
     immobile = Immobile()
 
     for i in range(1, 10):
-        immobile.aggiungiImmobile(i, 'IM' + str(i), "Immobile" + str(i), "987654321" + str(i), "Offida", "AP",
-                                  "63073", "Via Roma " + str(i))
+        immobile.aggiungiImmobile(i, 'IM' + str(i), "Immobile" + str(i), "987654321" + str(i), "Offida", "AP", "63073", "Via Roma " + str(i))
 
     print("tutti immobili inseriti")
     for immobile in Immobile.getAllImmobili().values():
@@ -101,12 +100,9 @@ def up():
 
     # seeding tabelle millesimali
     tabellaMillesimale = TabellaMillesimale()
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [1, 4], "Spesa generale", Immobile.ricercaImmobileByCodice(1).id,
-                                                  {})
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [2, 5], "Spesa relative all'uso dell'ascensore",
-                                                  Immobile.ricercaImmobileByCodice(1).id, {})
-    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [3], "Spesa impianto giardino",
-                                                  Immobile.ricercaImmobileByCodice(1).id, {})
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [1, 4], "Spesa generale", Immobile.ricercaImmobileByCodice(1).id)
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab B", [2, 5], "Spesa relative all'uso dell'ascensore", Immobile.ricercaImmobileByCodice(1).id)
+    tabellaMillesimale.aggiungiTabellaMillesimale("Tab C", [3], "Spesa impianto giardino", Immobile.ricercaImmobileByCodice(1).id)
 
     print("\n ------------------------------------------------- \n")
 
