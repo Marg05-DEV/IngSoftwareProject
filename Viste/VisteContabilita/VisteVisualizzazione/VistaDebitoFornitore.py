@@ -184,7 +184,8 @@ class VistaDebitoFornitore(QWidget):
             for spese in self.spese_non_pagate:
                 print("if degli immobili: ", immobile.id == spese.immobile)
                 if immobile.id == spese.immobile:
-                    list_immobili_con_debito.append(immobile)
+                    if immobile not in list_immobili_con_debito:
+                        list_immobili_con_debito.append(immobile)
 
         print("immobili: ", list_immobili_con_debito)
         for immobile in list_immobili_con_debito:
@@ -205,6 +206,7 @@ class VistaDebitoFornitore(QWidget):
             self.tree_widget.resizeColumnToContents(i)
 
         if self.spese_non_pagate:
+            self.spese_debito_section["no_spese"].setVisible(False)
             self.spese_debito_totale_section["all_debito_spese"].setVisible(True)
             self.spese_debito_totale_section["frase_all_debito"].setVisible(True)
             self.spese_debito_totale_section["importo_totale"].setText(str("%.2f" % self.debito_totale))

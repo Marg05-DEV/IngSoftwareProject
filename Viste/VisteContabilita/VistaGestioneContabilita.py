@@ -59,6 +59,7 @@ class VistaGestioneContabilita(QWidget):
         return button
 
     def goGestioneSpese(self):
+        print("goSpese")
         self.vista_spese = VistaGestioneSpese()
         self.vista_spese.show()
 

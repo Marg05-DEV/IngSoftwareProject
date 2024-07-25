@@ -15,9 +15,9 @@ from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
 from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 
 class VistaGestioneSpese(QWidget):
-    def __init__(self, parent=None, sortLabel=None):
-        super(VistaGestioneSpese, self).__init__(parent)
-
+    def __init__(self):
+        super(VistaGestioneSpese, self).__init__()
+        print("soono nelle spese")
         main_layout = QVBoxLayout()
 
         find_layout = QHBoxLayout()
@@ -48,11 +48,14 @@ class VistaGestioneSpese(QWidget):
 
         button_layout = QHBoxLayout()
         self.button_list = {}
-
+        print("prima della creazione dei bottoni")
         button_layout.addWidget(self.create_button("Aggiungi Spesa", self.goCreateSpesa))
+        print("bottone 1")
         button_layout.addWidget(self.create_button("Visualizza Spesa", self.goReadSpesa, True))
+        print("bottone 2")
         button_layout.addWidget(self.create_button("Modifica Spesa", self.goUpdateSpesa, True))
         button_layout.addWidget(self.create_button("Elimina Spesa", self.goDeleteSpesa, True))
+        print("dopo la creazione dei bottoni")
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
@@ -157,6 +160,7 @@ class VistaGestioneSpese(QWidget):
                 self.table_spese.setItem(i, 2, QTableWidgetItem(""))
             self.table_spese.setItem(i, 3, QTableWidgetItem(spesa.descrizione))
             self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
+            print("prima di fornitore")
             self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
             self.table_spese.setItem(i, 6, QTableWidgetItem("%.2f" % spesa.importo))
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)

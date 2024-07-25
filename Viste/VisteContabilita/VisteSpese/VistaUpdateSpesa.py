@@ -235,23 +235,45 @@ class VistaUpdateSpesa(QWidget):
     def updateSpesa(self):
         temp_spesa = {}
         temp_fornitore = {}
-        print("si modifica")
-        for attributo in self.spesa.getInfoSpesa().keys():
-            print("si modifica", attributo)
-            if attributo == "immobile" or attributo == "tipoSpesa":
-                temp_spesa[attributo] = self.input_lines[attributo].currentText()
-            elif attributo in ["codice", "pagata", "isRitenuta"] or not self.input_lines[attributo].text():
-                temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
-            else:
-                temp_spesa[attributo] = self.input_lines[attributo].text()
+        denominazione_fornitore = ""
         fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-        for attributo in fornitore.getInfoFornitore.keys():
+        for attributo in fornitore.getInfoFornitore().keys():
+            print("attributo: ", attributo)
             if attributo == "tipoProfessione":
+                print(self.input_lines[attributo].currentText())
                 temp_fornitore[attributo] = self.input_lines[attributo].currentText()
-            elif not self.input_lines[attributo].text():
+            elif attributo == "denominazione":
+                print(self.input_lines[attributo].text())
+                temp_fornitore[attributo] = self.input_lines[attributo].text()
+                denominazione_fornitore = self.input_lines[attributo].text()
+            elif attributo in ["codice"]:
                 temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
             else:
+                print(self.input_lines[attributo].text())
                 temp_fornitore[attributo] = self.input_lines[attributo].text()
+
+        for attributo in self.spesa.getInfoSpesa().keys():
+            print("si modifica", attributo)
+            print(attributo, " ", self.spesa.getInfoSpesa()[attributo])
+            if attributo == "immobile" or attributo == "tipoSpesa":
+                temp_spesa[attributo] = self.input_lines[attributo].currentText()
+            elif attributo == "fornitore":
+                print("dentro attributo fornitore")
+                print(denominazione_fornitore)
+                for fornitore in Fornitore.getAllFornitore().values():
+                    if denominazione_fornitore == fornitore.denominazione:
+                        temp_spesa[attributo] = Fornitore.ricercaFornitoreByDenominazione(denominazione_fornitore).codice
+                    else:
+                        temp_fornitore = Fornitore()
+                        msg, fornitore = temp_fornitore.aggiungiFornitore(self.input_lines["cittaSede"].text(), self.input_lines["denominazione"].text(), self.input_lines["indirizzoSede"].text(),
+                                                                          self.input_lines["partitaIva"].text(), self.input_lines["tipoProfessione"].currentText())
+
+            elif attributo in ["codice", "pagata", "isRitenuta", "dataRegistrazione"] or not self.input_lines[attributo].text():
+                temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
+            else:
+                print(self.input_lines[attributo].text())
+                temp_spesa[attributo] = self.input_lines[attributo].text()
+
         print(temp_spesa)
 
         dataPagamento = temp_spesa["dataPagamento"].split('/')
@@ -261,8 +283,8 @@ class VistaUpdateSpesa(QWidget):
         dataRegistrazione = temp_spesa["dataRegistrazione"].split('/')
         dataRegistrazione = datetime.date(int(dataRegistrazione[2]), int(dataRegistrazione[1]), int(dataRegistrazione[0]))
 
-        msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"],temp_spesa["importo"],
-                                       temp_spesa["tipoSpesa"],temp_spesa["immobile"],temp_spesa["pagata"],
+        msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"], temp_spesa["importo"],
+                                       temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
                                        dataPagamento, dataFattura, dataRegistrazione,
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
