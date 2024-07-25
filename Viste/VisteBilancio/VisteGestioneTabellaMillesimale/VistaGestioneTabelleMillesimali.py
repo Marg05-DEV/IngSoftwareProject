@@ -134,7 +134,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
                         break
             i += 1
 
-
+        self.table_tabellaMillesimale.cellChanged.connect(self.changeCell)
         self.table_tabellaMillesimale.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_tabellaMillesimale.horizontalHeader().setStretchLastSection(True)
@@ -147,6 +147,9 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print("create tabella")
 
         return self.table_tabellaMillesimale
+    def changeCell(self, row, column):
+        print("cella cambiata: ", row, column)
+        print(self.table_tabellaMillesimale.item(row, column).text())
 
     def go_add_tabellaMillesimale(self):
         self.vista_nuova_tabella_millesimale = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
