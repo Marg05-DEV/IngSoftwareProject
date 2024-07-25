@@ -155,3 +155,4 @@ class TabellaMillesimale:
                 tabelleMillesimali[self.codice].mllesimi[ui.codice] = valore_millesimo
         with open(nome_file, "wb") as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
+

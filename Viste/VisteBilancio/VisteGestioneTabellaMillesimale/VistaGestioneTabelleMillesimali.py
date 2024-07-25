@@ -149,7 +149,21 @@ class VistaGestioneTabelleMillesimali(QWidget):
         return self.table_tabellaMillesimale
     def changeCell(self, row, column):
         print("cella cambiata: ", row, column)
-        print(self.table_tabellaMillesimale.item(row, column).text())
+        print(self.table_tabellaMillesimale.item(row, column).data(Qt.ItemDataRole.UserRole))
+
+        match = re.fullmatch("[0-9]*|[0-9]*[.,][0-9]{0,2}", self.table_tabellaMillesimale.item(row, column).text())
+        coordinate = self.table_tabellaMillesimale.item(row, column).data(Qt.ItemDataRole.UserRole)
+        if match is not None:
+            millesimo = float(self.table_tabellaMillesimale.item(row, column).text().replace(",", "."))
+            TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), millesimo)
+            self.table_tabellaMillesimale.item(row, column).setText("%.2f" % millesimo)
+        else:
+            old_millesimo = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).millesimi[coordinate[0]]
+            self.table_tabellaMillesimale.item(row, column).setText("%.2f" % old_millesimo)
+            self.msg.setText("Il valore inserito nella cella non è valido")
+            self.msg.show()
+            self.timer.start()
+
 
     def go_add_tabellaMillesimale(self):
         self.vista_nuova_tabella_millesimale = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)

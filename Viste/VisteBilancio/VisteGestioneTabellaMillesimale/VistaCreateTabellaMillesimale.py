@@ -246,7 +246,7 @@ class VistaCreateTabellaMillesimale(QWidget):
             self.lbl_tabella_millesimale_esistente.setVisible(False)
             self.button_exist.setVisible(False)
             num_errors = 0
-
+        print(num_writed_lines)
         if num_errors > 0 or num_writed_lines < len(required_fields) or not self.tipi_spesa:
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)
         else:
