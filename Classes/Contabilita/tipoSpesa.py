@@ -7,7 +7,7 @@ nome_file = 'Dati/TipiSpesa.pickle'
 class TipoSpesa:
 
     def __init__(self):
-        self.codice = 0
+        self.codice = 1
         self.descrizione = ""
         self.nome = ""
 
@@ -57,7 +57,10 @@ class TipoSpesa:
             with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
                 print(type(tipiSpesa))
+                print(tipiSpesa)
                 for tipoSpesa in tipiSpesa.values():
+                    print("nella funzione: ", tipoSpesa.codice)
+                    print(tipoSpesa.codice == codice)
                     if tipoSpesa.codice == codice:
                         return tipoSpesa
                 return None

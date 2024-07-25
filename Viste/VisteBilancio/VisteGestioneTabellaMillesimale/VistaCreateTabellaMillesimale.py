@@ -179,6 +179,7 @@ class VistaCreateTabellaMillesimale(QWidget):
         if tipo_spesa:
             self.tipi_spesa.append(tipo_spesa.codice)
         print(self.tipi_spesa)
+        self.input_validation()
         self.update_list()
 
     def nuovo_tipo_spesa(self):
