@@ -49,7 +49,7 @@ class VistaMenuGestioneBilancio(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Menu Registro Anagrafe")
+        self.setWindowTitle("Menu Gestione Bilancio")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)

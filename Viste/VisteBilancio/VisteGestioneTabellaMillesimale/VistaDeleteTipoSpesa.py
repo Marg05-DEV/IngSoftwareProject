@@ -32,7 +32,7 @@ class VistaDeleteTipoSpesa(QWidget):
 
         self.setLayout(main_layout)
         self.resize(350, 150)
-        self.setWindowTitle("Rimuovi Tabella Millesimale")
+        self.setWindowTitle("Rimuovi Tipo spesa")
 
     @staticmethod
     def create_button(testo, action):

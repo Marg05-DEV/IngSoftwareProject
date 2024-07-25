@@ -87,6 +87,7 @@ class VistaReadTabellaMillesimale(QWidget):
 
         for tipo_spesa_codice in self.tabella_millesimale.tipologiaSpesa:
             item = QStandardItem()
+            print(tipo_spesa_codice)
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipo_spesa_codice)
             print(tipo_spesa.codice)
             item_text = f"Nome:{tipo_spesa.nome}\nDescrizione:{tipo_spesa.descrizione}"
@@ -121,7 +122,8 @@ class VistaReadTabellaMillesimale(QWidget):
         self.remuve_tipo_spesa.show()
 
     def delete_tabella_millesimale(self):
-        self.rimuovi_tabella_millesimale = VistaDeleteTabellaMillesimale(self.tabella_millesimale, self.callback)
+        print(self.tabella_millesimale)
+        self.rimuovi_tabella_millesimale = VistaDeleteTabellaMillesimale(self.tabella_millesimale.codice, self.callback)
         self.close()
         self.rimuovi_tabella_millesimale.show()
 

@@ -159,11 +159,13 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.list_view_tipi_spesa.setModel(listview_model)
 
     def aggiungiTabellaMillesimale(self):
+        print("dentro aggiungi tabella millesimale")
         nome = self.input_lines["nome"].text()
         descrizione = self.input_lines["descrizione"].text()
         tipologiaSpesa = self.tipi_spesa
-        immobile = self.immobile
-
+        immobile = self.immobile.id
+        print(self.immobile)
+        print(self.tipi_spesa)
         temp_tabellaMillesimale = TabellaMillesimale()
         msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(nome, tipologiaSpesa, descrizione, immobile)
 
