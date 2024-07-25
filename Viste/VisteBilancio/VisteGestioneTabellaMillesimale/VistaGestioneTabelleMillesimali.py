@@ -22,7 +22,10 @@ class VistaGestioneTabelleMillesimali(QWidget):
         action_layout = QHBoxLayout()
 
         self.table_tabellaMillesimale = QTableWidget()
+        self.table_tabellaMillesimale.cellChanged.connect(self.saveMatrix)
         self.update_table()
+        print("-------------------------------------PRIMA CHIAMATA - collegamento signal _________________")
+
         action_layout.addWidget(self.table_tabellaMillesimale)
 
         button_layout = QVBoxLayout()
@@ -61,17 +64,19 @@ class VistaGestioneTabelleMillesimali(QWidget):
         return button
 
     def update_table(self):
+        self.table_tabellaMillesimale.cellChanged.disconnect(self.saveMatrix)
         print("dentro update")
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         print("unita dell'immobile sel tm", unita_immobiliari)
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
         print("tab mil immobile", tabelle_millesimali)
 
-        self.table_tabellaMillesimale.setRowCount(len(unita_immobiliari))
+        self.table_tabellaMillesimale.setRowCount(len(unita_immobiliari) + 1)
         self.table_tabellaMillesimale.setColumnCount(len(tabelle_millesimali))
 
         self.table_tabellaMillesimale.setHorizontalHeaderLabels([f"{tabella.nome}\n{tabella.descrizione}" for tabella in tabelle_millesimali])
         print("prima del for")
+        totale_millesimi_tabella = {}
         i = 0
         for unita in unita_immobiliari:
             print(unita.getInfoUnitaImmobiliare())
@@ -88,11 +93,22 @@ class VistaGestioneTabelleMillesimali(QWidget):
                     print("prima della chiamata addMillesimo")
                     tabella.addMillesimo(unita, 0.00)
                     print("dopo la chiamata addMillesimo")
+                
+                if j in totale_millesimi_tabella:
+                    totale_millesimi_tabella[j] += tabella.millesimi[unita.codice]
+                else:
+                    totale_millesimi_tabella[j] = tabella.millesimi[unita.codice]
+
                 self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
                 self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole, [unita.codice, tabella.codice])
                 j += 1
+
             i += 1
         print("fine for")
+
+        self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari), QTableWidgetItem("TOTALE MILLESIMI"))
+        for tabella, totale in totale_millesimi_tabella.items():
+            self.table_tabellaMillesimale.setItem(len(unita_immobiliari), tabella, QTableWidgetItem("%.2f" % totale))
 
         self.table_tabellaMillesimale.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_tabellaMillesimale.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
@@ -101,21 +117,17 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.table_tabellaMillesimale.cellChanged.connect(self.saveMatrix)
 
     def saveMatrix(self, row, column):
-        print("cella cambiata: ", row, column)
-        print(self.table_tabellaMillesimale.item(row, column).data(Qt.ItemDataRole.UserRole))
-
         match = re.fullmatch("[0-9]*|[0-9]*[.,][0-9]{0,2}", self.table_tabellaMillesimale.item(row, column).text())
         coordinate = self.table_tabellaMillesimale.item(row, column).data(Qt.ItemDataRole.UserRole)
-        if match is not None:
-            millesimo = float(self.table_tabellaMillesimale.item(row, column).text().replace(",", "."))
-            TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), millesimo)
-            self.table_tabellaMillesimale.item(row, column).setText("%.2f" % millesimo)
-        else:
-            old_millesimo = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).millesimi[coordinate[0]]
-            self.table_tabellaMillesimale.item(row, column).setText("%.2f" % old_millesimo)
-            self.msg.setText("Il valore inserito nella cella non è valido")
-            self.msg.show()
-            self.timer.start()
+        if coordinate is not None:
+            if match is not None:
+                millesimo = float(self.table_tabellaMillesimale.item(row, column).text().replace(",", "."))
+                TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), millesimo)
+            else:
+                self.msg.setText("Il valore inserito nella cella non è valido")
+                self.msg.show()
+                self.timer.start()
+            self.update_table()
 
 
     def go_add_tabellaMillesimale(self):
