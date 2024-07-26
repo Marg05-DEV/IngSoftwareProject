@@ -26,6 +26,7 @@ class VistaUpdateSpesa(QWidget):
         self.input_errors = {}
         self.buttons = {}
         self.checkboxes = {}
+        self.required_fields = []
         self.isFornitoreTrovatoNow = False
         main_layout = QVBoxLayout()
         lbl_frase = QLabel("Modifica Spesa:")
@@ -203,12 +204,18 @@ class VistaUpdateSpesa(QWidget):
 
         return input_layout
     def changeFornitore(self):
-        self.input_lines["denominazione"].setText("")
-        self.input_lines["cittaSede"].setText("")
-        self.input_lines["indirizzoSede"].setText("")
-        self.input_lines["partitaIva"].setText("")
+        for attributo in ['denominazione', 'cittaSede', 'indirizzoSede', 'partitaIva']:
+            self.input_lines[attributo].setText("")
+            self.input_lines[attributo].setPlaceholderText("")
+            self.required_fields.append(attributo)
+
+        self.input_lines['tipoProfessione'].clear()
+        self.input_lines['tipoProfessione'].setPlaceholderText("Scegli il tipo di professione...")
+        self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
+        self.required_fields.append('tipoProfessione')
         self.cambio_fornitore = True
         self.buttons["Cambia fornitore"].setDisabled(True)
+        self.buttons["Modifica Spesa"].setDisabled(True)
 
     def reset(self):
         for key in self.input_lines.keys():
@@ -289,8 +296,7 @@ class VistaUpdateSpesa(QWidget):
                 tipoProfessione = self.input_lines["tipoProfessione"].currentText()
 
                 temp_fornitore = Fornitore()
-                msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
-                                                                  tipoProfessione)
+                msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione)
                 for f in Fornitore.getAllFornitore().values():
                     print(f.getInfoFornitore())
                 print(fornitore.codice)
@@ -367,12 +373,11 @@ class VistaUpdateSpesa(QWidget):
 
     def input_validation(self):
         print("dentro la validazione")
-        required_fields = []
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             print("immobile modificato")
             if self.input_lines['immobile'].currentText():
-                print("immobile valido")
+                self.required_fields.append('tipoSpesa')
                 self.input_lines['tipoSpesa'].clear()
                 self.input_lines['tipoSpesa'].setVisible(True)
                 self.input_labels['tipoSpesa'].setVisible(True)
@@ -388,9 +393,6 @@ class VistaUpdateSpesa(QWidget):
                     self.input_lines['tipoSpesa'].clear()
                     self.input_lines['tipoSpesa'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile")
 
-                self.input_lines['tipoSpesa'].setVisible(True)
-                self.input_labels['tipoSpesa'].setVisible(True)
-
         if self.input_lines['denominazione'].text():
             denominazioni_fornitori = [item.denominazione.upper() for item in Fornitore.getAllFornitore().values()]
             if self.input_lines['denominazione'].text().upper() in denominazioni_fornitori:
@@ -400,10 +402,26 @@ class VistaUpdateSpesa(QWidget):
                 self.input_lines['partitaIva'].setText(fornitore.partitaIva)
                 self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
                 self.isFornitoreTrovatoNow = True
+
             elif (not (self.input_lines['denominazione'].text().upper() in denominazioni_fornitori)) and self.isFornitoreTrovatoNow:
                 self.input_lines['cittaSede'].setText("")
                 self.input_lines['indirizzoSede'].setText("")
                 self.input_lines['partitaIva'].setText("")
                 self.input_lines['tipoProfessione'].setCurrentText("")
                 self.isFornitoreTrovatoNow = False
+
+        num_writed_lines = 0
+
+        for field in self.required_fields:
+            if field in ['tipoSpesa', 'tipoProfessione']:
+                if self.input_lines[field].currentText():
+                    num_writed_lines += 1
+            else:
+                if self.input_lines[field].text():
+                    num_writed_lines += 1
+
+        if num_writed_lines < len(self.required_fields):
+            self.buttons["Modifica Spesa"].setDisabled(True)
+        else:
+            self.buttons["Modifica Spesa"].setDisabled(False)
 
