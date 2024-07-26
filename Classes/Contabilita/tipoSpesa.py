@@ -57,8 +57,6 @@ class TipoSpesa:
             with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
                 for tipoSpesa in tipiSpesa.values():
-                    print("nella funzione: ", tipoSpesa.codice)
-                    print(tipoSpesa.codice == codice)
                     if tipoSpesa.codice == codice:
                         return tipoSpesa
                 return None

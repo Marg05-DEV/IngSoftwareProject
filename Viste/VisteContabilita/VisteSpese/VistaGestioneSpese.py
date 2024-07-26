@@ -48,14 +48,10 @@ class VistaGestioneSpese(QWidget):
 
         button_layout = QHBoxLayout()
         self.button_list = {}
-        print("prima della creazione dei bottoni")
         button_layout.addWidget(self.create_button("Aggiungi Spesa", self.goCreateSpesa))
-        print("bottone 1")
         button_layout.addWidget(self.create_button("Visualizza Spesa", self.goReadSpesa, True))
-        print("bottone 2")
         button_layout.addWidget(self.create_button("Modifica Spesa", self.goUpdateSpesa, True))
         button_layout.addWidget(self.create_button("Elimina Spesa", self.goDeleteSpesa, True))
-        print("dopo la creazione dei bottoni")
         message_layout = QHBoxLayout()
 
         self.msg = QLabel("Messaggio")
