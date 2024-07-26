@@ -15,6 +15,8 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 class VistaUpdateSpesa(QWidget):
     def __init__(self, spesa, callback):
         super(VistaUpdateSpesa, self).__init__()
+        for f in Fornitore.getAllFornitore().values():
+            print(f.getInfoFornitore())
         self.spesa = spesa
         self.cambio_fornitore = False
         self.callback = callback
@@ -108,7 +110,6 @@ class VistaUpdateSpesa(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
-        print("dentro pair")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -128,8 +129,14 @@ class VistaUpdateSpesa(QWidget):
             input_line.activated.connect(self.input_validation)
         elif index == "tipoSpesa":
             input_line = QComboBox()
+            tipo_spesa = []
+            tabella_millesimale = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.spesa.immobile)).values())
+            for tabelle in tabella_millesimale:
+                for tipo in tabelle.tipologiaSpesa:
+                    tipo_spesa.append(TipoSpesa.ricercaTipoSpesaByCodice(tipo))
+            input_line.addItems([item.nome for item in tipo_spesa])
             tipo = TipoSpesa.ricercaTipoSpesaByCodice(self.spesa.tipoSpesa).nome
-            input_line.setPlaceholderText(tipo)
+            input_line.setCurrentText(tipo)
             input_line.activated.connect(self.input_validation)
         elif index == "numeroFattura":
             input_line = QLineEdit()
@@ -152,7 +159,7 @@ class VistaUpdateSpesa(QWidget):
         elif index == 'denominazione':
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore).denominazione
-            input_line.setText(str(fornitore))
+            input_line.setPlaceholderText(str(fornitore))
             fornitori_list = [item.denominazione for item in Fornitore.getAllFornitore().values()]
             completer = QCompleter(fornitori_list)
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
@@ -162,17 +169,17 @@ class VistaUpdateSpesa(QWidget):
         elif index == "cittaSede":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setText(str(fornitore.cittaSede))
+            input_line.setPlaceholderText(str(fornitore.cittaSede))
             input_line.textChanged.connect(self.input_validation)
         elif index == "indirizzoSede":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setText(str(fornitore.indirizzoSede))
+            input_line.setPlaceholderText(str(fornitore.indirizzoSede))
             input_line.textChanged.connect(self.input_validation)
         elif index == "partitaIva":
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
-            input_line.setText(str(fornitore.partitaIva))
+            input_line.setPlaceholderText(str(fornitore.partitaIva))
             input_line.textChanged.connect(self.input_validation)
         elif index == "tipoProfessione":
             input_line = QComboBox()
@@ -226,6 +233,12 @@ class VistaUpdateSpesa(QWidget):
         fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
         self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
+        self.input_lines["denominazione"].setPlaceholderText(fornitore.denominazione)
+        self.input_lines["cittaSede"].setPlaceholderText(fornitore.cittaSede)
+        self.input_lines["indirizzoSede"].setPlaceholderText(fornitore.indirizzoSede)
+        self.input_lines["partitaIva"].setPlaceholderText(fornitore.partitaIva)
+        self.cambio_fornitore = False
+        self.buttons["Cambia fornitore"].setDisabled(False)
 
         if self.spesa.pagata:
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Checked)
@@ -245,11 +258,12 @@ class VistaUpdateSpesa(QWidget):
         temp_spesa = {}
         temp_fornitore = {}
         fornitore_esistente = False
-        codice_fornitore = ""
+        codice_fornitore = 0
         msg1 = ""
 
         if self.cambio_fornitore:
             for fornitore in Fornitore.getAllFornitore().values():
+                print(self.input_lines["denominazione"].text() == fornitore.denominazione)
                 if self.input_lines["denominazione"].text() == fornitore.denominazione:
                     fornitore_esistente = True
                     codice_fornitore = fornitore.codice
@@ -267,6 +281,7 @@ class VistaUpdateSpesa(QWidget):
                                                        temp_fornitore["indirizzoSede"],
                                                        temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
             if not fornitore_esistente:
+                print("sto per aggiungere il fornitore")
                 denominazione = self.input_lines["denominazione"].text()
                 cittaSede = self.input_lines["cittaSede"].text()
                 indirizzoSede = self.input_lines["indirizzoSede"].text()
@@ -276,6 +291,9 @@ class VistaUpdateSpesa(QWidget):
                 temp_fornitore = Fornitore()
                 msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
                                                                   tipoProfessione)
+                for f in Fornitore.getAllFornitore().values():
+                    print(f.getInfoFornitore())
+                print(fornitore.codice)
                 codice_fornitore = fornitore.codice
 
         elif not self.cambio_fornitore:
@@ -283,21 +301,31 @@ class VistaUpdateSpesa(QWidget):
             for attributo in fornitore.getInfoFornitore().keys():
                 print("attributo: ", attributo)
                 if attributo == "tipoProfessione":
+                    print("if 1: ", attributo)
                     temp_fornitore[attributo] = self.input_lines[attributo].currentText()
                 elif attributo == "codice" or self.input_lines[attributo].text() == "":
+                    print("elif 1: ", attributo)
                     temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
                 else:
+                    print("else 1: ", attributo, ": ", self.input_lines[attributo].text())
                     temp_fornitore[attributo] = self.input_lines[attributo].text()
+            print("modifica del fornitore", temp_fornitore["cittaSede"], temp_fornitore["denominazione"],
+                                               temp_fornitore["indirizzoSede"],
+                                               temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
 
             msg1 = fornitore.modificaFornitore(temp_fornitore["cittaSede"], temp_fornitore["denominazione"],
                                                temp_fornitore["indirizzoSede"],
                                                temp_fornitore["partitaIva"], temp_fornitore["tipoProfessione"])
+
             codice_fornitore = fornitore.getInfoFornitore()["codice"]
+            print("Codice del fornitore modificato: ", codice_fornitore)
+            print("fornitore dopo la modifica: ", fornitore.getInfoFornitore())
 
         for attributo in self.spesa.getInfoSpesa().keys():
             if attributo == "immobile" or attributo == "tipoSpesa":
                 temp_spesa[attributo] = self.input_lines[attributo].currentText()
             elif attributo == "fornitore":
+                print("nell'elif della spesa: ", Fornitore.ricercaFornitoreByCodice(codice_fornitore).getInfoFornitore())
                 temp_spesa[attributo] = codice_fornitore
             elif attributo in ["pagata", "isRitenuta"]:
                 if self.checkboxes[attributo].isChecked():
@@ -306,18 +334,26 @@ class VistaUpdateSpesa(QWidget):
                     temp_spesa[attributo] = False
             elif attributo in ["codice", "dataRegistrazione"] or self.input_lines[attributo].text() == "":
                 temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
+                if attributo == "dataRegistrazione":
+                    print("data reg: ", temp_spesa[attributo])
             else:
                 print(self.input_lines[attributo].text())
                 temp_spesa[attributo] = self.input_lines[attributo].text()
 
-        print(temp_spesa)
-
+        print("dopo la presa dei valori delle spese")
         dataPagamento = temp_spesa["dataPagamento"].split('/')
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
+        print(dataPagamento)
         dataFattura = temp_spesa["dataFattura"].split('/')
         dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
-        dataRegistrazione = temp_spesa["dataRegistrazione"].split('/')
-        dataRegistrazione = datetime.date(int(dataRegistrazione[2]), int(dataRegistrazione[1]), int(dataRegistrazione[0]))
+        print(dataFattura)
+        dataRegistrazione = temp_spesa["dataRegistrazione"]
+        print(dataRegistrazione)
+
+        print(temp_spesa["descrizione"], temp_spesa["fornitore"], temp_spesa["importo"],
+                                       temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
+                                       dataPagamento, dataFattura, dataRegistrazione,
+                                       temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
         msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"], temp_spesa["importo"],
                                        temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
@@ -341,7 +377,6 @@ class VistaUpdateSpesa(QWidget):
                 self.input_lines['tipoSpesa'].setVisible(True)
                 self.input_labels['tipoSpesa'].setVisible(True)
                 self.sel_immobile = self.input_lines['immobile'].currentText()
-                print("disabilizazione")
                 tipi_spesa = []
                 for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     tipi_spesa.extend(tabella.tipologiaSpesa)
@@ -359,7 +394,6 @@ class VistaUpdateSpesa(QWidget):
         if self.input_lines['denominazione'].text():
             denominazioni_fornitori = [item.denominazione.upper() for item in Fornitore.getAllFornitore().values()]
             if self.input_lines['denominazione'].text().upper() in denominazioni_fornitori:
-                print("den trovata")
                 fornitore = Fornitore.ricercaFornitoreByDenominazione(self.input_lines['denominazione'].text())
                 self.input_lines['cittaSede'].setText(fornitore.cittaSede)
                 self.input_lines['indirizzoSede'].setText(fornitore.indirizzoSede)
@@ -367,11 +401,9 @@ class VistaUpdateSpesa(QWidget):
                 self.input_lines['tipoProfessione'].setCurrentText(fornitore.tipoProfessione)
                 self.isFornitoreTrovatoNow = True
             elif (not (self.input_lines['denominazione'].text().upper() in denominazioni_fornitori)) and self.isFornitoreTrovatoNow:
-                print("denn non trovata dopo che era trovata")
                 self.input_lines['cittaSede'].setText("")
                 self.input_lines['indirizzoSede'].setText("")
                 self.input_lines['partitaIva'].setText("")
                 self.input_lines['tipoProfessione'].setCurrentText("")
                 self.isFornitoreTrovatoNow = False
 
-        print("fine controlli inserimento - inizio required")
