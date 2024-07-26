@@ -267,6 +267,7 @@ class VistaUpdateSpesa(QWidget):
         fornitore_esistente = False
         codice_fornitore = 0
         msg1 = ""
+        codice = 0
 
         if self.cambio_fornitore:
             for fornitore in Fornitore.getAllFornitore().values():
@@ -314,6 +315,8 @@ class VistaUpdateSpesa(QWidget):
                     temp_fornitore[attributo] = fornitore.getInfoFornitore()[attributo]
                 else:
                     print("else 1: ", attributo, ": ", self.input_lines[attributo].text())
+                    if attributo == "denominazione":
+                        self.input_lines[attributo].setCompleter(QCompleter([]))
                     temp_fornitore[attributo] = self.input_lines[attributo].text()
             print("modifica del fornitore", temp_fornitore["cittaSede"], temp_fornitore["denominazione"],
                                                temp_fornitore["indirizzoSede"],
@@ -329,7 +332,11 @@ class VistaUpdateSpesa(QWidget):
 
         for attributo in self.spesa.getInfoSpesa().keys():
             if attributo == "immobile" or attributo == "tipoSpesa":
-                temp_spesa[attributo] = self.input_lines[attributo].currentText()
+                if attributo == "immobile":
+                    codice = Immobile.ricercaImmobileByDenominazione(self.input_lines[attributo].currentText()).id
+                else:
+                    codice = TipoSpesa.ricercaTipoSpesaByNome(self.input_lines[attributo].currentText()).codice
+                temp_spesa[attributo] = codice
             elif attributo == "fornitore":
                 print("nell'elif della spesa: ", Fornitore.ricercaFornitoreByCodice(codice_fornitore).getInfoFornitore())
                 temp_spesa[attributo] = codice_fornitore
@@ -366,9 +373,7 @@ class VistaUpdateSpesa(QWidget):
                                        dataPagamento, dataFattura, dataRegistrazione,
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
-
-        msg_unico = msg + " e " + msg1
-        self.callback(msg_unico)
+        self.callback(msg)
         self.close()
 
     def input_validation(self):
