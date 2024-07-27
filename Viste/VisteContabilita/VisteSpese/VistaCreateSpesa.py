@@ -27,6 +27,10 @@ class VistaCreateSpesa(QWidget):
         self.checkboxes = {}
         self.isFornitoreTrovatoNow = False
         self.numDividendi = 0
+        self.tipi_spesa = []
+
+        self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
+                                'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
 
         lbl_frase = QLabel("Inserisci i dati della nuova spesa: (* Campi obbligatori)")
         lbl_frase.setStyleSheet("font-weight: bold;")
@@ -133,22 +137,22 @@ class VistaCreateSpesa(QWidget):
             input_line = QComboBox()
             input_line.setPlaceholderText("Seleziona l'immobile a cui si riferisce la spesa...")
             input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
-            input_line.activated.connect(self.input_validation)
             input_line.activated.connect(self.immobile_field_dynamic)
+            input_line.activated.connect(self.input_validation)
         elif "tipoSpesa" in index:
             input_line = QComboBox()
             input_line.setPlaceholderText("Seleziona la tipologia di spesa...")
-            input_line.activated.connect(self.input_validation)
             input_line.activated.connect(self.dividendi_fields_dynamic)
+            input_line.activated.connect(self.input_validation)
             input_line.setVisible(False)
             label.setVisible(False)
         elif "dividendo" in index:
             print("inizio dividendo in pair", testo)
             input_line = QLineEdit()
             input_line.setPlaceholderText("in percentuale")
-            input_line.setValidator(QIntValidator())
-            input_line.textChanged.connect(self.input_validation)
+            input_line.setValidator(QIntValidator(0, 99))
             input_line.textChanged.connect(self.dividendi_fields_dynamic)
+            input_line.textChanged.connect(self.input_validation)
             input_line.setVisible(False)
             label.setVisible(False)
             print("fine dividendo in pair")
@@ -174,8 +178,8 @@ class VistaCreateSpesa(QWidget):
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
             completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             input_line.setCompleter(completer)
-            input_line.textChanged.connect(self.input_validation)
             input_line.textChanged.connect(self.fornitore_fields_dynamic)
+            input_line.textChanged.connect(self.input_validation)
         elif index == "tipoProfessione":
             input_line = QComboBox()
             input_line.setPlaceholderText("Seleziona il tipo di professione del fornitore...")
@@ -203,6 +207,11 @@ class VistaCreateSpesa(QWidget):
         dividendo_layout.addLayout(self.pairLabelInput("%", "dividendo" + str(self.numDividendi)))
 
         if self.numDividendi > 0:
+            if 'dividendo0' not in self.required_fields:
+                self.required_fields.append('dividendo0')
+            self.buttons['Aggiungi Spesa'].setDisabled(True)
+            self.required_fields.append(f"tipoSpesa{self.numDividendi}")
+            self.required_fields.append(f"dividendo{self.numDividendi}")
             self.input_lines["dividendo0"].setVisible(True)
             self.input_labels["dividendo0"].setVisible(True)
             self.input_lines[f"tipoSpesa{self.numDividendi}"].setVisible(True)
@@ -210,7 +219,31 @@ class VistaCreateSpesa(QWidget):
             self.input_lines[f"dividendo{self.numDividendi}"].setVisible(True)
             self.input_labels[f"dividendo{self.numDividendi}"].setVisible(True)
 
+            self.tipi_spesa = []
+
+            for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+                self.tipi_spesa.extend(tabella.tipologiaSpesa)
+
+            for cod_tipo in self.tipi_spesa:
+                tipo_just_selected = False
+
+                tipo = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo)
+                print("inserendo", tipo.nome)
+                for i in range(self.numDividendi):
+                    print(f"controllo tipi spesa gia inseriti. giro del tipoSpesa{i}")
+                    if self.input_lines[f'tipoSpesa{i}'].currentText():
+                        print("    combo box non vuoto ->", self.input_lines[f'tipoSpesa{i}'].currentText())
+                        if self.input_lines[f'tipoSpesa{i}'].currentText() == tipo.nome:
+                            print("tipo già inserito", tipo.nome)
+                            tipo_just_selected = True
+
+                if not tipo_just_selected:
+                    self.input_lines[f'tipoSpesa{self.numDividendi}'].addItem(tipo.nome, cod_tipo)
+
         self.numDividendi += 1
+
+        if self.numDividendi >= len(self.tipi_spesa):
+            self.buttons["Aggiungi Dividendo"].setDisabled(True)
 
         print("fatto, num dividendi attuale", self.numDividendi)
         self.dividendi_layout.insertLayout(self.numDividendi - 1, dividendo_layout)
@@ -248,12 +281,14 @@ class VistaCreateSpesa(QWidget):
         self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
 
         self.sel_immobile = None
+
+        self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
+                                'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
         print("input lin post reset", self.input_lines)
 
     def createSpesa(self):
         immobile = Immobile.ricercaImmobileByDenominazione(self.input_lines["immobile"].currentText()).id
 
-        tipoSpesa = self.input_lines["tipoSpesa0"].currentData()
         descrizione = self.input_lines["descrizione"].text()
         denominazione = self.input_lines["denominazione"].text()
         cittaSede = self.input_lines['cittaSede'].text()
@@ -266,8 +301,6 @@ class VistaCreateSpesa(QWidget):
         dataFattura = self.input_lines["dataFattura"].text()
         dataFattura = dataFattura.split("/")
         dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
-
-        importo = float((self.input_lines["importo"].text()).replace(",", "."))
 
         dataPagamento = self.input_lines["dataPagamento"].text()
         dataPagamento = dataPagamento.split("/")
@@ -285,20 +318,48 @@ class VistaCreateSpesa(QWidget):
             msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
                                                               tipoProfessione)
 
-        temp_spesa = Spesa()
-        msg, spesa = temp_spesa.aggiungiSpesa(descrizione, fornitore.codice, importo, tipoSpesa, immobile,
-                                              self.checkboxes['pagata'].isChecked(), dataPagamento, dataFattura,
-                                              datetime.date.today(), self.checkboxes['isRitenuta'].isChecked(),
-                                              numeroFattura)
+        for i in range(self.numDividendi):
+            importo = float((self.input_lines["importo"].text()).replace(",", "."))
+            tipoSpesa = self.input_lines[f"tipoSpesa{i}"].currentData()
+            if self.numDividendi > 1:
+                importo = importo * int(self.input_lines[f"dividendo{i}"].text()) / 100
+
+            temp_spesa = Spesa()
+            msg, spesa = temp_spesa.aggiungiSpesa(descrizione, fornitore.codice, importo, tipoSpesa, immobile,
+                                                  self.checkboxes['pagata'].isChecked(), dataPagamento, dataFattura,
+                                                  datetime.date.today(), self.checkboxes['isRitenuta'].isChecked(),
+                                                  numeroFattura)
         self.callback(msg)
         self.close()
 
     def immobile_field_dynamic(self):
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
+            print("immobile cambaito")
             if self.input_lines['immobile'].currentText():
+                print(" e non vuoto")
                 self.input_lines['tipoSpesa0'].clear()
                 self.input_lines['tipoSpesa0'].setVisible(True)
                 self.input_labels['tipoSpesa0'].setVisible(True)
+                self.input_lines['dividendo0'].setVisible(False)
+                self.input_labels['dividendo0'].setVisible(False)
+                if 'dividendo0' in self.required_fields:
+                    self.required_fields.remove('dividendo0')
+                print(self.numDividendi)
+                if self.numDividendi > 1:
+                    for i in range(1, self.numDividendi):
+                        print("giro", i)
+                        self.required_fields.remove('tipoSpesa' + str(i))
+                        self.required_fields.remove('dividendo' + str(i))
+                        self.dividendi_layout.removeWidget(self.input_lines['tipoSpesa' + str(i)])
+                        self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(i)])
+                        self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(i)])
+                        self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(i)])
+                        del self.input_lines['tipoSpesa' + str(i)]
+                        del self.input_labels['tipoSpesa' + str(i)]
+                        del self.input_lines['dividendo' + str(i)]
+                        del self.input_labels['dividendo' + str(i)]
+                self.numDividendi = 1
+
                 self.buttons['Aggiungi Dividendo'].setVisible(True)
                 self.sel_immobile = self.input_lines['immobile'].currentText()
 
@@ -307,19 +368,21 @@ class VistaCreateSpesa(QWidget):
                 for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     self.tipi_spesa.extend(tabella.tipologiaSpesa)
 
-                if self.tipi_spesa:
-                    self.buttons['Aggiungi Dividendo'].setDisabled(False)
-                    for i in range(self.numDividendi):
-                        self.input_lines[f'tipoSpesa{i}'].setPlaceholderText("Seleziona la tipologia di spesa...")
+                print(self.tipi_spesa)
 
-                        for tipo in self.tipi_spesa:
-                            self.input_lines[f'tipoSpesa{i}'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+                if self.tipi_spesa:
+                    print("ci sono tipi")
+                    self.buttons['Aggiungi Dividendo'].setDisabled(False)
+                    self.input_lines['tipoSpesa0'].setPlaceholderText("Seleziona la tipologia di spesa...")
+
+                    for tipo in self.tipi_spesa:
+                        self.input_lines['tipoSpesa0'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
                 else:
+                    print("non ci sono tipi")
                     self.buttons['Aggiungi Dividendo'].setDisabled(True)
 
-                    for i in range(self.numDividendi):
-                        self.input_lines[f'tipoSpesa{i}'].clear()
-                        self.input_lines[f'tipoSpesa{i}'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile. Aggiungile nella sezione Tabelle Millesimali")
+                    self.input_lines['tipoSpesa0'].clear()
+                    self.input_lines['tipoSpesa0'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile. Aggiungile nella sezione Tabelle Millesimali")
 
     def fornitore_fields_dynamic(self):
         if self.input_lines['denominazione'].text():
@@ -352,19 +415,71 @@ class VistaCreateSpesa(QWidget):
                 self.isFornitoreTrovatoNow = False
 
     def dividendi_fields_dynamic(self):
-        pass
+        self.tipi_spesa = []
+
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+            self.tipi_spesa.extend(tabella.tipologiaSpesa)
+
+        available_tipi_spesa = self.tipi_spesa
+
+        for i in range(self.numDividendi):
+            if self.input_lines[f'tipoSpesa{i}'].currentText():
+                for tipo in self.tipi_spesa:
+                    if self.input_lines[f'tipoSpesa{i}'].currentData() == tipo:
+                        available_tipi_spesa.remove(tipo)
+
+        print("disponibili (non utilizzati)", len(available_tipi_spesa), available_tipi_spesa)
+
+        sender_index = [item for item in self.input_lines.keys() if self.input_lines[item] == self.sender()][0]
+
+        for i in range(self.numDividendi):
+            print(i)
+            if self.input_lines[f'tipoSpesa{i}'].currentText():
+
+                current_choice = [self.input_lines[f'tipoSpesa{i}'].currentText(), self.input_lines[f'tipoSpesa{i}'].currentData()]
+
+                self.input_lines[f'tipoSpesa{i}'].clear()
+                self.input_lines[f'tipoSpesa{i}'].addItem(current_choice[0], current_choice[1])
+                self.input_lines[f'tipoSpesa{i}'].setCurrentText(current_choice[0])
+                for tipo in available_tipi_spesa:
+                    self.input_lines[f'tipoSpesa{i}'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+            else:
+                self.input_lines[f'tipoSpesa{i}'].clear()
+                self.input_lines[f'tipoSpesa{i}'].setPlaceholderText("Seleziona la tipologia di spesa...")
+                for tipo in available_tipi_spesa:
+                    self.input_lines[f'tipoSpesa{i}'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+
+        totale_dividendi = 100
+        num_filled_dividendi_fields = 1
+        if self.numDividendi > 1:
+            totale_dividendi = 0
+            num_filled_dividendi_fields = 0
+            for i in range(self.numDividendi):
+                if self.input_lines[f'dividendo{i}'].text():
+                    num_filled_dividendi_fields += 1
+                    totale_dividendi += int(self.input_lines[f'dividendo{i}'].text())
+
+        if totale_dividendi != 100 and num_filled_dividendi_fields == self.numDividendi:
+            self.input_errors['dividendo0'].setText('La somma dei dividendi deve essero 100')
+            self.input_errors['tipoSpesa0'].setText('')
+            self.input_errors['dividendo0'].setVisible(True)
+            self.input_errors['tipoSpesa0'].setVisible(True)
+            self.buttons['Aggiungi Spesa'].setDisabled(True)
+        else:
+            self.input_errors['dividendo0'].setVisible(False)
+            self.input_errors['tipoSpesa0'].setVisible(False)
+            self.buttons['Aggiungi Spesa'].setDisabled(False)
 
     def input_validation(self):
-        print("dentro la validazione")
-        self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
-                           'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
-
-
-        print("fine controlli inserimento - inizio required")
         num_writed_lines = 0
 
+        print("richiesto:", self.required_fields)
+        combo_box_fields = ['immobile', 'tipoProfessione']
+        combo_box_fields.extend([item for item in self.input_lines.keys() if 'tipoSpesa' in item])
+        print(combo_box_fields)
+
         for field in self.required_fields:
-            if field in ['immobile', 'tipoSpesa0', 'tipoProfessione']:
+            if field in combo_box_fields:
                 if self.input_lines[field].currentText():
                     num_writed_lines += 1
             else:
