@@ -216,6 +216,8 @@ class VistaUpdateRata(QWidget):
         self.input_lines['versante'].setPlaceholderText(self.rata_selezionata.versante)
 
     def updateRata(self):
+        # qui ho tolto pagata sia nel secondo elif che all'interno della funzione modificaRata
+
         temp_rata = {}
         print("si modifica")
         for attributo in self.rata_selezionata.getInfoRata().keys():
@@ -224,7 +226,7 @@ class VistaUpdateRata(QWidget):
                 temp_rata[attributo] = self.input_lines[attributo].currentData()
             elif attributo == "tipoPagamento":
                 temp_rata[attributo] = self.input_lines[attributo].currentText()
-            elif attributo in ["codice", "pagata"] or not self.input_lines[attributo].text():
+            elif attributo in ["codice"] or not self.input_lines[attributo].text():
                 temp_rata[attributo] = self.rata_selezionata.getInfoRata()[attributo]
             else:
                 temp_rata[attributo] = self.input_lines[attributo].text()
@@ -238,7 +240,6 @@ class VistaUpdateRata(QWidget):
                                                  temp_rata['descrizione'],
                                                  float(temp_rata['importo']),
                                                  int(temp_rata['numeroRicevuta']),
-                                                 True,
                                                  temp_rata['tipoPagamento'],
                                                  int(temp_rata['unitaImmobiliare']),
                                                  temp_rata['versante'])

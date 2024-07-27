@@ -13,18 +13,19 @@ class Rata:
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
-        self.pagata = False
+        #self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = 0
         self.versante = ""
         self.isLast = False
 
-    def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
+    def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante):
+        #cancello la proprietà pagata nei parametri
         self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.importo = importo
         self.numeroRicevuta = numeroRicevuta
-        self.pagata = pagata
+        #self.pagata = pagata
         self.tipoPagamento = tipoPagamento
         self.unitaImmobiliare = unitaImmobiliare
         self.versante = versante
@@ -51,7 +52,8 @@ class Rata:
             pickle.dump(rate, f, pickle.HIGHEST_PROTOCOL)
         return "Rata aggiunta", self
 
-    def modificaRata(self, dataPagamento, descrizione, importo, numeroRicevuta, pagata, tipoPagamento, unitaImmobiliare, versante):
+    def modificaRata(self, dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante):
+        # cancello la proprietà pagata nei parametri
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 rate = dict(pickle.load(f))
@@ -59,7 +61,7 @@ class Rata:
                 rate[self.codice].descrizione = descrizione
                 rate[self.codice].importo = importo
                 rate[self.codice].numeroRicevuta = numeroRicevuta
-                rate[self.codice].pagata = pagata
+                #rate[self.codice].pagata = pagata
                 rate[self.codice].tipoPagamento = tipoPagamento
                 rate[self.codice].unitaImmobiliare = unitaImmobiliare
                 rate[self.codice].versante = versante
@@ -79,7 +81,7 @@ class Rata:
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
-        self.pagata = False
+        #self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = 0
         self.versante = ""
@@ -92,7 +94,7 @@ class Rata:
             "descrizione": self.descrizione,
             "importo": self.importo,
             "numeroRicevuta": self.numeroRicevuta,
-            "pagata": self.pagata,
+            #"pagata": self.pagata,
             "tipoPagamento": self.tipoPagamento,
             "unitaImmobiliare": self.unitaImmobiliare,
             "versante": self.versante,

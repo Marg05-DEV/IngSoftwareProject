@@ -107,11 +107,12 @@ def up():
     print("\n ------------------------------------------------- \n")
 
     #seeding rate
+    #ho cancellato il parametro relativo alla proprietà pagata
     rata = Rata()
-    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 50.55, 1, True, "Contanti", 1, "Verdi Maria")
-    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 120.60, 2, True, "Contanti", 3, "Gialli Laura")
-    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 150.60, 1, True, "Contanti", 2, "Bianchi Elena")
-    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 90.30, 3, True, "Assegno Bancario", 4, "Rossi Roberto")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 50.55, 1, "Contanti", 1, "Verdi Maria")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 120.60, 2, "Contanti", 3, "Gialli Laura")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 150.60, 1, "Contanti", 2, "Bianchi Elena")
+    rata.aggiungiRata(datetime.date.today(), "Versamento Rata 23/24", 90.30, 3, "Assegno Bancario", 4, "Rossi Roberto")
 
     #seeding fornitore
     fornitore = Fornitore()

@@ -134,11 +134,12 @@ class VistaGestioneRate(QWidget):
             self.msg.hide()
 
         self.table_rate.setRowCount(len(self.rate))
-        self.table_rate.setColumnCount(8)
+        #self.table_rate.setColumnCount(8)
+        self.table_rate.setColumnCount(7)
 
         print("aiuto")
-
-        self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo", "Pagata"])
+        #in self.table_rate.setHorizontalHeaderLabels ho eliminato il parametro pagata
+        self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo"])
         self.table_rate.verticalHeader().setVisible(False)
 
         i = 0
@@ -152,10 +153,10 @@ class VistaGestioneRate(QWidget):
             else:
                 self.table_rate.setItem(i, 1, QTableWidgetItem(""))
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
-            if rata.pagata:
-                self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
-            else:
-                self.table_rate.setItem(i, 3, QTableWidgetItem())
+            #if rata.pagata:
+            self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
+            """else:
+                self.table_rate.setItem(i, 3, QTableWidgetItem())"""
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
             if rata.numeroRicevuta > 0:
                 self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
@@ -165,10 +166,10 @@ class VistaGestioneRate(QWidget):
             self.table_rate.setItem(i, 6, QTableWidgetItem("%.2f" % rata.importo))
             self.table_rate.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.table_rate.setItem(i, 7, QTableWidgetItem())
-            if rata.pagata:
+            """if rata.pagata:
                 self.table_rate.item(i, 7).setData(10, 2)
             else:
-                self.table_rate.item(i, 7).setData(10, 0)
+                self.table_rate.item(i, 7).setData(10, 0)"""
             i += 1
 
         self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -210,9 +211,7 @@ class VistaGestioneRate(QWidget):
     def goReadRicevuta(self):
         print('daidaidai')
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
-        print('daidaidai')
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
-        print('daidaidai')
         directory_file = os.path.dirname(os.path.abspath(__file__)).replace("\\Viste\\VisteContabilita\\VisteRate", "\\Dati\\pdf\\")
         print(directory_file, directory_file + 'temp')
         if os.path.isdir(directory_file + "temp\\"):
@@ -250,9 +249,7 @@ class VistaGestioneRate(QWidget):
         self.searchType.clear()
         self.searchType.addItems(["Ricerca per data di pagamento", "Ricerca per denominazione dell'immobile", "Ricerca per nome del versante"])
         self.update_table()
-        print("table aggio")
         self.avvia_ordinamento()
-        print("table aggio")
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
@@ -262,7 +259,6 @@ class VistaGestioneRate(QWidget):
         print("ora di nascondere")
         self.msg.hide()
         self.timer.stop()
-        print("table aggio")
         if not self.rate:
             self.msg.setText("Non sono presenti immobili")
             self.msg.show()

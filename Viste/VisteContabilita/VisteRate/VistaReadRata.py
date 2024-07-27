@@ -31,18 +31,18 @@ class VistaReadRata(QWidget):
         main_layout.addLayout(self.pair_label("Descrizione", "descrizione"))
         main_layout.addLayout(self.pair_label("Importo", "importo"))
 
-        if rata.pagata:
-            if rata.importo > 0:
-                main_layout.addWidget(QLabel("La rata è stata versata"))
-                main_layout.addLayout(self.pair_label("Numero Ricevuta", "numeroRicevuta"))
-                main_layout.addLayout(self.pair_label("Data versamento", "dataPagamento"))
-                main_layout.addLayout(self.pair_label("Tipologia pagamento", "tipoPagamento"))
-            elif rata.importo < 0:
-                main_layout.addWidget(QLabel("Il prelievo è stato effettuato"))
-                main_layout.addLayout(self.pair_label("Data prelievo", "dataPagamento"))
-                main_layout.addLayout(self.pair_label("Tipologia prelievo", "tipoPagamento"))
-        else:
-            main_layout.addWidget(QLabel("La rata non è stata versata"))
+        #if rata.pagata:
+        if rata.importo > 0:
+            main_layout.addWidget(QLabel("La rata è stata versata"))
+            main_layout.addLayout(self.pair_label("Numero Ricevuta", "numeroRicevuta"))
+            main_layout.addLayout(self.pair_label("Data versamento", "dataPagamento"))
+            main_layout.addLayout(self.pair_label("Tipologia pagamento", "tipoPagamento"))
+        elif rata.importo < 0:
+            main_layout.addWidget(QLabel("Il prelievo è stato effettuato"))
+            main_layout.addLayout(self.pair_label("Data prelievo", "dataPagamento"))
+            main_layout.addLayout(self.pair_label("Tipologia prelievo", "tipoPagamento"))
+        """else:
+            main_layout.addWidget(QLabel("La rata non è stata versata"))"""
 
         main_layout.addWidget(self.create_button("Modifica Rata", self.updateRata))
         main_layout.addWidget(self.create_button("Rimuovi Rata", self.deleteRata))
