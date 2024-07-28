@@ -816,7 +816,6 @@ class VistaUpdateSpesa(QWidget):
                     codice = TipoSpesa.ricercaTipoSpesaByNome(self.input_lines[attributo].currentText()).codice
                 temp_spesa[attributo] = codice
             elif attributo == "fornitore":
-                print("nell'elif della spesa: ", Fornitore.ricercaFornitoreByCodice(codice_fornitore).getInfoFornitore())
                 temp_spesa[attributo] = codice_fornitore
             elif attributo in ["pagata", "isRitenuta"]:
                 if self.checkboxes[attributo].isChecked():
@@ -826,27 +825,22 @@ class VistaUpdateSpesa(QWidget):
             elif attributo in ["codice", "dataRegistrazione"] or self.input_lines[attributo].text() == "":
                 temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
             else:
-                print(self.input_lines[attributo].text())
                 temp_spesa[attributo] = self.input_lines[attributo].text()
 
-        print("dopo la presa dei valori delle spese")
         dataPagamento = temp_spesa["dataPagamento"].split('/')
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
-        print(dataPagamento)
+
         dataFattura = temp_spesa["dataFattura"].split('/')
         dataFattura = datetime.date(int(dataFattura[2]), int(dataFattura[1]), int(dataFattura[0]))
-        print(dataFattura)
-        dataRegistrazione = temp_spesa["dataRegistrazione"]
-        print(dataRegistrazione)
 
         print(temp_spesa["descrizione"], temp_spesa["fornitore"], float(temp_spesa["importo"]),
                                        temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
-                                       dataPagamento, dataFattura, dataRegistrazione,
+                                       dataPagamento, dataFattura, temp_spesa["dataRegistrazione"],
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
         msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"], float(temp_spesa["importo"]),
                                        temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
-                                       dataPagamento, dataFattura, dataRegistrazione,
+                                       dataPagamento, dataFattura, temp_spesa["dataRegistrazione"],
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
         self.callback(msg)
