@@ -158,7 +158,9 @@ class VistaGestioneSpese(QWidget):
             self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
             print("prima di fornitore")
             self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-            self.table_spese.setItem(i, 6, QTableWidgetItem("%.2f" % spesa.importo))
+            print("prima di inserire importo")
+            self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
+            print("dopo inserimento importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.table_spese.setItem(i, 7, QTableWidgetItem())
             if spesa.pagata:

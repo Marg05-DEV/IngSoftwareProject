@@ -617,7 +617,7 @@ class VistaUpdateSpesa(QWidget):
             input_line.dateChanged.connect(self.input_validation)
         elif index == "importo":
             input_line = QLineEdit()
-            input_line.setPlaceholderText(str(self.spesa.importo))
+            input_line.setPlaceholderText(str("%.2f" % self.spesa.importo))
             input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
@@ -839,12 +839,12 @@ class VistaUpdateSpesa(QWidget):
         dataRegistrazione = temp_spesa["dataRegistrazione"]
         print(dataRegistrazione)
 
-        print(temp_spesa["descrizione"], temp_spesa["fornitore"], temp_spesa["importo"],
+        print(temp_spesa["descrizione"], temp_spesa["fornitore"], float(temp_spesa["importo"]),
                                        temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
                                        dataPagamento, dataFattura, dataRegistrazione,
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
 
-        msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"], temp_spesa["importo"],
+        msg = self.spesa.modificaSpesa(temp_spesa["descrizione"], temp_spesa["fornitore"], float(temp_spesa["importo"]),
                                        temp_spesa["tipoSpesa"], temp_spesa["immobile"], temp_spesa["pagata"],
                                        dataPagamento, dataFattura, dataRegistrazione,
                                        temp_spesa["isRitenuta"], int(temp_spesa["numeroFattura"]))
