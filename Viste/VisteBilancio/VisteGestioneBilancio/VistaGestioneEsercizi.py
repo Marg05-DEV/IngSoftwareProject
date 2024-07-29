@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import os
 import webbrowser
@@ -159,16 +160,32 @@ class VistaGestioneEsercizi(QWidget):
             self.button_list["Vai al bilancio"].setDisabled(False)
 
     def input_validation(self):
-        data_inizio = self.input_lines["inizioEsercizio"].text()
-        data_inizio = data_inizio.split("/")[2]
+        data_inizio_str = self.input_lines["inizioEsercizio"].text()
+        anno_data_inizio = data_inizio_str.split("/")[2]
+        data_fine_str = self.input_lines["fineEsercizio"].text()
+        anno_data_fine = data_fine_str.split("/")[2]
 
-        data_fine = self.input_lines["fineEsercizio"].text()
-        data_fine = data_fine.split("/")[2]
+        formato_data = "%d/%m/%Y"
+        data_inizio = datetime.datetime.strptime(data_inizio_str, formato_data)
+        data_fine = datetime.datetime.strptime(data_fine_str, formato_data)
 
-        if int(data_inizio) > int(data_fine):
-            self.button_list["Nuovo Esercizio"].setDisabled(True)
+        print(data_fine, data_inizio)
+
+        differenza = data_fine - data_inizio
+        print(calendar.isleap(int(anno_data_inizio)))
+
+        if calendar.isleap(int(anno_data_inizio)) and calendar.isleap(int(anno_data_fine)):
+            print("sono nell'if")
+            if differenza != datetime.timedelta(days=365):
+                self.button_list["Nuovo Esercizio"].setDisabled(True)
+            else:
+                self.button_list["Nuovo Esercizio"].setDisabled(False)
         else:
-            self.button_list["Nuovo Esercizio"].setDisabled(False)
+            print("sono nell'else")
+            if differenza != datetime.timedelta(days=364):
+                self.button_list["Nuovo Esercizio"].setDisabled(True)
+            else:
+                self.button_list["Nuovo Esercizio"].setDisabled(False)
 
     def callback(self, msg=""):
         print("sono nella callback")
