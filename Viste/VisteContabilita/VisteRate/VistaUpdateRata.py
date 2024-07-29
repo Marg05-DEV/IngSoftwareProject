@@ -38,6 +38,7 @@ class VistaUpdateRata(QWidget):
         self.input_labels = {}
         self.input_errors = {}
         self.buttons = {}
+        self.required_fields = []
 
         lbl_frase = QLabel("Inserisci i nuovi dati della rata da modificare:")
         lbl_frase.setStyleSheet("font-weight: bold;")
@@ -142,8 +143,8 @@ class VistaUpdateRata(QWidget):
             input_line.textChanged.connect(self.input_validation)
         elif index == "importo":
             input_line = QLineEdit()
-            input_line.setPlaceholderText(str(self.rata_selezionata.importo))
-            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("(-){0,1}[0-9]*[.,][0-9]{0,2}")))
+            input_line.setPlaceholderText(str(abs(self.rata_selezionata.importo)))
+            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*|[0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
             input_line = QDateEdit()
@@ -216,20 +217,38 @@ class VistaUpdateRata(QWidget):
         self.input_lines['versante'].setPlaceholderText(self.rata_selezionata.versante)
 
     def updateRata(self):
-        # qui ho tolto pagata sia nel secondo elif che all'interno della funzione modificaRata
-
         temp_rata = {}
+
         print("si modifica")
-        for attributo in self.rata_selezionata.getInfoRata().keys():
-            print("si modifica", attributo)
-            if attributo == "unitaImmobiliare":
-                temp_rata[attributo] = self.input_lines[attributo].currentData()
-            elif attributo == "tipoPagamento":
-                temp_rata[attributo] = self.input_lines[attributo].currentText()
-            elif attributo in ["codice"] or not self.input_lines[attributo].text():
-                temp_rata[attributo] = self.rata_selezionata.getInfoRata()[attributo]
-            else:
-                temp_rata[attributo] = self.input_lines[attributo].text()
+        if self.rata_selezionata.getInfoRata()['importo'] < 0:
+            for attributo in self.rata_selezionata.getInfoRata().keys():
+                print("si modifica", attributo)
+                if attributo == "unitaImmobiliare":
+                    if self.input_lines[attributo].currentIndex() >= 0:
+                        print(self.input_lines[attributo].currentData())
+                        temp_rata[attributo] = self.input_lines[attributo].currentData()
+                    else:
+                        temp_rata[attributo] = 0
+                elif attributo in ["codice", "isLast", "tipoPagamento", "numeroRicevuta"] or not self.input_lines[attributo].text():
+                    temp_rata[attributo] = self.rata_selezionata.getInfoRata()[attributo]
+                elif attributo == 'importo':
+                    temp_rata['importo'] = -abs(float((self.input_lines["importo"].text()).replace(",", ".")))
+                else:
+                    temp_rata[attributo] = self.input_lines[attributo].text()
+
+        else:
+            for attributo in self.rata_selezionata.getInfoRata().keys():
+                print("si modifica", attributo)
+                if attributo == "unitaImmobiliare":
+                    temp_rata[attributo] = self.input_lines[attributo].currentData()
+                elif attributo == "tipoPagamento":
+                    temp_rata[attributo] = self.input_lines[attributo].currentText()
+                elif attributo in ["codice", "isLast"] or not self.input_lines[attributo].text():
+                    temp_rata[attributo] = self.rata_selezionata.getInfoRata()[attributo]
+                elif attributo == 'importo':
+                    temp_rata['importo'] = abs(float((self.input_lines["importo"].text()).replace(",", ".")))
+                else:
+                    temp_rata[attributo] = self.input_lines[attributo].text()
 
         print(temp_rata)
 
@@ -238,10 +257,10 @@ class VistaUpdateRata(QWidget):
 
         msg = self.rata_selezionata.modificaRata(dataPagamento,
                                                  temp_rata['descrizione'],
-                                                 float(temp_rata['importo']),
+                                                 temp_rata['importo'],
                                                  int(temp_rata['numeroRicevuta']),
                                                  temp_rata['tipoPagamento'],
-                                                 int(temp_rata['unitaImmobiliare']),
+                                                 temp_rata['unitaImmobiliare'],
                                                  temp_rata['versante'])
         self.callback(msg)
         self.close()

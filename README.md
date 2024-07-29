@@ -29,11 +29,13 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Mettere DataPagamento = None in aggiungi spesa quando la spesa non è pagata e modificare visualizza spesa di conseguenza
 - Aggiungere un reset dei soli dividendi in aggiungi spesa
 - Rivedere il codice di modifica spesa per vedere se è tutto giusto
+- Capire come risolvere checkbox pagata nelle spese
 
 ### RATE
 - rivedere gestione rate(scelta prelievo/versamento si blocca in aggiunta, si blocca al click di modifica rata)
 
 ### STATO PATRIMONIALE e SALDO CASSA
+- vedere selezione tipo ricerca in debito fornitore
 - rivedere saldo cassa e debito immobile 
 - fare credito condomino e correggere stato patrimoniale immobile dopo aver fatto il bilancio
 
@@ -50,7 +52,12 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 *praticamente da iniziare (fatta parte gestione esercizi di un immobile)*
 
 - nella creazione nuovo esercizio togliere controllo distanza di un anno (si potrebbe stabilire la data di fine automatica dopo aver inserito la data di inizio (data fine = data inizio  + 1 anno - 1 giorno))
+- controllo esercizio già esistente nelle date inserite
 
 ## AREA DOCUMENTI
 
 *da fare*
+
+# FARE GLI UNIT TEST
+
+# X GIORGIO

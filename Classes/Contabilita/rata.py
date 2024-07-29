@@ -13,19 +13,16 @@ class Rata:
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
-        #self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = 0
         self.versante = ""
         self.isLast = False
 
     def aggiungiRata(self, dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante):
-        #cancello la proprietà pagata nei parametri
         self.dataPagamento = dataPagamento
         self.descrizione = descrizione
         self.importo = importo
         self.numeroRicevuta = numeroRicevuta
-        #self.pagata = pagata
         self.tipoPagamento = tipoPagamento
         self.unitaImmobiliare = unitaImmobiliare
         self.versante = versante
@@ -43,7 +40,6 @@ class Rata:
                 print("codice unità immobiliare", self.unitaImmobiliare, " - codice unità immobilare che scorre delle rate", rata.unitaImmobiliare)
                 if rata.unitaImmobiliare > 0:
                     if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare).immobile == UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare).immobile:
-                        print("altra rata stesso immobile")
                         rata.isLast = False
                     print("fuori if")
             self.isLast = True

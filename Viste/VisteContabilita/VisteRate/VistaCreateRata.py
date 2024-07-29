@@ -31,7 +31,6 @@ class VistaCreateRata(QWidget):
         self.combo_box_operazione.setPlaceholderText("Scegli...")
         self.combo_box_operazione.addItems(["Prelievo", "Versamento"])
         self.combo_box_operazione.activated.connect(self.scelta_operazione)
-        print("create rata, ci siamo dentro")
 
         scelta_operazione_layout.addWidget(lbl_frase_scelta)
         scelta_operazione_layout.addWidget(self.combo_box_operazione)
@@ -45,7 +44,6 @@ class VistaCreateRata(QWidget):
         main_layout.addWidget(self.lbl_frase)
         print("create rata, ci siamo dentro")
 
-
         main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
         main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
         main_layout.addLayout(self.pairLabelInput("Versante", "versante"))
@@ -55,8 +53,6 @@ class VistaCreateRata(QWidget):
         pagamento_layout.addLayout(self.pairLabelInput("Importo", "importo"))
         pagamento_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
         main_layout.addLayout(pagamento_layout)
-
-        #main_layout.addLayout(self.pairLabelInput("La rata è stata versata", "pagata"))
 
         main_layout.addLayout(self.pairLabelInput("Tipologia Pagamento", "tipoPagamento"))
 
@@ -95,12 +91,7 @@ class VistaCreateRata(QWidget):
         error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         error.setVisible(False)
 
-        """if index != "pagata":
-            label = QLabel(testo + "*: ")
-            pair_layout.addWidget(label)
-        else:
-            label = QLabel(testo)"""
-
+        label = QLabel(testo)
 
         if index == "immobile":
             input_line = QComboBox()
@@ -112,20 +103,20 @@ class VistaCreateRata(QWidget):
             input_line.setPlaceholderText("Seleziona l'unità immobiliare per cui si versa la rata...")
             input_line.activated.connect(self.input_validation)
             input_line.setVisible(False)
-            #label.setVisible(False)
+            label.setVisible(False)
         elif index == "versante":
             input_line = QLineEdit()
             input_line.setPlaceholderText("cognome nome")
             input_line.textChanged.connect(self.input_validation)
             input_line.setVisible(False)
-            #label.setVisible(False)
+            label.setVisible(False)
         elif index == "numeroRicevuta":
             input_line = QLineEdit()
             input_line.setValidator(QIntValidator())
             input_line.textChanged.connect(self.input_validation)
         elif index == "importo":
             input_line = QLineEdit()
-            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*[.,][0-9]{0,2}")))
+            input_line.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*|[0-9]*[.,][0-9]{0,2}")))
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
             input_line = QDateEdit()
@@ -136,20 +127,16 @@ class VistaCreateRata(QWidget):
             input_line.setPlaceholderText("Seleziona la tipologia di pagamento...")
             input_line.addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
             input_line.activated.connect(self.input_validation)
-        elif index == "pagata":
-            input_line = QCheckBox()
-            input_line.stateChanged.connect(self.input_validation)
         else:
             input_line = QLineEdit()
             input_line.textChanged.connect(self.input_validation)
 
         self.input_lines[index] = input_line
-        #self.input_labels[index] = label
+        self.input_labels[index] = label
         self.input_errors[index] = error
 
+        pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
-        """if index == "pagata":
-            pair_layout.addWidget(label)"""
 
         input_layout.addWidget(error)
         input_layout.addLayout(pair_layout)
@@ -182,9 +169,8 @@ class VistaCreateRata(QWidget):
                 button.setVisible(True)
 
         elif self.combo_box_operazione.currentText() == 'Versamento':
-            #qui ho eliminato il campo pagata in visible_field
-            visible_field = ["immobile", "descrizione", "importo"]
-            self.required_fields = ['versante', 'descrizione', 'importo']
+            visible_field = ["immobile", "descrizione", "importo", "numeroRicevuta", "dataPagamento", "tipoPagamento"]
+            self.required_fields = ['versante', 'descrizione', 'importo', "numeroRicevuta", "tipoPagamento"]
 
             for field in self.input_lines.keys():
                 if field in visible_field:
@@ -203,14 +189,11 @@ class VistaCreateRata(QWidget):
                 button.setVisible(True)
 
     def reset(self):
-        print('reset')
-        """for key in self.input_lines.keys():
-            print(key)
-            if key != "pagata":
-                self.input_lines[key].clear()
-        self.input_lines["pagata"].setCheckState(Qt.CheckState.Unchecked)"""
-
+        self.input_lines['immobile'].clear()
+        self.input_lines['immobile'].setPlaceholderText("Seleziona l'immobile per cui si versa la rata...")
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+        self.input_lines['tipoPagamento'].clear()
+        self.input_lines['tipoPagamento'].setPlaceholderText("Seleziona la tipologia di pagamento...")
         self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
         self.input_lines['versante'].setVisible(False)
         self.input_labels['versante'].setVisible(False)
@@ -224,9 +207,10 @@ class VistaCreateRata(QWidget):
         print("fine reset")
 
     def createRata(self):
+        print("create rata")
         importo = float((self.input_lines["importo"].text()).replace(",", "."))
+
         if self.combo_box_operazione.currentText() == "Prelievo":
-            print("è un prelievo")
             if self.input_lines["unitaImmobiliare"].currentIndex() < 0:
                 unitaImmobiliare = 0
             else:
@@ -234,37 +218,31 @@ class VistaCreateRata(QWidget):
             numeroRicevuta = 0
             importo = -abs(importo)
             tipoPagamento = "Contanti"
-            #pagata = True
+
         elif self.combo_box_operazione.currentText() == "Versamento":
+            print("si versa")
             unitaImmobiliare = self.input_lines["unitaImmobiliare"].currentData()
             tipoPagamento = self.input_lines["tipoPagamento"].currentText()
-            #pagata = self.input_lines["pagata"].isChecked()
-            #if pagata:
             numeroRicevuta = int(self.input_lines["numeroRicevuta"].text())
-            #else:
-            numeroRicevuta = 0
 
         versante = self.input_lines["versante"].text()
         descrizione = self.input_lines["descrizione"].text()
 
-        #if pagata:
         dataPagamento = self.input_lines["dataPagamento"].text()
         dataPagamento = dataPagamento.split("/")
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
-        #else:
-        dataPagamento = None
 
 
         print("rata in creazione", dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante)
         temp_rata = Rata()
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento,
-                                            unitaImmobiliare, versante)
-        print("inserito")
+                                           unitaImmobiliare, versante)
+
 
         self.callback(msg)
         self.close()
 
-    def input_validation(self):
+    def immobile_field_dynamic(self):
         print("inizio validation")
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             print("dentro immobile cambiato")
@@ -286,19 +264,29 @@ class VistaCreateRata(QWidget):
                 print("ciao")
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                        proprietario = Condomino.ricercaCondominoByCF(
+                            [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                        self.input_lines['unitaImmobiliare'].addItem(
+                            f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}",
+                            unita.codice)
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                        proprietario = Condomino.ricercaCondominoByCF(
+                            [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                        self.input_lines['unitaImmobiliare'].addItem(
+                            f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
                 print("fien validation immobile sel")
+
+    def unita_immobiliare_field_dynamic(self):
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:
             if self.input_lines['unitaImmobiliare'].currentText():
                 self.input_lines['versante'].clear()
                 self.sel_unita = self.input_lines['unitaImmobiliare'].currentText()
-                advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
+                advisable_versanti_list = [
+                    (Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for
+                    item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
+                        self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
                 completer = QCompleter(advisable_versanti_list)
                 completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
                 completer.setFilterMode(Qt.MatchFlag.MatchContains)
@@ -306,31 +294,7 @@ class VistaCreateRata(QWidget):
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
 
-        """if self.combo_box_operazione.currentText() == "Versamento":
-            if self.input_lines["pagata"].isChecked():
-                self.input_lines["dataPagamento"].setVisible(True)
-                self.input_labels["dataPagamento"].setVisible(True)
-                self.input_lines["tipoPagamento"].setVisible(True)
-                self.input_labels["tipoPagamento"].setVisible(True)
-                self.input_lines["numeroRicevuta"].setVisible(True)
-                self.input_labels["numeroRicevuta"].setVisible(True)
-                if "tipoPagamento" not in self.required_fields:
-                    self.required_fields.append("tipoPagamento")
-                if "numeroRicevuta" not in self.required_fields:
-                    self.required_fields.append("numeroRicevuta")
-            else:
-                self.input_lines["dataPagamento"].setVisible(False)
-                self.input_labels["dataPagamento"].setVisible(False)
-                self.input_lines["tipoPagamento"].setVisible(False)
-                self.input_labels["tipoPagamento"].setVisible(False)
-                self.input_lines["numeroRicevuta"].setVisible(False)
-                self.input_labels["numeroRicevuta"].setVisible(False)
-                if "tipoPagamento" in self.required_fields:
-                    self.required_fields.remove("tipoPagamento")
-                if "numeroRicevuta" in self.required_fields:
-                    self.required_fields.remove("numeroRicevuta")
-                print(self.required_fields)
-"""
+    def input_validation(self):
         num_writed_lines = 0
 
         for field in self.required_fields:

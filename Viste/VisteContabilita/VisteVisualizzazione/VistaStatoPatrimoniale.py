@@ -20,7 +20,6 @@ class VistaStatoPatrimoniale(QWidget):
         self.immobile = None
         main_layout = QVBoxLayout()
 
-        find_layout = QGridLayout()
         completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
         print(completer_list)
         self.searchbar = QLineEdit()
@@ -38,20 +37,39 @@ class VistaStatoPatrimoniale(QWidget):
         self.searchType.activated.connect(self.sel_tipo_ricerca)
         self.immobile_selezionato = QLabel("Nessun immobile selezionato")
 
-        find_layout.addWidget(self.lbl_search, 0, 0, 1, 3)
-        find_layout.addWidget(self.lbl_searchType, 0, 3)
-        find_layout.addWidget(self.searchbar, 1, 0, 1, 3)
-        find_layout.addWidget(self.searchType, 1, 3)
-        find_layout.addWidget(QLabel("Stai selezionando: "), 2, 0, 1, 1)
-        find_layout.addWidget(self.immobile_selezionato, 2, 1, 1, 3)
+        search_layout = QVBoxLayout()
+        type_layout = QVBoxLayout()
+
+        search_layout.addWidget(self.lbl_search)
+        search_layout.addWidget(self.searchbar)
+        type_layout.addWidget(self.lbl_searchType)
+        type_layout.addWidget(self.searchType)
+
+        find_layout.addLayout(search_layout)
+        find_layout.addLayout(type_layout)
+
+        main_layout.addLayout(find_layout)
+
+        msg_layout = QHBoxLayout()
+
+        frase_lbl = QLabel("Stai selezionando: ")
+        self.immobile_selezionato = QLabel("Nessun immobile selezionato")
+
+        msg_layout.addWidget(frase_lbl)
+        msg_layout.addWidget(self.immobile_selezionato)
+
+        main_layout.addLayout(msg_layout)
+
+        if not completer_list:
+            frase_lbl.setText("Nessun immobile presente")
+            self.immobile_selezionato.setVisible(False)
 
         self.button_layout = QHBoxLayout()
-        print("u")
 
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_stato_patrimoniale))
-        self.buttons["Seleziona"].setEnabled(False)
+        self.buttons["Seleziona"].setDisabled(True)
         self.searchbar.textChanged.connect(self.selectioning)
-        print("c")
+        main_layout.addLayout(self.button_layout)
 
         """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
         """ ------------------------------ SEZIONE SPESE ---------------------------- """
@@ -121,8 +139,6 @@ class VistaStatoPatrimoniale(QWidget):
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
-        main_layout.addLayout(find_layout)
-        main_layout.addLayout(self.button_layout)
         main_layout.addLayout(spesa_layout)
         self.drawLine()
         main_layout.addLayout(rata_layout)
@@ -161,10 +177,10 @@ class VistaStatoPatrimoniale(QWidget):
 
         if immobile != None:
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
-            self.buttons["Seleziona"].setEnabled(True)
+            self.buttons["Seleziona"].setDisabled(False)
         else:
             self.immobile_selezionato.setText("Nessun immobile selezionato")
-            self.buttons["Seleziona"].setEnabled(False)
+            self.buttons["Seleziona"].setDisabled(True)
 
     def sel_tipo_ricerca(self):
         print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(
