@@ -174,12 +174,20 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.close()
 
     def seleziona_tipo_spesa(self):
+        self.tipo_spesa_associato = False
         self.search_text = self.searchbar.currentText()
         tipo_spesa = None
         if self.search_text:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(self.search_text)
         if tipo_spesa:
-            self.tipi_spesa.append(tipo_spesa.codice)
+            for tabelle in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values():
+                for tipo in tabelle.tipologiaSpesa:
+                    if tipo_spesa.codice == tipo:
+                        self.tipo_spesa_associato = True
+            if not self.tipo_spesa_associato:
+                self.tipi_spesa.append(tipo_spesa.codice)
+            else:
+                return []
         print(self.tipi_spesa)
         self.input_validation()
         self.update_list()
@@ -262,6 +270,15 @@ class VistaCreateTabellaMillesimale(QWidget):
             self.msg.show()
 
     def callback_for_append_tipo_spesa(self, tipo_spesa):
-        self.tipi_spesa.append(tipo_spesa.codice)
+        if tipo_spesa:
+            for tabelle in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values():
+                for tipo in tabelle.tipologiaSpesa:
+                    if tipo_spesa.codice == tipo:
+                        self.tipo_spesa_associato = True
+            if not self.tipo_spesa_associato:
+                self.tipi_spesa.append(tipo_spesa.codice)
+            else:
+                return []
+        #self.tipi_spesa.append(tipo_spesa.codice)
         self.update_list()
         self.input_validation()
