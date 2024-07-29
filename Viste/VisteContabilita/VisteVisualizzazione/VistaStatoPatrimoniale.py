@@ -183,8 +183,7 @@ class VistaStatoPatrimoniale(QWidget):
             self.buttons["Seleziona"].setDisabled(True)
 
     def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(
-            self.searchType.currentText()))
+        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             lista_completamento = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -220,7 +219,7 @@ class VistaStatoPatrimoniale(QWidget):
         importo_totale = 0.00
         print("inizio")
 
-        self.rate = [item for item in Rata.getAllRateByImmobile(self.immobile).values() if not item.pagata]
+        self.rate = [item for item in Rata.getAllRateByImmobile(self.immobile).values()]
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
         print("rata:", self.rate)
         print("spesa", self.spese)

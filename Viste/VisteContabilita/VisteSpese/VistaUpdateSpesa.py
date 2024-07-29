@@ -132,6 +132,7 @@ class VistaUpdateSpesa(QWidget):
             input_line = QComboBox()
             input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
             input_line.setCurrentText(Immobile.ricercaImmobileById(self.spesa.immobile).denominazione)
+            input_line.activated.connect(self.immobile_field_dynamic)
             input_line.activated.connect(self.input_validation)
         elif index == "tipoSpesa":
             input_line = QComboBox()
@@ -166,13 +167,7 @@ class VistaUpdateSpesa(QWidget):
             input_line = QLineEdit()
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore).denominazione
             input_line.setPlaceholderText(str(fornitore))
-            """
-            fornitori_list = [item.denominazione for item in Fornitore.getAllFornitore().values()]
-            completer = QCompleter(fornitori_list)
-            completer.setFilterMode(Qt.MatchFlag.MatchContains)
-            completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-            input_line.setCompleter(completer)
-            """
+            input_line.textChanged.connect(self.fornitore_field_dynamic)
             input_line.textChanged.connect(self.input_validation)
         elif index == "cittaSede":
             input_line = QLineEdit()
@@ -384,7 +379,7 @@ class VistaUpdateSpesa(QWidget):
         self.callback(msg)
         self.close()
 
-    def input_validation(self):
+    def immobile_field_dynamic(self):
 
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             print("immobile modificato")
@@ -404,7 +399,8 @@ class VistaUpdateSpesa(QWidget):
                 else:
                     self.input_lines['tipoSpesa'].clear()
                     self.input_lines['tipoSpesa'].setPlaceholderText("Nessuna tipologia di spesa per questo immobile")
-
+                    
+    def fornitore_field_dynamic(self):
         if self.input_lines['denominazione'].text():
             self.input_errors["error"].setVisible(False)
             print("nell'if principale")
@@ -436,7 +432,7 @@ class VistaUpdateSpesa(QWidget):
                 print("sem trvat u fornitor mo lu può modifica")
                 self.cambio_fornitore = False
 
-
+    def input_validation(self):
         num_writed_lines = 0
 
         for field in self.required_fields:

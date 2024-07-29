@@ -41,17 +41,9 @@ class VistaSaldoCassa(QWidget):
 
     def update_table(self):
         print("crazione tabella")
-        rate_pagate = [item for item in Rata.getAllRate().values() if item.pagata]
-        rate_pagate_oggi = [item for item in rate_pagate if item.dataPagamento == datetime.date.today()]
-
-        """
-        self.all_rate = Rata.getAllRate()
-        for rate in self.all_rate.values():
-            if rate.pagata:
-                rate_pagate.append(rate.codice)
-            if rate.dataPagamento == datetime.date.today():
-                rate_pagate_oggi.append(rate.codice)
-        """
+        all_rate = [item for item in Rata.getAllRate().values()]
+        rate_pagate_oggi = [item for item in all_rate if item.dataPagamento == datetime.date.today()]
+        print(all_rate)
 
         self.table_rate.setRowCount(len(rate_pagate_oggi)+1)
         self.table_rate.setColumnCount(3)
@@ -61,7 +53,7 @@ class VistaSaldoCassa(QWidget):
         rimanenza = 0.00
 
         yesterday = datetime.date.today() - datetime.timedelta(days=1)
-        for rata in rate_pagate:
+        for rata in all_rate:
             if yesterday >= rata.dataPagamento:
                 if rata.tipoPagamento == "Contanti":
                     rimanenza += rata.importo

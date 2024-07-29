@@ -97,10 +97,12 @@ class VistaCreateRata(QWidget):
             input_line = QComboBox()
             input_line.setPlaceholderText("Seleziona l'immobile per cui si versa la rata...")
             input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+            input_line.activated.connect(self.immobile_field_dynamic)
             input_line.activated.connect(self.input_validation)
         elif index == "unitaImmobiliare":
             input_line = QComboBox()
             input_line.setPlaceholderText("Seleziona l'unità immobiliare per cui si versa la rata...")
+            input_line.activated.connect(self.unita_immobiliare_field_dynamic)
             input_line.activated.connect(self.input_validation)
             input_line.setVisible(False)
             label.setVisible(False)
@@ -262,7 +264,8 @@ class VistaCreateRata(QWidget):
                 else:
                     self.input_lines['numeroRicevuta'].setPlaceholderText("Non ci sono ricevute precedenti")
                 print("ciao")
-                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
+                        Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
                         proprietario = Condomino.ricercaCondominoByCF(
                             [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])

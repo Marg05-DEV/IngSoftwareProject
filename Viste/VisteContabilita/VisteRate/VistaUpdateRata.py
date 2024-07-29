@@ -102,6 +102,7 @@ class VistaUpdateRata(QWidget):
             else:
                 input_line.setPlaceholderText("Scegli l'immobile del nuovo prelevante...")
                 input_line.addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
+            input_line.activated.connect(self.immobile_field_dynamic)
             input_line.activated.connect(self.input_validation)
         elif index == "unitaImmobiliare":
             input_line = QComboBox()
@@ -122,6 +123,7 @@ class VistaUpdateRata(QWidget):
             else:
                 input_line.setVisible(False)
                 label.setVisible(False)
+            input_line.activated.connect(self.unita_immobiliare_field_dynamic)
             input_line.activated.connect(self.input_validation)
 
         elif index == "versante":
@@ -265,8 +267,7 @@ class VistaUpdateRata(QWidget):
         self.callback(msg)
         self.close()
 
-    def input_validation(self):
-        required_fields = []
+    def immobile_field_dynamic(self):
         num_errors = 0
         there_is_unique_error = {}
         print('validation')
@@ -274,7 +275,8 @@ class VistaUpdateRata(QWidget):
             if self.input_lines['immobile'].currentText():
                 self.input_lines['unitaImmobiliare'].clear()
                 self.input_lines['unitaImmobiliare'].setPlaceholderText("Seleziona l'unità immobiliare per cui si versa la rata...")
-                required_fields.append('versante')
+                if 'versante' not in self.required_fields:
+                    self.required_fields.append('versante')
                 self.sel_unita = None
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
@@ -289,11 +291,13 @@ class VistaUpdateRata(QWidget):
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
                         self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
 
+    def unita_immobiliare_field_dynamic(self):
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:
             if self.input_lines['unitaImmobiliare'].currentText():
                 self.input_lines['versante'].clear()
                 self.input_lines['versante'].setPlaceholderText("cognome nome")
-                required_fields.append('versante')
+                if 'versante' not in self.required_fields:
+                    self.required_fields.append('versante')
                 self.sel_unita = self.input_lines['unitaImmobiliare'].currentText()
                 advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
                 completer = QCompleter(advisable_versanti_list)
@@ -303,9 +307,11 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
 
+    def input_validation(self):
+        print("in vlarugerug")
         num_writed_lines = 0
 
-        for field in required_fields:
+        for field in self.required_fields:
             if field == 'tipoPagamento':
                 if self.input_lines[field].currentText():
                     num_writed_lines += 1
@@ -313,7 +319,7 @@ class VistaUpdateRata(QWidget):
                 if self.input_lines[field].text():
                     num_writed_lines += 1
         print(num_writed_lines)
-        if num_writed_lines < len(required_fields):
+        if num_writed_lines < len(self.required_fields):
             self.buttons["Modifica Rata"].setDisabled(True)
         else:
             self.buttons["Modifica Rata"].setDisabled(False)

@@ -98,7 +98,7 @@ class Fornitore:
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
                 for fornitore in fornitori.values():
-                    if fornitore.partitaIVA == partitaIva:
+                    if fornitore.partitaIva == partitaIva:
                         return fornitore
                 return None
         return None
