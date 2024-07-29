@@ -83,9 +83,11 @@ class VistaCreateUnitaImmobiliare(QWidget):
             input_line.setPlaceholderText("Scegli la tipologia di Unità Immobiliare...")
             input_line.addItems(['Appartamento', 'Box', 'Cantina', 'Negozio'])
             input_line.activated.connect(self.scelta_tipologia)
+            input_line.activated.connect(self.unita_immobiliare_field_dynamic)
             input_line.activated.connect(self.input_validation)
         else:
             input_line = QLineEdit()
+            input_line.textChanged.connect(self.unita_immobiliare_field_dynamic)
             input_line.textChanged.connect(self.input_validation)
 
         if index in ['interno', 'scala']:
@@ -158,18 +160,18 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.input_lines["tipoUnitaImmobiliare"].addItems(['Appartamento', 'Box', 'Cantina', 'Negozio'])
         self.input_validation()
 
-    def input_validation(self):
+    def unita_immobiliare_field_dynamic(self):
         print("scrivendo ...", self.immobile)
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
-        num_writed_lines = 0
-        there_is_unique_pair_error = False
+
+        self.there_is_unique_pair_error = False
 
         if self.input_lines['tipoUnitaImmobiliare'].currentText() == "Appartamento":
             for unita in unitaImmobiliari.values():
                 if self.input_lines['interno'].text() == str(unita.interno) and self.input_lines['scala'].text() == str(unita.scala):
-                    there_is_unique_pair_error = True
+                    self.there_is_unique_pair_error = True
                     break
-        if there_is_unique_pair_error:
+        if self.there_is_unique_pair_error:
             self.input_errors['scala'].setText("interno già esistente nella scala inserita")
             self.input_errors['interno'].setText("")
             self.input_errors['scala'].setVisible(True)
@@ -178,6 +180,8 @@ class VistaCreateUnitaImmobiliare(QWidget):
             self.input_errors['scala'].setVisible(False)
             self.input_errors['interno'].setVisible(False)
 
+    def input_validation(self):
+        num_writed_lines = 0
         print(self.required_fields)
         for field in self.required_fields:
             if field == 'tipoUnitaImmobiliare':
@@ -192,7 +196,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
                     self.input_errors[field].setVisible(False)
         print("numero linee riempite", num_writed_lines)
 
-        if num_writed_lines < len(self.required_fields) or there_is_unique_pair_error:
+        if num_writed_lines < len(self.required_fields) or self.there_is_unique_pair_error:
             self.buttons["Assegna Condomini"].setDisabled(True)
         else:
             self.buttons["Assegna Condomini"].setDisabled(False)
