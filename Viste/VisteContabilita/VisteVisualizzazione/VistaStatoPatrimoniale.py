@@ -35,7 +35,8 @@ class VistaStatoPatrimoniale(QWidget):
         self.searchType = QComboBox()
         self.searchType.addItems(["Denominazione", "Sigla", "Codice"])
         self.searchType.activated.connect(self.sel_tipo_ricerca)
-        self.immobile_selezionato = QLabel("Nessun immobile selezionato")
+
+        find_layout = QHBoxLayout()
 
         search_layout = QVBoxLayout()
         type_layout = QVBoxLayout()

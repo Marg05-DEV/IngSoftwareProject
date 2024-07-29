@@ -19,7 +19,7 @@ class VistaCreditoCondomino(QWidget):
         self.debito_totale = 0.00
         main_layout = QVBoxLayout()
 
-        find_layout = QGridLayout()
+
         completer_list = sorted([item.codiceFiscale + " " + item.cognome + " " + item.nome for item in Condomino.getAllCondomini().values()])
         print(completer_list)
         self.searchbar = QLineEdit()
@@ -28,6 +28,11 @@ class VistaCreditoCondomino(QWidget):
         self.condomini_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         print(self.condomini_completer.completionModel())
         self.searchbar.setCompleter(self.condomini_completer)
+
+        find_layout = QHBoxLayout()
+
+        search_layout = QVBoxLayout()
+        type_layout = QVBoxLayout()
 
         """
         in bilancio abbiamo il dict importiDaVersare che è {ui1: totale da versare di ui1, ui2: ..., uin:...}
@@ -55,10 +60,31 @@ class VistaCreditoCondomino(QWidget):
         find_layout.addWidget(self.lbl_search, 0, 0, 1, 3)
         find_layout.addWidget(self.lbl_searchType, 0, 3)
         """
-        find_layout.addWidget(self.searchbar, 1, 0, 1, 3)
-        #find_layout.addWidget(self.searchType, 1, 3)
-        find_layout.addWidget(QLabel("Stai selezionando: "), 2, 0, 1, 1)
-        find_layout.addWidget(self.condomino_selezionato, 2, 1, 1, 3)
+        search_layout.addWidget(self.searchbar)
+        type_layout.addWidget(self.searchType)
+        type_layout.addWidget(self.lbl_searchType)
+        search_layout.addWidget(self.lbl_search)
+
+        find_layout.addLayout(search_layout)
+        find_layout.addLayout(type_layout)
+
+        main_layout.addLayout(find_layout)
+
+        msg_layout = QHBoxLayout()
+
+        frase_lbl = QLabel("Stai selezionando: ")
+        self.immobile_selezionato = QLabel("Nessun immobile selezionato")
+
+        msg_layout.addWidget(frase_lbl)
+        msg_layout.addWidget(self.condomino_selezionato)
+
+        main_layout.addLayout(msg_layout)
+
+        if not completer_list:
+            frase_lbl.setText("Nessun condomino presente")
+            self.condomino_selezionato.setVisible(False)
+
+
 
         self.button_layout = QHBoxLayout()
         print("u")
