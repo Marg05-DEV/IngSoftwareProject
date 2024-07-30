@@ -38,7 +38,8 @@ class VistaGestioneEsercizi(QWidget):
         action_data = QHBoxLayout()
         action_data.addLayout(self.pairLabelInput("Data inizio Esercizio", "inizioEsercizio"))
         action_data.addLayout(self.pairLabelInput("Data fine Esercizio", "fineEsercizio"))
-        action_data.addWidget(self.create_button("Nuovo Esercizio", self.goNuovoEsercizio, True))
+        action_data.addWidget(self.create_button("Nuovo Esercizio", self.goNuovoEsercizio, False))
+        #self.button_list["Nuovo Esercizio"].setDisabled(False)
 
         self.msg = QLabel("Non ci sono Esercizi")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
@@ -76,14 +77,12 @@ class VistaGestioneEsercizi(QWidget):
         error.setVisible(False)
 
         label = QLabel(testo + "*: ")
+        input_line = QDateEdit()
         if index == "inizioEsercizio":
-            input_line = QDateEdit()
             input_line.setDate(datetime.date.today())
             input_line.dateChanged.connect(self.input_validation)
 
         if index == "fineEsercizio":
-            print("vau")
-            input_line = QDateEdit()
             data_fine_esercizio = self.input_lines["inizioEsercizio"].text().split('/')
             print("u")
             data_fine_esercizio = datetime.date(int(data_fine_esercizio[2]), int(data_fine_esercizio[1]), int(data_fine_esercizio[0]))
@@ -116,7 +115,10 @@ class VistaGestioneEsercizi(QWidget):
         listview_model = QStandardItemModel(self.list_view_bilanci)
         for bilancio in self.all_bilanci:
             item = QStandardItem()
-            item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio}"
+            if bilancio.isApprovata:
+                item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio} -> Approvato il {bilancio.dataApprovazione}"
+            else:
+                item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio} -> Non Approvato"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -160,19 +162,17 @@ class VistaGestioneEsercizi(QWidget):
             self.button_list["Vai al bilancio"].setDisabled(False)
 
     def input_validation(self):
-        data_inizio_str = self.input_lines["inizioEsercizio"].text()
-        anno_data_inizio = data_inizio_str.split("/")[2]
-        data_fine_str = self.input_lines["fineEsercizio"].text()
-        anno_data_fine = data_fine_str.split("/")[2]
-
         formato_data = "%d/%m/%Y"
+        data_inizio_str = self.input_lines["inizioEsercizio"].text()
+
         data_inizio = datetime.datetime.strptime(data_inizio_str, formato_data)
+
+        data_distanza = data_inizio + datetime.timedelta(days=364)
+        self.input_lines["fineEsercizio"].setDate(data_distanza)
+        print(self.input_lines["fineEsercizio"].text())
+        data_fine_str = self.input_lines["fineEsercizio"].text()
+
         data_fine = datetime.datetime.strptime(data_fine_str, formato_data)
-
-        print(data_fine, data_inizio)
-
-        #differenza = data_fine - data_inizio
-        print(calendar.isleap(int(anno_data_inizio)))
 
         if data_inizio > data_fine:
             self.button_list["Nuovo Esercizio"].setDisabled(True)
@@ -182,7 +182,7 @@ class VistaGestioneEsercizi(QWidget):
     def callback(self, msg=""):
         print("sono nella callback")
         self.button_list["Vai al bilancio"].setDisabled(True)
-        self.button_list["Nuovo Esercizio"].setDisabled(True)
+        self.button_list["Nuovo Esercizio"].setDisabled(False)
         self.update_list()
         if msg:
             self.msg.setText(msg)
