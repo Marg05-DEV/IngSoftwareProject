@@ -14,7 +14,6 @@ from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 class VistaCreateTipoSpesa(QWidget):
     def __init__(self, tabella_millesimale, callback, callback_append_tipo_spesa):
         super(VistaCreateTipoSpesa, self).__init__()
-        print("ciao bellu")
         self.tabella_millesimale = tabella_millesimale
         self.callback = callback
         self.callback_append_tipo_spesa = callback_append_tipo_spesa
@@ -130,7 +129,7 @@ class VistaCreateTipoSpesa(QWidget):
 
         tipo_spesa = []
         if self.tabella_millesimale != None:
-            for tipo in self.tabella_millesimale.tipologiaSpesa:
+            for tipo in self.tabella_millesimale.tipologieSpesa:
                 value = TipoSpesa.ricercaTipoSpesaByCodice(tipo)
                 tipo_spesa.append(value)
 

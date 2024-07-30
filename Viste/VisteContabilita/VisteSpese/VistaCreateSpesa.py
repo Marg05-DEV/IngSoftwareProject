@@ -224,7 +224,7 @@ class VistaCreateSpesa(QWidget):
             self.tipi_spesa = []
 
             for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
-                self.tipi_spesa.extend(tabella.tipologiaSpesa)
+                self.tipi_spesa.extend(tabella.tipologieSpesa)
 
             for cod_tipo in self.tipi_spesa:
                 tipo_just_selected = False
@@ -360,7 +360,7 @@ class VistaCreateSpesa(QWidget):
                 self.tipi_spesa = []
 
                 for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
-                    self.tipi_spesa.extend(tabella.tipologiaSpesa)
+                    self.tipi_spesa.extend(tabella.tipologieSpesa)
 
                 if self.tipi_spesa:
                     self.buttons['Aggiungi Dividendo'].setDisabled(False)
@@ -408,7 +408,7 @@ class VistaCreateSpesa(QWidget):
         self.tipi_spesa = []
 
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
-            self.tipi_spesa.extend(tabella.tipologiaSpesa)
+            self.tipi_spesa.extend(tabella.tipologieSpesa)
 
         available_tipi_spesa = self.tipi_spesa
 

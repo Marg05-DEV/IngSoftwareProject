@@ -76,7 +76,7 @@ class VistaReadTabellaMillesimale(QWidget):
         return label
 
     def update_list(self):
-        if not self.tabella_millesimale.tipologiaSpesa:
+        if not self.tabella_millesimale.tipologieSpesa:
             self.msg.setText("Non ci sono tipi di spesa")
             self.msg.show()
         else:
@@ -85,7 +85,7 @@ class VistaReadTabellaMillesimale(QWidget):
         print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_tipi_spesa)
 
-        for tipo_spesa_codice in self.tabella_millesimale.tipologiaSpesa:
+        for tipo_spesa_codice in self.tabella_millesimale.tipologieSpesa:
             item = QStandardItem()
             print(tipo_spesa_codice)
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipo_spesa_codice)
@@ -145,6 +145,6 @@ class VistaReadTabellaMillesimale(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
-        if not self.tabella_millesimale.tipologiaSpesa:
+        if not self.tabella_millesimale.tipologieSpesa:
             self.msg.setText("Non ci sono tipi di spesa asseganti")
             self.msg.show()

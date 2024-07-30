@@ -92,7 +92,7 @@ class TipoSpesa:
                 if tabellaAssociata.codice == tabella.codice:
                     flag = True
             if not flag:
-                for tipo_spesa_codice in tabella.tipologiaSpesa:
+                for tipo_spesa_codice in tabella.tipologieSpesa:
                     if tipo_spesa_codice == self.codice:
                         valore = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
                         tabelle_millesimali_associate.append(TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice))

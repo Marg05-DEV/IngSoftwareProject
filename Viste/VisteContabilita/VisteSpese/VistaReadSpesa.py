@@ -76,8 +76,8 @@ class VistaReadSpesa(QWidget):
         line.setFrameShape(QFrame.Shape.HLine)
         line.setFrameShadow(QFrame.Shadow.Sunken)
         return line
-    @staticmethod
-    def create_button(testo, action):
+
+    def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)

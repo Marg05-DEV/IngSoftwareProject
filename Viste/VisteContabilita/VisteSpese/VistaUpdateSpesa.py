@@ -139,7 +139,7 @@ class VistaUpdateSpesa(QWidget):
             tipo_spesa = []
             tabella_millesimale = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.spesa.immobile)).values())
             for tabelle in tabella_millesimale:
-                for tipo in tabelle.tipologiaSpesa:
+                for tipo in tabelle.tipologieSpesa:
                     tipo_spesa.append(TipoSpesa.ricercaTipoSpesaByCodice(tipo))
             input_line.addItems([item.nome for item in tipo_spesa])
             tipo = TipoSpesa.ricercaTipoSpesaByCodice(self.spesa.tipoSpesa).nome
@@ -238,7 +238,7 @@ class VistaUpdateSpesa(QWidget):
 
         tipi_spesa = []
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
-            tipi_spesa.extend(tabella.tipologiaSpesa)
+            tipi_spesa.extend(tabella.tipologieSpesa)
         for tipo in tipi_spesa:
             self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
 
@@ -391,7 +391,7 @@ class VistaUpdateSpesa(QWidget):
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 tipi_spesa = []
                 for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
-                    tipi_spesa.extend(tabella.tipologiaSpesa)
+                    tipi_spesa.extend(tabella.tipologieSpesa)
                 if tipi_spesa:
                     self.input_lines['tipoSpesa'].setPlaceholderText("Seleziona la tipologia di spesa...")
                     for tipo in tipi_spesa:

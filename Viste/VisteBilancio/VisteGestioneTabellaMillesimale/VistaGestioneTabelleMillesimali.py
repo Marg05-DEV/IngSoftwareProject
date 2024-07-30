@@ -74,7 +74,12 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.table_tabellaMillesimale.setRowCount(len(unita_immobiliari) + 1)
         self.table_tabellaMillesimale.setColumnCount(len(tabelle_millesimali))
 
-        self.table_tabellaMillesimale.setHorizontalHeaderLabels([f"{tabella.nome}\n{tabella.descrizione}" for tabella in tabelle_millesimali])
+        i = 0
+        for tabella in tabelle_millesimali:
+            self.table_tabellaMillesimale.setHorizontalHeaderItem(i, QTableWidgetItem(f"{tabella.nome}\n{tabella.descrizione}"))
+            self.table_tabellaMillesimale.horizontalHeaderItem(i).setData(Qt.ItemDataRole.UserRole, tabella.codice)
+            i += 1
+
         print("prima del for")
         totale_millesimi_tabella = {}
         i = 0
@@ -92,27 +97,34 @@ class VistaGestioneTabelleMillesimali(QWidget):
                 if unita.codice not in tabella.millesimi:
                     print("prima della chiamata addMillesimo")
                     tabella.addMillesimo(unita, 0.00)
+                    tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
                     print("dopo la chiamata addMillesimo")
                 
                 if j in totale_millesimi_tabella:
                     totale_millesimi_tabella[j] += tabella.millesimi[unita.codice]
                 else:
                     totale_millesimi_tabella[j] = tabella.millesimi[unita.codice]
+                print("riga del totale", totale_millesimi_tabella)
 
                 self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
                 self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole, [unita.codice, tabella.codice])
                 j += 1
 
             i += 1
+            print("fine ciclo ", i)
         print("fine for")
 
         self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari), QTableWidgetItem("TOTALE MILLESIMI"))
         for tabella, totale in totale_millesimi_tabella.items():
             self.table_tabellaMillesimale.setItem(len(unita_immobiliari), tabella, QTableWidgetItem("%.2f" % totale))
+            self.table_tabellaMillesimale.item(len(unita_immobiliari), tabella).setFlags(Qt.ItemFlag.NoItemFlags)
 
         self.table_tabellaMillesimale.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_tabellaMillesimale.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table_tabellaMillesimale.verticalHeader().setSectionResizeMode(len(unita_immobiliari), QHeaderView.ResizeMode.ResizeToContents)
+        self.table_tabellaMillesimale.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.table_tabellaMillesimale.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.table_tabellaMillesimale.cellChanged.connect(self.saveMatrix)
 
@@ -135,38 +147,18 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.vista_nuova_tabella_millesimale.show()
 
     def go_read_tabellaMillesimale(self):
-        print(self.logicalIndex)
-        item = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
-        print(item)
-        tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimali()
-        print(tabelle_millesimali.values())
-        codice_tabella = 0
-        for tabelle in tabelle_millesimali.values():
-            if item.text().split("\n")[0] == tabelle.nome:
-                codice_tabella = tabelle.codice
-        print(codice_tabella)
-        self.vista_dettaglio_tabella_millesimale = VistaReadTabellaMillesimale(codice_tabella, callback=self.callback)
+        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(Qt.ItemDataRole.UserRole)
+        self.vista_dettaglio_tabella_millesimale = VistaReadTabellaMillesimale(codice_tabella_selezionata, callback=self.callback)
         self.vista_dettaglio_tabella_millesimale.show()
 
     def go_delete_tabellaMillesimale(self):
-        print(self.logicalIndex)
-        item = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
-        print(item)
-        tabelle_millesimali = TabellaMillesimale.getAllTabelleMillesimali()
-        print(tabelle_millesimali.values())
-        codice_tabella = 0
-        for tabelle in tabelle_millesimali.values():
-            if item.text().split("\n")[0] == tabelle.nome:
-                codice_tabella = tabelle.codice
-        print(codice_tabella)
-        self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella, callback=self.callback)
+        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(Qt.ItemDataRole.UserRole)
+        self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella_selezionata, callback=self.callback)
         self.vista_dettaglio_tabella_millesimale.show()
 
     def able_button(self, logicalIndex):
-        print(logicalIndex)
-        self.logicalIndex = logicalIndex
-        header = self.table_tabellaMillesimale.horizontalHeaderItem(self.logicalIndex)
-        print(header.text().split("\n")[0])
+        self.tabella_selezionata = logicalIndex
+        header = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata)
         if not header:
             self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)

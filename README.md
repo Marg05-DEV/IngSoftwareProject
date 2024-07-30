@@ -6,7 +6,6 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Rivedere le dimensioni di Widget e altre cose;
 - Migliorare i layout delle viste seguendo i mockup;
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
-- Mettere messaggio di nessun immobile presente quando non ci sono immmobili da scegliere nella selezione immobili
 
 ## AREA IMMOBILI
 - controlli mancanti su modifica Immobile (stessa denominazione, codice, sigla, CF, ...)
@@ -32,7 +31,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Capire come risolvere checkbox pagata nelle spese
 
 ### RATE
-- rivedere gestione rate(scelta prelievo/versamento si blocca in aggiunta, si blocca al click di modifica rata)
+- fare test sulle rate (dovrebbe funzionare tutto)
 
 ### STATO PATRIMONIALE e SALDO CASSA
 - vedere selezione tipo ricerca in debito fornitore
@@ -43,8 +42,6 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 ### TABELLE MILLESIMALI
 - da fare test per il suo completo funzionamento (dovrebbe funzionare tutto)
-- cambiare dimensioni righe tabella
-- rendere non editabile l'ultima riga (TOTALE)
 - non dare possibilità di assegnare tipi di spesa già assegnati ad altre tabelle millesimali dello stesso immobile
 
 ### BILANCIO
@@ -59,5 +56,3 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 *da fare*
 
 # FARE GLI UNIT TEST
-
-# X GIORGIO

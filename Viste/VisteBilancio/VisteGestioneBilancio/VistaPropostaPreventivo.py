@@ -18,7 +18,7 @@ class VistaPropostaPreventivo(QWidget):
         self.tab_mill = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
         if self.tab_mill:
             for tab in self.tab_mill.values():
-                if tab.tipologiaSpesa:
+                if tab.tipologieSpesa:
                     self.table_tabellaMillesimale = QTableWidget()
                     self.update_table(tab)
                     main_layout.addWidget(self.table_tabellaMillesimale)
@@ -51,12 +51,12 @@ class VistaPropostaPreventivo(QWidget):
     def update_table(self, tab):
         print("crazione tabella")
         self.tab = tab
-        self.table_tabellaMillesimale.setRowCount(len(self.tab.tipologiaSpesa))
+        self.table_tabellaMillesimale.setRowCount(len(self.tab.tipologieSpesa))
         self.table_tabellaMillesimale.setColumnCount(2)
 
         self.table_tabellaMillesimale.setHorizontalHeaderLabels(["Tipo di spesa", "Importo Ipotizzato"])
         i = 0
-        for tipo_spesa in self.tab.tipologiaSpesa:
+        for tipo_spesa in self.tab.tipologieSpesa:
             tipo = TipoSpesa.ricercaTipoSpesaByCodice(tipo_spesa)
             item_text = f"Nome:{tipo.nome}\nDescrizione:{tipo.descrizione}"
             item_table = QTableWidgetItem(item_text)

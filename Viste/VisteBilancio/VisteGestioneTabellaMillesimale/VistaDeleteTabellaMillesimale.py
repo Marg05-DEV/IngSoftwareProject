@@ -41,11 +41,11 @@ class VistaDeleteTabellaMillesimale(QWidget):
 
     def delete_tabella_millesimale(self):
         print(self.tabella_millesimale)
-        if self.tabella_millesimale.tipologiaSpesa:
-            print(self.tabella_millesimale.tipologiaSpesa)
+        if self.tabella_millesimale.tipologieSpesa:
+            print(self.tabella_millesimale.tipologieSpesa)
         else:
             print("è vuota")
-        for tipi_spesa_codici in self.tabella_millesimale.tipologiaSpesa:
+        for tipi_spesa_codici in self.tabella_millesimale.tipologieSpesa:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipi_spesa_codici)
             self.tabella_millesimale.removeTipoSpesa(tipo_spesa)
             #if not tipo_spesa.getTabelleMillesimaliAssociate():

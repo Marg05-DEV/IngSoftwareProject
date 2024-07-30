@@ -11,14 +11,14 @@ class TabellaMillesimale:
     def __init__(self):
         self.codice = 1
         self.nome = ""
-        self.tipologiaSpesa = []
+        self.tipologieSpesa = []
         self.descrizione = ""
         self.immobile = 0
         self.millesimi = {}  # {unita immobiliare: millesimo}
 
     def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile):
         self.nome = nome
-        self.tipologiaSpesa = tipologieSpesa
+        self.tipologieSpesa = tipologieSpesa
         self.descrizione = descrizione
         self.immobile = immobile
         for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(immobile)).values():
@@ -40,15 +40,13 @@ class TabellaMillesimale:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
-                print(tabelleMillesimali[self.codice].tipologiaSpesa)
-                tabelleMillesimali[self.codice].tipologiaSpesa.append(tipo_spesa.codice)
-                print(tabelleMillesimali[self.codice].tipologiaSpesa)
+                tabelleMillesimali[self.codice].tipologieSpesa.append(tipo_spesa.codice)
             with open(nome_file, "wb") as f:
                 pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
     def getInfoTabellaMillesimale(self):
         return {
             "nome": self.nome,
-            "tipologiaSpesa": self.tipologiaSpesa,
+            "tipologieSpesa": self.tipologieSpesa,
             "Descrizione": self.descrizione,
             "Millesimi": self.millesimi
         }
@@ -87,7 +85,7 @@ class TabellaMillesimale:
                 pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
         self.codice = -1
         self.nome = ""
-        self.tipologiaSpesa = []
+        self.tipologieSpesa = []
         self.descrizione = ""
         self.immobile = None
         self.millesimi = {}
@@ -135,15 +133,10 @@ class TabellaMillesimale:
             return None
 
     def removeTipoSpesa(self, tipo_spesa):
-        print("dentro la funzione removeTipoSpesa")
-        print(tipo_spesa.codice)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
-                print("prima del dict")
                 tabelle_millesimali = dict(pickle.load(f))
-                print(tabelle_millesimali[self.codice].tipologiaSpesa)
-                tabelle_millesimali[self.codice].tipologiaSpesa.remove(tipo_spesa.codice)
-                print(tabelle_millesimali[self.codice].tipologiaSpesa)
+                tabelle_millesimali[self.codice].tipologieSpesa.remove(tipo_spesa.codice)
             with open(nome_file, "wb") as f:
                 pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
 
