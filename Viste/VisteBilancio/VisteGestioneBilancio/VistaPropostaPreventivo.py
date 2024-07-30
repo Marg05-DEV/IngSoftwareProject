@@ -4,9 +4,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QLa
 
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.Contabilita.tipoSpesa import TipoSpesa
-from Classes.RegistroAnagrafe.condomino import Condomino
-from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
-
 
 class VistaPropostaPreventivo(QWidget):
     def __init__(self, immobile):
