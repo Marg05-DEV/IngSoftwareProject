@@ -21,7 +21,6 @@ class VistaGestioneEsercizi(QWidget):
 
     def __init__(self, immobile):
         super(VistaGestioneEsercizi, self).__init__()
-        print("ciao1")
         self.immobile = immobile
         self.input_lines = {}
         self.input_errors = {}
@@ -60,16 +59,14 @@ class VistaGestioneEsercizi(QWidget):
         self.setWindowTitle("Gestione Bilancio")
 
     def create_button(self, testo, action, disabled=False):
-        print("bottone in")
         button = QPushButton(testo)
         button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
-        print("botton ok")
         return button
+
     def pairLabelInput(self, testo, index):
-        print("dentro pair")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -79,9 +76,22 @@ class VistaGestioneEsercizi(QWidget):
         error.setVisible(False)
 
         label = QLabel(testo + "*: ")
-        input_line = QDateEdit()
-        input_line.dateChanged.connect(self.input_validation)
-        print("dopo il richiamo della validazione in pair")
+        if index == "inizioEsercizio":
+            input_line = QDateEdit()
+            input_line.setDate(datetime.date.today())
+            input_line.dateChanged.connect(self.input_validation)
+
+        if index == "fineEsercizio":
+            print("vau")
+            input_line = QDateEdit()
+            data_fine_esercizio = self.input_lines["inizioEsercizio"].text().split('/')
+            print("u")
+            data_fine_esercizio = datetime.date(int(data_fine_esercizio[2]), int(data_fine_esercizio[1]), int(data_fine_esercizio[0]))
+            print("d")
+            input_line.setDate(data_fine_esercizio + datetime.timedelta(days=364))
+            print("fine")
+            input_line.dateChanged.connect(self.input_validation)
+
         self.input_lines[index] = input_line
         self.input_errors[index] = error
 
@@ -90,24 +100,21 @@ class VistaGestioneEsercizi(QWidget):
 
         input_layout.addWidget(error)
         input_layout.addLayout(pair_layout)
-        print("fine del pair")
+
         return input_layout
 
     def update_list(self):
-        print("dentro update list")
         self.all_bilanci = list(Bilancio.getAllBilanciByImmobile(self.immobile).values())
         Bilancio.ordinaBilancioByDataInizio(self.all_bilanci)
-        print("dopo la funzione di ordinamento")
 
         if not self.all_bilanci:
             self.msg.setText("Non ci sono bilanci definiti")
             self.msg.show()
         elif not self.timer.isActive():
             self.msg.hide()
-        print("prima del for in update")
+
         listview_model = QStandardItemModel(self.list_view_bilanci)
         for bilancio in self.all_bilanci:
-            print("dentro al for in update")
             item = QStandardItem()
             item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio}"
             item.setText(item_text)
@@ -118,14 +125,11 @@ class VistaGestioneEsercizi(QWidget):
             listview_model.appendRow(item)
 
         self.list_view_bilanci.setModel(listview_model)
-        print("prima di aver selezionato la riga")
         self.selectionModel = self.list_view_bilanci.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
-        print("fuoir update")
 
 
     def goBilancio(self):
-        print("dentro a goBilancio")
         item = None
         for index in self.list_view_bilanci.selectedIndexes():
             item = self.list_view_bilanci.model().itemFromIndex(index)
@@ -134,7 +138,6 @@ class VistaGestioneEsercizi(QWidget):
         self.choose_bilancio.show()
 
     def goNuovoEsercizio(self):
-        print("dentro nuovo esercizio")
         data_inizio = self.input_lines["inizioEsercizio"].text()
         data_inizio = data_inizio.split("/")
         data_inizio = datetime.date(int(data_inizio[2]), int(data_inizio[1]), int(data_inizio[0]))
@@ -142,18 +145,15 @@ class VistaGestioneEsercizi(QWidget):
         data_fine = self.input_lines["fineEsercizio"].text()
         data_fine = data_fine.split("/")
         data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
-        print("prima dell'aggiunta del bilancio")
         temp_bilancio = Bilancio()
         msg, bilancio = temp_bilancio.aggiungiBilancio(data_fine, self.immobile, {}, data_inizio, 0,
-                                                       {}, {}, {}, {}, {}, {})
-        print("dopo l'aggiunta di un nuovo bilancio")
+                                                       {}, {}, {}, {}, {}, {}, False, None)
         self.callback(msg)
         self.nuovo_esercizio = VistaGestioneBilancio(self.immobile, bilancio)
         self.nuovo_esercizio.show()
 
 
     def able_button(self):
-        print("dentro ad able_button")
         if not self.list_view_bilanci.selectedIndexes():
             self.button_list["Vai al bilancio"].setDisabled(True)
         else:
@@ -171,21 +171,13 @@ class VistaGestioneEsercizi(QWidget):
 
         print(data_fine, data_inizio)
 
-        differenza = data_fine - data_inizio
+        #differenza = data_fine - data_inizio
         print(calendar.isleap(int(anno_data_inizio)))
 
-        if calendar.isleap(int(anno_data_inizio)) and calendar.isleap(int(anno_data_fine)):
-            print("sono nell'if")
-            if differenza != datetime.timedelta(days=365):
-                self.button_list["Nuovo Esercizio"].setDisabled(True)
-            else:
-                self.button_list["Nuovo Esercizio"].setDisabled(False)
+        if data_inizio > data_fine:
+            self.button_list["Nuovo Esercizio"].setDisabled(True)
         else:
-            print("sono nell'else")
-            if differenza != datetime.timedelta(days=364):
-                self.button_list["Nuovo Esercizio"].setDisabled(True)
-            else:
-                self.button_list["Nuovo Esercizio"].setDisabled(False)
+            self.button_list["Nuovo Esercizio"].setDisabled(False)
 
     def callback(self, msg=""):
         print("sono nella callback")

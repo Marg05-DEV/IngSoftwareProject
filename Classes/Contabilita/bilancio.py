@@ -18,9 +18,11 @@ class Bilancio:
         self.importiDaVersare = {} # {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
         self.numeroRate = 0
         self.ratePreventivate = {} # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
+        self.isApprovata = False
+        self.dataApprovazione = datetime.date(year=1970, month=1, day=1)
         
     def aggiungiBilancio(self, fineEsercizio, immobile, importiDaVersare, inizioEsercizio, numeroRate, ratePreventivate, ripartizioneConguaglio,
-                         ripartizioneSpeseConsuntivate, ripartizioneSpesePreventivate, speseConsuntivate, spesePreventivate):
+                         ripartizioneSpeseConsuntivate, ripartizioneSpesePreventivate, speseConsuntivate, spesePreventivate, isApprovata, dataApprovazione):
         self.fineEsercizio = fineEsercizio
         self.immobile = immobile
         self.importiDaVersare = importiDaVersare
@@ -32,6 +34,8 @@ class Bilancio:
         self.ripartizioneSpesePreventivate = ripartizioneSpesePreventivate
         self.speseConsuntivate = speseConsuntivate
         self.spesePreventivate = spesePreventivate
+        self.isApprovata = isApprovata
+        self.dataApprovazione = dataApprovazione
 
         bilanci = {}
         if os.path.isfile(nome_file):
@@ -57,7 +61,9 @@ class Bilancio:
             "ripartizioneSpeseConsuntivate": self.ripartizioneSpeseConsuntivate,
             "ripartizioneSpesePreventivate": self.ripartizioneSpesePreventivate,
             "speseConsuntivate": self.speseConsuntivate,
-            "spesePreventivate": self.spesePreventivate
+            "spesePreventivate": self.spesePreventivate,
+            "isApprovata": self.isApprovata,
+            "dataApprovazione": self.dataApprovazione
         }
 
     @staticmethod
@@ -90,10 +96,6 @@ class Bilancio:
             with open(nome_file, 'rb') as f:
                 bilanci = dict(pickle.load(f))
                 for bilancio in bilanci.values():
-                    print(str(bilancio.inizioEsercizio))
-                    print(data_inizio)
-                    print(str(bilancio.inizioEsercizio) == data_inizio and bilancio.immobile.codice == immobile.codice)
-                    print(bilancio.immobile, " --- ", immobile)
                     if str(bilancio.inizioEsercizio) == data_inizio and bilancio.immobile.codice == immobile.codice:
                         return bilancio
                 return None
