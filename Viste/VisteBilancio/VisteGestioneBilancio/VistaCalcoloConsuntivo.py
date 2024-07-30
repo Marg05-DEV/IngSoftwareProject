@@ -46,7 +46,7 @@ class VistaCalcoloConsuntivo(QWidget):
 
         self.setLayout(main_layout)
         self.resize(1200, 650)
-        self.setWindowTitle("Proposta Preventivo")
+        self.setWindowTitle("Calcola Consuntivo")
 
     def update_table(self, tab):
         print("crazione tabella")
