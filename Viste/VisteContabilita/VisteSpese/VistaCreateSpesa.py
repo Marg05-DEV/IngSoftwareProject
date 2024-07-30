@@ -304,6 +304,9 @@ class VistaCreateSpesa(QWidget):
         dataPagamento = dataPagamento.split("/")
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
 
+        if not self.checkboxes['pagata'].isChecked():
+            dataPagamento = None
+
         fornitore_esistente = False
         for fornitore in Fornitore.getAllFornitore().values():
             if fornitore.denominazione == denominazione:
