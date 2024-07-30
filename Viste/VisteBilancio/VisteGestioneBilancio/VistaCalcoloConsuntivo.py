@@ -9,9 +9,10 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaCalcoloConsuntivo(QWidget):
-    def __init__(self, immobile):
+    def __init__(self, immobile, bilancio):
         super(VistaCalcoloConsuntivo, self).__init__()
         self.immobile = immobile
+        self.bilancio = bilancio
         main_layout = QVBoxLayout()
         action_layout = QHBoxLayout()
 

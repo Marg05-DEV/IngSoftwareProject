@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBo
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcolaBilancio import VistaCalcolaBilancio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaListaSpese import VistaListaSpese
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaProspettiEsercizio import VistaProspettiEsercizio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo
@@ -29,7 +30,7 @@ class VistaGestioneBilancio(QWidget):
                                                  self.goPropostaPreventivo))
         action_layout3.addWidget(self.getButton("Calcola consuntivo",
                                                  "Recupera le spese effettive dell'esercizio conclutosi\ne dividile per tipo di spesa.",
-                                                self.goCalcolaConsuntivo))
+                                                self.goElencoSpese))
         vertical_layout.addLayout(action_layout1)
         vertical_layout.addLayout(action_layout3)
 
@@ -65,9 +66,10 @@ class VistaGestioneBilancio(QWidget):
         self.proposta_preventivo = VistaPropostaPreventivo(self.immobile)
         self.proposta_preventivo.show()
 
-    def goCalcolaConsuntivo(self):
-        self.calcola_consuntivo = VistaCalcoloConsuntivo(self.immobile)
-        self.calcola_consuntivo.show()
+    def goElencoSpese(self):
+        self.lista_spese = VistaListaSpese(self.immobile, self.bilancio)
+        self.lista_spese.show()
+
     def goRipartizionePreventivo(self):
         self.ripartizione_preventivo = VistaRipartizionePreventivo()
         self.ripartizione_preventivo.show()

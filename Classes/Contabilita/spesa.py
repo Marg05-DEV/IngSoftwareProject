@@ -275,3 +275,15 @@ class Spesa:
             return speseByFornitore
         else:
             return {}
+
+    @staticmethod
+    def getAllSpeseByPeriodoBilancio(immobile, data_inizio, data_fine):
+        spese = Spesa.getAllSpeseByImmobile(immobile)
+        if spese:
+            speseByPeriodoBilancio = {}
+            for key, value in spese.items():
+                if value.inizioEsercizio >= data_inizio and value.fineEsercizio <= data_fine:
+                    speseByPeriodoBilancio[key] = value
+            return speseByPeriodoBilancio
+        else:
+            return {}
