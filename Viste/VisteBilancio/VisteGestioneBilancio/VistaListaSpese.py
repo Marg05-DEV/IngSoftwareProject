@@ -16,10 +16,10 @@ from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
 from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 
 class VistaListaSpese(QWidget):
-    def __init__(self, immobile, bilancio):
+    def __init__(self, bilancio):
         super(VistaListaSpese, self).__init__()
         print("sono in lista spese")
-        self.immobile = immobile
+        self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
         main_layout = QVBoxLayout()
 

@@ -166,10 +166,6 @@ class VistaGestioneRate(QWidget):
             self.table_rate.setItem(i, 6, QTableWidgetItem("%.2f" % rata.importo))
             self.table_rate.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.table_rate.setItem(i, 7, QTableWidgetItem())
-            """if rata.pagata:
-                self.table_rate.item(i, 7).setData(10, 2)
-            else:
-                self.table_rate.item(i, 7).setData(10, 0)"""
             i += 1
 
         self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
