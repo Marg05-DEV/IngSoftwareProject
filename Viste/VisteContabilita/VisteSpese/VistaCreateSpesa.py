@@ -90,6 +90,7 @@ class VistaCreateSpesa(QWidget):
         main_layout.addWidget(self.create_checkbox("L'importo si riferisce ad una ritenuta di una spesa", 'isRitenuta'))
         pagata_layout = QHBoxLayout()
         pagata_layout.addWidget(self.create_checkbox("La spesa è stata pagata", 'pagata'))
+        self.checkboxes['pagata'].stateChanged.connect(self.data_pagamento_field_dynamic)
         pagata_layout.addLayout(self.pairLabelInput("Data Pagamento", "dataPagamento"))
         main_layout.addLayout(pagata_layout)
 
@@ -171,7 +172,13 @@ class VistaCreateSpesa(QWidget):
             input_line.textChanged.connect(self.input_validation)
         elif index == "dataPagamento":
             input_line = QDateEdit()
-            input_line.setDate(QDate.currentDate())
+            if not self.checkboxes["pagata"].isChecked():
+                input_line.setVisible(False)
+                label.setVisible(False)
+            else:
+                input_line.setVisible(True)
+                label.setVisible(True)
+                input_line.setDate(datetime.date.today())
             input_line.dateChanged.connect(self.input_validation)
         elif index == 'denominazione':
             input_line = QLineEdit()
@@ -458,6 +465,14 @@ class VistaCreateSpesa(QWidget):
             self.input_errors['dividendo0'].setVisible(False)
             self.input_errors['tipoSpesa0'].setVisible(False)
             self.buttons['Aggiungi Spesa'].setDisabled(False)
+
+    def data_pagamento_field_dynamic(self):
+        if not self.checkboxes["pagata"].isChecked():
+            self.input_labels["dataPagamento"].setVisible(False)
+            self.input_lines["dataPagamento"].setVisible(False)
+        elif self.checkboxes["pagata"].isChecked():
+            self.input_labels["dataPagamento"].setVisible(True)
+            self.input_lines["dataPagamento"].setVisible(True)
 
     def input_validation(self):
         num_writed_lines = 0

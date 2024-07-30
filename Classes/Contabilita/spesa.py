@@ -282,7 +282,7 @@ class Spesa:
         if spese:
             speseByPeriodoBilancio = {}
             for key, value in spese.items():
-                if value.inizioEsercizio >= data_inizio and value.fineEsercizio <= data_fine:
+                if value.dataRegistrazione >= data_inizio and value.dataRegistrazione <= data_fine:
                     speseByPeriodoBilancio[key] = value
             return speseByPeriodoBilancio
         else:

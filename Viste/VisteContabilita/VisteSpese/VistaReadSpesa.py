@@ -86,7 +86,7 @@ class VistaReadSpesa(QWidget):
 
     def pair_label(self, testo, index):
         pair_layout = QHBoxLayout()
-        lbl_content = ""
+        lbl_content = QLabel("")
         lbl_desc = QLabel(testo + ": ")
         if index == "denominazione" or index == "cittaSede" or index == "indirizzoSede" or index == "partitaIva" or index == "tipoProfessione":
             fornitore = Fornitore.ricercaFornitoreByCodice(self.spesa.fornitore)
@@ -106,12 +106,13 @@ class VistaReadSpesa(QWidget):
             if self.spesa.getInfoSpesa()["pagata"]:
                 lbl_content = QLabel("La spesa è stata pagata")
             else:
-                lbl_content = QLabel("La spesa non è stata pagata")
+                lbl_desc = QLabel("La spesa non è stata pagata")
         elif index == "dataPagamento":
             if self.spesa.getInfoSpesa()["pagata"]:
                 lbl_content = QLabel(str(self.spesa.getInfoSpesa()["dataPagamento"]))
             else:
-                lbl_content = QLabel("-")
+                lbl_desc.setVisible(False)
+                lbl_content.setVisible(False)
         else:
             lbl_content = QLabel(str(self.spesa.getInfoSpesa()[index]))
         pair_layout.addWidget(lbl_desc)

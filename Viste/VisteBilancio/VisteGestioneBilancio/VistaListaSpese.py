@@ -28,7 +28,7 @@ class VistaListaSpese(QWidget):
 
         button_layout = QHBoxLayout()
         self.button_list = {}
-        button_layout.addWidget(self.create_button("Aggiungi Spesa", self.goCalcolaConsuntivo))
+        button_layout.addWidget(self.create_button("Vai a Consuntivo", self.goCalcolaConsuntivo))
 
         message_layout = QHBoxLayout()
 
@@ -62,11 +62,7 @@ class VistaListaSpese(QWidget):
         return button
 
     def update_table(self):
-        print("in update_table")
         self.spese = list(Spesa.getAllSpeseByPeriodoBilancio(self.immobile, self.bilancio.inizioEsercizio, self.bilancio.fineEsercizio).values())
-
-        for s in self.spese:
-            print(s.getInfoSpesa())
 
         if not self.spese:
             self.msg.setText("Non sono presenti spese in questo esercizio")
@@ -77,14 +73,14 @@ class VistaListaSpese(QWidget):
         self.table_spese.setRowCount(len(self.spese))
         self.table_spese.setColumnCount(8)
 
-        print("aiuto")
-
         self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
         self.table_spese.verticalHeader().setVisible(False)
 
+        self.lista_spese_competenza = []
         i = 0
         for spesa in self.spese:
             print(spesa, spesa.getInfoSpesa())
+            self.lista_spese_competenza.append(spesa.codice)
             self.table_spese.setItem(i, 0, QTableWidgetItem())
             self.table_spese.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, spesa.codice)
             self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -105,7 +101,6 @@ class VistaListaSpese(QWidget):
                 self.table_spese.item(i, 7).setData(10, 0)
             self.table_spese.item(i, 7).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             i += 1
-
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_spese.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         self.table_spese.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
@@ -114,11 +109,9 @@ class VistaListaSpese(QWidget):
         self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_spese.selectionModel().selectionChanged.connect(self.able_button)
 
     def goCalcolaConsuntivo(self):
-        print("calcolo consuntivo")
-        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.immobile, self.bilancio)
+        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.immobile, self.bilancio, self.lista_spese_competenza)
         self.calcolo_consuntivo.show()
 
     def callback(self, msg):

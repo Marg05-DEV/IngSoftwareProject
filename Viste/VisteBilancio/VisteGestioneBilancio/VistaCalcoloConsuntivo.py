@@ -9,13 +9,16 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaCalcoloConsuntivo(QWidget):
-    def __init__(self, immobile, bilancio):
+    def __init__(self, immobile, bilancio, lista_spese):
         super(VistaCalcoloConsuntivo, self).__init__()
         self.immobile = immobile
         self.bilancio = bilancio
+        self.lista_spese_di_competenza = lista_spese
         main_layout = QVBoxLayout()
         action_layout = QHBoxLayout()
 
+        self.table_tabellaMillesimale = QTableWidget()
+        self.update_table()
         self.tab_mill = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile)
         if self.tab_mill:
             for tab in self.tab_mill.values():
@@ -49,9 +52,9 @@ class VistaCalcoloConsuntivo(QWidget):
         self.resize(1200, 650)
         self.setWindowTitle("Calcola Consuntivo")
 
-    def update_table(self, tab):
+    def update_table(self):
         print("crazione tabella")
-        self.tab = tab
+        self.table_tabellaMillesimale.setHorizontalHeaderLabels(["Tipo di spesa", "Importo Effettivo"])
         self.table_tabellaMillesimale.setRowCount(len(self.tab.tipologieSpesa))
         self.table_tabellaMillesimale.setColumnCount(2)
 
