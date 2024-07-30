@@ -115,9 +115,10 @@ class VistaGestioneTabelleMillesimali(QWidget):
         print("fine for")
 
         self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari), QTableWidgetItem("TOTALE MILLESIMI"))
+
         for tabella, totale in totale_millesimi_tabella.items():
             self.table_tabellaMillesimale.setItem(len(unita_immobiliari), tabella, QTableWidgetItem("%.2f" % totale))
-            self.table_tabellaMillesimale.item(len(unita_immobiliari), tabella).setFlags(Qt.ItemFlag.NoItemFlags)
+            self.table_tabellaMillesimale.item(len(unita_immobiliari), tabella).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
         self.table_tabellaMillesimale.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_tabellaMillesimale.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)

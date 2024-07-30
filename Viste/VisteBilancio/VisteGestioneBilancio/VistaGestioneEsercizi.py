@@ -1,19 +1,16 @@
-import calendar
 import datetime
 import os
 import webbrowser
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
-    QPushButton, QSizePolicy, QSpacerItem, QDateEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QListView, QLabel, QHBoxLayout, QPushButton, QSizePolicy, QDateEdit
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneBilancio import VistaGestioneBilancio
-from Viste.VisteBilancio.VisteGestioneBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaCreateUnitaImmobiliare import VistaCreateUnitaImmobiliare
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaReadAssegnazione import VistaReadAssegnazione
 
@@ -80,15 +77,13 @@ class VistaGestioneEsercizi(QWidget):
         input_line = QDateEdit()
         if index == "inizioEsercizio":
             input_line.setDate(datetime.date.today())
+            input_line.dateChanged.connect(self.autoset_data_fine)
             input_line.dateChanged.connect(self.input_validation)
 
         if index == "fineEsercizio":
             data_fine_esercizio = self.input_lines["inizioEsercizio"].text().split('/')
-            print("u")
             data_fine_esercizio = datetime.date(int(data_fine_esercizio[2]), int(data_fine_esercizio[1]), int(data_fine_esercizio[0]))
-            print("d")
             input_line.setDate(data_fine_esercizio + datetime.timedelta(days=364))
-            print("fine")
             input_line.dateChanged.connect(self.input_validation)
 
         self.input_lines[index] = input_line
@@ -161,18 +156,21 @@ class VistaGestioneEsercizi(QWidget):
         else:
             self.button_list["Vai al bilancio"].setDisabled(False)
 
+    def autoset_data_fine(self):
+        data_inizio = self.input_lines["inizioEsercizio"].text()
+        data_inizio = data_inizio.split("/")
+        data_inizio = datetime.date(int(data_inizio[2]), int(data_inizio[1]), int(data_inizio[0]))
+        data_fine = data_inizio + datetime.timedelta(days=364)
+        self.input_lines["fineEsercizio"].setDate(data_fine)
+
     def input_validation(self):
-        formato_data = "%d/%m/%Y"
-        data_inizio_str = self.input_lines["inizioEsercizio"].text()
+        data_inizio = self.input_lines["inizioEsercizio"].text()
+        data_inizio = data_inizio.split("/")
+        data_inizio = datetime.date(int(data_inizio[2]), int(data_inizio[1]), int(data_inizio[0]))
 
-        data_inizio = datetime.datetime.strptime(data_inizio_str, formato_data)
-
-        data_distanza = data_inizio + datetime.timedelta(days=364)
-        self.input_lines["fineEsercizio"].setDate(data_distanza)
-        print(self.input_lines["fineEsercizio"].text())
-        data_fine_str = self.input_lines["fineEsercizio"].text()
-
-        data_fine = datetime.datetime.strptime(data_fine_str, formato_data)
+        data_fine = self.input_lines["fineEsercizio"].text()
+        data_fine = data_fine.split("/")
+        data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
 
         if data_inizio > data_fine:
             self.button_list["Nuovo Esercizio"].setDisabled(True)

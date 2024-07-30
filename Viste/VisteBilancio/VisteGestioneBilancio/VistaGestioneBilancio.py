@@ -3,7 +3,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBo
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcolaBilancio import VistaCalcolaBilancio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
-from Viste.VisteBilancio.VisteGestioneBilancio.VistaNuovoEsercizio import VistaNuovoEsercizio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaProspettiEsercizio import VistaProspettiEsercizio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo

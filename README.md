@@ -50,6 +50,8 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 - nella creazione nuovo esercizio togliere controllo distanza di un anno (si potrebbe stabilire la data di fine automatica dopo aver inserito la data di inizio (data fine = data inizio  + 1 anno - 1 giorno))
 - controllo esercizio già esistente nelle date inserite
+- punti precedenti fatti ma capire come fare meglio i controlli
+- per i prospetti capire come mettere colonne unite si una tabella
 
 ## AREA DOCUMENTI
 

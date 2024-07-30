@@ -180,11 +180,8 @@ class VistaCreateTabellaMillesimale(QWidget):
         print("update tipi spesa lista 2", self.tipi_spesa)
         self.list_view_tipi_spesa.clear()
         for cod_tipo_spesa in self.tipi_spesa:
-            print("update tipi spesa lista 1")
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa)
-            print("update tipi spesa lista 2")
             item = QListWidgetItem(f"{tipo_spesa.nome} - {tipo_spesa.descrizione}")
-            print("update tipi spesa lista 4")
             item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             print("update tipi spesa lista 5")
             font = item.font()
