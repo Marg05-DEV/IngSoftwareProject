@@ -123,7 +123,6 @@ class VistaCreateSpesa(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
-        print("dentro pair")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -173,12 +172,14 @@ class VistaCreateSpesa(QWidget):
         elif index == "dataPagamento":
             input_line = QDateEdit()
             if not self.checkboxes["pagata"].isChecked():
+                print("qui non voglio che enti")
                 input_line.setVisible(False)
                 label.setVisible(False)
             else:
+                print("qui voglio che entri")
+                input_line.setDate(datetime.date.today())
                 input_line.setVisible(True)
                 label.setVisible(True)
-                input_line.setDate(datetime.date.today())
             input_line.dateChanged.connect(self.input_validation)
         elif index == 'denominazione':
             input_line = QLineEdit()
@@ -283,8 +284,11 @@ class VistaCreateSpesa(QWidget):
         self.numDividendi = 1
 
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
+        self.input_lines["dataPagamento"].setVisible(False)
         self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
+        self.checkboxes["pagata"].setChecked(False)
+        self.checkboxes["isRitenuta"].setChecked(False)
 
         self.sel_immobile = None
 
@@ -471,6 +475,7 @@ class VistaCreateSpesa(QWidget):
             self.input_labels["dataPagamento"].setVisible(False)
             self.input_lines["dataPagamento"].setVisible(False)
         elif self.checkboxes["pagata"].isChecked():
+            self.input_lines["dataPagamento"].setDate(datetime.date.today())
             self.input_labels["dataPagamento"].setVisible(True)
             self.input_lines["dataPagamento"].setVisible(True)
 
