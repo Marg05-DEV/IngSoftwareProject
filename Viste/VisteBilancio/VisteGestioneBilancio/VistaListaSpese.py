@@ -80,7 +80,6 @@ class VistaListaSpese(QWidget):
         self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
         self.table_spese.verticalHeader().setVisible(False)
 
-        #self.lista_spese_competenza = []
         i = 0
         for cod_spesa in self.bilancio.listaSpeseAConsuntivo:
             spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
@@ -115,7 +114,11 @@ class VistaListaSpese(QWidget):
         self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
     def goCalcolaConsuntivo(self):
-        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.immobile, self.bilancio)
+        print('dentro consuntivo si va')
+        self.bilancio.calcolaSpeseConsuntivo()
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        print("si va al consuntivo", self.bilancio.getInfoBilancio)
+        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.bilancio)
         self.calcolo_consuntivo.show()
 
     def callback(self, msg):

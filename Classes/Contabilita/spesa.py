@@ -22,6 +22,7 @@ class Spesa:
         self.tipoSpesa = None
         self.pagata = False
         self.numeroFattura = 0
+        self.aBilancio = False
 
     def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
         #Spesa.numSpeseRegistrate += 1
@@ -87,6 +88,7 @@ class Spesa:
         self.isRitenuta = False
         self.tipoSpesa = None
         self.pagata = False
+        self.aBilancio = False
         self.numeroFattura = 0
         del self
         return "Spesa rimossa"
@@ -247,6 +249,7 @@ class Spesa:
         "isRitenuta" : self.isRitenuta,
         "tipoSpesa" : self.tipoSpesa,
         "pagata" : self.pagata,
+        "aBilancio" : self.aBilancio,
         "numeroFattura" : self.numeroFattura
         }
 
