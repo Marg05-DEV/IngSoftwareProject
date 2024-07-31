@@ -5,6 +5,7 @@ from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy
 
+from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
@@ -18,16 +19,17 @@ from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 class VistaListaSpese(QWidget):
     def __init__(self, bilancio):
         super(VistaListaSpese, self).__init__()
-        print("sono in lista spese")
+
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
+        self.button_list = {}
+        self.lista_spese = []
+
         main_layout = QVBoxLayout()
 
         self.table_spese = QTableWidget()
-        self.lista_spese = []
 
         button_layout = QHBoxLayout()
-        self.button_list = {}
         button_layout.addWidget(self.create_button("Vai a Consuntivo", self.goCalcolaConsuntivo))
 
         message_layout = QHBoxLayout()
@@ -62,15 +64,17 @@ class VistaListaSpese(QWidget):
         return button
 
     def update_table(self):
-        self.spese = list(Spesa.getAllSpeseByPeriodoBilancio(self.immobile, self.bilancio.inizioEsercizio, self.bilancio.fineEsercizio).values())
+        self.bilancio.aggiornaListaSpeseAConsuntivo()
 
-        if not self.spese:
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+
+        if not self.bilancio.listaSpeseAConsuntivo:
             self.msg.setText("Non sono presenti spese in questo esercizio")
             self.msg.show()
         elif not self.timer.isActive():
             self.msg.hide()
 
-        self.table_spese.setRowCount(len(self.spese))
+        self.table_spese.setRowCount(len(self.bilancio.listaSpeseAConsuntivo))
         self.table_spese.setColumnCount(8)
 
         self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
@@ -78,10 +82,9 @@ class VistaListaSpese(QWidget):
 
         #self.lista_spese_competenza = []
         i = 0
-        for spesa in self.spese:
-            print(spesa, spesa.getInfoSpesa())
-            #self.lista_spese_competenza.append(spesa.codice)
-            self.bilancio.listaSpeseAConsuntivo.append(spesa.codice)
+        for cod_spesa in self.bilancio.listaSpeseAConsuntivo:
+            spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+
             self.table_spese.setItem(i, 0, QTableWidgetItem())
             self.table_spese.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, spesa.codice)
             self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)

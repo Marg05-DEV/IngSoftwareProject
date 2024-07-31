@@ -374,7 +374,7 @@ class VistaUpdateSpesa(QWidget):
                     temp_spesa[attributo] = self.input_lines[attributo].text()
                     dataPagamento = temp_spesa["dataPagamento"].split('/')
                     dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
-            elif attributo in ["codice", "dataRegistrazione"] or self.input_lines[attributo].text() == "":
+            elif attributo in ["codice", "dataRegistrazione", "aBilancio"] or self.input_lines[attributo].text() == "":
                 temp_spesa[attributo] = self.spesa.getInfoSpesa()[attributo]
             else:
                 temp_spesa[attributo] = self.input_lines[attributo].text()

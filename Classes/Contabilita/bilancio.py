@@ -2,6 +2,7 @@ import datetime
 import os.path
 import pickle
 
+from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.RegistroAnagrafe.immobile import Immobile
 
@@ -35,13 +36,12 @@ class Bilancio:
 
         ultimo_bilancio = Bilancio.getLastBilancio(Immobile.ricercaImmobileById(immobile))
 
-        print("prima di inizializzare spese prev", immobile)
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(immobile.id)).values():
-            print("Scorrendo tabelle", tabella.nome, tabella.codice)
             there_is_tabella = False
             self.spesePreventivate[tabella.codice] = {}
+            self.speseConsuntivate[tabella.codice] = {}
             for cod_tipo_spesa in tabella.tipologieSpesa:
-                print(" ----- Scorrendo tipi spesa", cod_tipo_spesa)
+                self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
                 if ultimo_bilancio:
                     if tabella.codice in ultimo_bilancio.spesePreventivate:
                         there_is_tabella = True
@@ -52,25 +52,11 @@ class Bilancio:
                 else:
                     self.spesePreventivate[tabella.codice][cod_tipo_spesa] = 0.0
 
+        self.listaSpeseAConsuntivo = [item.codice for item in Spesa.getAllSpeseByPeriodoBilancio(immobile, inizioEsercizio, fineEsercizio).values()]
+
         print(self.spesePreventivate)
-
-        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(immobile.id)).values():
-            print("Scorrendo tabelle", tabella.nome, tabella.codice)
-            there_is_tabella = False
-            self.speseConsuntivate[tabella.codice] = {}
-            for cod_tipo_spesa in tabella.tipologieSpesa:
-                print(" ----- Scorrendo tipi spesa", cod_tipo_spesa)
-                if ultimo_bilancio:
-                    if tabella.codice in ultimo_bilancio.speseConsuntivate:
-                        there_is_tabella = True
-                    if cod_tipo_spesa in ultimo_bilancio.speseConsuntivate[tabella.codice] and there_is_tabella:
-                        self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = ultimo_bilancio.speseConsuntivate[tabella.codice][cod_tipo_spesa]
-                    else:
-                        self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
-                else:
-                    self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
-
         print(self.speseConsuntivate)
+        print(self.listaSpeseAConsuntivo)
 
         bilanci = {}
         if os.path.isfile(nome_file):
@@ -90,7 +76,7 @@ class Bilancio:
             "fineEsercizio": self.fineEsercizio,
             "immobile": self.immobile,
             "spesePreventivate": self.spesePreventivate,
-            "listaSpeseAConsuntico": self.listaSpeseAConsuntivo,
+            "listaSpeseAConsuntivo": self.listaSpeseAConsuntivo,
             "speseConsuntivate": self.speseConsuntivate,
             "ripartizioneSpesePreventivate": self.ripartizioneSpesePreventivate,
             "ripartizioneSpeseConsuntivate": self.ripartizioneSpeseConsuntivate,
@@ -172,15 +158,44 @@ class Bilancio:
                 bilanci[self.codice].spesePreventivate[cod_tabella][cod_tipo_spesa] = importo
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
     def addImportoConsuntivato(self, codice_tabella_millesimale, codice_tipo_spesa, importo):
-        print("dentro cons", codice_tabella_millesimale, codice_tipo_spesa, importo)
         if os.path.isfile(nome_file):
-            print("if")
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
-                print(bilanci[self.codice])
-                print(bilanci[self.codice].speseConsuntivate)
                 bilanci[self.codice].speseConsuntivate[codice_tabella_millesimale][codice_tipo_spesa] = importo
-                print(bilanci[self.codice].speseConsuntivate)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def aggiornaListaSpeseAConsuntivo(self):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                bilanci[self.codice].listaSpeseAConsuntivo = [item.codice for item in Spesa.getAllSpeseByPeriodoBilancio(Immobile.ricercaImmobileById(self.immobile), self.inizioEsercizio, self.fineEsercizio).values()]
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def calcolaSpeseConsuntivo(self):
+        print("dentro calcola spese consuntivo")
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+
+                for cod_tabella in bilanci[self.codice].speseConsuntivate.keys():
+                    for cod_tipo_spesa in bilanci[self.codice].speseConsuntivate[cod_tabella].keys():
+                        bilanci[self.codice].speseConsuntivate[cod_tabella][cod_tipo_spesa] = 0.0
+
+                for cod_spesa in bilanci[self.codice].listaSpeseAConsuntivo:
+                    spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+                    print("scorrendo spese", spesa.getInfoSpesa())
+                    print("bilancio selezioanto", bilanci[self.codice].getInfoBilancio())
+                    for cod_tabella in bilanci[self.codice].speseConsuntivate.keys():
+                        print("---------- scorrendo tabelle", cod_tabella)
+                        for cod_tipo_spesa in bilanci[self.codice].speseConsuntivate[cod_tabella].keys():
+                            print("---------------------- scorrendo tipi spesa", cod_tipo_spesa)
+                            if cod_tipo_spesa == spesa.tipoSpesa:
+                                bilanci[self.codice].speseConsuntivate[cod_tabella][cod_tipo_spesa] += spesa.importo
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+

@@ -12,27 +12,16 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class VistaCalcoloConsuntivo(QWidget):
-    def __init__(self, immobile, bilancio):
+    def __init__(self, bilancio):
         super(VistaCalcoloConsuntivo, self).__init__()
-        #self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
-        print("dentro calcolo consuntivo")
-        self.immobile = immobile
+        self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
-        print(self.bilancio.listaSpeseAConsuntivo)
 
-        for spese_consuntivo in self.bilancio.listaSpeseAConsuntivo:
-            spesa = Spesa.ricercaSpesaByCodice(spese_consuntivo)
-            print("dettaglio spesa: ", spesa.getInfoSpesa())
-            for tabelle in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values():
-                print("dettaglio tabella: ", tabelle.getInfoTabellaMillesimale())
-                if spesa.tipoSpesa in tabelle.tipologieSpesa:
-                    print("codice tabella: ", tabelle.codice, "codice tipo spesa: ", spesa.tipoSpesa, "importo: ", str("%.2f" % spesa.importo) )
-                    self.bilancio.addImportoConsuntivato(tabelle.codice, spesa.tipoSpesa, spesa.importo)
+        print(self.bilancio.listaSpeseAConsuntivo)
 
         main_layout = QVBoxLayout()
 
         self.table_calcolo_consuntivo = QTableWidget()
-        #self.table_calcolo_consuntivo.cellChanged.connect(self.saveMatrix)
 
         main_layout.addWidget(self.table_calcolo_consuntivo)
 
@@ -53,10 +42,6 @@ class VistaCalcoloConsuntivo(QWidget):
         self.setWindowTitle("Calcolo Consuntivo")
 
     def update_table(self):
-        #self.table_proposta_preventivo.cellChanged.disconnect(self.saveMatrix)
-
-        #self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-
         tabelle_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
         used_tipi_spesa = []
 
@@ -69,10 +54,7 @@ class VistaCalcoloConsuntivo(QWidget):
         bold_font.setBold(True)
 
         self.table_calcolo_consuntivo.setHorizontalHeaderLabels(["DESCRIZIONE TIPOLOGIA DI SPESA", "IMPORTO EFFETTIVO"])
-        """
-        self.table_proposta_preventivo.setHorizontalHeaderItem(0, QTableWidgetItem("DESCRIZIONE TIPOLOGIA DI SPESA"))
-        self.table_proposta_preventivo.setHorizontalHeaderItem(1, QTableWidgetItem("IMPORTO PREVENTIVATO"))
-        """
+
         self.table_calcolo_consuntivo.horizontalHeader().setFont(bold_font)
 
         row = 0
@@ -89,7 +71,7 @@ class VistaCalcoloConsuntivo(QWidget):
                 self.table_calcolo_consuntivo.setItem(row, 1, QTableWidgetItem("%.2f" % self.bilancio.speseConsuntivate[tabella.codice][cod_tipo_spesa]))
 
                 self.table_calcolo_consuntivo.item(row, 0).setFlags(Qt.ItemFlag.ItemIsEnabled)
-                self.table_calcolo_consuntivo.item(row, 1).setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable)
+                self.table_calcolo_consuntivo.item(row, 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
                 self.table_calcolo_consuntivo.item(row, 1).setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignRight)
                 self.table_calcolo_consuntivo.item(row, 1).setData(Qt.ItemDataRole.UserRole, [tabella.codice, cod_tipo_spesa])
@@ -121,24 +103,6 @@ class VistaCalcoloConsuntivo(QWidget):
         self.table_calcolo_consuntivo.verticalHeader().setVisible(False)
         self.table_calcolo_consuntivo.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_calcolo_consuntivo.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-
-        #self.table_calcolo_consuntivo.cellChanged.connect(self.saveMatrix)
-
-    """def saveMatrix(self, row, column):
-        print("edit effettuato", row, column)
-        match = re.fullmatch("[0-9]*|[0-9]*[.,][0-9]{0,2}", self.table_proposta_preventivo.item(row, column).text())
-        print("matcha?", match)
-        coordinate = self.table_proposta_preventivo.item(row, column).data(Qt.ItemDataRole.UserRole)
-        if coordinate is not None:
-            if match is not None:
-                print(match, coordinate)
-                importo = float(self.table_proposta_preventivo.item(row, column).text().replace(",", "."))
-                self.bilancio.addImportoPreventivato(coordinate[0], coordinate[1], importo)
-            else:
-                self.msg.setText("Il valore inserito nella cella non è valido")
-                self.msg.show()
-                self.timer.start()
-            self.update_table()"""
 
     def hide_message(self):
         self.msg.hide()

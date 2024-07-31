@@ -124,9 +124,9 @@ def up():
     # seeding spese
     spesa = Spesa()
     spesa.aggiungiSpesa("descrizione 1", 1, 12.60, 1, 1, True, datetime.date.today(), datetime.date.today(), datetime.date.today(), True, 1)
-    spesa.aggiungiSpesa("descrizione 2", 2, 122.60, 1, 1, False, datetime.date.today(), datetime.date.today(), datetime.date.today(), True, 2)
+    spesa.aggiungiSpesa("descrizione 2", 2, 122.60, 1, 1, False, None, datetime.date.today(), datetime.date.today(), True, 2)
     spesa.aggiungiSpesa("descrizione 3", 3, 102.60, 2, 2, True, datetime.date.today(), datetime.date.today(), datetime.date.today(), False, 1)
-    spesa.aggiungiSpesa("descrizione 4", 4, 1.60, 3, 1, False, datetime.date.today(), datetime.date.today(), datetime.date.today(), False, 3)
+    spesa.aggiungiSpesa("descrizione 4", 4, 1.60, 3, 1, False, None, datetime.date.today(), datetime.date.today(), False, 3)
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))
