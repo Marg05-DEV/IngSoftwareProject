@@ -115,23 +115,15 @@ class VistaGestioneEsercizi(QWidget):
                 item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio} -> Approvato il {bilancio.dataApprovazione}"
             else:
                 item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio} -> Non Approvato"
-            print("i")
             item.setText(item_text)
-            print("i")
             item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-            print("i")
             font = item.font()
-            print("i")
             font.setPointSize(12)
-            print("i")
             item.setFont(font)
             item.setData(Qt.ItemDataRole.UserRole, bilancio.codice)
-            print("i")
             self.list_view_bilanci.addItem(item)
-            print("ii")
 
         self.list_view_bilanci.itemSelectionChanged.connect(self.able_button)
-        print("ii")
 
     def goBilancio(self):
         bilancio = Bilancio.ricercaBilancioByCodice(self.list_view_bilanci.selectedItems()[0].data(Qt.ItemDataRole.UserRole))
