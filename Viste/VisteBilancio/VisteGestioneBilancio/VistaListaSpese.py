@@ -3,7 +3,7 @@ import datetime
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
-    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy
+    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy, QCheckBox
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
@@ -23,6 +23,7 @@ class VistaListaSpese(QWidget):
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
         self.button_list = {}
+        self.checkboxes = {}
         self.lista_spese = []
 
         main_layout = QVBoxLayout()
@@ -64,31 +65,66 @@ class VistaListaSpese(QWidget):
         return button
 
     def update_table(self):
+        print("dentro update")
         self.bilancio.aggiornaListaSpeseAConsuntivo()
 
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        print(self.bilancio.listaSpeseAConsuntivo)
+        print(self.bilancio.listaSpeseNonAConsuntivo)
 
-        if not self.bilancio.listaSpeseAConsuntivo:
+        if not self.bilancio.listaSpeseAConsuntivo and not self.bilancio.listaSpeseNonAConsuntivo:
             self.msg.setText("Non sono presenti spese in questo esercizio")
             self.msg.show()
         elif not self.timer.isActive():
             self.msg.hide()
 
-        self.table_spese.setRowCount(len(self.bilancio.listaSpeseAConsuntivo))
-        self.table_spese.setColumnCount(8)
-
-        self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
+        print("sorpasso. controllo liste vuote")
+        self.table_spese.setRowCount(len(self.bilancio.listaSpeseAConsuntivo) + len(self.bilancio.listaSpeseNonAConsuntivo))
+        self.table_spese.setColumnCount(9)
+        print("sorpasso. set dimensioni tabella")
+        self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata", "A Consuntivo"])
         self.table_spese.verticalHeader().setVisible(False)
+        print("sorpasso. prima di stampare le spese")
 
         i = 0
         for cod_spesa in self.bilancio.listaSpeseAConsuntivo:
             spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
 
-            self.table_spese.setItem(i, 0, QTableWidgetItem())
-            self.table_spese.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, spesa.codice)
+            self.table_spese.setItem(i, 0, QTableWidgetItem(str(spesa.codice)))
             self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
             self.table_spese.setItem(i, 1, QTableWidgetItem(Immobile.ricercaImmobileById(spesa.immobile).denominazione))
+            if spesa.dataPagamento is not None:
+                self.table_spese.setItem(i, 2, QTableWidgetItem(spesa.dataPagamento.strftime("%Y/%m/%d")))
+            else:
+                self.table_spese.setItem(i, 2, QTableWidgetItem(""))
+            self.table_spese.setItem(i, 3, QTableWidgetItem(spesa.descrizione))
+            self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
+            self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+            self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
+            print("prima di allineare l'importo")
+            self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
+            self.table_spese.setItem(i, 7, QTableWidgetItem())
             if spesa.pagata:
+                self.table_spese.item(i, 7).setData(10, 2)
+            else:
+                self.table_spese.item(i, 7).setData(10, 0)
+            print(" ----------- sorpasso. appena prima di mettere un checkbox")
+            checkbox = QCheckBox()
+            checkbox.setChecked(True)
+            self.checkboxes[spesa.codice] = checkbox
+            self.table_spese.setCellWidget(i, 8, checkbox)
+            self.table_spese.cellWidget(i, 8).stateChanged.connect(self.changeList)
+            print("------------ appena dope")
+            i += 1
+        print("sorpasso. printed lista a cons")
+
+        for cod_spesa in self.bilancio.listaSpeseNonAConsuntivo:
+            spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+
+            self.table_spese.setItem(i, 0, QTableWidgetItem(str(spesa.codice)))
+            self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+            self.table_spese.setItem(i, 1, QTableWidgetItem(Immobile.ricercaImmobileById(spesa.immobile).denominazione))
+            if spesa.dataPagamento is not None:
                 self.table_spese.setItem(i, 2, QTableWidgetItem(spesa.dataPagamento.strftime("%Y/%m/%d")))
             else:
                 self.table_spese.setItem(i, 2, QTableWidgetItem(""))
@@ -102,13 +138,19 @@ class VistaListaSpese(QWidget):
                 self.table_spese.item(i, 7).setData(10, 2)
             else:
                 self.table_spese.item(i, 7).setData(10, 0)
-            self.table_spese.item(i, 7).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+            print(" ----------- sorpasso. appena prima di mettere un checkbox")
+            checkbox = QCheckBox()
+            checkbox.setChecked(False)
+            self.checkboxes[spesa.codice] = checkbox
+            self.table_spese.setCellWidget(i, 8, checkbox)
+            self.table_spese.cellWidget(i, 8).stateChanged.connect(self.changeList)
+            print("------------ appena dope")
             i += 1
+        print("sorpasso. printed lista a non cons")
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_spese.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         self.table_spese.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
 
-        self.table_spese.sortItems(0, Qt.SortOrder.DescendingOrder)
         self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -120,6 +162,14 @@ class VistaListaSpese(QWidget):
         print("si va al consuntivo", self.bilancio.getInfoBilancio)
         self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.bilancio)
         self.calcolo_consuntivo.show()
+
+    def changeList(self):
+        for cod_spesa, checkbox in self.checkboxes.items():
+            print("checkbox chiamante", self.sender(), "checkbox che cicla", checkbox)
+            if checkbox is self.sender():
+                self.bilancio.changeListaConsuntivo(cod_spesa)
+        self.update_table()
+
 
     def callback(self, msg):
         self.update_table()

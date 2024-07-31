@@ -18,6 +18,7 @@ class Bilancio:
         self.fineEsercizio = datetime.date(year=1970, month=1, day=1)
         self.spesePreventivate = {} # {TabMillesimale: {TipoSpesa: valore inserito da noi}, ...}
         self.listaSpeseAConsuntivo = []
+        self.listaSpeseNonAConsuntivo = []
         self.speseConsuntivate = {} # {TabMillesimale: {TipoSpesa: valore calcolato dalle spese inserite}, ...}
         self.ripartizioneSpesePreventivate = {} # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict spesePreventivate e tabelle millesimali}, ...}
         self.ripartizioneSpeseConsuntivate = {} # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict speseConsuntivate e tabelle millesimali}, ...}
@@ -30,17 +31,23 @@ class Bilancio:
         self.isLastEsercizio = False
         
     def aggiungiBilancio(self, inizioEsercizio, fineEsercizio, immobile):
+        print("dentro aggiungiBilancio, immobile", immobile)
         self.inizioEsercizio = inizioEsercizio
         self.fineEsercizio = fineEsercizio
         self.immobile = immobile.id
 
-        ultimo_bilancio = Bilancio.getLastBilancio(Immobile.ricercaImmobileById(immobile))
+        print("prima di ultimo bilancio")
+        ultimo_bilancio = Bilancio.getLastBilancio(Immobile.ricercaImmobileById(immobile.id))
+        print("dopo ultimo bilancio")
 
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(immobile.id)).values():
+            print("scorrendo tabelle")
             there_is_tabella = False
             self.spesePreventivate[tabella.codice] = {}
             self.speseConsuntivate[tabella.codice] = {}
+            print("tabella", tabella)
             for cod_tipo_spesa in tabella.tipologieSpesa:
+                print("------------- tipo spese", cod_tipo_spesa)
                 self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
                 if ultimo_bilancio:
                     if tabella.codice in ultimo_bilancio.spesePreventivate:
@@ -52,11 +59,17 @@ class Bilancio:
                 else:
                     self.spesePreventivate[tabella.codice][cod_tipo_spesa] = 0.0
 
-        self.listaSpeseAConsuntivo = [item.codice for item in Spesa.getAllSpeseByPeriodoBilancio(immobile, inizioEsercizio, fineEsercizio).values()]
 
-        print(self.spesePreventivate)
-        print(self.speseConsuntivate)
-        print(self.listaSpeseAConsuntivo)
+
+        listaSpeseNonABilancio = [item.codice for item in Spesa.getAllSpeseByImmobile(immobile).values() if not item.aBilancio]
+        self.listaSpeseAConsuntivo = [item for item in listaSpeseNonABilancio if Spesa.ricercaSpesaByCodice(item).dataRegistrazione >= inizioEsercizio and Spesa.ricercaSpesaByCodice(item).dataRegistrazione <= fineEsercizio]
+        self.listaSpeseNonAConsuntivo = [item for item in listaSpeseNonABilancio if item not in self.listaSpeseAConsuntivo]
+
+
+        print("spese prev ", self.spesePreventivate)
+        print("spese cons ", self.speseConsuntivate)
+        print("spese a consuntivo: ", self.listaSpeseAConsuntivo)
+        print("spese NON a cons: ", self.listaSpeseNonAConsuntivo)
 
         bilanci = {}
         if os.path.isfile(nome_file):
@@ -115,7 +128,9 @@ class Bilancio:
 
     @staticmethod
     def getLastBilancio(immobile):
+        print("dentro get ultimo bilancio. immobile", immobile)
         bilanci_immobile = Bilancio.getAllBilanciByImmobile(immobile)
+        print("bilanci dell'immobile", bilanci_immobile)
         ultimo_bilancio = 0
 
         for bilancio in bilanci_immobile.values():
@@ -171,7 +186,28 @@ class Bilancio:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
-                bilanci[self.codice].listaSpeseAConsuntivo = [item.codice for item in Spesa.getAllSpeseByPeriodoBilancio(Immobile.ricercaImmobileById(self.immobile), self.inizioEsercizio, self.fineEsercizio).values()]
+                listaSpeseNonABilancio = [item.codice for item in Spesa.getAllSpeseByImmobile(Immobile.ricercaImmobileById(bilanci[self.codice].immobile)).values() if not item.aBilancio]
+
+                for cod_spesa in listaSpeseNonABilancio:
+                    if cod_spesa not in bilanci[self.codice].listaSpeseAConsuntivo and cod_spesa not in bilanci[self.codice].listaSpeseNonAConsuntivo:
+                        spesa_nel_limbo = Spesa.ricercaSpesaByCodice(cod_spesa)
+                        if spesa_nel_limbo.dataRegistrazione >= bilanci[self.codice].inizioEsercizio and spesa_nel_limbo.dataRegistrazione <= bilanci[self.codice].fineEsercizio:
+                            bilanci[self.codice].listaSpeseAConsuntivo.append(cod_spesa)
+                        else:
+                            bilanci[self.codice].listaSpeseNonAConsuntivo.append(cod_spesa)
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def changeListaConsuntivo(self, cod_spesa):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                if cod_spesa in bilanci[self.codice].listaSpeseAConsuntivo:
+                    bilanci[self.codice].listaSpeseAConsuntivo.remove(cod_spesa)
+                    bilanci[self.codice].listaSpeseNonAConsuntivo.append(cod_spesa)
+                elif cod_spesa in bilanci[self.codice].listaSpeseNonAConsuntivo:
+                    bilanci[self.codice].listaSpeseNonAConsuntivo.remove(cod_spesa)
+                    bilanci[self.codice].listaSpeseAConsuntivo.append(cod_spesa)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
@@ -187,12 +223,8 @@ class Bilancio:
 
                 for cod_spesa in bilanci[self.codice].listaSpeseAConsuntivo:
                     spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
-                    print("scorrendo spese", spesa.getInfoSpesa())
-                    print("bilancio selezioanto", bilanci[self.codice].getInfoBilancio())
                     for cod_tabella in bilanci[self.codice].speseConsuntivate.keys():
-                        print("---------- scorrendo tabelle", cod_tabella)
                         for cod_tipo_spesa in bilanci[self.codice].speseConsuntivate[cod_tabella].keys():
-                            print("---------------------- scorrendo tipi spesa", cod_tipo_spesa)
                             if cod_tipo_spesa == spesa.tipoSpesa:
                                 bilanci[self.codice].speseConsuntivate[cod_tabella][cod_tipo_spesa] += spesa.importo
         with open(nome_file, "wb") as f:

@@ -327,8 +327,7 @@ class VistaCreateSpesa(QWidget):
             fornitore = Fornitore.ricercaFornitoreByDenominazione(denominazione)
         else:
             temp_fornitore = Fornitore()
-            msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva,
-                                                              tipoProfessione)
+            msg, fornitore = temp_fornitore.aggiungiFornitore(cittaSede, denominazione, indirizzoSede, partitaIva, tipoProfessione)
 
         for i in range(self.numDividendi):
             importo = float((self.input_lines["importo"].text()).replace(",", "."))
