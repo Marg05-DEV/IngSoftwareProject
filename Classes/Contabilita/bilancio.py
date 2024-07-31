@@ -90,6 +90,7 @@ class Bilancio:
             "immobile": self.immobile,
             "spesePreventivate": self.spesePreventivate,
             "listaSpeseAConsuntivo": self.listaSpeseAConsuntivo,
+            "listaSpeseNonAConsuntivo": self.listaSpeseAConsuntivo,
             "speseConsuntivate": self.speseConsuntivate,
             "ripartizioneSpesePreventivate": self.ripartizioneSpesePreventivate,
             "ripartizioneSpeseConsuntivate": self.ripartizioneSpeseConsuntivate,
@@ -183,6 +184,7 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def aggiornaListaSpeseAConsuntivo(self):
+        print("dentro aggiornaListaSpeseAConsuntivo")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))

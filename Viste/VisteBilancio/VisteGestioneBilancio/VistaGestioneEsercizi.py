@@ -177,13 +177,13 @@ class VistaGestioneEsercizi(QWidget):
         data_fine = data_fine.split("/")
         data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
 
-        for bilancio in Bilancio.getAllBilanci().values():
-            if data_inizio == bilancio.inizioEsercizio and data_fine == bilancio.fineEsercizio:
+        """for bilancio in Bilancio.getAllBilanci().values():
+            if data_inizio >= bilancio.inizioEsercizio and data_inizio <= bilancio.fineEsercizio:
                 self.input_errors["error"].setVisible(True)
             else:
-                self.input_errors["error"].setVisible(False)
-
-        if data_inizio > data_fine or self.input_errors["error"].isVisible():
+                self.input_errors["error"].setVisible(False)"""
+        #if data_inizio > data_fine or self.input_errors["error"].isVisible():
+        if data_inizio > data_fine:
             self.button_list["Nuovo Esercizio"].setDisabled(True)
         else:
             self.button_list["Nuovo Esercizio"].setDisabled(False)
