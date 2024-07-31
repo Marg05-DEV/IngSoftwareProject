@@ -35,6 +35,11 @@ class VistaGestioneEsercizi(QWidget):
         action_data.addLayout(self.pairLabelInput("Data fine Esercizio", "fineEsercizio"))
         action_data.addWidget(self.create_button("Nuovo Esercizio", self.goNuovoEsercizio, False))
 
+        self.lbl_bilancio_exists= QLabel("Il bilancio è esistente")
+        self.lbl_bilancio_exists.setStyleSheet("font-weight: bold;")
+        self.input_errors["error"] = self.lbl_bilancio_exists
+        self.input_errors["error"].setVisible(False)
+
         self.msg = QLabel("Non ci sono Esercizi")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
@@ -45,13 +50,14 @@ class VistaGestioneEsercizi(QWidget):
 
         main_layout.addLayout(action_layout)
         main_layout.addLayout(action_data)
+        main_layout.addWidget(self.lbl_bilancio_exists)
         main_layout.addWidget(self.msg)
 
         self.update_list()
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Bilancio")
+        self.setWindowTitle("Gestione Esercizio")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
@@ -171,7 +177,13 @@ class VistaGestioneEsercizi(QWidget):
         data_fine = data_fine.split("/")
         data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
 
-        if data_inizio > data_fine:
+        for bilancio in Bilancio.getAllBilanci().values():
+            if data_inizio == bilancio.inizioEsercizio and data_fine == bilancio.fineEsercizio:
+                self.input_errors["error"].setVisible(True)
+            else:
+                self.input_errors["error"].setVisible(False)
+
+        if data_inizio > data_fine or self.input_errors["error"].isVisible():
             self.button_list["Nuovo Esercizio"].setDisabled(True)
         else:
             self.button_list["Nuovo Esercizio"].setDisabled(False)
