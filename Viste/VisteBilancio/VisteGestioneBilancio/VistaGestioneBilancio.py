@@ -71,11 +71,11 @@ class VistaGestioneBilancio(QWidget):
         self.lista_spese.show()
 
     def goRipartizionePreventivo(self):
-        self.ripartizione_preventivo = VistaRipartizionePreventivo()
+        self.ripartizione_preventivo = VistaRipartizionePreventivo(self.bilancio)
         self.ripartizione_preventivo.show()
 
     def goRipartizioneConsuntivo(self):
-        self.ripartizione_consuntivo = VistaRipartizioneConsuntivo()
+        self.ripartizione_consuntivo = VistaRipartizioneConsuntivo(self.bilancio)
         self.ripartizione_consuntivo.show()
 
     def goProspettiEsercizio(self):

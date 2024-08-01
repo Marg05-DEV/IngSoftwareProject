@@ -5,6 +5,7 @@ import pickle
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 nome_file = 'Dati/Bilanci.pickle'
 
@@ -22,13 +23,14 @@ class Bilancio:
         self.speseConsuntivate = {} # {TabMillesimale: {TipoSpesa: valore calcolato dalle spese inserite}, ...}
         self.ripartizioneSpesePreventivate = {} # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict spesePreventivate e tabelle millesimali}, ...}
         self.ripartizioneSpeseConsuntivate = {} # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict speseConsuntivate e tabelle millesimali}, ...}
-        self.ripartizioneConguaglio = {} # {TabMillesimale: {UnitaImmobiliare: differenza ripartizioneSpesePrev - ripartizioneSpeseCons }, ...}
+        self.ripartizioneConguaglio = {} # {UnitaImmobiliare: differenza ripartizioneSpesePrev - ripartizioneSpeseCons }
         self.importiDaVersare = {} # {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
         self.numeroRate = 0
         self.ratePreventivate = {} # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
         self.isApprovata = False
         self.dataApprovazione = datetime.date(year=1970, month=1, day=1)
         self.isLastEsercizio = False
+        self.passaggi = {"spesePreventivate": False, "speseConsuntivate": False, "ripartizioneSpesePreventivate": False, "ripartizioneSpeseConsuntivate": False}
         
     def aggiungiBilancio(self, inizioEsercizio, fineEsercizio, immobile):
         print("dentro aggiungiBilancio, immobile", immobile)
@@ -36,15 +38,14 @@ class Bilancio:
         self.fineEsercizio = fineEsercizio
         self.immobile = immobile.id
 
-        print("prima di ultimo bilancio")
         ultimo_bilancio = Bilancio.getLastBilancio(Immobile.ricercaImmobileById(immobile.id))
-        print("dopo ultimo bilancio")
 
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(immobile.id)).values():
-            print("scorrendo tabelle")
             there_is_tabella = False
             self.spesePreventivate[tabella.codice] = {}
             self.speseConsuntivate[tabella.codice] = {}
+            self.ripartizioneSpeseConsuntivate[tabella.codice] = {}
+            self.ripartizioneSpesePreventivate[tabella.codice] = {}
             print("tabella", tabella)
             for cod_tipo_spesa in tabella.tipologieSpesa:
                 print("------------- tipo spese", cod_tipo_spesa)
@@ -59,6 +60,10 @@ class Bilancio:
                 else:
                     self.spesePreventivate[tabella.codice][cod_tipo_spesa] = 0.0
 
+            for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(immobile.id)).values():
+                self.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice] = 0.0
+                self.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice] = 0.0
+                self.ripartizioneConguaglio[unita_immobiliare.codice] = 0.0
 
 
         listaSpeseNonABilancio = [item.codice for item in Spesa.getAllSpeseByImmobile(immobile).values() if not item.aBilancio]
@@ -232,4 +237,19 @@ class Bilancio:
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
+    def passaggioRaggiunto(self):
+        pass
 
+    def calcolaQuotaConsuntivo(self, unita_immobiliare, tabella_millesimale):
+        print("sono in calcola Quota", unita_immobiliare, tabella_millesimale)
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                totale_millesimi_tabella = sum(list(tabella_millesimale.millesimi.values()))
+                totale_consuntivo_tabella = sum(list(bilanci[self.codice].speseConsuntivate[tabella_millesimale.codice].values()))
+                print("Totale cons: ", totale_consuntivo_tabella, "totale mill: ", totale_millesimi_tabella)
+                print(bilanci[self.codice].ripartizioneSpeseConsuntivate)
+                bilanci[self.codice].ripartizioneSpeseConsuntivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_consuntivo_tabella) / totale_millesimi_tabella
+                print(bilanci[self.codice].ripartizioneSpeseConsuntivate)
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
