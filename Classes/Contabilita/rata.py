@@ -149,6 +149,22 @@ class Rata:
             return {}
 
     @staticmethod
+    def getAllRateByUnitaImmobiliare(unita_immobiliare):
+        print("in getAllrateUnita")
+        rate = Rata.getAllRate()
+        rateByUnitaImmobiliare = {}
+        if rate:
+            for cod_rata, rata in rate.items():
+                print("------------scorrendo rate", rata)
+                if rata.unitaImmobiliare > 0:
+                    if unita_immobiliare.codice == rata.unitaImmobiliare:
+                        print("rata approvata", rata.getInfoRata())
+                        rateByUnitaImmobiliare[cod_rata] = rata
+            print(rateByUnitaImmobiliare)
+            return rateByUnitaImmobiliare
+        else:
+            return {}
+    @staticmethod
     def lastNumeroRicevuta(immobile):
         #{1: cardinalità di 1, 2: cardinalità di 2, ..., n: cardinalità di n}
         print(immobile)

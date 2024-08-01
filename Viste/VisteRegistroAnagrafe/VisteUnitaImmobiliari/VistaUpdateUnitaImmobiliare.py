@@ -148,6 +148,15 @@ class VistaUpdateUnitaImmobiliare(QWidget):
     def reset(self):
         for input_line in self.input_lines.values():
             input_line.clear()
+        self.input_lines["tipoUnitaImmobiliare"].addItems(['Appartamento', 'Box', 'Cantina', 'Negozio'])
+        self.input_lines["tipoUnitaImmobiliare"].setCurrentText(self.sel_unitaImmobiliare.tipoUnitaImmobiliare)
+        if self.input_lines['tipoUnitaImmobiliare'].currentText() == "Appartamento":
+            self.input_lines["interno"].setVisible(True)
+            self.input_lines["scala"].setVisible(True)
+            self.labels["interno"].setVisible(True)
+            self.labels["scala"].setVisible(True)
+        self.input_errors['scala'].setVisible(False)
+        self.input_errors['interno'].setVisible(False)
 
     def input_validation(self):
         print("scrivendo ...")
@@ -196,9 +205,10 @@ class VistaUpdateUnitaImmobiliare(QWidget):
 
         for unita in unitaImmobiliari.values():
             if not unita.codice == self.sel_unitaImmobiliare.codice:
-                if scala == unita.scala and interno == unita.interno:
-                    there_is_unique_pair_error = True
-                    break
+                if scala != 0 and interno != 0:
+                    if scala == unita.scala and interno == unita.interno:
+                        there_is_unique_pair_error = True
+                        break
 
         num_writed_lines = 0
         for field in required_fields:

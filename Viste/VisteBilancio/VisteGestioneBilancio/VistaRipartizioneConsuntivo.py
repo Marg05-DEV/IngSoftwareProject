@@ -37,6 +37,7 @@ class VistaRipartizioneConsuntivo(QWidget):
         self.resize(1200, 650)
         self.setWindowTitle("Ripartizione Consuntivo")
     def update_table(self):
+        print("update")
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
 
@@ -57,6 +58,7 @@ class VistaRipartizioneConsuntivo(QWidget):
             self.table_ripartizioneConsuntivo.item(1, j + 1 + len(tabelle_millesimali)).setFont(bold_font)
             self.table_ripartizioneConsuntivo.item(1, j + 1 + len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             j += 1
+
         self.table_ripartizioneConsuntivo.setItem(1, len(tabelle_millesimali), QTableWidgetItem(f"Unità Immobiliari\nCondomino Proprietario"))
         self.table_ripartizioneConsuntivo.item(1, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizioneConsuntivo.item(1, len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -90,7 +92,14 @@ class VistaRipartizioneConsuntivo(QWidget):
                 else:
                     proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
                     self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+
+                self.table_ripartizioneConsuntivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
                 print("prima del richiamo")
+
+                if unita.codice not in tabella.millesimi:
+                    tabella.addMillesimo(unita, 0.00)
+                    tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
+
                 self.bilancio.calcolaQuotaConsuntivo(unita, tabella)
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
 
@@ -98,26 +107,33 @@ class VistaRipartizioneConsuntivo(QWidget):
                 totale_consuntivo_tabella += self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
                 self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari)+2, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % totale_consuntivo_tabella))
 
-                if unita.codice not in tabella.millesimi:
-                    tabella.addMillesimo(unita, 0.00)
-                    tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
-
                 totale_millesimi_tabella += tabella.millesimi[unita.codice]
 
                 self.table_ripartizioneConsuntivo.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
 
-                if i in totale_consuntivo_attuale:
-                    totale_consuntivo_attuale[i] += self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
+                if unita.codice in totale_consuntivo_attuale:
+                    totale_consuntivo_attuale[unita.codice] += self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
                 else:
-                    totale_consuntivo_attuale[i] = self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
+                    totale_consuntivo_attuale[unita.codice] = self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
                 i += 1
             self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, j, QTableWidgetItem("%.2f" % totale_millesimi_tabella))
+
             j += 1
+        conguaglio_precedente = self.bilancio.getConguaglioPrecedente()
+        rate_versate = self.bilancio.getRateVersate()
+        self.bilancio.calcolaConguaglio(totale_consuntivo_attuale, conguaglio_precedente, rate_versate)
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        for i in range(2, len(unita_immobiliari)+2):
+            cod_unita = self.table_ripartizioneConsuntivo.item(i, len(tabelle_millesimali)).data(Qt.ItemDataRole.UserRole)
+            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % totale_consuntivo_attuale[cod_unita]))
+            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali)*2 + 2, QTableWidgetItem("%.2f" % conguaglio_precedente[cod_unita]))
+            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali)*2 + 3, QTableWidgetItem("%.2f" % rate_versate[cod_unita]))
+            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali)*2 + 4, QTableWidgetItem("%.2f" % self.bilancio.ripartizioneConguaglio[cod_unita]))
 
-        for unita, totale in totale_consuntivo_attuale.items():
-            self.table_ripartizioneConsuntivo.setItem(unita, len(tabelle_millesimali)*2 + 1, QTableWidgetItem("%.2f" % totale))
-
-        self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari)+2, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % sum(list(totale_consuntivo_attuale.values()))))
+        self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % sum(list(totale_consuntivo_attuale.values()))))
+        self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % sum(list(conguaglio_precedente.values()))))
+        self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % sum(list(rate_versate.values()))))
+        self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4, QTableWidgetItem("%.2f" % sum(list(self.bilancio.ripartizioneConguaglio.values()))))
 
         self.table_ripartizioneConsuntivo.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.table_ripartizioneConsuntivo.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)

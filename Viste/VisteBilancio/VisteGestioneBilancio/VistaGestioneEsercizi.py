@@ -183,10 +183,7 @@ class VistaGestioneEsercizi(QWidget):
         data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
         print("c")
         bilancio_esistente = False
-        for bilancio in Bilancio.getAllBilanci().values():
-            print("prima", (data_inizio >= bilancio.inizioEsercizio and data_inizio <= bilancio.fineEsercizio))
-            print("dopo", (data_fine >= bilancio.inizioEsercizio and data_fine <= bilancio.fineEsercizio))
-            print("insieme", (data_inizio >= bilancio.inizioEsercizio and data_inizio <= bilancio.fineEsercizio) or (data_fine >= bilancio.inizioEsercizio and data_fine <= bilancio.fineEsercizio))
+        for bilancio in Bilancio.getAllBilanciByImmobile(self.immobile).values():
             if (data_inizio >= bilancio.inizioEsercizio and data_inizio <= bilancio.fineEsercizio) or (data_fine >= bilancio.inizioEsercizio and data_fine <= bilancio.fineEsercizio):
                 bilancio_esistente = True
 
