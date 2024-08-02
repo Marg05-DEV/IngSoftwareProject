@@ -1,3 +1,5 @@
+import datetime
+
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QAbstractItemView, \
@@ -49,10 +51,38 @@ class VistaRipartizioneConsuntivo(QWidget):
 
         self.table_ripartizioneConsuntivo.horizontalHeader().setFont(bold_font)
 
+        print("settando prima riga di header")
+        self.table_ripartizioneConsuntivo.setItem(0, 0, QTableWidgetItem("Tabelle Millesimali - Millesimi"))
+        print("i")
+        self.table_ripartizioneConsuntivo.setItem(0, len(tabelle_millesimali), QTableWidgetItem("Unita Immobilari"))
+        print("ii")
+        self.table_ripartizioneConsuntivo.setItem(0, len(tabelle_millesimali) + 1, QTableWidgetItem("Tab. Millesimali - Quote"))
+        print("iii")
+        self.table_ripartizioneConsuntivo.setItem(0, 2 * len(tabelle_millesimali) + 1, QTableWidgetItem(f"RIPARTIZIONE CONSUNTIVO ESERCIZIO {datetime.date.strftime(self.bilancio.inizioEsercizio, '%d/%m/%Y')} - {datetime.date.strftime(self.bilancio.fineEsercizio, '%d/%m/%Y')}"))
+        print("settata")
+
+        print("inizio set font")
+        self.table_ripartizioneConsuntivo.item(0, 0).setFont(bold_font)
+        print("i")
+        self.table_ripartizioneConsuntivo.item(0, len(tabelle_millesimali)).setFont(bold_font)
+        print("ii")
+        self.table_ripartizioneConsuntivo.item(0, len(tabelle_millesimali) + 1).setFont(bold_font)
+        print("iii")
+        self.table_ripartizioneConsuntivo.item(0, 2 * len(tabelle_millesimali) + 1).setFont(bold_font)
+        print("fine set font")
+
+        print("settando gli span")
+        self.table_ripartizioneConsuntivo.setSpan(0, 0, 1, len(tabelle_millesimali))
+        print("i")
+        self.table_ripartizioneConsuntivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
+        print("ii")
+        self.table_ripartizioneConsuntivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 4)
+        print("fine span")
+
         j = 0
         for tabella in tabelle_millesimali:
             self.table_ripartizioneConsuntivo.setItem(1, j, QTableWidgetItem(f"{tabella.nome}\n{tabella.descrizione}"))
-            self.table_ripartizioneConsuntivo.setItem(1, j + 1 + len(tabelle_millesimali), QTableWidgetItem(f"{tabella.nome}\nQuote:"))
+            self.table_ripartizioneConsuntivo.setItem(1, j + 1 + len(tabelle_millesimali), QTableWidgetItem(f"{tabella.nome}\nQuote"))
             self.table_ripartizioneConsuntivo.item(1, j).setFont(bold_font)
             self.table_ripartizioneConsuntivo.item(1, j).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.table_ripartizioneConsuntivo.item(1, j + 1 + len(tabelle_millesimali)).setFont(bold_font)
@@ -154,3 +184,6 @@ class VistaRipartizioneConsuntivo(QWidget):
         if not list(Bilancio.getAllBilanciByImmobile(self.immobile).values()):
             self.msg.setText("Non ci sono bilanci definiti")
             self.msg.show()
+
+    def closeEvent(self, event):
+        self.callback()

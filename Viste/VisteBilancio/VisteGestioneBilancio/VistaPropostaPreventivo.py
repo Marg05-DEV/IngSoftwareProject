@@ -11,10 +11,11 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class VistaPropostaPreventivo(QWidget):
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback):
         super(VistaPropostaPreventivo, self).__init__()
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
+        self.callback = callback
 
         main_layout = QVBoxLayout()
 
@@ -130,3 +131,6 @@ class VistaPropostaPreventivo(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
+
+    def closeEvent(self, event):
+        self.callback()

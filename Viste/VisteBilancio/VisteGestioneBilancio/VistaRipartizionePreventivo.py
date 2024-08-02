@@ -1,3 +1,5 @@
+import datetime
+
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QAbstractItemView, \
@@ -48,6 +50,20 @@ class VistaRipartizionePreventivo(QWidget):
         bold_font.setBold(True)
 
         self.table_ripartizionePreventivo.horizontalHeader().setFont(bold_font)
+
+        self.table_ripartizionePreventivo.setItem(0, 0, QTableWidgetItem("Tabelle Millesimali - Millesimi"))
+        self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali), QTableWidgetItem("Unita Immobilari"))
+        self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) + 1, QTableWidgetItem("Tab. Millesimali - Quote"))
+        self.table_ripartizionePreventivo.setItem(0, 2 * len(tabelle_millesimali) + 1, QTableWidgetItem(f"RIPARTIZIONE PREVENTIVO ESERCIZIO {datetime.date.strftime(self.bilancio.inizioEsercizio, '%d/%m/%Y')} - {datetime.date.strftime(self.bilancio.fineEsercizio, '%d/%m/%Y')}"))
+
+        self.table_ripartizionePreventivo.item(0, 0).setFont(bold_font)
+        self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFont(bold_font)
+        self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFont(bold_font)
+        self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFont(bold_font)
+
+        self.table_ripartizionePreventivo.setSpan(0, 0, 1, len(tabelle_millesimali))
+        self.table_ripartizionePreventivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
+        self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 3)
 
         j = 0
         for tabella in tabelle_millesimali:
@@ -156,3 +172,6 @@ class VistaRipartizionePreventivo(QWidget):
         if not list(Bilancio.getAllBilanciByImmobile(self.immobile).values()):
             self.msg.setText("Non ci sono bilanci definiti")
             self.msg.show()
+
+    def closeEvent(self, event):
+        self.callback()

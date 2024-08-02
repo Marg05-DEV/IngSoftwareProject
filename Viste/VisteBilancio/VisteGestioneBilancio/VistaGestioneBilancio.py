@@ -1,19 +1,21 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QLineEdit
 
 from Classes.RegistroAnagrafe.immobile import Immobile
-from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcolaBilancio import VistaCalcolaBilancio
-from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaListaSpese import VistaListaSpese
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
-from Viste.VisteBilancio.VisteGestioneBilancio.VistaProspettiEsercizio import VistaProspettiEsercizio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizionePreventivo import VistaRipartizionePreventivo
+
+
+class VistaCalcolaBilancio:
+    pass
 
 
 class VistaGestioneBilancio(QWidget):
 
     def __init__(self, bilancio):
         print("ciao")
+        print(bilancio.getInfoBilancio())
         super(VistaGestioneBilancio, self).__init__()
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
@@ -62,12 +64,37 @@ class VistaGestioneBilancio(QWidget):
         print(label)
         return label
 
+    def gestisciBottoni(self):
+        if self.bilancio.isApprovata:
+            self.buttons["Proposta Preventivo"].setDisabled(True)
+            self.buttons["Calcola consuntivo"].setDisabled(True)
+            self.buttons["Ripartizione Consuntivo"].setDisabled(True)
+            self.buttons["Ripartizione Preventivo"].setDisabled(True)
+            self.buttons["Visualizza i prospetti del bilancio dell'esercizio"].setDisabled(False)
+            self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(True)
+        else:
+            self.buttons["Proposta Preventivo"].setDisabled(False)
+            self.buttons["Calcola consuntivo"].setDisabled(False)
+            self.buttons["Ripartizione Consuntivo"].setDisabled(True)
+            self.buttons["Ripartizione Preventivo"].setDisabled(True)
+            self.buttons["Visualizza i prospetti del bilancio dell'esercizio"].setDisabled(True)
+            self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(True)
+
+            if self.bilancio.passaggi["ripartizioneSpesePreventivate"]:
+                self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(False)
+
+            if self.bilancio.passaggi["ripartizioneSpeseConsuntivate"] and self.bilancio.passaggi["spesePreventivate"]:
+                self.buttons["Ripartizione Preventivo"].setDisabled(False)
+
+            if self.bilancio.passaggi["speseConsuntivate"]:
+                self.buttons["Ripartizione Consuntivo"].setDisabled(False)
+
     def goPropostaPreventivo(self):
         self.proposta_preventivo = VistaPropostaPreventivo(self.bilancio)
         self.proposta_preventivo.show()
 
     def goElencoSpese(self):
-        self.lista_spese = VistaListaSpese(self.bilancio)
+        self.lista_spese = VistaListaSpese(self.bilancio, self.callback)
         self.lista_spese.show()
 
     def goRipartizionePreventivo(self):
@@ -79,10 +106,15 @@ class VistaGestioneBilancio(QWidget):
         self.ripartizione_consuntivo.show()
 
     def goProspettiEsercizio(self):
-        self.prospetti_esercizio = VistaProspettiEsercizio()
-        self.prospetti_esercizio.show()
+        return
 
     def goCalcolaBilancio(self):
         self.calcola_bilancio = VistaCalcolaBilancio()
         self.calcola_bilancio.show()
+
+    def callback(self):
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        print(" -------------- dentro la callback per aggiornare i bottoni -----------------")
+        print(self.bilancio.getInfoBilancio())
+        self.gestisciBottoni()
 

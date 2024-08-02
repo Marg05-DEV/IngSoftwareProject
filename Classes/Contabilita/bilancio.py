@@ -94,6 +94,7 @@ class Bilancio:
             "inizioEsercizio": self.inizioEsercizio,
             "fineEsercizio": self.fineEsercizio,
             "immobile": self.immobile,
+            "passaggi": self.passaggi,
             "spesePreventivate": self.spesePreventivate,
             "listaSpeseAConsuntivo": self.listaSpeseAConsuntivo,
             "listaSpeseNonAConsuntivo": self.listaSpeseAConsuntivo,
