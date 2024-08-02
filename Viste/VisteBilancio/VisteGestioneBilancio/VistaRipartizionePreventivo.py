@@ -13,9 +13,10 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaRipartizionePreventivo(QWidget):
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback):
         super(VistaRipartizionePreventivo, self).__init__()
         self.bilancio = bilancio
+        self.callback = callback
         self.immobile = Immobile.ricercaImmobileById(self.bilancio.immobile)
         self.input_lines = {}
         self.input_errors = {}
@@ -164,7 +165,6 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.table_ripartizionePreventivo.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-
 
     def hide_message(self):
         self.msg.hide()

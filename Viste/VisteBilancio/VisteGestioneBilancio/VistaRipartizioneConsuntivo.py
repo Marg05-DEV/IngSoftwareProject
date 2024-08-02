@@ -13,9 +13,10 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaRipartizioneConsuntivo(QWidget):
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback):
         super(VistaRipartizioneConsuntivo, self).__init__()
         self.bilancio = bilancio
+        self.callback = callback
         self.immobile = Immobile.ricercaImmobileById(self.bilancio.immobile)
         self.input_lines = {}
         self.input_errors = {}

@@ -12,10 +12,11 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 
 
 class VistaCalcoloConsuntivo(QWidget):
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback):
         super(VistaCalcoloConsuntivo, self).__init__()
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
+        self.callback = callback
 
         print(self.bilancio.listaSpeseAConsuntivo)
 
@@ -107,3 +108,6 @@ class VistaCalcoloConsuntivo(QWidget):
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()
+
+    def closeEvent(self, event):
+        self.callback()

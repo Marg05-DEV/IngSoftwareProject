@@ -17,11 +17,12 @@ from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
 from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 
 class VistaListaSpese(QWidget):
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback):
         super(VistaListaSpese, self).__init__()
 
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
+        self.callback = callback
         self.button_list = {}
         self.checkboxes = {}
         self.lista_spese = []
@@ -157,10 +158,13 @@ class VistaListaSpese(QWidget):
 
     def goCalcolaConsuntivo(self):
         print('dentro consuntivo si va')
+        self.bilancio.passaggioRaggiunto("speseConsuntivate")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
         self.bilancio.calcolaSpeseConsuntivo()
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
         print("si va al consuntivo", self.bilancio.getInfoBilancio)
-        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.bilancio)
+        self.close()
+        self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.bilancio, self.callback)
         self.calcolo_consuntivo.show()
 
     def changeList(self):
@@ -169,13 +173,6 @@ class VistaListaSpese(QWidget):
             if checkbox is self.sender():
                 self.bilancio.changeListaConsuntivo(cod_spesa)
         self.update_table()
-
-
-    def callback(self, msg):
-        self.update_table()
-        self.msg.setText(msg)
-        self.msg.show()
-        self.timer.start()
 
     def hide_message(self):
         self.msg.hide()

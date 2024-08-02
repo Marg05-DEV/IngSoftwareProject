@@ -239,11 +239,16 @@ class Bilancio:
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
-    def passaggioRaggiunto(self):
-        pass
+    def passaggioRaggiunto(self, passaggio):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                bilanci[self.codice].passaggi[passaggio] = True
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def calcolaQuotaConsuntivo(self, unita_immobiliare, tabella_millesimale):
-        print("sono in calcola Quota", unita_immobiliare, tabella_millesimale)
+        print("sono in calcola Quota cons", unita_immobiliare, tabella_millesimale)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
@@ -257,21 +262,21 @@ class Bilancio:
                     bilanci[self.codice].ripartizioneSpeseConsuntivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_consuntivo_tabella) / totale_millesimi_tabella
                 else:
                     bilanci[self.codice].ripartizioneSpeseConsuntivate[tabella_millesimale.codice][unita_immobiliare.codice] = 0.0
-                print(bilanci[self.codice].ripartizioneSpeseConsuntivate)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def calcolaQuotaPreventivo(self, unita_immobiliare, tabella_millesimale):
-        print("sono in calcola Quota", unita_immobiliare, tabella_millesimale)
+        print("sono in calcola Quota prev", unita_immobiliare, tabella_millesimale)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
                 totale_millesimi_tabella = sum(list(tabella_millesimale.millesimi.values()))
                 totale_preventivo_tabella = sum(list(bilanci[self.codice].spesePreventivate[tabella_millesimale.codice].values()))
                 print("Totale cons: ", totale_preventivo_tabella, "totale mill: ", totale_millesimi_tabella)
-                print(bilanci[self.codice].ripartizioneSpesePreventivate)
-                bilanci[self.codice].ripartizioneSpesePreventivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_preventivo_tabella) / totale_millesimi_tabella
-                print(bilanci[self.codice].ripartizioneSpesePreventivate)
+                if totale_millesimi_tabella:
+                    bilanci[self.codice].ripartizioneSpesePreventivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_preventivo_tabella) / totale_millesimi_tabella
+                else:
+                    bilanci[self.codice].ripartizioneSpesePreventivate[tabella_millesimale.codice][unita_immobiliare.codice] = 0.0
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 

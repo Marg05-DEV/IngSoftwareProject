@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QLineEdit
 
+from Classes.Contabilita.bilancio import Bilancio
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaListaSpese import VistaListaSpese
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
@@ -20,6 +21,7 @@ class VistaGestioneBilancio(QWidget):
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
         self.setWindowTitle("Gestione Bilancio")
+        self.buttons = {}
         self.input_lines = {}
         self.input_errors = {}
         vertical_layout = QVBoxLayout()
@@ -36,17 +38,22 @@ class VistaGestioneBilancio(QWidget):
         vertical_layout.addLayout(action_layout1)
         vertical_layout.addLayout(action_layout3)
 
-        vertical_layout.addWidget(self.getButton("Ripartizione Preventivo",
-                                                 "Dividi in base alle tabelle millesimali le spese effettive per ogni unità immobiliare e calcola il conguaglio facendo\n la differenza con le rate versate durante l'esercizio conclutosi.",
-                                                 self.goRipartizionePreventivo))
         vertical_layout.addWidget(self.getButton("Ripartizione Consuntivo",
                                                  "Calcola le rate che le unità immobiliari dovranno versare nel prossimo esercizio basandosi sulle spese ipotizzate\n e il conguaglio restante dall'esercizio precedente.",
                                                  self.goRipartizioneConsuntivo))
-        vertical_layout.addWidget(self.getButton("Visualizza i prospetti del bilancio dell'esercizio ", "",
+
+        vertical_layout.addWidget(self.getButton("Ripartizione Preventivo",
+                                                 "Dividi in base alle tabelle millesimali le spese effettive per ogni unità immobiliare e calcola il conguaglio facendo\n la differenza con le rate versate durante l'esercizio conclutosi.",
+                                                 self.goRipartizionePreventivo))
+
+        vertical_layout.addWidget(self.getButton("Visualizza i prospetti del bilancio dell'esercizio", "",
                                                  self.goProspettiEsercizio))
         vertical_layout.addWidget(self.getButton("Calcola Bilancio dell'esercizio",
                                                  "",
                                                  self.goCalcolaBilancio))
+
+        self.gestisciBottoni()
+
         self.setLayout(vertical_layout)
         self.resize(600, 400)
         print("ciao")
@@ -56,6 +63,7 @@ class VistaGestioneBilancio(QWidget):
         button.setText(button.text() + "\n" + sottotesto)
         button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button.clicked.connect(on_click)
+        self.buttons[testo] = button
         return button
 
     def new_label(self, testo, index):
@@ -90,7 +98,9 @@ class VistaGestioneBilancio(QWidget):
                 self.buttons["Ripartizione Consuntivo"].setDisabled(False)
 
     def goPropostaPreventivo(self):
-        self.proposta_preventivo = VistaPropostaPreventivo(self.bilancio)
+        self.bilancio.passaggioRaggiunto("spesePreventivate")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        self.proposta_preventivo = VistaPropostaPreventivo(self.bilancio, self.callback)
         self.proposta_preventivo.show()
 
     def goElencoSpese(self):
@@ -98,11 +108,15 @@ class VistaGestioneBilancio(QWidget):
         self.lista_spese.show()
 
     def goRipartizionePreventivo(self):
-        self.ripartizione_preventivo = VistaRipartizionePreventivo(self.bilancio)
+        self.bilancio.passaggioRaggiunto("ripartizioneSpesePreventivate")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        self.ripartizione_preventivo = VistaRipartizionePreventivo(self.bilancio, self.callback)
         self.ripartizione_preventivo.show()
 
     def goRipartizioneConsuntivo(self):
-        self.ripartizione_consuntivo = VistaRipartizioneConsuntivo(self.bilancio)
+        self.bilancio.passaggioRaggiunto("ripartizioneSpeseConsuntivate")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        self.ripartizione_consuntivo = VistaRipartizioneConsuntivo(self.bilancio, self.callback)
         self.ripartizione_consuntivo.show()
 
     def goProspettiEsercizio(self):
