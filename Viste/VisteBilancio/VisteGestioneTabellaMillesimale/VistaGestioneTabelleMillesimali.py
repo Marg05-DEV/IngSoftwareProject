@@ -65,11 +65,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
     def update_table(self):
         self.table_tabellaMillesimale.cellChanged.disconnect(self.saveMatrix)
-        print("dentro update")
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
-        print("unita dell'immobile sel tm", unita_immobiliari)
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
-        print("tab mil immobile", tabelle_millesimali)
 
         self.table_tabellaMillesimale.setRowCount(len(unita_immobiliari) + 1)
         self.table_tabellaMillesimale.setColumnCount(len(tabelle_millesimali))

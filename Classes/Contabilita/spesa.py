@@ -290,3 +290,11 @@ class Spesa:
             return speseByPeriodoBilancio
         else:
             return {}
+
+    def mettiABilancio(self):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                spese = dict(pickle.load(f))
+                spese[self.codice].aBilancio = True
+        with open(nome_file, "wb") as f:
+            pickle.dump(spese, f, pickle.HIGHEST_PROTOCOL)

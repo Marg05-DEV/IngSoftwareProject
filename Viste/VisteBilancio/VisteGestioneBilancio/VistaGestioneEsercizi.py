@@ -138,7 +138,7 @@ class VistaGestioneEsercizi(QWidget):
 
     def goBilancio(self):
         bilancio = Bilancio.ricercaBilancioByCodice(self.list_view_bilanci.selectedItems()[0].data(Qt.ItemDataRole.UserRole))
-        self.choose_bilancio = VistaGestioneBilancio(bilancio)
+        self.choose_bilancio = VistaGestioneBilancio(bilancio, self.callback)
         self.choose_bilancio.show()
 
     def goNuovoEsercizio(self):
@@ -154,7 +154,7 @@ class VistaGestioneEsercizi(QWidget):
         msg, bilancio = temp_bilancio.aggiungiBilancio(data_inizio, data_fine, self.immobile)
 
         self.callback(msg)
-        self.nuovo_esercizio = VistaGestioneBilancio(bilancio)
+        self.nuovo_esercizio = VistaGestioneBilancio(bilancio, self.callback)
         self.nuovo_esercizio.show()
 
 

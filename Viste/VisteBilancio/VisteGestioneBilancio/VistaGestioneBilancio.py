@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBo
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaAvvisoBilancio import VistaAvvisoBilancio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaListaSpese import VistaListaSpese
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaPropostaPreventivo import VistaPropostaPreventivo
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo import VistaRipartizioneConsuntivo
@@ -14,12 +15,13 @@ class VistaCalcolaBilancio:
 
 class VistaGestioneBilancio(QWidget):
 
-    def __init__(self, bilancio):
+    def __init__(self, bilancio, callback_lista_esercizi):
         print("ciao")
         print(bilancio.getInfoBilancio())
         super(VistaGestioneBilancio, self).__init__()
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
+        self.callback_lista_esercizi = callback_lista_esercizi
         self.setWindowTitle("Gestione Bilancio")
         self.buttons = {}
         self.input_lines = {}
@@ -123,7 +125,9 @@ class VistaGestioneBilancio(QWidget):
         return
 
     def goCalcolaBilancio(self):
-        self.calcola_bilancio = VistaCalcolaBilancio()
+        self.calcola_bilancio = VistaAvvisoBilancio(self, self.bilancio.approvaBilancio,
+                                                    "Approvando il bilancio non sarai più in grado di modificarlo.\nSei sicuro di voler procedere?",
+                                                    "Approva")
         self.calcola_bilancio.show()
 
     def callback(self):
@@ -132,3 +136,9 @@ class VistaGestioneBilancio(QWidget):
         print(self.bilancio.getInfoBilancio())
         self.gestisciBottoni()
 
+    def avvisoConfermato(self):
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        self.gestisciBottoni()
+
+    def closeEvent(self, event):
+        self.callback_lista_esercizi()

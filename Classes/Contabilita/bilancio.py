@@ -325,3 +325,48 @@ class Bilancio:
                     bilanci[self.codice].importiDaVersare[unita.codice] = totale_preventivo_attuale[unita.codice] + bilanci[self.codice].ripartizioneConguaglio[unita.codice]
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def approvaBilancio(self):
+        print("approvando")
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                bilanci[self.codice].isApprovata = True
+                bilanci[self.codice].dataApprovazione = datetime.date.today()
+                if Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile)):
+                    bilanci[Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile)).codice].isLast = False
+                bilanci[self.codice].isLast = True
+                for cod_spesa in bilanci[self.codice].listaSpeseAConsuntivo:
+                    Spesa.ricercaSpesaByCodice(cod_spesa).mettiABilancio()
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+    def addNumeroRate(self, numeroRate):
+        print("sono nell'aggiunta numero rate")
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                print("prima del change", bilanci[self.codice].numeroRate)
+                bilanci[self.codice].numeroRate = numeroRate
+                print("dopo il change",bilanci[self.codice].numeroRate)
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def ripartizioneRate(self, cod_unita):
+        print("sono nella ripartizione")
+        list_rate = []
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                print("numero rate", bilanci[self.codice].numeroRate)
+                print("prima", bilanci[self.codice].ratePreventivate)
+                if bilanci[self.codice].numeroRate:
+                    for rate in range(0, bilanci[self.codice].numeroRate):
+                        list_rate.append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
+                        #bilanci[self.codice].ratePreventivate[cod_unita].append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
+                    bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
+                else:
+                    list_rate.append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
+                    bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
+                print("dopo", bilanci[self.codice].ratePreventivate)
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
