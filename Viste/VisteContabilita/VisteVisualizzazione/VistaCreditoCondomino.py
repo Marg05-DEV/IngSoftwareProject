@@ -61,19 +61,12 @@ class VistaCreditoCondomino(QWidget):
         find_layout.addWidget(self.lbl_searchType, 0, 3)
         """
         search_layout.addWidget(self.searchbar)
-        type_layout.addWidget(self.searchType)
-        type_layout.addWidget(self.lbl_searchType)
-        search_layout.addWidget(self.lbl_search)
-
         find_layout.addLayout(search_layout)
-        find_layout.addLayout(type_layout)
-
-        main_layout.addLayout(find_layout)
 
         msg_layout = QHBoxLayout()
 
         frase_lbl = QLabel("Stai selezionando: ")
-        self.immobile_selezionato = QLabel("Nessun immobile selezionato")
+        self.immobile_selezionato = QLabel("Nessun condomino selezionato")
 
         msg_layout.addWidget(frase_lbl)
         msg_layout.addWidget(self.condomino_selezionato)
@@ -84,8 +77,6 @@ class VistaCreditoCondomino(QWidget):
             frase_lbl.setText("Nessun condomino presente")
             self.condomino_selezionato.setVisible(False)
 
-
-
         self.button_layout = QHBoxLayout()
         print("u")
 
@@ -94,7 +85,7 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar.textChanged.connect(self.selectioning)
         print("c")
 
-        """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
+        """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
         print("d")
         self.drawLine()
         self.tree_widget = QTreeWidget()

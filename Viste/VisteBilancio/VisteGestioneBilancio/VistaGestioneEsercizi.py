@@ -191,7 +191,7 @@ class VistaGestioneEsercizi(QWidget):
             self.input_errors["error"].setVisible(True)
         else:
             self.input_errors["error"].setVisible(False)
-
+        print(self.input_errors["error"].isVisible())
         if data_inizio > data_fine or self.input_errors["error"].isVisible():
             print("e")
             self.button_list["Nuovo Esercizio"].setDisabled(True)
@@ -200,9 +200,7 @@ class VistaGestioneEsercizi(QWidget):
             self.button_list["Nuovo Esercizio"].setDisabled(False)
 
     def callback(self, msg=""):
-        print("sono nella callback")
-        self.button_list["Vai al bilancio"].setDisabled(True)
-        self.button_list["Nuovo Esercizio"].setDisabled(False)
+        self.input_validation()
         self.update_list()
         if msg:
             self.msg.setText(msg)

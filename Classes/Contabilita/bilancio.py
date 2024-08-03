@@ -142,9 +142,11 @@ class Bilancio:
         ultimo_bilancio = 0
 
         for bilancio in bilanci_immobile.values():
+            print(bilancio.getInfoBilancio())
             if bilancio.isLastEsercizio:
                 ultimo_bilancio = bilancio
 
+        print(ultimo_bilancio)
         return ultimo_bilancio
 
     @staticmethod
@@ -302,7 +304,7 @@ class Bilancio:
         for unita in unita_immobiliari:
             print("----------scorrendo unita", unita.getInfoUnitaImmobiliare())
             rateVersateByUnitaImmobiliare = Rata.getAllRateByUnitaImmobiliare(unita)
-            rate_versate[unita.codice] = sum([item.importo for item in rateVersateByUnitaImmobiliare.values()])
+            rate_versate[unita.codice] = sum([item.importo for item in rateVersateByUnitaImmobiliare.values() if item.dataPagamento >= self.inizioEsercizio and item.dataPagamento <= self.fineEsercizio])
             print("-----------fine ciclo unita")
         return rate_versate
 
@@ -334,8 +336,8 @@ class Bilancio:
                 bilanci[self.codice].isApprovata = True
                 bilanci[self.codice].dataApprovazione = datetime.date.today()
                 if Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile)):
-                    bilanci[Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile)).codice].isLast = False
-                bilanci[self.codice].isLast = True
+                    bilanci[Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile)).codice].isLastEsercizio = False
+                bilanci[self.codice].isLastEsercizio = True
                 for cod_spesa in bilanci[self.codice].listaSpeseAConsuntivo:
                     Spesa.ricercaSpesaByCodice(cod_spesa).mettiABilancio()
         with open(nome_file, "wb") as f:
@@ -365,7 +367,6 @@ class Bilancio:
                         #bilanci[self.codice].ratePreventivate[cod_unita].append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
                 else:
-                    list_rate.append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
                 print("dopo", bilanci[self.codice].ratePreventivate)
         with open(nome_file, "wb") as f:

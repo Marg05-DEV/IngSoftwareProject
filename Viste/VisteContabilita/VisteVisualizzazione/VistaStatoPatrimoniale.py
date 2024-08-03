@@ -3,11 +3,14 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
     QPushButton, QListView, QFrame
 
+from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
+from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaStatoPatrimoniale(QWidget):
@@ -219,17 +222,35 @@ class VistaStatoPatrimoniale(QWidget):
     def update_list(self):
         importo_totale = 0.00
         print("inizio")
+        self.rate_da_versare = Bilancio.getLastBilancio(self.immobile).importiDaVersare
+        self.rate_versate = {}
+        for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
+            totale_versato = 0.0
+            for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
+                if rata.dataPagamento >= Bilancio.getLastBilancio(self.immobile).dataApprovazione and rata.importo >= 0.0:
+                    totale_versato += rata.importo
+            self.rate_versate[unita_immobiliare.codice] = totale_versato
 
-        self.rate = [item for item in Rata.getAllRateByImmobile(self.immobile).values()]
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
-        print("rata:", self.rate)
+        print("rata:", self.rate_da_versare)
         print("spesa", self.spese)
-        if not self.spese and not self.rate:
+        importi_tutti_nulli = False
+        importi_da_non_rappresentare = []
+
+        if self.rate_da_versare:
+            for r in self.rate_da_versare.values():
+                if r <= 0:
+                    importi_da_non_rappresentare.append(r)
+            print("confronto", len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()))
+            if len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()):
+                importi_tutti_nulli = True
+
+        if (not self.spese and not self.rate_da_versare) or (not self.spese and importi_tutti_nulli):
             print("yes")
             self.rate_section["lista_rate"].setVisible(False)
             self.rate_section["totale"].setVisible(False)
             self.rate_section["frase_totale"].setVisible(False)
-            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
+            self.rate_section["no_rate"].setText("Non ci sono rate da versare per questo immobile")
             self.rate_section["no_rate"].setVisible(True)
 
             self.spese_section["lista_spese"].setVisible(False)
@@ -238,14 +259,16 @@ class VistaStatoPatrimoniale(QWidget):
             self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
             self.spese_section["no_spese"].setVisible(True)
 
-        elif not self.rate:
+        elif not self.rate_da_versare or importi_tutti_nulli:
+            print("yesyes")
             self.rate_section["lista_rate"].setVisible(False)
             self.rate_section["totale"].setVisible(False)
             self.rate_section["frase_totale"].setVisible(False)
 
-            self.rate_section["no_rate"].setText("Non ci sono rate per questo immobile")
+            self.rate_section["no_rate"].setText("Non ci sono da versare per questo immobile")
             self.rate_section["no_rate"].setVisible(True)
         elif not self.spese:
+            print("yesyesyes")
             self.spese_section["lista_spese"].setVisible(False)
             self.spese_section["totale"].setVisible(False)
             self.spese_section["frase_totale"].setVisible(False)
@@ -275,27 +298,43 @@ class VistaStatoPatrimoniale(QWidget):
             self.spese_section["totale"].setText(str("%.2f" % importo_totale))
             for spese in self.spese_section.values():
                 spese.setVisible(True)
+            self.spese_section["no_spese"].setVisible(False)
+        print("bi")
 
         listview_model1 = QStandardItemModel(self.list_view_rate)
-        for rata in self.rate:
-            item = QStandardItem()
-            if not rata.pagata:
-                importo = str("%.2f" % rata.importo)
-                item_text = f"{importo}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model1.appendRow(item)
+        for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
+            unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
+            if self.rate_da_versare[unita] > 0:
+                if unita in self.rate_da_versare.keys():
+                    item = QStandardItem()
+                    importo = self.rate_da_versare[unita] - self.rate_versate[unita]
+                    importo = str("%.2f" % importo)
+                    if unita_immo.tipoUnitaImmobiliare == "Appartamento":
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
+                                                                       unita_immo.condomini[item] == "Proprietario"][0])
+                        item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                    else:
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
+                                                                       unita_immo.condomini[item] == "Proprietario"][0])
+                        item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                    item.setText(item_text)
+                    item.setEditable(False)
+                    font = item.font()
+                    font.setPointSize(12)
+                    item.setFont(font)
+                    listview_model1.appendRow(item)
 
         importo_totale = 0.00
         print("qui finisce")
         self.list_view_rate.setModel(listview_model1)
-        if self.rate:
-            for rata in self.rate:
-                if not rata.pagata:
-                    importo_totale += rata.importo
+
+        if self.rate_da_versare and not importi_tutti_nulli:
+            print("nell'if")
+            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
+                if self.rate_da_versare[unita] > 0:
+                    if unita in self.rate_da_versare.keys():
+                        importo_totale += self.rate_da_versare[unita]
             self.rate_section["totale"].setText(str("%.2f" % importo_totale))
             for rate in self.rate_section.values():
                 rate.setVisible(True)
+            self.rate_section["no_rate"].setVisible(False)
