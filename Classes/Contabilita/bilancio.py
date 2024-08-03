@@ -145,7 +145,6 @@ class Bilancio:
             print(bilancio.getInfoBilancio())
             if bilancio.isLastEsercizio:
                 ultimo_bilancio = bilancio
-
         print(ultimo_bilancio)
         return ultimo_bilancio
 

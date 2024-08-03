@@ -1,13 +1,16 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem
+    QPushButton, QListView, QFrame
 
+from Classes.Contabilita.bilancio import Bilancio
+from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class VistaCreditoCondomino(QWidget):
@@ -15,12 +18,11 @@ class VistaCreditoCondomino(QWidget):
 
         super(VistaCreditoCondomino, self).__init__()
         self.buttons = {}
+        self.condomino_section = {}
         self.immobile = None
-        self.debito_totale = 0.00
         main_layout = QVBoxLayout()
 
-
-        completer_list = sorted([item.codiceFiscale + " " + item.cognome + " " + item.nome for item in Condomino.getAllCondomini().values()])
+        completer_list = sorted([item.codiceFiscale for item in Condomino.getAllCondomini().values()])
         print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
@@ -29,102 +31,77 @@ class VistaCreditoCondomino(QWidget):
         print(self.condomini_completer.completionModel())
         self.searchbar.setCompleter(self.condomini_completer)
 
+        self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare asegnata")
+        self.lbl_frase_condomino.setStyleSheet("font-weight: bold;")
+        self.condomino_section["frase"] = self.lbl_frase_condomino
+        self.condomino_section["frase"].setVisible(False)
         find_layout = QHBoxLayout()
-
         search_layout = QVBoxLayout()
-        type_layout = QVBoxLayout()
 
-        """
-        in bilancio abbiamo il dict importiDaVersare che è {ui1: totale da versare di ui1, ui2: ..., uin:...}
-        Questi importi sono da versare dopo una certa data (data di conferma bilancio) 
-        servirebbe un dict che dice ad oggi (datetime.date.today()) quanto ogni unita immobiliare ha versato
-        {ui1: totale versato fino a today(), ...}  1 marzo 2023 500
-                                                        -> today() 300 -> in credito condomino scrivi 200
-                                                  15 marzo 2024 650
-                                                        -> 450      
-        """
-
-
-
-        """
-        self.lbl_search = QLabel("Ricerca fornitore da selezionare:")
-        self.lbl_searchType = QLabel("Ricerca per:")
-        self.lbl_search.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
-        self.lbl_searchType.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
-        self.searchType = QComboBox()
-        self.searchType.addItems(["Denominazione", "PartitaIva"])
-        self.searchType.activated.connect(self.sel_tipo_ricerca)
-        """
-        self.condomino_selezionato = QLabel("Nessun condomino selezionato")
-        """
-        find_layout.addWidget(self.lbl_search, 0, 0, 1, 3)
-        find_layout.addWidget(self.lbl_searchType, 0, 3)
-        """
         search_layout.addWidget(self.searchbar)
+        search_layout.addWidget(self.lbl_frase_condomino)
         find_layout.addLayout(search_layout)
+        main_layout.addLayout(find_layout)
 
         msg_layout = QHBoxLayout()
-
         frase_lbl = QLabel("Stai selezionando: ")
-        self.immobile_selezionato = QLabel("Nessun condomino selezionato")
+        self.condomino_selezionato = QLabel("Nessun Condomino selezionato")
 
         msg_layout.addWidget(frase_lbl)
         msg_layout.addWidget(self.condomino_selezionato)
 
-        main_layout.addLayout(msg_layout)
-
         if not completer_list:
-            frase_lbl.setText("Nessun condomino presente")
+            frase_lbl.setText("Nessun Condomino presente")
             self.condomino_selezionato.setVisible(False)
 
         self.button_layout = QHBoxLayout()
-        print("u")
 
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_credito_condomino))
-        self.buttons["Seleziona"].setEnabled(False)
+        self.buttons["Seleziona"].setDisabled(True)
         self.searchbar.textChanged.connect(self.selectioning)
-        print("c")
+        main_layout.addLayout(msg_layout)
+        main_layout.addLayout(self.button_layout)
 
         """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
-        print("d")
+        """ ------------------------------ SEZIONE RATE ---------------------------- """
+
+        self.rate_section = {}
+
+        rata_layout = QVBoxLayout()
+        self.lbl_frase1 = QLabel("Rate:")
+        self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
+        self.list_view_rate = QListView()
+        self.list_view_rate.setAlternatingRowColors(True)
+        self.error_no_rate = QLabel("")
+        self.error_no_rate.setStyleSheet("font-weight: bold;")
+        self.rate_section["frase"] = self.lbl_frase1
+        self.rate_section["lista_rate"] = self.list_view_rate
+        self.rate_section["no_rate"] = self.error_no_rate
+        self.rate_section["no_rate"].setVisible(False)
+        rata_layout.addWidget(self.lbl_frase1)
+        rata_layout.addWidget(self.list_view_rate)
+        rata_layout.addWidget(self.error_no_rate)
+
+        totale_rate_layout = QHBoxLayout()
+        lbl_frase_totale_rate = QLabel("Credito verso condomini dell'immobile")
+        lbl_totale_rate = QLabel("0.00")
+
+        self.rate_section["frase_totale"] = lbl_frase_totale_rate
+        self.rate_section["totale"] = lbl_totale_rate
+        totale_rate_layout.addWidget(lbl_frase_totale_rate)
+        totale_rate_layout.addWidget(lbl_totale_rate)
+        rata_layout.addLayout(totale_rate_layout)
+
+        for widget in self.rate_section.values():
+            widget.setVisible(False)
+
+        self.msg = QLabel("")
+        self.msg.setStyleSheet("color: red; font-weight: bold;")
+        self.msg.hide()
+
         self.drawLine()
-        self.tree_widget = QTreeWidget()
-        self.tree_widget.setColumnCount(2)
-        self.tree_widget.setHeaderLabels(["Condomino", "Importo"])
-        self.tree_widget.setVisible(False)
-
-        self.rate_credito_section = {}
-        self.rate_a_credito_non_presenti = QLabel("")
-        self.rate_a_credito_non_presenti.setStyleSheet("font-weight: bold;")
-        self.rate_credito_section["no_rate"] = self.rate_a_credito_non_presenti
-        self.rate_credito_section["no_rate"].setVisible(False)
-
-        main_layout.addLayout(find_layout)
-        main_layout.addLayout(self.button_layout)
-        main_layout.addWidget(self.tree_widget)
-        main_layout.addWidget(self.rate_a_credito_non_presenti)
-
-        self.drawLine()
-
-        self.rate_credito_totale_section = {}
-        self.rate_totali = QLabel("")
-        self.rate_totali.setStyleSheet("font-weight: bold;")
-        self.rate_totali_importo = QLabel("")
-        self.rate_totali_importo.setStyleSheet("font-weight: bold;")
-        self.lbl_rate_totali_importo = QLabel("Debito totale verso il fornitore selezionato")
-        self.lbl_rate_totali_importo.setStyleSheet("font-weight: bold;")
-        self.rate_credito_totale_section["all_credito_rate"] = self.rate_totali
-        self.rate_credito_totale_section["importo_totale"] = self.rate_totali_importo
-        self.rate_credito_totale_section["frase_all_credito"] = self.lbl_rate_totali_importo
-        self.rate_credito_totale_section["frase_all_credito"].setVisible(False)
-        self.rate_credito_totale_section["importo_totale"].setVisible(False)
-        self.rate_credito_totale_section["all_credito_rate"].setVisible(False)
-        main_layout.addWidget(self.rate_totali)
-
-        credito_totale_layout = QHBoxLayout()
-        credito_totale_layout.addWidget(self.lbl_rate_totali_importo)
-        credito_totale_layout.addWidget(self.rate_totali_importo)
-        main_layout.addLayout(credito_totale_layout)
+        main_layout.addLayout(rata_layout)
+        main_layout.addWidget(self.msg)
 
         self.setLayout(main_layout)
         self.resize(600, 400)
@@ -146,89 +123,117 @@ class VistaCreditoCondomino(QWidget):
 
     def selectioning(self):
         condomino = None
-        print(self.searchbar.text())
         condomino = Condomino.ricercaCondominoByCF(self.searchbar.text())
+        print("imm: ", condomino)
 
         if condomino != None:
-            self.condomino_selezionato.setText(f"{condomino.nome} - {condomino.cognome}")
-            self.buttons["Seleziona"].setEnabled(True)
+            self.condomino_selezionato.setText(f"{condomino.nome} - {condomino.cognome} - {condomino.codiceFiscale}")
+            self.buttons["Seleziona"].setDisabled(False)
         else:
             self.condomino_selezionato.setText("Nessun condomino selezionato")
-            self.buttons["Seleziona"].setEnabled(False)
-    """
-    def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(
-            self.searchType.currentText()))
-        lista_completamento = []
-        if self.searchType.currentIndex() == 0:  # ricerca per denominazione
-            lista_completamento = sorted([item.denominazione for item in Fornitore.getAllFornitore().values()])
-        elif self.searchType.currentIndex() == 1:  # ricerca per sigla
-            lista_completamento = sorted([item.partitaIva for item in Fornitore.getAllFornitore().values()])
-
-        self.condomini_completer.setModel(QStringListModel(lista_completamento))
-        self.selectioning()
-    """
+            self.buttons["Seleziona"].setDisabled(True)
 
     def view_credito_condomino(self):
         search_text = self.searchbar.text()
         print(f"Testo della barra di ricerca: {search_text}")
+        for b in Bilancio.getAllBilanci().values():
+            print(b.getInfoBilancio())
         self.condomino = 0
         if search_text:
             self.condomino = Condomino.ricercaCondominoByCF(search_text)
-
+            print("Condomino: ", self.condomino)
         if self.condomino != None:
-            self.tree_widget.setVisible(True)
-            self.update_list()
+            if UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
+                list_immobile = []
+                self.condomino_section["frase"].setVisible(False)
+                for immobile in Immobile.getAllImmobili().values():
+                    for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
+                        unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita_immobiliare)
+                        if immobile.id == unita_immobiliare.immobile:
+                            if immobile.id not in list_immobile:
+                                list_immobile.append(immobile.id)
+                                self.update_list(immobile)
+            else:
+                self.condomino_section["frase"].setVisible(True)
         else:
             print("no")
             return None
 
-    def update_list(self):
-        self.credito_totale = 0.00
-        self.rate_non_pagate = []
-        self.spese_fornitore = Spesa.getAllSpeseByFornitore(self.fornitore)
-        for spesa in self.spese_fornitore.values():
-            if not spesa.pagata:
-                self.spese_non_pagate.append(spesa)
-                self.debito_totale += spesa.importo
+    def update_list(self, immobile_trovato):
+        importo_totale = 0.00
+        print(immobile_trovato.getInfoImmobile())
+        print("inizio")
+        ultimo_bilancio = Bilancio.getLastBilancio(immobile_trovato)
+        if ultimo_bilancio != 0:
+            self.rate_da_versare = ultimo_bilancio.importiDaVersare
+            print("dope")
+            self.rate_versate = {}
+            for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).values():
+                if self.condomino.codiceFiscale in unita_immobiliare.condomini.keys() and unita_immobiliare.condomini[self.condomino.codiceFiscale] == "Proprietario":
+                    totale_versato = 0.0
+                    for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
+                        if rata.dataPagamento >= Bilancio.getLastBilancio(immobile_trovato).dataApprovazione and rata.importo >= 0.0:
+                            totale_versato += rata.importo
+                    self.rate_versate[unita_immobiliare.codice] = totale_versato
 
-        print(self.spese_non_pagate)
+            print("rata:", self.rate_da_versare)
+            importi_tutti_nulli = False
+            importi_da_non_rappresentare = []
 
-        if not self.spese_non_pagate:
-            self.tree_widget.setVisible(False)
-            self.rate_credito_section["no_rate"].setText("Questo condomino non ha credito verso alcun immobile")
-            self.rate_credito_section["no_rate"].setVisible(True)
-            self.rate_credito_totale_section["frase_all_credito"].setVisible(False)
-            self.rate_credito_totale_section["importo_totale"].setVisible(False)
+            if self.rate_da_versare:
+                for r in self.rate_da_versare.values():
+                    if r <= 0:
+                        importi_da_non_rappresentare.append(r)
+                print("confronto", len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()))
+                if len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()):
+                    importi_tutti_nulli = True
 
-        self.tree_widget.clear()
-        list_immobili_con_debito = []
-        for immobile in Immobile.getAllImmobili().values():
-            for spese in self.spese_non_pagate:
-                print("if degli immobili: ", immobile.id == spese.immobile)
-                if immobile.id == spese.immobile:
-                    list_immobili_con_debito.append(immobile)
+            if not self.rate_da_versare or importi_tutti_nulli:
+                print("yesyes")
+                self.rate_section["lista_rate"].setVisible(False)
+                self.rate_section["totale"].setVisible(False)
+                self.rate_section["frase_totale"].setVisible(False)
 
-        print("immobili: ", list_immobili_con_debito)
-        for immobile in list_immobili_con_debito:
-            importo_debito_immobile = 0.00
-            for spesa in self.spese_non_pagate:
-                if spesa.immobile == immobile.id:
-                    importo_debito_immobile += spesa.importo
-            item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_debito_immobile)])
-            for spese_debito in self.spese_non_pagate:
-                print(immobile.id)
-                if spese_debito.immobile == immobile.id:
-                    child = QTreeWidgetItem([spese_debito.descrizione, str("%.2f" % spese_debito.importo)])
-                    item.addChild(child)
-            self.tree_widget.addTopLevelItem(item)
+                self.rate_section["no_rate"].setText("Non ci sono da versare per questo immobile")
+                self.rate_section["no_rate"].setVisible(True)
 
-        for i in range(self.tree_widget.columnCount()):
-            print(i)
-            self.tree_widget.resizeColumnToContents(i)
+            listview_model1 = QStandardItemModel(self.list_view_rate)
+            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).keys():
+                unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
+                if self.condomino.codiceFiscale in unita_immo.condomini.keys() and unita_immo.condomini[self.condomino.codiceFiscale] == "Proprietario":
+                    if self.rate_da_versare[unita] > 0:
+                        if unita in self.rate_da_versare.keys():
+                            item = QStandardItem()
+                            importo = self.rate_da_versare[unita] - self.rate_versate[unita]
+                            importo = str("%.2f" % importo)
+                            if unita_immo.tipoUnitaImmobiliare == "Appartamento":
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
+                                                                               unita_immo.condomini[item] == "Proprietario"][0])
+                                item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                            else:
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
+                                                                               unita_immo.condomini[item] == "Proprietario"][0])
+                                item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                            item.setText(item_text)
+                            item.setEditable(False)
+                            font = item.font()
+                            font.setPointSize(12)
+                            item.setFont(font)
+                            listview_model1.appendRow(item)
 
-        if self.spese_non_pagate:
-            self.rate_credito_totale_section["all_credito_spese"].setVisible(True)
-            self.rate_credito_totale_section["frase_all_credito"].setVisible(True)
-            self.rate_credito_totale_section["importo_totale"].setText(str("%.2f" % self.debito_totale))
-            self.rate_credito_totale_section["importo_totale"].setVisible(True)
+            importo_totale = 0.00
+            print("qui finisce")
+            self.list_view_rate.setModel(listview_model1)
+
+            if self.rate_da_versare and not importi_tutti_nulli:
+                print("nell'if")
+                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).keys():
+                    unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
+                    if self.condomino.codiceFiscale in unita_immo.condomini.keys() and unita_immo.condomini[self.condomino.codiceFiscale] == "Proprietario":
+                        if self.rate_da_versare[unita] > 0:
+                            if unita in self.rate_da_versare.keys():
+                                importo_totale += self.rate_da_versare[unita]
+                self.rate_section["totale"].setText(str("%.2f" % importo_totale))
+                for rate in self.rate_section.values():
+                    rate.setVisible(True)
+                self.rate_section["no_rate"].setVisible(False)

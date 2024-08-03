@@ -161,6 +161,27 @@ class UnitaImmobiliare:
         else:
             return {}
 
+    @staticmethod
+    def getAllUnitaImmobiliariByCondomino(condomino):
+        print("sono in getAllUnitaImmobiliariByCondomino")
+        print("codice fiscale", condomino.codiceFiscale)
+        unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
+        if unitaImmobiliari:
+            print("si ci sono unita per questo condomino")
+            unitaImmobiliariByCondomino = []
+            for key, value in unitaImmobiliari.items():
+                print(value.condomini)
+                for codice_fiscale_condomino in value.condomini.keys():
+                    print("cod fisc nel for", codice_fiscale_condomino)
+                    if codice_fiscale_condomino == condomino.codiceFiscale:
+                        print("nell'if")
+                        unitaImmobiliariByCondomino.append(key)
+            print(unitaImmobiliariByCondomino)
+            return unitaImmobiliariByCondomino
+        else:
+            print("non ci sono unita per questo condomino")
+            return []
+
     def addCondomino(self, condomino, titolo):
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
