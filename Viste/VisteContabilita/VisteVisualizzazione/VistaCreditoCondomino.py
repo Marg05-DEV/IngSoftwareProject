@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame
+    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
@@ -64,43 +64,24 @@ class VistaCreditoCondomino(QWidget):
 
         """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
         """ ------------------------------ SEZIONE RATE ---------------------------- """
+        self.drawLine()
+        self.tree_widget = QTreeWidget()
+        self.tree_widget.setColumnCount(2)
+        self.tree_widget.setHeaderLabels(["Denominazione Immobile", "Importo a Credito"])
+        self.tree_widget.setVisible(False)
 
-        self.rate_section = {}
-
-        rata_layout = QVBoxLayout()
-        self.lbl_frase1 = QLabel("Rate:")
-        self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
-        self.list_view_rate = QListView()
-        self.list_view_rate.setAlternatingRowColors(True)
-        self.error_no_rate = QLabel("")
-        self.error_no_rate.setStyleSheet("font-weight: bold;")
-        self.rate_section["frase"] = self.lbl_frase1
-        self.rate_section["lista_rate"] = self.list_view_rate
-        self.rate_section["no_rate"] = self.error_no_rate
-        self.rate_section["no_rate"].setVisible(False)
-        rata_layout.addWidget(self.lbl_frase1)
-        rata_layout.addWidget(self.list_view_rate)
-        rata_layout.addWidget(self.error_no_rate)
-
-        totale_rate_layout = QHBoxLayout()
-        lbl_frase_totale_rate = QLabel("Credito verso condomini dell'immobile")
-        lbl_totale_rate = QLabel("0.00")
-
-        self.rate_section["frase_totale"] = lbl_frase_totale_rate
-        self.rate_section["totale"] = lbl_totale_rate
-        totale_rate_layout.addWidget(lbl_frase_totale_rate)
-        totale_rate_layout.addWidget(lbl_totale_rate)
-        rata_layout.addLayout(totale_rate_layout)
-
-        for widget in self.rate_section.values():
-            widget.setVisible(False)
-
+        self.credito_condomino_section = {}
+        self.rate_a_credito_non_presenti = QLabel("")
+        self.rate_a_credito_non_presenti.setStyleSheet("font-weight: bold;")
+        self.credito_condomino_section["no_credito"] = self.rate_a_credito_non_presenti
+        self.credito_condomino_section["no_credito"].setVisible(False)
         self.msg = QLabel("")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
         self.drawLine()
-        main_layout.addLayout(rata_layout)
+        main_layout.addWidget(self.tree_widget)
+        main_layout.addWidget(self.rate_a_credito_non_presenti)
         main_layout.addWidget(self.msg)
 
         self.setLayout(main_layout)
@@ -143,97 +124,62 @@ class VistaCreditoCondomino(QWidget):
             self.condomino = Condomino.ricercaCondominoByCF(search_text)
             print("Condomino: ", self.condomino)
         if self.condomino != None:
-            if UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
-                list_immobile = []
-                self.condomino_section["frase"].setVisible(False)
-                for immobile in Immobile.getAllImmobili().values():
-                    for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
-                        unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita_immobiliare)
-                        if immobile.id == unita_immobiliare.immobile:
-                            if immobile.id not in list_immobile:
-                                list_immobile.append(immobile.id)
-                                self.update_list(immobile)
-            else:
-                self.condomino_section["frase"].setVisible(True)
+            self.tree_widget.setVisible(True)
+            self.update_list()
         else:
             print("no")
             return None
 
-    def update_list(self, immobile_trovato):
-        importo_totale = 0.00
-        print(immobile_trovato.getInfoImmobile())
-        print("inizio")
-        ultimo_bilancio = Bilancio.getLastBilancio(immobile_trovato)
-        if ultimo_bilancio != 0:
-            self.rate_da_versare = ultimo_bilancio.importiDaVersare
-            print("dope")
-            self.rate_versate = {}
-            for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).values():
-                if self.condomino.codiceFiscale in unita_immobiliare.condomini.keys() and unita_immobiliare.condomini[self.condomino.codiceFiscale] == "Proprietario":
-                    totale_versato = 0.0
-                    for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
-                        if rata.dataPagamento >= Bilancio.getLastBilancio(immobile_trovato).dataApprovazione and rata.importo >= 0.0:
-                            totale_versato += rata.importo
-                    self.rate_versate[unita_immobiliare.codice] = totale_versato
+    def update_list(self):
+        self.credito_totale_condomino = 0.00
+        self.unita_associate_al_condomino = []
+        immobile_con_credito = []
+        for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
+            self.unita_associate_al_condomino.append(cod_unita_immobiliare)
 
-            print("rata:", self.rate_da_versare)
-            importi_tutti_nulli = False
-            importi_da_non_rappresentare = []
+        for immobile in Immobile.getAllImmobili().values():
+            for cod_unita in self.unita_associate_al_condomino:
+                unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
+                if immobile.id == unita.immobile:
+                    if immobile.id not in immobile_con_credito:
+                        immobile_con_credito.append(immobile)
 
-            if self.rate_da_versare:
-                for r in self.rate_da_versare.values():
-                    if r <= 0:
-                        importi_da_non_rappresentare.append(r)
-                print("confronto", len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()))
-                if len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()):
-                    importi_tutti_nulli = True
+        if not self.unita_associate_al_condomino:
+            self.tree_widget.setVisible(False)
+            self.condomino_section["frase"].setVisible(True)
 
-            if not self.rate_da_versare or importi_tutti_nulli:
-                print("yesyes")
-                self.rate_section["lista_rate"].setVisible(False)
-                self.rate_section["totale"].setVisible(False)
-                self.rate_section["frase_totale"].setVisible(False)
+        for immobile in immobile_con_credito:
+            importo_totale_per_immobile = 0.00
+            importo_per_unita = {}
+            for unita_immobile in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile).values():
+                if unita_immobile.codice in self.unita_associate_al_condomino:
+                    last_bilancio = Bilancio.getLastBilancio(immobile)
+                    totale_rate_versate_per_unita = 0.0
+                    for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita_immobile).values():
+                        totale_rate_versate_per_unita += rate_versate.importo
+                    print("totale rate versate per unita", totale_rate_versate_per_unita)
+                    if last_bilancio.importiDaVersare[unita_immobile.codice] < 0:
+                        importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] + totale_rate_versate_per_unita
+                    else:
+                        importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] - totale_rate_versate_per_unita
+                    print("importo da versare dell'unita", unita_immobile.codice, " :", last_bilancio.importiDaVersare[unita_immobile.codice])
+                    print("importo per unita", importo_per_unita)
+                    importo_totale_per_immobile += importo_per_unita[unita_immobile.codice]
+                    print("ko")
+            print("prima di item")
+            item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
+            print("dopo item")
+            for key, value in importo_per_unita.items():
+                unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(key)
+                if unita.tipoUnitaImmobiliare == "Appartamento":
+                    unita_immobiliare = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno}"
+                else:
+                    unita_immobiliare = f"{unita.tipoUnitaImmobiliare}"
 
-                self.rate_section["no_rate"].setText("Non ci sono da versare per questo immobile")
-                self.rate_section["no_rate"].setVisible(True)
+                child = QTreeWidgetItem([unita_immobiliare], str("%.2f" % importo_per_unita))
+                item.addChild(child)
+            self.tree_widget.addTopLevelItem(item)
 
-            listview_model1 = QStandardItemModel(self.list_view_rate)
-            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).keys():
-                unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
-                if self.condomino.codiceFiscale in unita_immo.condomini.keys() and unita_immo.condomini[self.condomino.codiceFiscale] == "Proprietario":
-                    if self.rate_da_versare[unita] > 0:
-                        if unita in self.rate_da_versare.keys():
-                            item = QStandardItem()
-                            importo = self.rate_da_versare[unita] - self.rate_versate[unita]
-                            importo = str("%.2f" % importo)
-                            if unita_immo.tipoUnitaImmobiliare == "Appartamento":
-                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
-                                                                               unita_immo.condomini[item] == "Proprietario"][0])
-                                item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
-                            else:
-                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
-                                                                               unita_immo.condomini[item] == "Proprietario"][0])
-                                item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
-                            item.setText(item_text)
-                            item.setEditable(False)
-                            font = item.font()
-                            font.setPointSize(12)
-                            item.setFont(font)
-                            listview_model1.appendRow(item)
-
-            importo_totale = 0.00
-            print("qui finisce")
-            self.list_view_rate.setModel(listview_model1)
-
-            if self.rate_da_versare and not importi_tutti_nulli:
-                print("nell'if")
-                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile_trovato).keys():
-                    unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
-                    if self.condomino.codiceFiscale in unita_immo.condomini.keys() and unita_immo.condomini[self.condomino.codiceFiscale] == "Proprietario":
-                        if self.rate_da_versare[unita] > 0:
-                            if unita in self.rate_da_versare.keys():
-                                importo_totale += self.rate_da_versare[unita]
-                self.rate_section["totale"].setText(str("%.2f" % importo_totale))
-                for rate in self.rate_section.values():
-                    rate.setVisible(True)
-                self.rate_section["no_rate"].setVisible(False)
+        for i in range(self.tree_widget.columnCount()):
+            print(i)
+            self.tree_widget.resizeColumnToContents(i)
