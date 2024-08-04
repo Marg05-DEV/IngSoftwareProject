@@ -10,11 +10,11 @@ class TabellaMillesimale:
 
     def __init__(self):
         self.codice = 1
-        self.nome = ""
-        self.tipologieSpesa = []
-        self.descrizione = ""
-        self.immobile = 0
-        self.millesimi = {}  # {unita immobiliare: millesimo}
+        self.nome = ""#
+        self.tipologieSpesa = []#
+        self.descrizione = ""#
+        self.immobile = 0#
+        self.millesimi = {} # # {unita immobiliare: millesimo}
 
     def aggiungiTabellaMillesimale(self, nome, tipologieSpesa, descrizione, immobile):
         self.nome = nome

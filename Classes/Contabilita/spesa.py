@@ -11,17 +11,17 @@ class Spesa:
 
     def __init__(self):
         self.codice = 1
-        self.dataFattura = datetime.date(year=1970, month=1, day=1)
-        self.dataRegistrazione = datetime.date(year=1970, month=1, day=1)
-        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
-        self.descrizione = ""
-        self.fornitore = None
-        self.importo = 0.0
-        self.immobile = None
-        self.isRitenuta = False
-        self.tipoSpesa = None
-        self.pagata = False
-        self.numeroFattura = 0
+        self.dataFattura = datetime.date(year=1970, month=1, day=1)#
+        self.dataRegistrazione = datetime.date(year=1970, month=1, day=1)#
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)#
+        self.descrizione = ""#
+        self.fornitore = None#
+        self.importo = 0.0#
+        self.immobile = None#
+        self.isRitenuta = False#
+        self.tipoSpesa = None#
+        self.pagata = False#
+        self.numeroFattura = 0#
         self.aBilancio = False
 
     def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):

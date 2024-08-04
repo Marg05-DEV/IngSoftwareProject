@@ -108,6 +108,18 @@ def up():
     for i in range (3, 10):
         tabellaMillesimale.aggiungiTabellaMillesimale("Tab A", [], "Spesa generale", Immobile.ricercaImmobileByCodice(i).id)
 
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(1).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(1), 400.00)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(1).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(3), 350.00)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(1).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(4), 250.00)
+
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(2).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(1), 20.50)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(2).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(3), 131.12)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(2).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(4), 478.56)
+
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(3).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(1), 98.00)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(3).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(3), 105.00)
+    tabellaMillesimale.ricercaTabelleMillesimaliByCodice(3).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(4), 10.00)
+
     print("\n ------------------------------------------------- \n")
 
     #seeding rate

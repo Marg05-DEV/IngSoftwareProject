@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem
+    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
 
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
@@ -222,9 +222,8 @@ class VistaDebitoFornitore(QWidget):
                     item.addChild(child)
             self.tree_widget.addTopLevelItem(item)
 
-        for i in range(self.tree_widget.columnCount()):
-            print(i)
-            self.tree_widget.resizeColumnToContents(i)
+        self.tree_widget.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
         if self.spese_non_pagate:
             self.spese_debito_section["no_spese"].setVisible(False)

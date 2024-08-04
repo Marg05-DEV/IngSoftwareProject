@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem
+    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
@@ -20,6 +20,7 @@ class VistaCreditoCondomino(QWidget):
         self.buttons = {}
         self.condomino_section = {}
         self.immobile = None
+        self.credito_totale = 0.0
         main_layout = QVBoxLayout()
 
         completer_list = sorted([item.codiceFiscale for item in Condomino.getAllCondomini().values()])
@@ -75,13 +76,27 @@ class VistaCreditoCondomino(QWidget):
         self.rate_a_credito_non_presenti.setStyleSheet("font-weight: bold;")
         self.credito_condomino_section["no_credito"] = self.rate_a_credito_non_presenti
         self.credito_condomino_section["no_credito"].setVisible(False)
+
+        self.totale_credito_condomino = QLabel("")
+        self.totale_credito_condomino.setStyleSheet("font-weight: bold;")
+        self.credito_condomino_section["credito_totale"] = self.totale_credito_condomino
+        self.credito_condomino_section["credito_totale"].setVisible(False)
+
+        self.lbl_totale_credito_condomino = QLabel("Totale credito del condomino:")
+        self.lbl_totale_credito_condomino.setStyleSheet("font-weight: bold;")
+        self.credito_condomino_section["frase_credito_totale"] = self.lbl_totale_credito_condomino
+        self.credito_condomino_section["frase_credito_totale"].setVisible(False)
         self.msg = QLabel("")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
+        totale_credito_layout = QHBoxLayout()
         self.drawLine()
         main_layout.addWidget(self.tree_widget)
         main_layout.addWidget(self.rate_a_credito_non_presenti)
+        totale_credito_layout.addWidget(self.lbl_totale_credito_condomino)
+        totale_credito_layout.addWidget(self.totale_credito_condomino)
+        main_layout.addLayout(totale_credito_layout)
         main_layout.addWidget(self.msg)
 
         self.setLayout(main_layout)
@@ -133,7 +148,8 @@ class VistaCreditoCondomino(QWidget):
     def update_list(self):
         self.credito_totale_condomino = 0.00
         self.unita_associate_al_condomino = []
-        immobile_con_credito = []
+        immobile_con_credito = {}
+
         for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
             self.unita_associate_al_condomino.append(cod_unita_immobiliare)
 
@@ -142,44 +158,72 @@ class VistaCreditoCondomino(QWidget):
                 unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
                 if immobile.id == unita.immobile:
                     if immobile.id not in immobile_con_credito:
-                        immobile_con_credito.append(immobile)
+                        immobile_con_credito[immobile.id] = immobile
 
-        if not self.unita_associate_al_condomino:
-            self.tree_widget.setVisible(False)
-            self.condomino_section["frase"].setVisible(True)
+        immobile_con_credito = list(immobile_con_credito.values())
 
+        self.credito_totale = 0.00
+        self.tree_widget.clear()
         for immobile in immobile_con_credito:
+            print("we", immobile_con_credito)
             importo_totale_per_immobile = 0.00
             importo_per_unita = {}
+            last_bilancio = Bilancio.getLastBilancio(immobile)
             for unita_immobile in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile).values():
                 if unita_immobile.codice in self.unita_associate_al_condomino:
-                    last_bilancio = Bilancio.getLastBilancio(immobile)
                     totale_rate_versate_per_unita = 0.0
-                    for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita_immobile).values():
-                        totale_rate_versate_per_unita += rate_versate.importo
-                    print("totale rate versate per unita", totale_rate_versate_per_unita)
-                    if last_bilancio.importiDaVersare[unita_immobile.codice] < 0:
-                        importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] + totale_rate_versate_per_unita
-                    else:
-                        importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] - totale_rate_versate_per_unita
-                    print("importo da versare dell'unita", unita_immobile.codice, " :", last_bilancio.importiDaVersare[unita_immobile.codice])
-                    print("importo per unita", importo_per_unita)
-                    importo_totale_per_immobile += importo_per_unita[unita_immobile.codice]
-                    print("ko")
+                    importo_per_unita[unita_immobile.codice] = 0.0
+                    if last_bilancio:
+                        for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita_immobile).values():
+                            totale_rate_versate_per_unita += rate_versate.importo
+                        print("totale rate versate per unita", totale_rate_versate_per_unita)
+                        if last_bilancio.importiDaVersare[unita_immobile.codice] < 0:
+                            importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] + totale_rate_versate_per_unita
+                        else:
+                            importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] - totale_rate_versate_per_unita
+                        print("importo da versare dell'unita", unita_immobile.codice, " :", last_bilancio.importiDaVersare[unita_immobile.codice])
+                        print("importo per unita", importo_per_unita)
+                        importo_totale_per_immobile += importo_per_unita[unita_immobile.codice]
+                        self.credito_totale += importo_totale_per_immobile
             print("prima di item")
-            item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
+            if last_bilancio:
+                item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
+            else:
+                item = QTreeWidgetItem([immobile.denominazione, "Nessun bilancio approvato per questo immobile"])
+
             print("dopo item")
             for key, value in importo_per_unita.items():
+                print("key", key)
                 unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(key)
+                print("f")
                 if unita.tipoUnitaImmobiliare == "Appartamento":
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno}"
                 else:
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare}"
-
-                child = QTreeWidgetItem([unita_immobiliare], str("%.2f" % importo_per_unita))
+                print(unita_immobiliare, value)
+                if last_bilancio:
+                    child = QTreeWidgetItem([unita_immobiliare, str("%.2f" % value)])
+                else:
+                    child = QTreeWidgetItem([unita_immobiliare, "Nessun bilancio approvato per questo immobile"])
                 item.addChild(child)
             self.tree_widget.addTopLevelItem(item)
 
-        for i in range(self.tree_widget.columnCount()):
-            print(i)
-            self.tree_widget.resizeColumnToContents(i)
+
+        self.tree_widget.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+
+        if immobile_con_credito:
+            self.tree_widget.setVisible(True)
+            self.condomino_section["frase"].setVisible(False)
+            if last_bilancio:
+                self.credito_condomino_section["frase_credito_totale"].setVisible(True)
+                self.credito_condomino_section["credito_totale"].setText("%.2f" % self.credito_totale)
+                self.credito_condomino_section["credito_totale"].setVisible(True)
+            else:
+                self.credito_condomino_section["frase_credito_totale"].setVisible(False)
+                self.credito_condomino_section["credito_totale"].setVisible(False)
+        else:
+            self.tree_widget.setVisible(False)
+            self.condomino_section["frase"].setVisible(True)
+            self.credito_condomino_section["frase_credito_totale"].setVisible(False)
+            self.credito_condomino_section["credito_totale"].setVisible(False)

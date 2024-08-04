@@ -9,12 +9,12 @@ nome_file = 'Dati/Rate.pickle'
 class Rata:
     def __init__(self):
         self.codice = 1
-        self.dataPagamento = datetime.date(year=1970, month=1, day=1)
-        self.descrizione = ""
-        self.importo = 0.0
-        self.numeroRicevuta = 0
-        self.tipoPagamento = ""
-        self.unitaImmobiliare = 0
+        self.dataPagamento = datetime.date(year=1970, month=1, day=1)#
+        self.descrizione = ""#
+        self.importo = 0.0#
+        self.numeroRicevuta = 0#
+        self.tipoPagamento = ""#
+        self.unitaImmobiliare = 0#
         self.versante = ""
         self.isLast = False
 

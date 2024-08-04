@@ -12,18 +12,17 @@ class UnitaImmobiliare:
 
     def __init__(self):
         self.codice = 1
-        self.interno = 0
-        self.foglio = 0
-        self.subalterno = 0
-        self.condomini = {}
-        self.particella = 0
-        self.tipoUnitaImmobiliare = ""
-        self.categoria = ""
-        self.classe = 0
-        self.immobile = 0
-        self.scala = 0
-        self.ZC = ""
-        #self.scadenza = datetime.date(year=1970, month=1, day=1)
+        self.interno = 0#
+        self.foglio = 0#
+        self.subalterno = 0#
+        self.condomini = {}#
+        self.particella = 0#
+        self.tipoUnitaImmobiliare = ""#
+        self.categoria = ""#
+        self.classe = 0#
+        self.immobile = 0#
+        self.scala = 0#
+        self.ZC = ""#
 
 
     def aggiungiUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare, categoria, classe, immobile, scala, ZC):

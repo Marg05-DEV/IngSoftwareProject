@@ -37,7 +37,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 - Impostare il treeWidget in creditoCondomino e forse in StatoPatrimoniale
 - Controllo generale
-
+- In credito condomino migliorare ricerca condomino con possibili colonne per il combo box
 ## AREA BILANCIO
 
 ### TABELLE MILLESIMALI

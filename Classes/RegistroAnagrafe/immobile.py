@@ -9,14 +9,14 @@ directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Classes\Re
 class Immobile:
     def __init__(self):
         self.id = 1
-        self.codice = 0
-        self.sigla = ""
-        self.denominazione = ""
-        self.codiceFiscale = ""
-        self.citta = ""
-        self.provincia = ""
-        self.cap = ""
-        self.via = ""
+        self.codice = 0#
+        self.sigla = ""#
+        self.denominazione = ""#
+        self.codiceFiscale = ""#
+        self.citta = ""#
+        self.provincia = ""#
+        self.cap = ""#
+        self.via = ""#
         self.files_path = ""
 
     def aggiungiImmobile(self, codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
