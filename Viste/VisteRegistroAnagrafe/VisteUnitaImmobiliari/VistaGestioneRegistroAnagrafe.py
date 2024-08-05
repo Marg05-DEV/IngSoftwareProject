@@ -46,11 +46,11 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         button_layout = QVBoxLayout()
         self.button_list = {}
-        button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        #button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
-        button_layout.addSpacerItem(QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        #button_layout.addSpacerItem(QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Visualizza Assegnazione", self.go_Read_Assegnazione, True))
-        button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        #button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
@@ -77,14 +77,16 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Gestione Registro Anagrafe Condominiale: " + self.immobile.denominazione)
+        self.setWindowTitle("Registro Anagrafe Condominiale dell'immobile: " + self.immobile.denominazione)
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         if testo == "Mostra Registro Anagrafe Condominiale":
-            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         else:
-            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -135,11 +137,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             elif self.searchType.currentIndex() == 2:  # ricerca per nominativo condomino
                 condomini = {item.codice: '    '.join([Condomino.ricercaCondominoByCF(cf).cognome + " " + Condomino.ricercaCondominoByCF(cf).nome for cf in item.condomini.keys()])
                              for item in self.lista_unitaImmobiliari}
-                print("************************************************************************")
-                print("************************************************************************")
-                print("condomini", condomini)
-                print("************************************************************************")
-                print("************************************************************************")
 
                 self.lista_unitaImmobiliari = [UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item) for item in condomini.keys() if self.searchbar.text().upper() in condomini[item].upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)
@@ -174,7 +171,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             listview_model.appendRow(item)
 
         self.list_view_unitaImmobiliare.setModel(listview_model)
-
+        self.list_view_unitaImmobiliare.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.selectionModel = self.list_view_unitaImmobiliare.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
 

@@ -37,12 +37,13 @@ class VistaCreateImmobile(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuovo Immobile")
+        self.setWindowTitle("Inserimento Immobile")
 
-    def create_button(self,testo, action):
+    def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

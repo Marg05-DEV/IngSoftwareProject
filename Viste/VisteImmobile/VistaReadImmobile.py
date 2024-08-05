@@ -25,18 +25,18 @@ class VistaReadImmobile(QWidget):
         main_layout.addLayout(self.pair_label("Via", "via"))
 
         main_layout.addWidget(self.create_button("Modifica Immobile", self.updateImmobile))
-        main_layout.addWidget(self.create_button("Elimina Immobile", self.deleteImmobile))
+        main_layout.addWidget(self.create_button("Rimuovi Immobile", self.deleteImmobile))
 
         self.setLayout(main_layout)
 
-        self.resize(600, 400)
+        self.resize(300, 400)
         self.setWindowTitle("Dettaglio Immobile")
 
     @staticmethod
     def create_button(testo, action):
         button = QPushButton(testo)
-        button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         return button
 

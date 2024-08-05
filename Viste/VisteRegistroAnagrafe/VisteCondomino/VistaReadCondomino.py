@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBo
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaDeleteCondomino import VistaDeleteCondomino
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaUpdateCondomino import VistaUpdateCondomino
 
 
@@ -12,12 +13,11 @@ class VistaReadCondomino(QWidget):
 
     def __init__(self, sel_condomino, callback, fromUnitaImmobiliare, unita_immobiliare=None):
         super(VistaReadCondomino, self).__init__()
-        print("dentro a read condomino 1")
         self.sel_condomino = sel_condomino
+        self.fromUnitaImmobiliare = fromUnitaImmobiliare
         if fromUnitaImmobiliare:
             self.unita_immobiliare = unita_immobiliare
         self.callback = callback
-        print("dentro a read condomino 2")
         main_layout = QVBoxLayout()
 
         main_layout.addLayout(self.pair_label("Nome", "nome"))
@@ -32,6 +32,7 @@ class VistaReadCondomino(QWidget):
 
         if fromUnitaImmobiliare:
             titolo_layout = QHBoxLayout()
+            button_layout = QVBoxLayout()
 
             lbl_desc = QLabel("Titolo nell'unità immobiliare: ")
             lbl_content = QLabel(str(self.unita_immobiliare.condomini[self.sel_condomino.codiceFiscale]))
@@ -39,7 +40,11 @@ class VistaReadCondomino(QWidget):
             titolo_layout.addWidget(lbl_desc)
             titolo_layout.addWidget(lbl_content)
 
+            button_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
+            button_layout.addWidget(self.create_button("Rimuovi Condomino", self.removeCondomino))
+
             main_layout.addLayout(titolo_layout)
+            main_layout.addLayout(button_layout)
         else:
             main_layout.addWidget(self.create_button("Modifica Dati Anagrafici Condomino", self.updateCondomino))
 
@@ -58,14 +63,18 @@ class VistaReadCondomino(QWidget):
             self.update_list()
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
-        self.setWindowTitle("Dettaglio Condomino")
+        self.resize(300, 500)
+        if fromUnitaImmobiliare:
+            self.setWindowTitle("Dettaglio Condomino")
+        else:
+            self.setWindowTitle("Dati Anagrafici Condomino")
 
     @staticmethod
     def create_button(testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         return button
 
@@ -106,8 +115,14 @@ class VistaReadCondomino(QWidget):
         self.list_view_immobili.setModel(listview_model)
 
     def updateCondomino(self):
-        print("ciao")
-        self.vista_modifica_condomino = VistaUpdateCondomino(self.sel_condomino, callback=self.callback, onlyAnagrafica=True)
-        print("ciao ciao")
+        if self.fromUnitaImmobiliare:
+            self.vista_modifica_condomino = VistaUpdateCondomino(self.sel_condomino, self.callback, self.unita_immobiliare, onlyAnagrafica=False)
+        else:
+            self.vista_modifica_condomino = VistaUpdateCondomino(self.sel_condomino, callback=self.callback, onlyAnagrafica=True)
         self.close()
         self.vista_modifica_condomino.show()
+
+    def removeCondomino(self):
+        self.vista_elimina_condomino = VistaDeleteCondomino(self.sel_condomino, self.unita_immobiliare, self.callback)
+        self.close()
+        self.vista_elimina_condomino.show()

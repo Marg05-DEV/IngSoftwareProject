@@ -15,19 +15,19 @@ class VistaHome(QWidget):
         self.setWindowTitle("Amministrazione Condominiale")
         vertical_layout = QVBoxLayout()
 
-        vertical_layout.addWidget(self.getButton("Gestione Immobile",
+        vertical_layout.addWidget(self.getButton("GESTIONE IMMOBILE",
                                                  "Aggiungi nuovi immobili. Visualizza, modifica o rimuovi quelli esistenti.",
                                                  self.goImmobile))
-        vertical_layout.addWidget(self.getButton("Gestione Registro Anagrafe Condominiale",
+        vertical_layout.addWidget(self.getButton("GESTIONE REGISTRO ANAGRAFE CONDOMINIALE",
                                                  "Scegli un immobile e gestisci le unità immobiliari che lo compongono e i condomini che lo abitano.",
                                                  self.goRegistroAnagrafe))
-        vertical_layout.addWidget(self.getButton("Gestione Contabilità",
+        vertical_layout.addWidget(self.getButton("GESTIONE CONTABILITÀ",
                                                  "Aggiungi le rate versate e le spese a carico di un qualsiasi immobile.",
                                                  self.goContabilita))
-        vertical_layout.addWidget(self.getButton("Gestione Bilancio",
+        vertical_layout.addWidget(self.getButton("GESTIONE BILANCIO",
                                                  "Scegli un immobile e visualizza le sue tabelle millesimali o calcola il bilancio dell'esercizio.",
                                                  self.goBilancio))
-        vertical_layout.addWidget(self.getButton("Gestione Documenti",
+        vertical_layout.addWidget(self.getButton("GESTIONE DOCUMENTI",
                                                  "Visualizza tutti i documenti creati come i registri anagrafici o i prospetti del bilancio degli immobili.",
                                                  self.goDocumenti))
         self.setLayout(vertical_layout)

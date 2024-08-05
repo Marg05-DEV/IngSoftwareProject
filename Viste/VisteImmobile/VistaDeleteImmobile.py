@@ -24,8 +24,8 @@ class VistaDeleteImmobile(QWidget):
 
         button_layout = QHBoxLayout()
 
-        button_layout.addWidget(self.create_button("Procedi", self.deleteImmobile))
         button_layout.addWidget(self.create_button("Annulla", self.close))
+        button_layout.addWidget(self.create_button("Procedi", self.deleteImmobile))
 
         main_layout.addLayout(button_layout)
 

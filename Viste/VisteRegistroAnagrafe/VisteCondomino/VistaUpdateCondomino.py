@@ -44,9 +44,10 @@ class VistaUpdateCondomino(QWidget):
         if not self.onlyAnagrafica:
             main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"))
 
-        main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
-        main_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
-
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.create_button("Svuota i campi", self.reset))
+        button_layout.addWidget(self.create_button("Modifica Condomino", self.updateCondomino))
+        main_layout.addLayout(button_layout)
         self.setLayout(main_layout)
 
         self.resize(600, 400)
@@ -55,7 +56,8 @@ class VistaUpdateCondomino(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

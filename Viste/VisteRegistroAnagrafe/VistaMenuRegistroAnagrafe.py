@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt, QStringListModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QPushButton, QLabel, \
-    QCompleter
+    QCompleter, QFrame, QSizePolicy
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteRegistroAnagrafe.VisteCondomino.VistaGestioneCondomini import VistaGestioneCondomini
@@ -33,9 +33,9 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.immobile_selezionato = QLabel("Nessun immobile selezionato")
 
         find_layout = QHBoxLayout()
-
         search_layout = QVBoxLayout()
         type_layout = QVBoxLayout()
+        selected_layout = QHBoxLayout()
 
         search_layout.addWidget(self.lbl_search)
         type_layout.addWidget(self.lbl_searchType)
@@ -55,8 +55,6 @@ class VistaMenuRegistroAnagrafe(QWidget):
         msg_layout.addWidget(frase_lbl)
         msg_layout.addWidget(self.immobile_selezionato)
 
-        main_layout.addLayout(msg_layout)
-
         if not completer_list:
             frase_lbl.setText("Nessun immobile presente")
             self.immobile_selezionato.setVisible(False)
@@ -64,26 +62,37 @@ class VistaMenuRegistroAnagrafe(QWidget):
         self.button_layout = QHBoxLayout()
 
         self.select_button = self.create_button("Seleziona", self.go_Gestione_UnitaImmobiliare, True)
-        self.button_layout.addWidget(self.select_button)
+        self.select_button.setMaximumWidth(200)
+        self.select_button.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         self.button_layout.addWidget(self.create_button("Visualizza tutti i Condomini", self.go_Gestione_Condomino))
 
         self.searchbar.textChanged.connect(self.selectioning)
 
+        selected_layout.addWidget(self.select_button)
+        selected_layout.addLayout(msg_layout)
+
         main_layout.addLayout(find_layout)
+        main_layout.addLayout(selected_layout)
+        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(self.button_layout)
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
-        self.setWindowTitle("Menu Registro Anagrafe")
+        self.resize(500, 300)
+        self.setWindowTitle("Menu Registro Anagrafe Condominiale")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(275, 55)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.setCheckable(False)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         return button
-
+    def drawLine(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
+        return line
     def selectioning(self):
         immobile = None
 

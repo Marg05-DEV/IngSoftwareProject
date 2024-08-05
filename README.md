@@ -6,6 +6,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Rivedere le dimensioni di Widget e altre cose;
 - Migliorare i layout delle viste seguendo i mockup;
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
+- Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio
 
 ## AREA IMMOBILI
 - controlli mancanti su modifica Immobile (stessa denominazione, codice, sigla, CF, ...)

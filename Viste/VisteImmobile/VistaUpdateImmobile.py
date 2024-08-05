@@ -43,7 +43,8 @@ class VistaUpdateImmobile(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
@@ -106,7 +107,7 @@ class VistaUpdateImmobile(QWidget):
         print("scrivendo ...")
         immobili = Immobile.getAllImmobili()
         num_errors = 0
-        unique_fields = ['codiceFiscale']
+        unique_fields = ['denominazione', 'sigla', 'codice', 'codiceFiscale']
         there_is_unique_error = {}
 
         for field in unique_fields:
