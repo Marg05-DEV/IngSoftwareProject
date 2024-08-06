@@ -11,10 +11,6 @@ from Classes.Contabilita.spesa import Spesa
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaCalcoloConsuntivo import VistaCalcoloConsuntivo
-from Viste.VisteContabilita.VisteSpese.VistaCreateSpesa import VistaCreateSpesa
-from Viste.VisteContabilita.VisteSpese.VistaDeleteSpesa import VistaDeleteSpesa
-from Viste.VisteContabilita.VisteSpese.VistaReadSpesa import VistaReadSpesa
-from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 
 class VistaListaSpese(QWidget):
     def __init__(self, bilancio, callback):
@@ -25,6 +21,7 @@ class VistaListaSpese(QWidget):
         self.callback = callback
         self.button_list = {}
         self.checkboxes = {}
+        self.checkboxes_pagata = {}
         self.lista_spese = []
 
         main_layout = QVBoxLayout()
@@ -104,17 +101,40 @@ class VistaListaSpese(QWidget):
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
             print("prima di allineare l'importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
-            self.table_spese.setItem(i, 7, QTableWidgetItem())
+
+            cell_widget = QWidget()
+            checkbox_pagata = QCheckBox()
+            self.checkboxes_pagata[spesa.codice] = checkbox_pagata
+            checkbox_pagata.stateChanged.connect(self.reset_pagata)
+            print("b")
             if spesa.pagata:
-                self.table_spese.item(i, 7).setData(10, 2)
+                checkbox_pagata.setCheckState(Qt.CheckState.Checked)
             else:
-                self.table_spese.item(i, 7).setData(10, 0)
+                checkbox_pagata.setCheckState(Qt.CheckState.Unchecked)
+
+            checkbox_pagata.setTristate(False)
+
+            checkbox_layout = QHBoxLayout(cell_widget)
+            checkbox_layout.addWidget(checkbox_pagata)
+            checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_layout.setContentsMargins(0, 0, 0, 0)
+            cell_widget.setLayout(checkbox_layout)
+
+            self.table_spese.setCellWidget(i, 7, cell_widget)
             print(" ----------- sorpasso. appena prima di mettere un checkbox")
+            cell_widget_scelta = QWidget()
             checkbox = QCheckBox()
             checkbox.setChecked(True)
             self.checkboxes[spesa.codice] = checkbox
-            self.table_spese.setCellWidget(i, 8, checkbox)
-            self.table_spese.cellWidget(i, 8).stateChanged.connect(self.changeList)
+
+            checkbox.stateChanged.connect(self.changeList)
+
+            checkbox_scelta_layout = QHBoxLayout(cell_widget_scelta)
+            checkbox_scelta_layout.addWidget(checkbox)
+            checkbox_scelta_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_scelta_layout.setContentsMargins(0, 0, 0, 0)
+            cell_widget_scelta.setLayout(checkbox_scelta_layout)
+            self.table_spese.setCellWidget(i, 8, cell_widget_scelta)
             print("------------ appena dope")
             i += 1
         print("sorpasso. printed lista a cons")
@@ -134,17 +154,39 @@ class VistaListaSpese(QWidget):
             self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
-            self.table_spese.setItem(i, 7, QTableWidgetItem())
+            cell_widget = QWidget()
+            checkbox_pagata = QCheckBox()
+            self.checkboxes_pagata[spesa.codice] = checkbox_pagata
+            checkbox_pagata.stateChanged.connect(self.reset_pagata)
+            print("b")
             if spesa.pagata:
-                self.table_spese.item(i, 7).setData(10, 2)
+                checkbox_pagata.setCheckState(Qt.CheckState.Checked)
             else:
-                self.table_spese.item(i, 7).setData(10, 0)
+                checkbox_pagata.setCheckState(Qt.CheckState.Unchecked)
+
+            checkbox_pagata.setTristate(False)
+
+            checkbox_layout = QHBoxLayout(cell_widget)
+            checkbox_layout.addWidget(checkbox_pagata)
+            checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_layout.setContentsMargins(0, 0, 0, 0)
+            cell_widget.setLayout(checkbox_layout)
+
+            self.table_spese.setCellWidget(i, 7, cell_widget)
             print(" ----------- sorpasso. appena prima di mettere un checkbox")
+            cell_widget_scelta = QWidget()
             checkbox = QCheckBox()
             checkbox.setChecked(False)
             self.checkboxes[spesa.codice] = checkbox
-            self.table_spese.setCellWidget(i, 8, checkbox)
-            self.table_spese.cellWidget(i, 8).stateChanged.connect(self.changeList)
+
+            checkbox.stateChanged.connect(self.changeList)
+
+            checkbox_scelta_layout = QHBoxLayout(cell_widget_scelta)
+            checkbox_scelta_layout.addWidget(checkbox)
+            checkbox_scelta_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_scelta_layout.setContentsMargins(0, 0, 0, 0)
+            cell_widget_scelta.setLayout(checkbox_scelta_layout)
+            self.table_spese.setCellWidget(i, 8, cell_widget_scelta)
             print("------------ appena dope")
             i += 1
         print("sorpasso. printed lista a non cons")
@@ -155,6 +197,16 @@ class VistaListaSpese(QWidget):
         self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+
+    def reset_pagata(self):
+        checkbox = self.sender()
+        for cod_spesa, cell_widget_checkbox in self.checkboxes_pagata.items():
+            if cell_widget_checkbox is checkbox:
+                spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+        if spesa.pagata:
+            checkbox.setCheckState(Qt.CheckState.Checked)
+        else:
+            checkbox.setCheckState(Qt.CheckState.Unchecked)
 
     def goCalcolaConsuntivo(self):
         print('dentro consuntivo si va')

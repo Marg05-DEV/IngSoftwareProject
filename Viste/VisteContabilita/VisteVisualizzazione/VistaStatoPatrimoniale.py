@@ -226,6 +226,8 @@ class VistaStatoPatrimoniale(QWidget):
         self.rate_versate = {}
         for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
             totale_versato = 0.0
+            if unita_immobiliare.codice not in self.rate_da_versare:
+                self.rate_da_versare[unita_immobiliare.codice] = 0.00
             for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
                 if rata.dataPagamento >= Bilancio.getLastBilancio(self.immobile).dataApprovazione and rata.importo >= 0.0:
                     totale_versato += rata.importo
@@ -299,24 +301,29 @@ class VistaStatoPatrimoniale(QWidget):
             for spese in self.spese_section.values():
                 spese.setVisible(True)
             self.spese_section["no_spese"].setVisible(False)
-        print("bi")
-
+        print("******************************")
+        print("******************************")
+        print(self.rate_da_versare)
         listview_model1 = QStandardItemModel(self.list_view_rate)
         for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
             unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
             if self.rate_da_versare[unita] > 0:
                 if unita in self.rate_da_versare.keys():
+                    print("bu")
                     item = QStandardItem()
                     importo = self.rate_da_versare[unita] - self.rate_versate[unita]
                     importo = str("%.2f" % importo)
                     if unita_immo.tipoUnitaImmobiliare == "Appartamento":
+                        print("Appartamento")
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
                                                                        unita_immo.condomini[item] == "Proprietario"][0])
                         item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                        print("fine apppartamento")
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
-                                                                       unita_immo.condomini[item] == "Proprietario"][0])
+                        print("non appartamento")
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
                         item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                        print("fine non appartamento")
                     item.setText(item_text)
                     item.setEditable(False)
                     font = item.font()

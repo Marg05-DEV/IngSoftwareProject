@@ -27,8 +27,6 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 ### SPESE
 - Aggiungere un reset dei soli dividendi in aggiungi spesa
 - Rivedere il codice di modifica spesa per vedere se è tutto giusto
-- Capire come risolvere checkbox pagata nella lista di gestione spese
-- Vedere se migliorare checkbox spesa pagata nella gestione delle spese e copiarlo in vista lista spese del bilancio. Inoltre vedere come allineare il checkbox nella cella
 
 ### RATE
 - fare test sulle rate (dovrebbe funzionare tutto)
@@ -36,6 +34,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 ### STATO PATRIMONIALE e SALDO CASSA
 
 - Impostare il treeWidget in creditoCondomino e forse in StatoPatrimoniale
+- In stato patrimoniale e altri fare controlli: esempio gestire esistenza o meno dell'ultimo bilancio, propretario assente o dizionari non completi: esempio chiave = codice unità immobiliare mancante
 - Controllo generale
 - In credito condomino migliorare ricerca condomino con possibili colonne per il combo box
 ## AREA BILANCIO

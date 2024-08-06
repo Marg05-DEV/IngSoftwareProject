@@ -163,16 +163,25 @@ class VistaGestioneSpese(QWidget):
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
             print("dopo inserimento importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
+            cell_widget = QWidget()
             checkbox = QCheckBox()
-            self.checkboxes[i] = checkbox
+            self.checkboxes[spesa.codice] = checkbox
+            checkbox.stateChanged.connect(self.reset_pagata)
             print("b")
             if spesa.pagata:
                 checkbox.setCheckState(Qt.CheckState.Checked)
             else:
                 checkbox.setCheckState(Qt.CheckState.Unchecked)
-            checkbox.setDisabled(True)
+
             checkbox.setTristate(False)
-            self.table_spese.setCellWidget(i, 7, checkbox)
+
+            checkbox_layout = QHBoxLayout(cell_widget)
+            checkbox_layout.addWidget(checkbox)
+            checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_layout.setContentsMargins(0, 0, 0, 0)
+            cell_widget.setLayout(checkbox_layout)
+
+            self.table_spese.setCellWidget(i, 7, cell_widget)
             print("c")
             i += 1
 
@@ -185,6 +194,16 @@ class VistaGestioneSpese(QWidget):
         self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table_spese.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table_spese.selectionModel().selectionChanged.connect(self.able_button)
+
+    def reset_pagata(self):
+        checkbox = self.sender()
+        for cod_spesa, cell_widget_checkbox in self.checkboxes.items():
+            if cell_widget_checkbox is checkbox:
+                spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+        if spesa.pagata:
+            checkbox.setCheckState(Qt.CheckState.Checked)
+        else:
+            checkbox.setCheckState(Qt.CheckState.Unchecked)
 
     def goCreateSpesa(self):
         print("creazione rata")
