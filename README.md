@@ -9,14 +9,12 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio
 
 ## AREA IMMOBILI
-- controlli mancanti su modifica Immobile (stessa denominazione, codice, sigla, CF, ...)
 - ricontrollare quando si abilita/disabilita i bottoni delle azioni CRUD
 
 ## AREA REGISTRO ANAGRAFE
 
 ### UNITA IMMOBILIARI (ASSEGNAZIONI)
 
-- Vedere in particolare dimensioni bottoni gestione reg. anagrafe quando non ci sono assegnazioni (Aggiungi assegnazione, visualizza assegnazione. Ci sono i QSpacer)
 - Vedere se mettere la dataContratto per gli inquilini come richiesto dal form del registro anagrafe
 - vedere perchè non scompare msg = "unità immobiliari non corrispondenti alla ricerca" (da cambiare anche) quando la ricerca non è più attiva
 - vedere il reset modifica unità immobiliare
@@ -30,6 +28,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Aggiungere un reset dei soli dividendi in aggiungi spesa
 - Rivedere il codice di modifica spesa per vedere se è tutto giusto
 - Capire come risolvere checkbox pagata nella lista di gestione spese
+- Vedere se migliorare checkbox spesa pagata nella gestione delle spese e copiarlo in vista lista spese del bilancio. Inoltre vedere come allineare il checkbox nella cella
 
 ### RATE
 - fare test sulle rate (dovrebbe funzionare tutto)

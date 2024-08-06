@@ -86,7 +86,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         else:
             button.setMaximumHeight(40)
-            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
+            button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

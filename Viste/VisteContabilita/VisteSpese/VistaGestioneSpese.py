@@ -3,7 +3,7 @@ import datetime
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
-    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy
+    QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy, QCheckBox
 
 from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.spesa import Spesa
@@ -29,6 +29,7 @@ class VistaGestioneSpese(QWidget):
         self.searchType.activated.connect(self.avvia_ricerca)
         self.searchbar.textChanged.connect(self.avvia_ricerca)
 
+        self.checkboxes = {}
         find_layout.addWidget(self.searchbar)
         find_layout.addWidget(self.searchType)
 
@@ -162,12 +163,17 @@ class VistaGestioneSpese(QWidget):
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
             print("dopo inserimento importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
-            self.table_spese.setItem(i, 7, QTableWidgetItem())
+            checkbox = QCheckBox()
+            self.checkboxes[i] = checkbox
+            print("b")
             if spesa.pagata:
-                self.table_spese.item(i, 7).setData(10, 2)
+                checkbox.setCheckState(Qt.CheckState.Checked)
             else:
-                self.table_spese.item(i, 7).setData(10, 0)
-            self.table_spese.item(i, 7).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+                checkbox.setCheckState(Qt.CheckState.Unchecked)
+            checkbox.setDisabled(True)
+            checkbox.setTristate(False)
+            self.table_spese.setCellWidget(i, 7, checkbox)
+            print("c")
             i += 1
 
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)

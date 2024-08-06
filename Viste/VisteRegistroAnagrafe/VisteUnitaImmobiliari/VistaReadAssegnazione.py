@@ -52,8 +52,8 @@ class VistaReadAssegnazione(QWidget):
         self.button_list["Modifica Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         self.button_list["Rimuovi Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
-        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(button_unita_layout)
+        main_layout.addWidget(self.drawLine())
 
         condomini_label = QLabel("CONDOMINI ASSEGNATI:")
         condomini_label.setStyleSheet("font-weight: bold;")
@@ -95,7 +95,11 @@ class VistaReadAssegnazione(QWidget):
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setMaximumHeight(40)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        if testo in ["Aggiungi Condomino", "Modifica Condomino", "Visualizza Condomino", "Rimuovi Condomino"]:
+            button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
+        else:
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
@@ -110,39 +114,40 @@ class VistaReadAssegnazione(QWidget):
         table = QTableWidget()
         table.setRowCount(1)
         table.setColumnCount(6)
-        print("create tabella")
         dati_catastali = self.sel_unitaImmobiliare.getDatiCatastali()
-        print("create tabella")
 
         header = list(dati_catastali.keys())
         dati = list(dati_catastali.values())
-        print("create tabella")
 
         i = 0
         for h in header:
             item = QTableWidgetItem(h)
-            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             table.setHorizontalHeaderItem(i, item)
             i += 1
-        print("create tabella")
 
         i = 0
         for d in dati:
             item = QTableWidgetItem(str(d))
-            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             table.setItem(0, i, item)
             i += 1
 
-        print("create tabella")
         table.verticalHeader().setVisible(False)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        table.resizeRowsToContents()
+        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        print("************")
+        print("************")
+        print("************")
+        print("************")
+        table.setMaximumHeight(table.horizontalHeader().height() + table.rowHeight(0))
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        print(table.horizontalHeader().height())
+        print(table.rowHeight(0))
         return table
 
     def new_label(self, testo, index):
