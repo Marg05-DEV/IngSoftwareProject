@@ -24,16 +24,13 @@ class VistaCreateTabellaMillesimale(QWidget):
         main_layout = QVBoxLayout()
 
         self.tipi_spesa = []
-        print("ciao nuova finestravwrijern")
 
         lbl_frase = QLabel("Inserisci i dati della nuova tabella millesimale:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
-        print("ciao nuova finestravwrijern")
         main_layout.addWidget(lbl_frase)
         existing_tabella_millesimale_layout = QHBoxLayout()
         existing_tabella_millesimale_data_layout = QVBoxLayout()
-        print("ciao nuova finestravwrijern")
         self.lbl_exist = QLabel("La tabella millesimale esistente è: ")
         self.lbl_tabella_millesimale_esistente = QLabel()
         self.lbl_tabella_millesimale_esistente.setStyleSheet("font-weight: bold;")
@@ -42,18 +39,14 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.button_exist.setVisible(False)
         self.lbl_exist.setVisible(False)
         self.lbl_tabella_millesimale_esistente.setVisible(False)
-        print("ciao nuova finestravwrijern")
         existing_tabella_millesimale_data_layout.addWidget(self.lbl_exist, alignment=Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignLeft)
         existing_tabella_millesimale_data_layout.addWidget(self.lbl_tabella_millesimale_esistente, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         existing_tabella_millesimale_layout.addLayout(existing_tabella_millesimale_data_layout)
         existing_tabella_millesimale_layout.addWidget(self.button_exist)
         main_layout.addLayout(existing_tabella_millesimale_layout)
-        print("ciao nuova finestravwrijern")
         fields_layout = QVBoxLayout()
-        print("ciao nuova finestravwrijern")
         fields_layout.addLayout(self.pairLabelInput("Nome", "nome"))
-        print("ciao nuova finestravwrijern")
         fields_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
 
         assign_tipo_layout = QHBoxLayout()
@@ -61,13 +54,9 @@ class VistaCreateTabellaMillesimale(QWidget):
 
         for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values():
             tipi_spesa_utilizzati.extend(tabella.tipologieSpesa)
-        print("tipi spesa utilizzati", tipi_spesa_utilizzati)
-        print("prova list tipi", [item for item in TipoSpesa.getAllTipoSpesa().values()])
         tipi_spesa_list = [item for item in TipoSpesa.getAllTipoSpesa().values() if item.codice not in tipi_spesa_utilizzati]
 
-        print("lista combo", tipi_spesa_list)
         self.searchbar = QComboBox()
-        print("ciao nuova finestravwrijern")
         lbl_frase1 = QLabel("Aggiungi un tipo di spesa esistente che non sia assegnato ad altre tabelle millesimali dello stesso immobile:")
 
         assign_tipo_layout.addWidget(self.searchbar)

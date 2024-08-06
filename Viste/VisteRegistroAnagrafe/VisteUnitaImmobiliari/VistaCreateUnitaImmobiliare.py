@@ -23,7 +23,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.buttons = {}
         self.required_fields = ['tipoUnitaImmobiliare', 'foglio', 'particella', 'subalterno', 'ZC', 'classe', 'categoria']
 
-        lbl_frase = QLabel("Inserisci i dati per la nuova assegnazione: (* Campi Obbligatori)")
+        lbl_frase = QLabel("Inserisci i dati della nuova unità immobiliare: (* Campi Obbligatori)")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
@@ -50,6 +50,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.buttons["Assegna Condomini"].setDisabled(True)
 
         main_layout.addLayout(self.dati_appartamento)
+        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(dati_catastali1)
         main_layout.addLayout(dati_catastali2)
         main_layout.addLayout(button_layout)
@@ -57,15 +58,21 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuovo Assegnazione")
+        self.setWindowTitle("Inserimento Unità Immobilare")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         self.buttons[testo] = button
         button.clicked.connect(action)
         return button
+    def drawLine(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
+        return line
 
     def pairLabelInput(self, testo, index):
         input_layout = QVBoxLayout()

@@ -1,7 +1,7 @@
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, QListView, \
-    QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView
+    QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QFrame
 
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.immobile import Immobile
@@ -44,12 +44,16 @@ class VistaReadAssegnazione(QWidget):
         main_layout.addWidget(self.table_dati_catastali)
 
         self.button_list = {}
-        main_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare))
-        main_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare))
-        print("Prossimo problema")
+
+        button_unita_layout = QHBoxLayout()
+        button_unita_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare))
+        button_unita_layout.addWidget(self.create_button("Rimuovi Unità Immobiliare", self.deleteUnitaImmobiliare))
 
         self.button_list["Modifica Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         self.button_list["Rimuovi Unità Immobiliare"].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+
+        main_layout.addWidget(self.drawLine())
+        main_layout.addLayout(button_unita_layout)
 
         condomini_label = QLabel("CONDOMINI ASSEGNATI:")
         condomini_label.setStyleSheet("font-weight: bold;")
@@ -90,12 +94,17 @@ class VistaReadAssegnazione(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button
-
         return button
+    def drawLine(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
+        return line
 
     def create_table(self):
         table = QTableWidget()

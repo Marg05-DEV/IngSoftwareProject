@@ -24,7 +24,7 @@ class VistaCreateCondomino(QWidget):
         self.input_errors = {}
         self.buttons = {}
 
-        lbl_frase = QLabel("Inserisci i dati per l'aggiunta di un nuovo condomino: (* Campi obbligatori)")
+        lbl_frase = QLabel("Inserisci i dati del nuovo condomino: (* Campi obbligatori)")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
@@ -93,12 +93,13 @@ class VistaCreateCondomino(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuovo Condomino")
+        self.setWindowTitle("Inserimento Condomino")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

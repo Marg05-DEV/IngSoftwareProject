@@ -27,9 +27,9 @@ class VistaUpdateCondomino(QWidget):
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
         main_layout.addWidget(lbl_frase)
 
-        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"))
         main_layout.addLayout(self.pairLabelInput("Nome", "nome", ))
         main_layout.addLayout(self.pairLabelInput("Cognome", "cognome"))
+        main_layout.addLayout(self.pairLabelInput("Codice Fiscale", "codiceFiscale"))
 
         nascita_layout = QHBoxLayout()
         nascita_layout.addLayout(self.pairLabelInput("Luogo di nascita", "luogoDiNascita"))
@@ -42,7 +42,7 @@ class VistaUpdateCondomino(QWidget):
         main_layout.addLayout(self.pairLabelInput("Email", "email"))
 
         if not self.onlyAnagrafica:
-            main_layout.addLayout(self.pairLabelInput("Titolo Unità Immobiliare", "titolo"))
+            main_layout.addLayout(self.pairLabelInput("Titolo dell'Unità Immobiliare", "titolo"))
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.create_button("Svuota i campi", self.reset))

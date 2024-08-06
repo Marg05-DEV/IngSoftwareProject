@@ -3,7 +3,7 @@ import datetime
 from PyQt6.QtCore import QDate
 from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QLineEdit, QDateEdit, \
-    QVBoxLayout, QComboBox
+    QVBoxLayout, QComboBox, QFrame
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -47,6 +47,7 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         button_layout.addWidget(self.create_button("Modifica Unità Immobiliare", self.updateUnitaImmobiliare))
 
         main_layout.addLayout(self.dati_appartamento)
+        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(dati_catastali1)
         main_layout.addLayout(dati_catastali2)
         main_layout.addLayout(button_layout)
@@ -54,15 +55,21 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Modifica Condomino")
+        self.setWindowTitle("Modifica Unità Immobiliare")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         self.buttons[testo] = button
         button.clicked.connect(action)
         return button
+    def drawLine(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
+        return line
 
     def pairLabelInput(self, testo, index):
         print("---------------------- creazione "+ index + " --------------------------")
