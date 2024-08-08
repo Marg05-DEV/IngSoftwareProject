@@ -112,10 +112,7 @@ class VistaGestioneSpese(QWidget):
     def update_table(self, searchActivated=False):
         self.spese = list(Spesa.getAllSpese().values())
 
-        print("update")
-
         if searchActivated and self.searchbar.text():
-            print("in ricerca")
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per data Pagamento
                 day, month, year = [int(x) for x in self.searchbar.text().split("/")]
                 data = datetime.date(year, month, day)
@@ -127,7 +124,6 @@ class VistaGestioneSpese(QWidget):
             elif self.searchType.currentIndex() == 3:  # ricerca per denominazione fornitore
                 self.spese = [item for item in self.spese if self.searchbar.text().upper() in (Fornitore.ricercaFornitoreByCodice(item.fornitore)).denominazione.upper()]
         if not self.spese:
-            print("vuoto")
             if searchActivated:
                 self.msg.setText("Nessuna spesa corrisponde alla ricerca")
             else:
@@ -139,14 +135,11 @@ class VistaGestioneSpese(QWidget):
         self.table_spese.setRowCount(len(self.spese))
         self.table_spese.setColumnCount(8)
 
-        print("aiuto")
-
         self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata"])
         self.table_spese.verticalHeader().setVisible(False)
 
         i = 0
         for spesa in self.spese:
-            print(spesa, spesa.getInfoSpesa())
             self.table_spese.setItem(i, 0, QTableWidgetItem())
             self.table_spese.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, spesa.codice)
             self.table_spese.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -157,17 +150,13 @@ class VistaGestioneSpese(QWidget):
                 self.table_spese.setItem(i, 2, QTableWidgetItem(""))
             self.table_spese.setItem(i, 3, QTableWidgetItem(spesa.descrizione))
             self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
-            print("prima di fornitore")
             self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-            print("prima di inserire importo")
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
-            print("dopo inserimento importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
             cell_widget = QWidget()
             checkbox = QCheckBox()
             self.checkboxes[spesa.codice] = checkbox
             checkbox.stateChanged.connect(self.reset_pagata)
-            print("b")
             if spesa.pagata:
                 checkbox.setCheckState(Qt.CheckState.Checked)
             else:
@@ -182,7 +171,6 @@ class VistaGestioneSpese(QWidget):
             cell_widget.setLayout(checkbox_layout)
 
             self.table_spese.setCellWidget(i, 7, cell_widget)
-            print("c")
             i += 1
 
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -211,29 +199,23 @@ class VistaGestioneSpese(QWidget):
         self.vista_nuova_spesa.show()
 
     def goReadSpesa(self):
-        print("visualizzazione rata")
         spesa_selezionata = None
         codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
         spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
-        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
         self.vista_dettaglio_spesa = VistaReadSpesa(spesa_selezionata, callback=self.callback)
         self.vista_dettaglio_spesa.show()
 
     def goUpdateSpesa(self):
-        print("modifica rata")
         spesa_selezionata = None
         codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
         spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
-        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
         self.vista_modifica_spesa = VistaUpdateSpesa(spesa_selezionata, callback=self.callback)
         self.vista_modifica_spesa.show()
 
     def goDeleteSpesa(self):
-        print("modifica rata")
         spesa_selezionata = None
         codice_spesa = [item.data(0) for item in self.table_spese.verticalHeader().selectionModel().selectedRows()][0]
         spesa_selezionata = Spesa.ricercaSpesaByCodice(int(codice_spesa))
-        print(codice_spesa, ": ", spesa_selezionata.getInfoSpesa())
         self.vista_elimina_spesa = VistaDeleteSpesa(spesa_selezionata, callback=self.callback)
         self.vista_elimina_spesa.show()
 

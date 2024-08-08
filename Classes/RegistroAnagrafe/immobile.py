@@ -50,9 +50,7 @@ class Immobile:
         return "Il nuovo immobile " + denominazione + " è stato inserito", self
 
     def modificaImmobile(self,  codice, sigla, denominazione, codiceFiscale, citta, provincia, cap, via):
-        print("dentro modifica")
         msg = "L'immobile " + self.denominazione + " è stato modificato"
-        print(type(self.codice))
         if os.path.isfile(file_name):
             with open(file_name, "rb") as f:
                 immobili = dict(pickle.load(f))

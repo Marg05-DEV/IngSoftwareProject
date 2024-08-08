@@ -162,6 +162,12 @@ class VistaUpdateUnitaImmobiliare(QWidget):
             self.input_lines["scala"].setVisible(True)
             self.labels["interno"].setVisible(True)
             self.labels["scala"].setVisible(True)
+        else:
+            self.input_lines["interno"].setVisible(False)
+            self.input_lines["scala"].setVisible(False)
+            self.labels["interno"].setVisible(False)
+            self.labels["scala"].setVisible(False)
+
         self.input_errors['scala'].setVisible(False)
         self.input_errors['interno'].setVisible(False)
 

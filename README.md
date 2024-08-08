@@ -7,6 +7,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Migliorare i layout delle viste seguendo i mockup;
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
 - Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio
+- Controllare ogni volta che si fa una qualsiasi ricerca, che i bottoni si disattivino (basta mettere le disabilitazioni nelle funzioni collegate al signal) (per i tablewidget non dovrebbe servire)
 
 ## AREA IMMOBILI
 
@@ -20,6 +21,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 *dovrebbe essere tutto corretto*
 
 ## AREA CONTABILITA
+- Controlla cosa succede quando si visualizza una ricevuta per prelievo
 
 ### SPESE
 - Aggiungere un reset dei soli dividendi in aggiungi spesa

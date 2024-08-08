@@ -140,14 +140,8 @@ class VistaReadAssegnazione(QWidget):
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
-        print("************")
-        print("************")
-        print("************")
-        print("************")
         table.setMaximumHeight(table.horizontalHeader().height() + table.rowHeight(0))
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
-        print(table.horizontalHeader().height())
-        print(table.rowHeight(0))
         return table
 
     def new_label(self, testo, index):
@@ -176,7 +170,6 @@ class VistaReadAssegnazione(QWidget):
             item.setFont(font)
             listview_model.appendRow(item)
 
-        print("qui finisce")
         self.list_view_condomini.setModel(listview_model)
         self.selectionModel = self.list_view_condomini.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
@@ -224,8 +217,6 @@ class VistaReadAssegnazione(QWidget):
         self.vista_rimuovi_condomino.show()
 
     def able_button(self):
-        print("selezione cambiata")
-        print("lista button", self.button_list)
         if not self.list_view_condomini.selectedIndexes():
             self.button_list["Modifica Condomino"].setDisabled(True)
             self.button_list["Visualizza Condomino"].setDisabled(True)
