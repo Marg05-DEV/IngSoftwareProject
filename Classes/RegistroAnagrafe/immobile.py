@@ -209,8 +209,11 @@ class Immobile:
                 del immobili[self.id]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
+            print("os", self.files_path)
             shutil.rmtree(self.files_path)
+            print("os")
             self.codice = -1
+            print("os")
             self.id = -1
             self.sigla = ""
             self.denominazione = ""
@@ -219,7 +222,9 @@ class Immobile:
             self.provincia = ""
             self.cap = ""
             self.via = ""
+            print("os")
             del self
+            print("os")
             return "L'immobile " + nome_immobile + " è stato rimosso"
 
 

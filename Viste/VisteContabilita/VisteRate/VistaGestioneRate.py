@@ -134,11 +134,8 @@ class VistaGestioneRate(QWidget):
             self.msg.hide()
 
         self.table_rate.setRowCount(len(self.rate))
-        #self.table_rate.setColumnCount(8)
         self.table_rate.setColumnCount(7)
 
-        print("aiuto")
-        #in self.table_rate.setHorizontalHeaderLabels ho eliminato il parametro pagata
         self.table_rate.setHorizontalHeaderLabels(["Cod.", "Immobile", "Condomino", "Data pagamento", "Descrizione", "N° Ricevuta", "Importo"])
         self.table_rate.verticalHeader().setVisible(False)
 
@@ -205,19 +202,14 @@ class VistaGestioneRate(QWidget):
         self.vista_elimina_rata.show()
 
     def goReadRicevuta(self):
-        print('daidaidai')
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
         directory_file = os.path.dirname(os.path.abspath(__file__)).replace("\\Viste\\VisteContabilita\\VisteRate", "\\Dati\\pdf\\")
         print(directory_file, directory_file + 'temp')
         if os.path.isdir(directory_file + "temp\\"):
-            print("data")
             shutil.rmtree(directory_file + "temp\\")
-            print("data")
-        print('daidaidai')
         if not os.path.isdir(directory_file + "temp\\"):
             os.makedirs(directory_file + "temp\\")
-        print('daidaidai')
         pdf = GestoreContabilita.generaRicevuta(rata_selezionata)
         pdf.output(directory_file + "temp\\ricevuta.pdf")
         webbrowser.open(directory_file + "temp\\ricevuta.pdf")

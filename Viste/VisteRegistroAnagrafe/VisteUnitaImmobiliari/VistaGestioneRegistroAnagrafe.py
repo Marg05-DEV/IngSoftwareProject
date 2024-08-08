@@ -4,7 +4,7 @@ import webbrowser
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QListView, QComboBox, QLabel, QHBoxLayout, \
-    QPushButton, QSizePolicy, QSpacerItem
+    QPushButton, QSizePolicy
 
 from Classes.Gestione.gestoreRegistroAnagrafe import GestoreRegistroAnagrafe
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -46,11 +46,8 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
         button_layout = QVBoxLayout()
         self.button_list = {}
-        #button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Aggiungi Assegnazione", self.go_Add_Assegnazione))
-        #button_layout.addSpacerItem(QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         button_layout.addWidget(self.create_button("Visualizza Assegnazione", self.go_Read_Assegnazione, True))
-        #button_layout.addSpacerItem(QSpacerItem(20, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         action_layout.addWidget(self.list_view_unitaImmobiliare)
 
@@ -93,12 +90,12 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         return button
 
     def avvia_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
+        self.button_list["Visualizza Assegnazione"].setDisabled(True)
         sorting, desc = self.ordina_lista(True)
         self.update_list(sorting, desc, True)
 
     def avvia_ordinamento(self):
-        print("selected index SORTING: " + str(self.sortType.currentIndex()) + " -> " + str(self.sortType.currentText()))
+        self.button_list["Visualizza Assegnazione"].setDisabled(True)
         if self.searchbar.text():
             sorting, desc = self.ordina_lista(True)
             self.update_list(sorting, desc, True)
@@ -143,8 +140,13 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
 
         if not self.lista_unitaImmobiliari:
-            self.msg.setText("Non ci sono unità immobiliari assegnate all'immobile selezionato")
+            if searchActivated:
+                self.msg.setText("Nessuna unità immobiliare corrisponde alla ricerca")
+            else:
+                self.msg.setText("Non sono presenti unità immobiliari")
             self.msg.show()
+        elif not self.timer.isActive():
+            self.msg.hide()
 
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         for unitaImmobiliare in self.lista_unitaImmobiliari:

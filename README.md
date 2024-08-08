@@ -9,15 +9,12 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio
 
 ## AREA IMMOBILI
-- ricontrollare quando si abilita/disabilita i bottoni delle azioni CRUD
 
 ## AREA REGISTRO ANAGRAFE
 
 ### UNITA IMMOBILIARI (ASSEGNAZIONI)
 
 - Vedere se mettere la dataContratto per gli inquilini come richiesto dal form del registro anagrafe
-- vedere perchè non scompare msg = "unità immobiliari non corrispondenti alla ricerca" (da cambiare anche) quando la ricerca non è più attiva
-- vedere il reset modifica unità immobiliare
 
 ### CONDOMINI
 *dovrebbe essere tutto corretto*

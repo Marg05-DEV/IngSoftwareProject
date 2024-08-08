@@ -86,10 +86,16 @@ class VistaGestioneImmobile(QWidget):
         return button
 
     def avvia_ricerca(self):
+        self.button_list["Visualizza Immobile"].setDisabled(True)
+        self.button_list["Modifica Immobile"].setDisabled(True)
+        self.button_list["Elimina Immobile"].setDisabled(True)
         sorting, desc = self.ordina_lista(True)
         self.update_list(sorting, desc, True)
 
     def avvia_ordinamento(self):
+        self.button_list["Visualizza Immobile"].setDisabled(True)
+        self.button_list["Modifica Immobile"].setDisabled(True)
+        self.button_list["Elimina Immobile"].setDisabled(True)
         if self.searchbar.text():
             sorting, desc = self.ordina_lista(True)
             self.update_list(sorting, desc, True)
