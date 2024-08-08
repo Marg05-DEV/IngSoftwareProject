@@ -52,7 +52,7 @@ class VistaCreateSpesa(QWidget):
 
         main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
 
-        lbl_frase1 = QLabel("Inserisci i dati del fornitore: (* Campi obbligatori)")
+        lbl_frase1 = QLabel("Dati fornitore: (* Campi obbligatori)")
         lbl_frase1.setStyleSheet("font-weight: bold;")
         lbl_frase1.setFixedSize(lbl_frase1.sizeHint())
 
@@ -100,7 +100,7 @@ class VistaCreateSpesa(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuova Spesa")
+        self.setWindowTitle("Inserimento Spesa")
 
     def create_checkbox(self, testo, index):
         checkbox = QCheckBox(testo)
@@ -117,7 +117,7 @@ class VistaCreateSpesa(QWidget):
         button = QPushButton(testo)
         button.setCheckable(False)
         button.setMaximumHeight(40)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

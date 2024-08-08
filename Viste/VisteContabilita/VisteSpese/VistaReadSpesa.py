@@ -22,7 +22,6 @@ class VistaReadSpesa(QWidget):
 
     def __init__(self, spesa, callback):
         super(VistaReadSpesa, self).__init__()
-        print("dentro a read condomino 1")
         self.spesa = spesa
         self.callback = callback
 
@@ -69,7 +68,7 @@ class VistaReadSpesa(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Dettaglio Rata")
+        self.setWindowTitle("Dettaglio Spesa")
 
     def drawLine(self):
         line = QFrame()
@@ -80,7 +79,8 @@ class VistaReadSpesa(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         return button
 

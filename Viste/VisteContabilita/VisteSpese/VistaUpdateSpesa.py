@@ -15,8 +15,7 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 class VistaUpdateSpesa(QWidget):
     def __init__(self, spesa, callback):
         super(VistaUpdateSpesa, self).__init__()
-        for f in Fornitore.getAllFornitore().values():
-            print(f.getInfoFornitore())
+
         self.spesa = spesa
         self.cambio_fornitore = False
         self.callback = callback
@@ -29,7 +28,7 @@ class VistaUpdateSpesa(QWidget):
         self.required_fields = []
         self.isFornitoreTrovatoNow = False
         main_layout = QVBoxLayout()
-        lbl_frase = QLabel("Modifica Spesa:")
+        lbl_frase = QLabel("Inserisci i nuovi dati della spesa da modificare:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
 
@@ -38,7 +37,7 @@ class VistaUpdateSpesa(QWidget):
         main_layout.addLayout(self.pairLabelInput("Tipo Spesa", "tipoSpesa"))
         main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
 
-        lbl_frase1 = QLabel("Modifica dati fornitore:")
+        lbl_frase1 = QLabel("Dati fornitore:")
         lbl_frase1.setStyleSheet("font-weight: bold;")
         lbl_frase1.setFixedSize(lbl_frase1.sizeHint())
 
@@ -63,7 +62,7 @@ class VistaUpdateSpesa(QWidget):
         main_layout.addLayout(luogo_fornitore_layout)
         main_layout.addLayout(info_fornitore_layout)
 
-        lbl_frase2 = QLabel("Modifica dati fattura")
+        lbl_frase2 = QLabel("Dati fattura")
         lbl_frase2.setStyleSheet("font-weight: bold;")
         lbl_frase2.setFixedSize(lbl_frase2.sizeHint())
 
@@ -74,7 +73,7 @@ class VistaUpdateSpesa(QWidget):
         fattura_layout.addLayout(self.pairLabelInput("Data Fattura", "dataFattura"))
         main_layout.addLayout(fattura_layout)
 
-        lbl_frase3 = QLabel("Modifica dati pagamento:")
+        lbl_frase3 = QLabel("Dati pagamento:")
         lbl_frase3.setStyleSheet("font-weight: bold;")
         lbl_frase3.setFixedSize(lbl_frase3.sizeHint())
 
@@ -111,7 +110,8 @@ class VistaUpdateSpesa(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button

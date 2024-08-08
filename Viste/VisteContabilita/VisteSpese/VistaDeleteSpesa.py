@@ -16,8 +16,8 @@ class VistaDeleteSpesa(QWidget):
 
         button_layout = QHBoxLayout()
 
-        button_layout.addWidget(self.create_button("Procedi", self.deleteSpesa))
         button_layout.addWidget(self.create_button("Annulla", self.close))
+        button_layout.addWidget(self.create_button("Procedi", self.deleteSpesa))
 
         main_layout.addLayout(button_layout)
 

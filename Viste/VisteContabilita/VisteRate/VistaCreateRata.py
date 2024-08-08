@@ -23,7 +23,6 @@ class VistaCreateRata(QWidget):
         self.input_errors = {}
         self.buttons = {}
         self.required_fields = []
-        print("create rata, ci siamo dentro")
 
         scelta_operazione_layout = QHBoxLayout()
         lbl_frase_scelta = QLabel("Scegli l'operazione che vuoi compiere: ")
@@ -71,7 +70,7 @@ class VistaCreateRata(QWidget):
         self.setLayout(main_layout)
 
         self.resize(600, 400)
-        self.setWindowTitle("Inserimento Nuova Rata")
+        self.setWindowTitle("Inserimento Rata")
 
     def create_button(self, testo, action):
         button = QPushButton(testo)

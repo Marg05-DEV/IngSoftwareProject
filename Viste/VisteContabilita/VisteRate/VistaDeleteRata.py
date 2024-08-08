@@ -16,8 +16,8 @@ class VistaDeleteRata(QWidget):
 
         button_layout = QHBoxLayout()
 
-        button_layout.addWidget(self.create_button("Procedi", self.deleteRata))
         button_layout.addWidget(self.create_button("Annulla", self.close))
+        button_layout.addWidget(self.create_button("Procedi", self.deleteRata))
 
         main_layout.addLayout(button_layout)
 
