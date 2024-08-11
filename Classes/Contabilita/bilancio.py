@@ -25,6 +25,8 @@ class Bilancio:
         self.ripartizioneSpesePreventivate = {} ## {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict spesePreventivate e tabelle millesimali}, ...}
         self.ripartizioneSpeseConsuntivate = {}# # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict speseConsuntivate e tabelle millesimali}, ...}
         self.ripartizioneConguaglio = {}# # {UnitaImmobiliare: differenza ripartizioneSpesePrev - ripartizioneSpeseCons }
+        self.conguaglioPrecedente = {}
+        self.rateVersate = {}
         self.importiDaVersare = {} ## {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
         self.numeroRate = 0#
         self.ratePreventivate = {}# # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
@@ -52,8 +54,10 @@ class Bilancio:
                 print("------------- tipo spese", cod_tipo_spesa)
                 self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
                 if ultimo_bilancio:
+                    self.conguaglioPrecedente = ultimo_bilancio.ripartizioneConguaglio
                     if tabella.codice in ultimo_bilancio.spesePreventivate:
                         there_is_tabella = True
+
                     if cod_tipo_spesa in ultimo_bilancio.spesePreventivate[tabella.codice] and there_is_tabella:
                         self.spesePreventivate[tabella.codice][cod_tipo_spesa] = ultimo_bilancio.spesePreventivate[tabella.codice][cod_tipo_spesa]
                     else:
@@ -284,36 +288,45 @@ class Bilancio:
     def getConguaglioPrecedente(self):
         ultimo_bilancio = Bilancio.getLastBilancio(Immobile.ricercaImmobileById(self.immobile))
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
-        conguaglio_precedente = {}
-        if ultimo_bilancio:
-            conguaglio_precedente = ultimo_bilancio.ripartizioneConguaglio
-            for unita in unita_immobiliari:
-                if unita.codice not in conguaglio_precedente:
-                    conguaglio_precedente[unita.codice] = 0.0
-        else:
-            for unita in unita_immobiliari:
-                conguaglio_precedente[unita.codice] = 0.0
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                if ultimo_bilancio:
+                    bilanci[self.codice].conguaglioPrecedente = ultimo_bilancio.ripartizioneConguaglio
+                    for unita in unita_immobiliari:
+                        if unita.codice not in self.conguaglioPrecedente:
+                            bilanci[self.codice].conguaglioPrecedente [unita.codice] = 0.0
+                else:
+                    for unita in unita_immobiliari:
+                        bilanci[self.codice].conguaglioPrecedente [unita.codice] = 0.0
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
-        return conguaglio_precedente
 
-    def getRateVersate(self):
-        print("in getRateVersate")
+    def calcolaRateVersate(self):
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
-        rate_versate = {}
-        for unita in unita_immobiliari:
-            print("----------scorrendo unita", unita.getInfoUnitaImmobiliare())
-            rateVersateByUnitaImmobiliare = Rata.getAllRateByUnitaImmobiliare(unita)
-            rate_versate[unita.codice] = sum([item.importo for item in rateVersateByUnitaImmobiliare.values() if item.dataPagamento >= self.inizioEsercizio and item.dataPagamento <= self.fineEsercizio])
-            print("-----------fine ciclo unita")
-        return rate_versate
 
-    def calcolaConguaglio(self, totale_consuntivo_attuale, conguaglio_precedente, rate_versate):
-        unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
                 for unita in unita_immobiliari:
-                    bilanci[self.codice].ripartizioneConguaglio[unita.codice] = totale_consuntivo_attuale[unita.codice] + conguaglio_precedente[unita.codice] - rate_versate[unita.codice]
+                    rateVersateByUnitaImmobiliare = Rata.getAllRateByUnitaImmobiliare(unita)
+                    importi_rate_accettabili = [item.importo for item in rateVersateByUnitaImmobiliare.values() if item.dataPagamento >= self.inizioEsercizio and item.dataPagamento <= self.fineEsercizio]
+                    if importi_rate_accettabili:
+                        bilanci[self.codice].rateVersate[unita.codice] = sum(importi_rate_accettabili)
+                    else:
+                        bilanci[self.codice].rateVersate[unita.codice] = 0.0
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def calcolaConguaglio(self, totale_consuntivo_attuale):
+        unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
+        print("trovate le unità")
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                for unita in unita_immobiliari:
+                    bilanci[self.codice].ripartizioneConguaglio[unita.codice] = totale_consuntivo_attuale[unita.codice] + bilanci[self.codice].conguaglioPrecedente[unita.codice] - bilanci[self.codice].rateVersate[unita.codice]
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
@@ -328,7 +341,6 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def approvaBilancio(self):
-        print("approvando")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))

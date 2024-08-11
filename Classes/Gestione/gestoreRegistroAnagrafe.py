@@ -3,7 +3,6 @@ import pickle
 
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
-from Classes.RegistroAnagrafe.immobile import Immobile
 
 from fpdf import FPDF, Align, YPos, XPos
 
@@ -66,39 +65,27 @@ class GestoreRegistroAnagrafe:
         proprietari_unita_immobiliari = []
         senza_proprietario = []
         senza_condomini = []
-        print('inizio ordinamento proprietario')
         for item in list_unitaImmobiliari:
             print("------------------------------------------------------------------------------------------")
             print(item.getInfoUnitaImmobiliare())
             proprietario_cf = [key for key, value in item.condomini.items() if value == 'Proprietario']
             print(proprietario_cf)
             if len(proprietario_cf) < 1:
-                print("no prop")
                 if len(item.condomini) < 1:
-                    print("nessun condomino")
                     senza_condomini.append(item)
                 else:
-                    print("nessun propriestario")
                     senza_proprietario.append(item)
             else:
-                print("si prop")
                 proprietario = Condomino.ricercaCondominoByCF(proprietario_cf[0])
                 proprietari_unita_immobiliari.append([item.codice, proprietario.cognome.upper(), proprietario.nome.upper()])
 
-        print("fine aver scorso unita")
-        print(senza_proprietario)
-        print(senza_condomini)
-        print(proprietari_unita_immobiliari)
         if len(senza_proprietario) > 0:
             GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_proprietario)
         if len(senza_condomini) > 0:
             GestoreRegistroAnagrafe.ordinaUnitaImmobiliariByScala(senza_condomini)
-        print("ordinati lo schifo")
         proprietari_unita_immobiliari.sort(reverse=isDecrescente, key=lambda row: row[2])
         proprietari_unita_immobiliari.sort(reverse=isDecrescente, key=lambda row: row[1])
-        print(senza_proprietario)
-        print(senza_condomini)
-        print(proprietari_unita_immobiliari)
+
 
         sorted_unitaImmobiliari = []
         for proprietario in proprietari_unita_immobiliari:

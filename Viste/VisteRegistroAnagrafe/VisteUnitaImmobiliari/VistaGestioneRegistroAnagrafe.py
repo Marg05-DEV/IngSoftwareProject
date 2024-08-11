@@ -13,7 +13,6 @@ from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaCreateUnitaImmobilia
 from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaReadAssegnazione import VistaReadAssegnazione
 
 class VistaGestioneRegistroAnagrafe(QWidget):
-
     def __init__(self, immobile):
         super(VistaGestioneRegistroAnagrafe, self).__init__()
         self.immobile = immobile
@@ -192,9 +191,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
 
     def go_pdf_RegAn(self):
         pdf = GestoreRegistroAnagrafe.generaPDFRegistroAnagrafeCondominiale(self.immobile)
-        directory_files = os.path.dirname(os.path.abspath(__file__)).replace(
-            "Viste\\VisteRegistroAnagrafe\\VisteUnitaImmobiliari", "Dati\\pdf\\")
-        print(directory_files)
+        directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Viste\\VisteRegistroAnagrafe\\VisteUnitaImmobiliari", "Dati\\pdf\\")
 
         pdf.output(directory_files + self.immobile.sigla + "\\RegistroAnagrafeCondominiale.pdf")
         webbrowser.open(directory_files + f"{self.immobile.sigla}\\RegistroAnagrafeCondominiale.pdf")

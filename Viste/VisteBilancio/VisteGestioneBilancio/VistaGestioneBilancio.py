@@ -1,6 +1,10 @@
+import os
+import webbrowser
+
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QLineEdit
 
 from Classes.Contabilita.bilancio import Bilancio
+from Classes.Gestione.gestoreBilancio import GestoreBilancio
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaAvvisoBilancio import VistaAvvisoBilancio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaListaSpese import VistaListaSpese
@@ -122,7 +126,17 @@ class VistaGestioneBilancio(QWidget):
         self.ripartizione_consuntivo.show()
 
     def goProspettiEsercizio(self):
-        return
+        print("prospetti esercizio")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+        pdf = GestoreBilancio.visualizzaProspettiEsercizio(self.bilancio)
+
+        directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Viste\\VisteBilancio\\VisteGestioneBilancio", "Dati\\pdf\\")
+
+        nome_file = f"Esercizio{self.bilancio.inizioEsercizio.year}-{self.bilancio.fineEsercizio.year}"
+        print(nome_file)
+
+        pdf.output(f"{directory_files}{self.immobile.sigla}\\{nome_file}.pdf")
+        webbrowser.open(f"{directory_files}{self.immobile.sigla}\\{nome_file}.pdf")
 
     def goCalcolaBilancio(self):
         self.calcola_bilancio = VistaAvvisoBilancio(self, self.bilancio.approvaBilancio,

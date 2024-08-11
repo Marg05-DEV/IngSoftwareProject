@@ -1,13 +1,12 @@
 import os
 import subprocess
 
-
 class GestorePDF:
 
     def creaPDF(self, nomefile):
         pass
 
-    def visualizzaPDF(self,nomefile):#ricerca il pdf e lo apre a schermo con il visualizzatore pdf predefinito del pc
+    def visualizzaPDF(self, nomefile):#ricerca il pdf e lo apre a schermo con il visualizzatore pdf predefinito del pc
         directory = 'Dati/'+nomefile
 
         for root, dirs, files in os.walk(directory):

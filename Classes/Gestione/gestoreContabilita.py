@@ -12,12 +12,6 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
 class GestoreContabilita:
-    def visualizzaCreditoCondomino(self):
-        pass
-
-    def visualizzaDebitoFornitore(self):
-        pass
-
     def visualizzaSaldoCassa(self):
         saldo_cassa_contanti = 0.0
         saldo_cassa_A_B = 0.0
