@@ -35,7 +35,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Impostare il treeWidget in creditoCondomino e forse in StatoPatrimoniale
 - In stato patrimoniale e altri fare controlli: esempio gestire esistenza o meno dell'ultimo bilancio, propretario assente o dizionari non completi: esempio chiave = codice unità immobiliare mancante
 - Controllo generale
-- In credito condomino migliorare ricerca condomino con possibili colonne per il combo box
+- In credito condomino migliorare ricerca condomino con possibili colonne per il combo box (colonna per Cf e una per nome cognome. Così da risolvere omonimi)
 ## AREA BILANCIO
 
 ### TABELLE MILLESIMALI
@@ -44,13 +44,15 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 ### BILANCIO
 
-- fare prospetti per esercizi con il PDF
+- mettere la possibilità di modificare le rate preventivate con una funzione di adattamento
+- mettere la data di scadenza delle rate preventivate
+- fatti i due punti precedenti modificare il pdf dei prospetti 
 - rivedere controlli bilancio, soprattutto le date e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
 
 ## AREA DOCUMENTI
 
-*da fare*
-
 # FARE GLI UNIT TEST
 
-*da fare*
+- fatti per immobile. Fare per altre classi in modo analogo. FUNZIONANO
+
+*attenzione a lanciarli partendo dalla cartella di progetto IngSoftProject e non da quella dei test*

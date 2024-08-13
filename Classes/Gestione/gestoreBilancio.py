@@ -87,73 +87,72 @@ class GestoreBilancio:
             pdf.cell(0, 10, "Ripartizione spese consuntivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
             tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
 
-            column_width = [1] * len(tabelle_millesimali_immobile) + [3] + [1] * len(tabelle_millesimali_immobile) + [2] * 4
+            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 4
+            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(tabelle_millesimali_immobile) + ["RIGHT"] * 4
             totale_consuntivo = 0.0
-            print(column_width)
-            with pdf.table(width=pdf.epw, num_heading_rows=2) as table:
-                pdf.set_font("helvetica", "", 7)
+
+            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width), text_align=tuple(column_alignment)) as table:
+                pdf.set_font("helvetica", "B", 7)
 
                 heading_top = table.row()
 
-                heading_top.cell("MILLESIMI", colspan=len(tabelle_millesimali_immobile))
-                heading_top.cell("QUOTE", colspan=len(tabelle_millesimali_immobile))
+                heading_top.cell("MILLESIMI", align=Align.C, colspan=len(tabelle_millesimali_immobile))
+                heading_top.cell("UNITÀ IMMOBILIARE", align=Align.C, rowspan=2)
+                heading_top.cell("QUOTE", align=Align.C, colspan=len(tabelle_millesimali_immobile))
+
+                heading_top.cell("TOTALE CONSUNTIVO", align=Align.C, rowspan=2)
+                heading_top.cell("CONGUAGLIO ANNO PRECEDENTE", align=Align.C, rowspan=2)
+                heading_top.cell("TOTALE VERSATO", align=Align.C, rowspan=2)
+                heading_top.cell("CONGUAGLIO ANNO ATTUALE", align=Align.C, rowspan=2)
+
 
                 heading = table.row()
                 for tabella in tabelle_millesimali_immobile:
-                    heading.cell(tabella.nome.upper())
-
-                heading.cell("UNITÀ IMMOBILIARE", rowspan=2)
+                    heading.cell(tabella.nome.upper(), align=Align.C)
 
                 for tabella in tabelle_millesimali_immobile:
-                    heading.cell(tabella.nome.upper())
+                    heading.cell(tabella.nome.upper(), align=Align.C)
 
-                heading.cell("TOTALE CONSUNTIVO", rowspan=2)
-                heading.cell("CONGUAGLIO ANNO PRECEDENTE", rowspan=2)
-                heading.cell("TOTALE VERSATO", rowspan=2)
-                heading.cell("CONGUAGLIO ANNO ATTUALE", rowspan=2)
+                
 
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("helvetica", "", 8)
                 for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
                     for tabella in tabelle_millesimali_immobile:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
-                    pdf.set_font("helvetica", "BI", 9)
+                    pdf.set_font("helvetica", "BI", 7)
                     if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di\n{proprietario.cognome} {proprietario.nome}")
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
                     else:
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}")
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
 
-                    pdf.set_font("helvetica", "", 9)
+                    pdf.set_font("helvetica", "", 8)
                     totale_cons_unita = 0.0
-                    print("prova", unita_immobiliare.getInfoUnitaImmobiliare())
+
                     for tabella in tabelle_millesimali_immobile:
-                        print("--prova")
                         unita_row.cell("%.2f" % bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice])
-                        print("--prova")
                         totale_cons_unita += bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice]
+
                     totale_consuntivo += totale_cons_unita
 
-                    print("prova")
                     unita_row.cell("%.2f" % totale_cons_unita)
-                    print("prova")
                     unita_row.cell("%.2f" % bilancio.conguaglioPrecedente[unita_immobiliare.codice])
-                    print("prova")
                     unita_row.cell("%.2f" % bilancio.rateVersate[unita_immobiliare.codice])
-                    print("prova")
                     unita_row.cell("%.2f" % bilancio.ripartizioneConguaglio[unita_immobiliare.codice])
-                    print("provaa")
 
-                pdf.set_font("helvetica", "", 9)
-                print("fine for unita")
+                pdf.set_font("helvetica", "I", 8)
                 totale_row = table.row()
 
                 for tabella in tabelle_millesimali_immobile:
                     totale_row.cell("%.2f" % sum(list(tabella.millesimi.values())))
 
+                pdf.set_font("helvetica", "BI", 9)
                 totale_row.cell("TOTALE")
+
+                pdf.set_font("helvetica", "I", 8)
 
                 for tabella in tabelle_millesimali_immobile:
                     totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneSpeseConsuntivate[tabella.codice].values())))
@@ -162,11 +161,95 @@ class GestoreBilancio:
                 totale_row.cell("%.2f" % sum(list(bilancio.conguaglioPrecedente.values())))
                 totale_row.cell("%.2f" % sum(list(bilancio.rateVersate.values())))
                 totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneConguaglio.values())))
-                print("fine rip cons")
 
         def printRipartizionePreventivo(pdf, bilancio):
             pdf.set_font("helvetica", "B", 10)
             pdf.cell(0, 10, "Ripartizione spese preventivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
+
+            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
+
+            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 3 + [1] * bilancio.numeroRate
+            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(tabelle_millesimali_immobile) + ["RIGHT"] * 3 + ["RIGHT"] * bilancio.numeroRate
+            totale_preventivo = 0.0
+            totale_rate = [0.0] * bilancio.numeroRate
+            print(totale_rate)
+            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width), text_align=tuple(column_alignment)) as table:
+                pdf.set_font("helvetica", "B", 7)
+
+                heading_top = table.row()
+
+                heading_top.cell("MILLESIMI", align=Align.C, colspan=len(tabelle_millesimali_immobile))
+                heading_top.cell("UNITÀ IMMOBILIARE", align=Align.C, rowspan=2)
+                heading_top.cell("QUOTE", align=Align.C, colspan=len(tabelle_millesimali_immobile))
+
+                heading_top.cell("TOTALE PREVENTIVO", align=Align.C, rowspan=2)
+                heading_top.cell("CONGUAGLIO ANNO ATTUALE", align=Align.C, rowspan=2)
+                heading_top.cell("TOTALE DA VERSARE", align=Align.C, rowspan=2)
+
+                for i in range(bilancio.numeroRate):
+                    heading_top.cell(f"{i+1}a RATA", align=Align.C, rowspan=2)
+
+                heading = table.row()
+                for tabella in tabelle_millesimali_immobile:
+                    heading.cell(tabella.nome.upper(), align=Align.C)
+
+                for tabella in tabelle_millesimali_immobile:
+                    heading.cell(tabella.nome.upper(), align=Align.C)
+
+                pdf.set_font("helvetica", "", 8)
+                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                    unita_row = table.row()
+
+                    for tabella in tabelle_millesimali_immobile:
+                        unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
+
+                    pdf.set_font("helvetica", "BI", 7)
+                    if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                    else:
+                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+
+                    pdf.set_font("helvetica", "", 8)
+                    totale_prev_unita = 0.0
+
+                    for tabella in tabelle_millesimali_immobile:
+                        unita_row.cell("%.2f" % bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice])
+                        totale_prev_unita += bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice]
+
+                    totale_preventivo += totale_prev_unita
+
+                    unita_row.cell("%.2f" % totale_prev_unita)
+                    unita_row.cell("%.2f" % bilancio.ripartizioneConguaglio[unita_immobiliare.codice])
+                    unita_row.cell("%.2f" % bilancio.importiDaVersare[unita_immobiliare.codice])
+
+                    i = 0
+                    for rata in bilancio.ratePreventivate[unita_immobiliare.codice]:
+                        unita_row.cell("%.2f" % rata)
+                        totale_rate[i] += rata
+                        i += 1
+
+                pdf.set_font("helvetica", "I", 8)
+                totale_row = table.row()
+
+                for tabella in tabelle_millesimali_immobile:
+                    totale_row.cell("%.2f" % sum(list(tabella.millesimi.values())))
+
+                pdf.set_font("helvetica", "BI", 9)
+                totale_row.cell("TOTALE")
+
+                pdf.set_font("helvetica", "I", 8)
+
+                for tabella in tabelle_millesimali_immobile:
+                    totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneSpeseConsuntivate[tabella.codice].values())))
+
+                totale_row.cell("%.2f" % totale_preventivo)
+                totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneConguaglio.values())))
+                totale_row.cell("%.2f" % sum(list(bilancio.importiDaVersare.values())))
+
+                for i in range(bilancio.numeroRate):
+                    totale_row.cell("%.2f" % totale_rate[i])
 
         print("dentro visProspetti")
         pdf = FPDF()
@@ -182,7 +265,6 @@ class GestoreBilancio:
         pdf.add_page("L")
         print("dentro visProspetti")
         printRipartizioneConsuntivo(pdf, bilancio)
-        printRipartizioneConsuntivo()
         print("fatto")
 
         pdf.add_page("L")

@@ -30,6 +30,7 @@ class Bilancio:
         self.importiDaVersare = {} ## {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
         self.numeroRate = 0#
         self.ratePreventivate = {}# # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
+        self.scadenzaRate = []
         self.isApprovata = False#
         self.dataApprovazione = datetime.date(year=1970, month=1, day=1)#
         self.isLastEsercizio = False#
@@ -106,9 +107,12 @@ class Bilancio:
             "ripartizioneSpesePreventivate": self.ripartizioneSpesePreventivate,
             "ripartizioneSpeseConsuntivate": self.ripartizioneSpeseConsuntivate,
             "ripartizioneConguaglio": self.ripartizioneConguaglio,
+            "conguaglioPrecedente": self.conguaglioPrecedente,
+            "rateVersate": self.rateVersate,
             "importiDaVersare": self.importiDaVersare,
             "numeroRate": self.numeroRate,
             "ratePreventivate": self.ratePreventivate,
+            "scadenzaRate": self.scadenzaRate,
             "isApprovata": self.isApprovata,
             "dataApprovazione": self.dataApprovazione,
             "isLastEsercizio": self.isLastEsercizio
