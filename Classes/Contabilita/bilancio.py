@@ -379,10 +379,55 @@ class Bilancio:
                 if bilanci[self.codice].numeroRate:
                     for rate in range(0, bilanci[self.codice].numeroRate):
                         list_rate.append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
-                        #bilanci[self.codice].ratePreventivate[cod_unita].append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
                 else:
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
                 print("dopo", bilanci[self.codice].ratePreventivate)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def initScadenzaRate(self):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                if bilanci[self.codice].numeroRate:
+                    months_periods = []
+                    if bilanci[self.codice].numeroRate == 5:
+                        months_periods = [0, 2, 5, 7, 9]
+                    else:
+                        months_periods = [int(12 / bilanci[self.codice].numeroRate) * i for i in range(0, bilanci[self.codice].numeroRate)]
+                    print("initScadenzaRate")
+                    print(bilanci[self.codice].numeroRate, " ----> ", months_periods)
+
+                    bilanci[self.codice].scadenzaRate = []
+                    for n_rate in range(0, bilanci[self.codice].numeroRate):
+                        print(" ----------- ciclo", n_rate)
+                        data_da_aggiungere = datetime.date.today()
+                        print("a")
+                        if n_rate > 0:
+                            print("a")
+                            month = (data_da_aggiungere.month + months_periods[n_rate]) % 12
+                            year = data_da_aggiungere.year
+                            print("a")
+                            if month == 0:
+                                month = 12
+                            print("new month", month)
+                            print(data_da_aggiungere.month + months_periods[n_rate])
+                            if data_da_aggiungere.month + months_periods[n_rate] > 12:
+                                print("abbiamo sbucato")
+                                year = data_da_aggiungere.year + 1
+                            data_da_aggiungere = data_da_aggiungere.replace(year, month, 1)
+                        print(" -----------", data_da_aggiungere)
+                        bilanci[self.codice].scadenzaRate.append(data_da_aggiungere)
+                        print("date scadenza", bilanci[self.codice].scadenzaRate)
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
+    def editDataScadenza(self, data, index):
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                bilanci[self.codice].scadenzaRate[index] = data
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+

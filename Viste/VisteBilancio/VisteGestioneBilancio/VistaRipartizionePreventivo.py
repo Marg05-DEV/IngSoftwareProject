@@ -3,7 +3,7 @@ import datetime
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QFont, QIntValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QAbstractItemView, \
-    QHeaderView, QSizePolicy, QLineEdit, QHBoxLayout
+    QHeaderView, QSizePolicy, QLineEdit, QHBoxLayout, QDateEdit, QAbstractSpinBox
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
@@ -20,12 +20,14 @@ class VistaRipartizionePreventivo(QWidget):
         self.immobile = Immobile.ricercaImmobileById(self.bilancio.immobile)
         self.input_lines = {}
         self.input_errors = {}
+        self.date_lines_rate = {}
         main_layout = QVBoxLayout()
         ricevuta_layout = QHBoxLayout()
 
         lbl_label = QLabel("Numero Rate")
         input_line = QLineEdit()
-        input_line.setValidator(QIntValidator(0, 12))
+        input_line.setPlaceholderText("max 6")
+        input_line.setValidator(QIntValidator(0, 6))
         self.input_lines["numeroRate"] = input_line
         self.input_lines["numeroRate"].editingFinished.connect(self.update_numero_rate)
         ricevuta_layout.addWidget(lbl_label)
@@ -46,25 +48,35 @@ class VistaRipartizionePreventivo(QWidget):
         main_layout.addWidget(self.msg)
 
         self.setLayout(main_layout)
-        self.resize(1200, 650)
+        self.resize(1500, 650)
         self.setWindowTitle("Ripartizione Preventivo")
     def update_numero_rate(self):
-        print("dento alla modifica delle rate", self.input_lines["numeroRate"].text())
         numero_rate = int(self.input_lines["numeroRate"].text())
         if numero_rate != self.bilancio.numeroRate:
             self.bilancio.addNumeroRate(numero_rate)
             self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+            self.bilancio.initScadenzaRate()
+            self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
             self.update_table()
 
+    def dataScadenzaChanged(self):
+        print("fine cambiamento")
+
+        for key, data in self.date_lines_rate.items():
+            if data is self.sender():
+                data_da_mettere = data.text().split("/")
+                data_da_mettere = datetime.date(int(data_da_mettere[2]), int(data_da_mettere[1]), int(data_da_mettere[0]))
+                self.bilancio.editDataScadenza(data_da_mettere, key)
+                self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+
     def update_table(self):
-        print("-----------update")
+        # prendo le list necessarie
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
-        print("-------dopo il richiamo dei get")
 
+        #setto row e colum della tabella
         self.table_ripartizionePreventivo.setRowCount(len(unita_immobiliari) + 3)
         self.table_ripartizionePreventivo.setColumnCount((len(tabelle_millesimali))*2 + 4 + self.bilancio.numeroRate)
-        print("------dopo le dimensioni")
 
         bold_font = QFont()
         bold_font.setBold(True)
@@ -76,61 +88,61 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) + 1, QTableWidgetItem("Tab. Millesimali - Quote"))
         self.table_ripartizionePreventivo.setItem(0, 2 * len(tabelle_millesimali) + 1, QTableWidgetItem(f"RIPARTIZIONE PREVENTIVO ESERCIZIO {datetime.date.strftime(self.bilancio.inizioEsercizio, '%d/%m/%Y')} - {datetime.date.strftime(self.bilancio.fineEsercizio, '%d/%m/%Y')}"))
 
-        print("-----------span1")
         self.table_ripartizionePreventivo.item(0, 0).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFont(bold_font)
-        print("-----------span2")
+
         self.table_ripartizionePreventivo.setSpan(0, 0, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 3)
-        print("-----------span3")
+
         j = 0
         for tabella in tabelle_millesimali:
-            self.table_ripartizionePreventivo.setItem(1, j, QTableWidgetItem(f"{tabella.nome}\n{tabella.descrizione}"))
-            self.table_ripartizionePreventivo.setItem(1, j + 1 + len(tabelle_millesimali), QTableWidgetItem(f"{tabella.nome}\nQuote"))
+            self.table_ripartizionePreventivo.setItem(1, j, QTableWidgetItem(f"{tabella.nome}"))
+            self.table_ripartizionePreventivo.setItem(1, j + 1 + len(tabelle_millesimali), QTableWidgetItem(f"{tabella.nome}"))
             self.table_ripartizionePreventivo.item(1, j).setFont(bold_font)
             self.table_ripartizionePreventivo.item(1, j).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setFont(bold_font)
             self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             j += 1
-        print("-----------span4")
+
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali), QTableWidgetItem(f"Unità Immobiliari\nCondomino Proprietario"))
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        print("------item1")
+
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali)*2 + 1, QTableWidgetItem(f"Totale Preventivo\nAnno Attuale"))
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 1).setFont(bold_font)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 1).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        print("---------item2")
+
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali)*2 + 2, QTableWidgetItem(f"Conguaglio\nAnno Attuale"))
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 2).setFont(bold_font)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 2).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        print("-------item3")
+
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali)*2 + 3, QTableWidgetItem(f"Totale\nDa Versare"))
-        print("----------riga1")
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 3).setFont(bold_font)
-        print("-----------riga2")
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 3).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-        print("------prima dell'if delle rate")
-        if self.bilancio.numeroRate >= 1:
-            self.table_ripartizionePreventivo.setItem(0, 2 * len(tabelle_millesimali) + 4, QTableWidgetItem(f"Numero rate: {self.bilancio.numeroRate}"))
-            self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 4).setFont(bold_font)
-            self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 4, 1, self.bilancio.numeroRate)
+
+        if self.bilancio.numeroRate > 0:
             for k in range(0, self.bilancio.numeroRate):
-                self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali) * 2 + 3 + k + 1, QTableWidgetItem(f"Rata {k + 1}"))
-                self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali) * 2 + 3 + k + 1).setFont(bold_font)
-                self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali) * 2 + 3 + k + 1).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                
-        """elif self.bilancio.numeroRate <= 0 :
-            self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali) * 2 + 4, QTableWidgetItem(f"Rata 1"))
-            self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali) * 2 + 4).setFont(bold_font)
-            self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali) * 2 + 4).setTextAlignment(Qt.AlignmentFlag.AlignCenter)"""
+                self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) * 2 + 3 + k + 1, QTableWidgetItem(f"Rata {k + 1}"))
+                self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) * 2 + 3 + k + 1).setFont(bold_font)
+                self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) * 2 + 3 + k + 1).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+                widget = QWidget()
+                layout = QVBoxLayout()
+                label = QLabel("Data scadenza:")
+                layout.addWidget(label, Qt.AlignmentFlag.AlignHCenter)
+                data = QDateEdit(self.bilancio.scadenzaRate[k])
+                data.editingFinished.connect(self.dataScadenzaChanged)
+                self.date_lines_rate[k] = data
+                layout.addWidget(data)
+                data.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+                widget.setLayout(layout)
+                self.table_ripartizionePreventivo.setCellWidget(1, len(tabelle_millesimali) * 2 + 3 + k + 1, widget)
 
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari)+2, len(tabelle_millesimali), QTableWidgetItem(f"TOTALE"))
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFont(bold_font)
-        #self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setTextAlignment()
 
         j = 0
         totale_preventivo_attuale = {}
@@ -186,18 +198,16 @@ class VistaRipartizionePreventivo(QWidget):
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % self.bilancio.importiDaVersare[cod_unita]))
             for r in range(0, self.bilancio.numeroRate):
                 self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % self.bilancio.ratePreventivate[cod_unita][r]))
-        print("zio cane")
+
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % sum(list(totale_preventivo_attuale.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % sum(list(self.bilancio.ripartizioneConguaglio.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % sum(list(self.bilancio.importiDaVersare.values()))))
+
         for r in range(0, self.bilancio.numeroRate):
-            print("questo è u problem")
             somma = 0.0
             for chiave in self.bilancio.ratePreventivate.keys():
-                print(chiave, self.bilancio.ratePreventivate[chiave])
-                print(self.bilancio.ratePreventivate[chiave][r])
                 somma += self.bilancio.ratePreventivate[chiave][r]
-                print(somma)
+
             self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % somma))
 
         self.table_ripartizionePreventivo.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)

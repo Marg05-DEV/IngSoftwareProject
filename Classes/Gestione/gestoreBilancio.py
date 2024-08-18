@@ -168,7 +168,7 @@ class GestoreBilancio:
 
             tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
 
-            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 3 + [1] * bilancio.numeroRate
+            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 3 + [1.5] * bilancio.numeroRate
             column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(tabelle_millesimali_immobile) + ["RIGHT"] * 3 + ["RIGHT"] * bilancio.numeroRate
             totale_preventivo = 0.0
             totale_rate = [0.0] * bilancio.numeroRate
@@ -187,7 +187,7 @@ class GestoreBilancio:
                 heading_top.cell("TOTALE DA VERSARE", align=Align.C, rowspan=2)
 
                 for i in range(bilancio.numeroRate):
-                    heading_top.cell(f"{i+1}a RATA", align=Align.C, rowspan=2)
+                    heading_top.cell(f"{i+1}a RATA", align=Align.C)
 
                 heading = table.row()
                 for tabella in tabelle_millesimali_immobile:
@@ -196,14 +196,20 @@ class GestoreBilancio:
                 for tabella in tabelle_millesimali_immobile:
                     heading.cell(tabella.nome.upper(), align=Align.C)
 
-                pdf.set_font("helvetica", "", 8)
+                print(bilancio.scadenzaRate)
+                pdf.set_font("helvetica", "B", 6)
+                for i in range(bilancio.numeroRate):
+                    print(bilancio.scadenzaRate[i].strftime("%d/%m/%Y"))
+                    heading.cell(f"SCADE IL {bilancio.scadenzaRate[i].strftime('%d/%m/%Y')}", align=Align.C)
+
+                pdf.set_font("helvetica", "", 7)
                 for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
 
                     for tabella in tabelle_millesimali_immobile:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
-                    pdf.set_font("helvetica", "BI", 7)
+                    pdf.set_font("helvetica", "BI", 8)
                     if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
                         unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
@@ -211,7 +217,7 @@ class GestoreBilancio:
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
                         unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
 
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("helvetica", "", 7)
                     totale_prev_unita = 0.0
 
                     for tabella in tabelle_millesimali_immobile:
@@ -230,16 +236,16 @@ class GestoreBilancio:
                         totale_rate[i] += rata
                         i += 1
 
-                pdf.set_font("helvetica", "I", 8)
+                pdf.set_font("helvetica", "I", 7)
                 totale_row = table.row()
 
                 for tabella in tabelle_millesimali_immobile:
                     totale_row.cell("%.2f" % sum(list(tabella.millesimi.values())))
 
-                pdf.set_font("helvetica", "BI", 9)
+                pdf.set_font("helvetica", "BI", 8)
                 totale_row.cell("TOTALE")
 
-                pdf.set_font("helvetica", "I", 8)
+                pdf.set_font("helvetica", "I", 7)
 
                 for tabella in tabelle_millesimali_immobile:
                     totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneSpeseConsuntivate[tabella.codice].values())))
