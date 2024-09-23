@@ -222,20 +222,23 @@ class VistaStatoPatrimoniale(QWidget):
     def update_list(self):
         importo_totale = 0.00
         print("inizio")
-        self.rate_da_versare = Bilancio.getLastBilancio(self.immobile).importiDaVersare
+        self.rate_da_versare = Bilancio.getLastBilancio(self.immobile)
+        if Bilancio.getLastBilancio(self.immobile):
+            self.rate_da_versare = Bilancio.getLastBilancio(self.immobile).importiDaVersare
+        else:
+            self.rate_da_versare = {}
         self.rate_versate = {}
         for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
             totale_versato = 0.0
             if unita_immobiliare.codice not in self.rate_da_versare:
                 self.rate_da_versare[unita_immobiliare.codice] = 0.00
             for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
-                if rata.dataPagamento >= Bilancio.getLastBilancio(self.immobile).dataApprovazione and rata.importo >= 0.0:
-                    totale_versato += rata.importo
+                if Bilancio.getLastBilancio(self.immobile):
+                    if rata.dataPagamento >= Bilancio.getLastBilancio(self.immobile).dataApprovazione and rata.importo >= 0.0:
+                        totale_versato += rata.importo
             self.rate_versate[unita_immobiliare.codice] = totale_versato
 
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
-        print("rata:", self.rate_da_versare)
-        print("spesa", self.spese)
         importi_tutti_nulli = False
         importi_da_non_rappresentare = []
 
@@ -267,7 +270,7 @@ class VistaStatoPatrimoniale(QWidget):
             self.rate_section["totale"].setVisible(False)
             self.rate_section["frase_totale"].setVisible(False)
 
-            self.rate_section["no_rate"].setText("Non ci sono da versare per questo immobile")
+            self.rate_section["no_rate"].setText("Non ci sono rate da versare per questo immobile")
             self.rate_section["no_rate"].setVisible(True)
         elif not self.spese:
             print("yesyesyes")
@@ -309,21 +312,34 @@ class VistaStatoPatrimoniale(QWidget):
             unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
             if self.rate_da_versare[unita] > 0:
                 if unita in self.rate_da_versare.keys():
-                    print("bu")
                     item = QStandardItem()
                     importo = self.rate_da_versare[unita] - self.rate_versate[unita]
                     importo = str("%.2f" % importo)
                     if unita_immo.tipoUnitaImmobiliare == "Appartamento":
                         print("Appartamento")
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if
-                                                                       unita_immo.condomini[item] == "Proprietario"][0])
-                        item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
-                        print("fine apppartamento")
+                        if unita_immo.condomini:
+                            for condomini in unita_immo.condomini.keys():
+                                if unita_immo.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
+                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                                    break
+                                else:
+                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di Nessun proprietario --> {importo}"
+                        else:
+                            item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di Nessun proprietario --> {importo}"
                     else:
                         print("non appartamento")
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
-                        item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
-                        print("fine non appartamento")
+                        if unita_immo.condomini:
+                            for condomini in unita_immo.condomini.keys():
+                                if unita_immo.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
+                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome} --> {importo}"
+                                    break
+                                else:
+                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} di Nessun proprietario --> {importo}"
+                        else:
+                            item_text = f"{unita_immo.tipoUnitaImmobiliare} di Nessun proprietario --> {importo}"
+                        print("fine non apppartamento")
                     item.setText(item_text)
                     item.setEditable(False)
                     font = item.font()
