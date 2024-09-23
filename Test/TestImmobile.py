@@ -1,4 +1,3 @@
-import datetime
 import os.path
 import pickle
 from unittest import TestCase
@@ -18,6 +17,7 @@ class TestGestioneImmobile(TestCase):
         self.assertIsNotNone(immobili)
         self.assertIn(10, immobili)
         print("dentro add immobili", immobili)
+
     def test_delete_immobile(self):
         immobili = None
         if os.path.isfile(nome_file):

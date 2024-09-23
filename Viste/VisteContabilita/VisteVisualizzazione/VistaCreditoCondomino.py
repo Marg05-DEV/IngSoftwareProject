@@ -1,7 +1,8 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
+    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView, QTableView, QTableWidget, \
+    QTableWidgetItem
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
@@ -23,14 +24,39 @@ class VistaCreditoCondomino(QWidget):
         self.credito_totale = 0.0
         main_layout = QVBoxLayout()
 
-        completer_list = sorted([item.codiceFiscale for item in Condomino.getAllCondomini().values()])
-        print(completer_list)
+        completer_table = QTableWidget()
+        self.condomini_completer = QCompleter()
+        popup_type = QTableView()
+        self.condomini_completer.setPopup(popup_type)
+        popup_type.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        popup_type.horizontalHeader().hide()
+        popup_type.verticalHeader().hide()
+
+        condomini_table = [[(item.cognome + " " + item.nome), item.codiceFiscale] for item in Condomino.getAllCondomini().values()]
+        print(condomini_table)
+
+        self.condomini_completer.setCompletionColumn(0)
+        completer_table.setRowCount(len(condomini_table))
+        completer_table.setColumnCount(2)
+
+        i = 0
+        for data in condomini_table:
+            j = 0
+            print(data)
+            for value in data:
+                print(value)
+                completer_table.setItem(i, j, QTableWidgetItem(str(value)))
+                j += 1
+            i += 1
+
+        print("ciao")
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
-        self.condomini_completer = QCompleter(completer_list)
-        self.condomini_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print(self.condomini_completer.completionModel())
+        print("ciao")
+
+        self.condomini_completer.setModel(completer_table.model())
         self.searchbar.setCompleter(self.condomini_completer)
+        print("ciao")
 
         self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare asegnata")
         self.lbl_frase_condomino.setStyleSheet("font-weight: bold;")
@@ -39,6 +65,7 @@ class VistaCreditoCondomino(QWidget):
         find_layout = QHBoxLayout()
         search_layout = QVBoxLayout()
 
+        #search_layout.addWidget(completer_table)
         search_layout.addWidget(self.searchbar)
         search_layout.addWidget(self.lbl_frase_condomino)
         find_layout.addLayout(search_layout)
@@ -51,7 +78,7 @@ class VistaCreditoCondomino(QWidget):
         msg_layout.addWidget(frase_lbl)
         msg_layout.addWidget(self.condomino_selezionato)
 
-        if not completer_list:
+        if not condomini_table:
             frase_lbl.setText("Nessun Condomino presente")
             self.condomino_selezionato.setVisible(False)
 
