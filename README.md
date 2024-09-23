@@ -42,11 +42,10 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - da fare test per il suo completo funzionamento (dovrebbe funzionare tutto)
 - non dare possibilità di assegnare tipi di spesa già assegnati ad altre tabelle millesimali dello stesso immobile(fare ulteriori controlli su aggiungi tipo spesa, rimuovi tipo spesa)
 
-### BILANCIO
+### BILANCIO 
 
 - mettere la possibilità di modificare le rate preventivate con una funzione di adattamento
-- mettere la data di scadenza delle rate preventivate
-- fatti i due punti precedenti modificare il pdf dei prospetti 
+- fatti i due punti(date rate fatto) precedenti modificare il pdf dei prospetti 
 - rivedere controlli bilancio, soprattutto le date e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
 
 ## AREA DOCUMENTI
