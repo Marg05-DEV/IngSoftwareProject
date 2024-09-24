@@ -1,14 +1,9 @@
-from PyQt6.QtCore import Qt, QStringListModel, QTimer
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView, QTableView, QTableWidget, \
-    QTableWidgetItem
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLineEdit, QCompleter, QLabel, QHBoxLayout, QPushButton, QFrame,
+                             QTreeWidget, QTreeWidgetItem, QHeaderView, QTableView, QTableWidget, QTableWidgetItem)
 
 from Classes.Contabilita.bilancio import Bilancio
-from Classes.Contabilita.fornitore import Fornitore
 from Classes.Contabilita.rata import Rata
-from Classes.Contabilita.spesa import Spesa
-from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
@@ -24,7 +19,7 @@ class VistaCreditoCondomino(QWidget):
         self.credito_totale = 0.0
         main_layout = QVBoxLayout()
 
-        completer_table = QTableWidget()
+        self.completer_table = QTableWidget()
         self.condomini_completer = QCompleter()
         popup_type = QTableView()
         self.condomini_completer.setPopup(popup_type)
@@ -36,8 +31,8 @@ class VistaCreditoCondomino(QWidget):
         print(condomini_table)
 
         self.condomini_completer.setCompletionColumn(0)
-        completer_table.setRowCount(len(condomini_table))
-        completer_table.setColumnCount(2)
+        self.completer_table.setRowCount(len(condomini_table))
+        self.completer_table.setColumnCount(2)
 
         i = 0
         for data in condomini_table:
@@ -45,32 +40,31 @@ class VistaCreditoCondomino(QWidget):
             print(data)
             for value in data:
                 print(value)
-                completer_table.setItem(i, j, QTableWidgetItem(str(value)))
+                self.completer_table.setItem(i, j, QTableWidgetItem(str(value)))
+                print(data)
+                self.completer_table.item(i, j).setData(Qt.ItemDataRole.UserRole, data)
                 j += 1
             i += 1
 
-        print("ciao")
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
-        print("ciao")
 
-        self.condomini_completer.setModel(completer_table.model())
+        self.condomini_completer.setModel(self.completer_table.model())
         self.searchbar.setCompleter(self.condomini_completer)
         print("ciao")
 
-        self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare asegnata")
+        self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare assegnata")
         self.lbl_frase_condomino.setStyleSheet("font-weight: bold;")
         self.condomino_section["frase"] = self.lbl_frase_condomino
         self.condomino_section["frase"].setVisible(False)
         find_layout = QHBoxLayout()
         search_layout = QVBoxLayout()
 
-        #search_layout.addWidget(completer_table)
         search_layout.addWidget(self.searchbar)
+
         search_layout.addWidget(self.lbl_frase_condomino)
         find_layout.addLayout(search_layout)
         main_layout.addLayout(find_layout)
-
         msg_layout = QHBoxLayout()
         frase_lbl = QLabel("Stai selezionando: ")
         self.condomino_selezionato = QLabel("Nessun Condomino selezionato")
@@ -145,6 +139,8 @@ class VistaCreditoCondomino(QWidget):
         return button
 
     def selectioning(self):
+        print("sel: ", self.condomini_completer.currentIndex(), self.condomini_completer.currentCompletion())
+        print(self.condomini_completer.model().data(self.condomini_completer.currentIndex(), Qt.ItemDataRole.UserRole))
         condomino = None
         condomino = Condomino.ricercaCondominoByCF(self.searchbar.text())
         print("imm: ", condomino)

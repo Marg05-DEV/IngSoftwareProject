@@ -8,7 +8,8 @@ nome_file = 'Dati/UnitaImmobiliari.pickle'
 class TestGestioneUnitaImmobiliare(TestCase):
     def test_add_unitaImmobiliare(self):
         self.unitaImmobiliare = UnitaImmobiliare()
-        self.unitaImmobiliare.aggiungiUnitaImmobiliare(1,3,"pippo",3,2,"Cella frigorifera", "Negozio","A",2,3,4)
+        self.unitaImmobiliare.aggiungiUnitaImmobiliare(1, 3, {"CRFRA96N17T714K": "Proprietario"}, 2, 1, "Garage", "B/1",
+                                                3, Immobile.ricercaImmobileByCodice(1), 0, "A")
 
         unitaImmobiliari = None
         if os.path.isfile(nome_file):
