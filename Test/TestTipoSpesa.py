@@ -8,14 +8,14 @@ nome_file = 'Dati/TipiSpesa.pickle'
 class TestGestioneTipoSpesa(TestCase):
     def test_add_tipoSpesa(self):
         self.tipoSpesa = TipoSpesa()
-        self.tipoSpesa.aggiungiTipoSpesa("bolletta", "gas")
+        self.tipoSpesa.aggiungiTipoSpesa("Spese per la manutenzione della caldaia", "Manutenzione Caldaia")
         tipiSpesa = None
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 tipiSpesa = dict(pickle.load(f))
         self.assertIsNotNone(tipiSpesa)
         self.assertIn(10, tipiSpesa)
-        print("dentro add immobili", tipiSpesa)
+        print("dentro ad tipiSpesa", tipiSpesa)
 
     def test_delete_tipoSpesa(self):
         tipiSpesa = None

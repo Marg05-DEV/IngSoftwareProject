@@ -3,12 +3,14 @@ import pickle
 from unittest import TestCase
 
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
+from Classes.RegistroAnagrafe.immobile import Immobile
 
 nome_file = 'Dati/TabelleMillesimali.pickle'
 class TestGestioneTabellaMillesimale(TestCase):
     def test_add_immobile(self):
         self.tabellaMillesimale = TabellaMillesimale()
-        self.tabellaMillesimale.aggiungiTabellaMillesimale("Tabella", "affitto", "descrizione", 1)
+        self.tabellaMillesimale.aggiungiTabellaMillesimale("Tab K", [1, 3], "Spesa relative all'utilizzo dei spazi comuni", Immobile.ricercaImmobileByCodice(1).id)
+
 
         tabelleMillesimali = None
         if os.path.isfile(nome_file):

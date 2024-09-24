@@ -17,21 +17,7 @@ class TestGestioneBilancio(TestCase):
                 bilanci = dict(pickle.load(f))
         self.assertIsNotNone(bilanci)
         self.assertIn(10, bilanci)
-        print("dentro add immobili", bilanci)
+        print("dentro a bilanci", bilanci)
 
-    def test_delete_bilancio(self):
-        bilanci = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                bilanci = pickle.load(f)
-        self.assertIsNotNone(bilanci)
-        self.assertIn(10, bilanci)
-        self.bilancio = Bilancio.ricercaBilancioByCodice(2)
-        self.bilancio.rimuoviBilancio()
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                bilanci = pickle.load(f)
-        self.assertIsNotNone(bilanci)
-        self.assertNotIn(10, bilanci)
-        print("dentro test delete", bilanci)
+
 

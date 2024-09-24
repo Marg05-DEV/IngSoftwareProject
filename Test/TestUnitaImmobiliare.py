@@ -3,6 +3,8 @@ import pickle
 from unittest import TestCase
 
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
+from Classes.RegistroAnagrafe.immobile import Immobile
+
 
 nome_file = 'Dati/UnitaImmobiliari.pickle'
 class TestGestioneUnitaImmobiliare(TestCase):
@@ -26,7 +28,7 @@ class TestGestioneUnitaImmobiliare(TestCase):
                 unitaImmobiliari = pickle.load(f)
         self.assertIsNotNone(unitaImmobiliari)
         self.assertIn(10, unitaImmobiliari)
-        self.unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(10)
+        self.unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(1)
         self.unitaImmobiliare.rimuoviUnitaImmobiliare()
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:

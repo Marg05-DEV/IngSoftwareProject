@@ -9,7 +9,8 @@ nome_file = 'Dati/Rate.pickle'
 class TestGestioneRata(TestCase):
     def test_add_rata(self):
         self.rata = Rata()
-        self.rata.aggiungiRata(datetime.date(2024,3,5), "pagamento", 100, "98765432110", "Paypal", 1, "63073")
+        self.rata.aggiungiRata(datetime.date.today(), "Versamento Rata 22/24", 130.60, 1, "Bonifico bancario", 1, "Gianni Rossi")
+
 
         rate = None
         if os.path.isfile(nome_file):

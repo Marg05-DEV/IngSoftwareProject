@@ -9,7 +9,7 @@ nome_file = 'Dati/Spesa.pickle'
 class TestGestioneSpesa(TestCase):
     def test_add_spesa(self):
         self.spesa = Spesa()
-        self.spesa.aggiungiSpesa("pagamento", "enel", 300, "bolletta", 1, True, datetime.date(2020,6,9), datetime.date(2021,1,5), datetime.date(2024,6,6), True, 2)
+        self.    spesa.aggiungiSpesa("descrizione Test", 2, 160, 1, 1, True, datetime.date.today(), datetime.date.today(), datetime.date.today(), True, 1)
 
         spese = None
         if os.path.isfile(nome_file):

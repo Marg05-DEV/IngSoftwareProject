@@ -8,7 +8,7 @@ nome_file = 'Dati/Fornitori.pickle'
 class TestGestioneFornitori(TestCase):
     def test_add_Fornitore(self):
         self.fornitore = Fornitore()
-        self.fornitore.aggiungiFornitore("Ascoli Piceno", "IM10", "contrada delle contrade", "98765432110", "spaccitt")
+        self.fornitore.aggiungiFornitore("Ascoli Piceno", "Energas", "Via del lavoro", "4751155555", "Ditta")
 
         fornitori = None
         if os.path.isfile(nome_file):
@@ -16,7 +16,7 @@ class TestGestioneFornitori(TestCase):
                 fornitori = dict(pickle.load(f))
         self.assertIsNotNone(fornitori)
         self.assertIn(10, fornitori)
-        print("dentro add immobili", fornitori)
+        print("dentro a fornitori", fornitori)
 
     def test_delete_fornitore(self):
         fornitori = None
@@ -25,7 +25,7 @@ class TestGestioneFornitori(TestCase):
                 fornitori = pickle.load(f)
         self.assertIsNotNone(fornitori)
         self.assertIn(10, fornitori)
-        self.fornitore = Fornitore.ricercaFornitoreByDenominazione("IM10")
+        self.fornitore = Fornitore.ricercaFornitoreByDenominazione("Energas")
         self.fornitore.rimuoviFornitore()
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
