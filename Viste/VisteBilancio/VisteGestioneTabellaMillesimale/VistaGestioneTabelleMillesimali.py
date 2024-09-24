@@ -8,9 +8,11 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
-from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaCreateTabellaMillesimale import VistaCreateTabellaMillesimale
+from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaCreateTabellaMillesimale import \
+    VistaCreateTabellaMillesimale
 from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaReadTabellaMillesimale import VistaReadTabellaMillesimale
-from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaDeleteTabellaMillesimale import VistaDeleteTabellaMillesimale
+from Viste.VisteBilancio.VisteGestioneTabellaMillesimale.VistaDeleteTabellaMillesimale import \
+    VistaDeleteTabellaMillesimale
 
 
 class VistaGestioneTabelleMillesimali(QWidget):
@@ -32,8 +34,10 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.button_list = {}
 
         button_layout.addWidget(self.create_button("Aggiungi Tabella Millesimale", self.go_add_tabellaMillesimale))
-        button_layout.addWidget(self.create_button("Visualizza Tabella Millesimale", self.go_read_tabellaMillesimale, True))
-        button_layout.addWidget(self.create_button("Rimuovi Tabella Millesimale", self.go_delete_tabellaMillesimale, True))
+        button_layout.addWidget(
+            self.create_button("Visualizza Tabella Millesimale", self.go_read_tabellaMillesimale, True))
+        button_layout.addWidget(
+            self.create_button("Rimuovi Tabella Millesimale", self.go_delete_tabellaMillesimale, True))
         self.table_tabellaMillesimale.horizontalHeader().sectionClicked.connect(self.able_button)
         message_layout = QHBoxLayout()
 
@@ -73,7 +77,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
 
         i = 0
         for tabella in tabelle_millesimali:
-            self.table_tabellaMillesimale.setHorizontalHeaderItem(i, QTableWidgetItem(f"{tabella.nome}\n{tabella.descrizione}"))
+            self.table_tabellaMillesimale.setHorizontalHeaderItem(i, QTableWidgetItem(
+                f"{tabella.nome}\n{tabella.descrizione}"))
             self.table_tabellaMillesimale.horizontalHeaderItem(i).setData(Qt.ItemDataRole.UserRole, tabella.codice)
             i += 1
 
@@ -83,11 +88,36 @@ class VistaGestioneTabelleMillesimali(QWidget):
         for unita in unita_immobiliari:
             print(unita.getInfoUnitaImmobiliare())
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                print(unita.condomini)
+                if unita.condomini:
+                    for condomini in unita.condomini.keys():
+                        if unita.condomini[condomini] == "Proprietario":
+                            proprietario = Condomino.ricercaCondominoByCF(
+                                [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                                f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                            break
+                        else:
+                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                                f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                else:
+                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                        f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
             else:
-                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                if unita.condomini:
+                    for condomini in unita.condomini.keys():
+                        if unita.condomini[condomini] == "Proprietario":
+                            proprietario = Condomino.ricercaCondominoByCF(
+                                [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                                f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                            break
+                        else:
+                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                                f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                else:
+                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
+                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
             j = 0
             for tabella in tabelle_millesimali:
                 print(tabella.millesimi)
@@ -96,7 +126,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
                     tabella.addMillesimo(unita, 0.00)
                     tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
                     print("dopo la chiamata addMillesimo")
-                
+
                 if j in totale_millesimi_tabella:
                     totale_millesimi_tabella[j] += tabella.millesimi[unita.codice]
                 else:
@@ -104,14 +134,16 @@ class VistaGestioneTabelleMillesimali(QWidget):
                 print("riga del totale", totale_millesimi_tabella)
 
                 self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
-                self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole, [unita.codice, tabella.codice])
+                self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole,
+                                                                 [unita.codice, tabella.codice])
                 j += 1
 
             i += 1
             print("fine ciclo ", i)
         print("fine for")
 
-        self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari), QTableWidgetItem("TOTALE MILLESIMI"))
+        self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari),
+                                                            QTableWidgetItem("TOTALE MILLESIMI"))
 
         for tabella, totale in totale_millesimi_tabella.items():
             self.table_tabellaMillesimale.setItem(len(unita_immobiliari), tabella, QTableWidgetItem("%.2f" % totale))
@@ -120,7 +152,8 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.table_tabellaMillesimale.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table_tabellaMillesimale.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
         self.table_tabellaMillesimale.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table_tabellaMillesimale.verticalHeader().setSectionResizeMode(len(unita_immobiliari), QHeaderView.ResizeMode.ResizeToContents)
+        self.table_tabellaMillesimale.verticalHeader().setSectionResizeMode(len(unita_immobiliari),
+                                                                            QHeaderView.ResizeMode.ResizeToContents)
         self.table_tabellaMillesimale.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         self.table_tabellaMillesimale.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -132,26 +165,30 @@ class VistaGestioneTabelleMillesimali(QWidget):
         if coordinate is not None:
             if match is not None:
                 millesimo = float(self.table_tabellaMillesimale.item(row, column).text().replace(",", "."))
-                TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), millesimo)
+                TabellaMillesimale.ricercaTabelleMillesimaliByCodice(coordinate[1]).addMillesimo(
+                    UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), millesimo)
             else:
                 self.msg.setText("Il valore inserito nella cella non è valido")
                 self.msg.show()
                 self.timer.start()
             self.update_table()
 
-
     def go_add_tabellaMillesimale(self):
         self.vista_nuova_tabella_millesimale = VistaCreateTabellaMillesimale(self.immobile, callback=self.callback)
         self.vista_nuova_tabella_millesimale.show()
 
     def go_read_tabellaMillesimale(self):
-        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(Qt.ItemDataRole.UserRole)
-        self.vista_dettaglio_tabella_millesimale = VistaReadTabellaMillesimale(codice_tabella_selezionata, callback=self.callback)
+        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(
+            Qt.ItemDataRole.UserRole)
+        self.vista_dettaglio_tabella_millesimale = VistaReadTabellaMillesimale(codice_tabella_selezionata,
+                                                                               callback=self.callback)
         self.vista_dettaglio_tabella_millesimale.show()
 
     def go_delete_tabellaMillesimale(self):
-        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(Qt.ItemDataRole.UserRole)
-        self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella_selezionata, callback=self.callback)
+        codice_tabella_selezionata = self.table_tabellaMillesimale.horizontalHeaderItem(self.tabella_selezionata).data(
+            Qt.ItemDataRole.UserRole)
+        self.vista_dettaglio_tabella_millesimale = VistaDeleteTabellaMillesimale(codice_tabella_selezionata,
+                                                                                 callback=self.callback)
         self.vista_dettaglio_tabella_millesimale.show()
 
     def able_button(self, logicalIndex):
