@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QAbstractProxyModel, QModelIndex
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLineEdit, QCompleter, QLabel, QHBoxLayout, QPushButton, QFrame,
                              QTreeWidget, QTreeWidgetItem, QHeaderView, QTableView, QTableWidget, QTableWidgetItem)
 
@@ -13,6 +13,7 @@ class VistaCreditoCondomino(QWidget):
     def __init__(self):
 
         super(VistaCreditoCondomino, self).__init__()
+        self.condomino = None
         self.buttons = {}
         self.condomino_section = {}
         self.immobile = None
@@ -51,6 +52,8 @@ class VistaCreditoCondomino(QWidget):
 
         self.condomini_completer.setModel(self.completer_table.model())
         self.searchbar.setCompleter(self.condomini_completer)
+        self.condomini_completer.activated[QModelIndex].connect(self.selectioning_by_completer)
+        self.condomini_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         print("ciao")
 
         self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare assegnata")
@@ -138,30 +141,37 @@ class VistaCreditoCondomino(QWidget):
         self.buttons[testo] = button
         return button
 
-    def selectioning(self):
-        print("sel: ", self.condomini_completer.currentIndex(), self.condomini_completer.currentCompletion())
-        print(self.condomini_completer.model().data(self.condomini_completer.currentIndex(), Qt.ItemDataRole.UserRole))
-        condomino = None
-        condomino = Condomino.ricercaCondominoByCF(self.searchbar.text())
-        print("imm: ", condomino)
+    def selectioning_by_completer(self, index):
+        print("att", index)
+        record = self.condomini_completer.model().data(self.condomini_completer.completionModel().mapToSource(index), Qt.ItemDataRole.UserRole)
+        print("att: ", record)
+        if record is not None:
+            self.condomino = Condomino.ricercaCondominoByCF(record[1])
 
-        if condomino != None:
-            self.condomino_selezionato.setText(f"{condomino.nome} - {condomino.cognome} - {condomino.codiceFiscale}")
+        if self.condomino is not None:
+            self.condomino_selezionato.setText(f"{self.condomino.cognome} {self.condomino.nome} - {self.condomino.codiceFiscale}")
+            self.buttons["Seleziona"].setDisabled(False)
+        else:
+            self.condomino_selezionato.setText("Nessun condomino selezionato")
+            self.buttons["Seleziona"].setDisabled(True)
+
+    def selectioning(self):
+        record = self.condomini_completer.model().data(self.condomini_completer.completionModel().mapToSource(self.condomini_completer.currentIndex()), Qt.ItemDataRole.UserRole)
+        print("changed: ", record)
+        if record is not None:
+            if record[0] == self.searchbar.text():
+                self.condomino = Condomino.ricercaCondominoByCF(record[1])
+        print("cond: ", self.condomino)
+
+        if self.condomino is not None:
+            self.condomino_selezionato.setText(f"{self.condomino.cognome} {self.condomino.nome} - {self.condomino.codiceFiscale}")
             self.buttons["Seleziona"].setDisabled(False)
         else:
             self.condomino_selezionato.setText("Nessun condomino selezionato")
             self.buttons["Seleziona"].setDisabled(True)
 
     def view_credito_condomino(self):
-        search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
-        for b in Bilancio.getAllBilanci().values():
-            print(b.getInfoBilancio())
-        self.condomino = 0
-        if search_text:
-            self.condomino = Condomino.ricercaCondominoByCF(search_text)
-            print("Condomino: ", self.condomino)
-        if self.condomino != None:
+        if self.condomino is not None:
             self.tree_widget.setVisible(True)
             self.update_list()
         else:
