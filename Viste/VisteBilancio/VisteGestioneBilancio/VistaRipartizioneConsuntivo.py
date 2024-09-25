@@ -117,15 +117,27 @@ class VistaRipartizioneConsuntivo(QWidget):
             totale_millesimi_tabella = 0.0
             totale_consuntivo_tabella = 0.0
             for unita in unita_immobiliari:
-                if unita.tipoUnitaImmobiliare == "Appartamento":
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                if unita.condomini:
+                    if unita.tipoUnitaImmobiliare == "Appartamento":
+                        for condomini in unita.condomini.keys():
+                            if unita.condomini[condomini] == "Proprietario":
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                                break
+                            else:
+                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                    else:
+                        for condomini in unita.condomini.keys():
+                            if unita.condomini[condomini] == "Proprietario":
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                                break
+                            else:
+                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 else:
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
-
+                    self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(
+                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 self.table_ripartizioneConsuntivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
-                print("prima del richiamo")
 
                 if unita.codice not in tabella.millesimi:
                     tabella.addMillesimo(unita, 0.00)
@@ -133,15 +145,12 @@ class VistaRipartizioneConsuntivo(QWidget):
 
                 self.bilancio.calcolaQuotaConsuntivo(unita, tabella)
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-
                 self.table_ripartizioneConsuntivo.setItem(i, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]))
                 totale_consuntivo_tabella += self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
                 self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari)+2, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % totale_consuntivo_tabella))
-
                 totale_millesimi_tabella += tabella.millesimi[unita.codice]
 
                 self.table_ripartizioneConsuntivo.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
-
                 if unita.codice in totale_consuntivo_attuale:
                     totale_consuntivo_attuale[unita.codice] += self.bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita.codice]
                 else:
@@ -150,24 +159,11 @@ class VistaRipartizioneConsuntivo(QWidget):
             self.table_ripartizioneConsuntivo.setItem(len(unita_immobiliari) + 2, j, QTableWidgetItem("%.2f" % totale_millesimi_tabella))
 
             j += 1
-        print()
-        print()
-        print("ATTENZIONE vediamo come va")
-        print()
-
         self.bilancio.getConguaglioPrecedente()
-        print()
-        print()
-        print("ATTENZIONE vediamo come va")
-        print()
+
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
         self.bilancio.calcolaRateVersate()
-        print()
-        print()
-        print("ATTENZIONE vediamo come va")
-        print()
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-        print("prova")
         print(self.bilancio.conguaglioPrecedente, self.bilancio.rateVersate)
         self.bilancio.calcolaConguaglio(totale_consuntivo_attuale)
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)

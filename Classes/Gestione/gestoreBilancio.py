@@ -23,12 +23,15 @@ class GestoreBilancio:
                 heading.cell("PREVENTIVO ANALITICO", align=Align.C)
 
                 totale_preventivato = 0.0
-                for tabella_millesimale in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for tabella_millesimale in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
+                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
 
                     pdf.set_font("helvetica", "BI", 9)
                     tabella_millesimale_row = table.row()
-                    tabella_millesimale_row.cell(f"{tabella_millesimale.nome} - {tabella_millesimale.descrizione}", align=Align.C)
-                    tabella_millesimale_row.cell("%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
+                    tabella_millesimale_row.cell(f"{tabella_millesimale.nome} - {tabella_millesimale.descrizione}",
+                                                 align=Align.C)
+                    tabella_millesimale_row.cell(
+                        "%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
                     pdf.set_font("helvetica", "", 9)
                     for cod_tipo_spesa in tabella_millesimale.tipologieSpesa:
                         tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa)
@@ -46,7 +49,8 @@ class GestoreBilancio:
             pdf.set_font("helvetica", "B", 10)
             pdf.cell(0, 10, "Spese consuntivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
 
-            with pdf.table(width=pdf.epw, col_widths=(55, 15, 15, 15), text_align=("LEFT", "RIGHT", "RIGHT", "RIGHT")) as table:
+            with pdf.table(width=pdf.epw, col_widths=(55, 15, 15, 15),
+                           text_align=("LEFT", "RIGHT", "RIGHT", "RIGHT")) as table:
                 heading = table.row()
                 heading.cell("DESCRIZIONE TIPOLOGIA DI SPESA", align=Align.C)
                 heading.cell("CONSUNTIVO ANALITICO", align=Align.C)
@@ -56,14 +60,20 @@ class GestoreBilancio:
                 totale_preventivato = 0.0
                 totale_consuntivato = 0.0
                 totale_risparmio = 0.0
-                for tabella_millesimale in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for tabella_millesimale in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
+                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
 
                     pdf.set_font("helvetica", "BI", 9)
                     tabella_millesimale_row = table.row()
-                    tabella_millesimale_row.cell(f"{tabella_millesimale.nome} - {tabella_millesimale.descrizione}", align=Align.C)
-                    tabella_millesimale_row.cell("%.2f" % sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())))
-                    tabella_millesimale_row.cell("%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
-                    tabella_millesimale_row.cell("%.2f" % (sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())) - sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values()))))
+                    tabella_millesimale_row.cell(f"{tabella_millesimale.nome} - {tabella_millesimale.descrizione}",
+                                                 align=Align.C)
+                    tabella_millesimale_row.cell(
+                        "%.2f" % sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())))
+                    tabella_millesimale_row.cell(
+                        "%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
+                    tabella_millesimale_row.cell("%.2f" % (
+                                sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())) - sum(
+                            list(bilancio.spesePreventivate[tabella_millesimale.codice].values()))))
                     pdf.set_font("helvetica", "", 9)
                     for cod_tipo_spesa in tabella_millesimale.tipologieSpesa:
                         tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa)
@@ -71,10 +81,12 @@ class GestoreBilancio:
                         row.cell("> " + tipo_spesa.descrizione)
                         row.cell("%.2f" % bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa])
                         row.cell("%.2f" % bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa])
-                        row.cell("%.2f" % (bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa] - bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa]))
+                        row.cell("%.2f" % (bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa] -
+                                           bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa]))
                         totale_consuntivato += bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa]
                         totale_preventivato += bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa]
-                        totale_risparmio += bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa] - bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa]
+                        totale_risparmio += bilancio.speseConsuntivate[tabella_millesimale.codice][cod_tipo_spesa] - \
+                                            bilancio.spesePreventivate[tabella_millesimale.codice][cod_tipo_spesa]
                 pdf.set_font("helvetica", "B", 9)
                 totale_row = table.row()
                 totale_row.cell("TOTALE")
@@ -85,13 +97,17 @@ class GestoreBilancio:
         def printRipartizioneConsuntivo(pdf, bilancio):
             pdf.set_font("helvetica", "B", 10)
             pdf.cell(0, 10, "Ripartizione spese consuntivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
-            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
+            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
+                Immobile.ricercaImmobileById(bilancio.immobile)).values())
 
-            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 4
-            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(tabelle_millesimali_immobile) + ["RIGHT"] * 4
+            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [
+                2] * 4
+            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(
+                tabelle_millesimali_immobile) + ["RIGHT"] * 4
             totale_consuntivo = 0.0
 
-            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width), text_align=tuple(column_alignment)) as table:
+            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width),
+                           text_align=tuple(column_alignment)) as table:
                 pdf.set_font("helvetica", "B", 7)
 
                 heading_top = table.row()
@@ -105,7 +121,6 @@ class GestoreBilancio:
                 heading_top.cell("TOTALE VERSATO", align=Align.C, rowspan=2)
                 heading_top.cell("CONGUAGLIO ANNO ATTUALE", align=Align.C, rowspan=2)
 
-
                 heading = table.row()
                 for tabella in tabelle_millesimali_immobile:
                     heading.cell(tabella.nome.upper(), align=Align.C)
@@ -113,28 +128,49 @@ class GestoreBilancio:
                 for tabella in tabelle_millesimali_immobile:
                     heading.cell(tabella.nome.upper(), align=Align.C)
 
-                
-
                 pdf.set_font("helvetica", "", 8)
-                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
+                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
                     for tabella in tabelle_millesimali_immobile:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
                     pdf.set_font("helvetica", "BI", 7)
-                    if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                    if unita_immobiliare.condomini:
+                        if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                            for condomini in unita_immobiliare.condomini.keys():
+                                if unita_immobiliare.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF(
+                                        [item for item in unita_immobiliare.condomini.keys() if
+                                         unita_immobiliare.condomini[item] == "Proprietario"][0])
+                                    unita_row.cell(
+                                        f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                                    break
+                                else:
+                                    unita_row.cell(
+                                        f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
+                        else:
+                            for condomini in unita_immobiliare.condomini.keys():
+                                if unita_immobiliare.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF(
+                                        [item for item in unita_immobiliare.condomini.keys() if
+                                         unita_immobiliare.condomini[item] == "Proprietario"][0])
+                                    unita_row.cell(
+                                        f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                                    break
+                                else:
+                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
 
                     pdf.set_font("helvetica", "", 8)
                     totale_cons_unita = 0.0
 
                     for tabella in tabelle_millesimali_immobile:
-                        unita_row.cell("%.2f" % bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice])
-                        totale_cons_unita += bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice]
+                        unita_row.cell(
+                            "%.2f" % bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice])
+                        totale_cons_unita += bilancio.ripartizioneSpeseConsuntivate[tabella.codice][
+                            unita_immobiliare.codice]
 
                     totale_consuntivo += totale_cons_unita
 
@@ -166,14 +202,18 @@ class GestoreBilancio:
             pdf.set_font("helvetica", "B", 10)
             pdf.cell(0, 10, "Ripartizione spese preventivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
 
-            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
+            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
+                Immobile.ricercaImmobileById(bilancio.immobile)).values())
 
-            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [2] * 3 + [1.5] * bilancio.numeroRate
-            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(tabelle_millesimali_immobile) + ["RIGHT"] * 3 + ["RIGHT"] * bilancio.numeroRate
+            column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [
+                2] * 3 + [1.5] * bilancio.numeroRate
+            column_alignment = ["CENTER"] * len(tabelle_millesimali_immobile) + ["LEFT"] + ["RIGHT"] * len(
+                tabelle_millesimali_immobile) + ["RIGHT"] * 3 + ["RIGHT"] * bilancio.numeroRate
             totale_preventivo = 0.0
             totale_rate = [0.0] * bilancio.numeroRate
             print(totale_rate)
-            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width), text_align=tuple(column_alignment)) as table:
+            with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width),
+                           text_align=tuple(column_alignment)) as table:
                 pdf.set_font("helvetica", "B", 7)
 
                 heading_top = table.row()
@@ -187,7 +227,7 @@ class GestoreBilancio:
                 heading_top.cell("TOTALE DA VERSARE", align=Align.C, rowspan=2)
 
                 for i in range(bilancio.numeroRate):
-                    heading_top.cell(f"{i+1}a RATA", align=Align.C)
+                    heading_top.cell(f"{i + 1}a RATA", align=Align.C)
 
                 heading = table.row()
                 for tabella in tabelle_millesimali_immobile:
@@ -203,26 +243,42 @@ class GestoreBilancio:
                     heading.cell(f"SCADE IL {bilancio.scadenzaRate[i].strftime('%d/%m/%Y')}", align=Align.C)
 
                 pdf.set_font("helvetica", "", 7)
-                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
+                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
 
                     for tabella in tabelle_millesimali_immobile:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
                     pdf.set_font("helvetica", "BI", 8)
-                    if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                    if unita_immobiliare.condomini:
+                        if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                            for condomini in unita_immobiliare.condomini.keys():
+                                if unita_immobiliare.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
+                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                                    break
+                                else:
+                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
+                        else:
+                            for condomini in unita_immobiliare.condomini.keys():
+                                if unita_immobiliare.condomini[condomini] == "Proprietario":
+                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
+                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                                    break
+                                else:
+                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
 
                     pdf.set_font("helvetica", "", 7)
                     totale_prev_unita = 0.0
 
                     for tabella in tabelle_millesimali_immobile:
-                        unita_row.cell("%.2f" % bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice])
-                        totale_prev_unita += bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice]
+                        unita_row.cell(
+                            "%.2f" % bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice])
+                        totale_prev_unita += bilancio.ripartizioneSpesePreventivate[tabella.codice][
+                            unita_immobiliare.codice]
 
                     totale_preventivo += totale_prev_unita
 

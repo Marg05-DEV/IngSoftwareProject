@@ -50,6 +50,7 @@ class VistaRipartizionePreventivo(QWidget):
         self.setLayout(main_layout)
         self.resize(1500, 650)
         self.setWindowTitle("Ripartizione Preventivo")
+
     def update_numero_rate(self):
         numero_rate = int(self.input_lines["numeroRate"].text())
         if numero_rate != self.bilancio.numeroRate:
@@ -152,13 +153,26 @@ class VistaRipartizionePreventivo(QWidget):
             totale_millesimi_tabella = 0.0
             totale_preventivo_tabella = 0.0
             for unita in unita_immobiliari:
-                if unita.tipoUnitaImmobiliare == "Appartamento":
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                if unita.condomini:
+                    if unita.tipoUnitaImmobiliare == "Appartamento":
+                        for condomini in unita.condomini.keys():
+                            if unita.condomini[condomini] == "Proprietario":
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                                self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                                break
+                            else:
+                                self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                    else:
+                        for condomini in unita.condomini.keys():
+                            if unita.condomini[condomini] == "Proprietario":
+                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
+                                self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                                break
+                            else:
+                                self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 else:
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
-
+                    self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(
+                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
                 print("prima del richiamo")
 
