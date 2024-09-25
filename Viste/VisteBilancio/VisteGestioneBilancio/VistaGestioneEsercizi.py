@@ -14,7 +14,6 @@ class VistaGestioneEsercizi(QWidget):
 
     def __init__(self, immobile):
         super(VistaGestioneEsercizi, self).__init__()
-        print("costruttore gest esercizi")
         self.immobile = immobile
         self.input_lines = {}
         self.input_errors = {}

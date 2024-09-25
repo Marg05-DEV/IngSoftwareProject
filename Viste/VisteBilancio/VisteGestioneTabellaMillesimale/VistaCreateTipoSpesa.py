@@ -138,7 +138,9 @@ class VistaCreateTipoSpesa(QWidget):
         required_fields = ['nome', 'descrizione']
         there_is_unique_pair_error = False
         same_tb = False
+        same_immo = False
 
+        tabelle_dell_immobile = []
         for field in required_fields:
             if self.input_lines[field].text():
                 num_writed_lines += 1
@@ -150,13 +152,27 @@ class VistaCreateTipoSpesa(QWidget):
                             for tipo in tipo_spesa:
                                 if self.input_lines['nome'].text().upper() == tipo.nome.upper():
                                     same_tb = True
+                                print("codice dell'immobile della tabella ", self.tabella_millesimale.immobile)
+                                print("immobile oggetto", Immobile.ricercaImmobileById(self.tabella_millesimale.immobile))
+                                tabelle_dell_immobile = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.tabella_millesimale.immobile)).values()
+                                print(tabelle_dell_immobile)
+                                for tabelle in tabelle_dell_immobile:
+                                    print("nome della tabella: ", tabelle.nome)
+                                    print("lista tipi associati alla tabella: ", tabelle .nome, ": ", tabelle.tipologieSpesa)
+                                    for tipologia in tabelle.tipologieSpesa:
+                                        tipo_assegnato = TipoSpesa.ricercaTipoSpesaByCodice(tipologia)
+                                        if self.input_lines['nome'].text().upper() == tipo_assegnato.nome.upper():
+                                            same_immo = True
+                                    print(same_immo)
                         if not same_tb:
                             self.lbl_tipo_spesa_esistente.setText(f"Nome:{all_tipi.nome}\nDescrizione:{all_tipi.descrizione}")
                             self.button_exist.setDisabled(False)
                         break
         if there_is_unique_pair_error:
             self.input_errors['nome'].setVisible(True)
-            if not same_tb:
+            if not same_tb and same_immo:
+                self.input_errors['nome'].setText(f"Nome del tipo spesa già stato inserito per questo immobile")
+            elif not same_tb:
                 self.input_errors['nome'].setText(f"Nome del tipo è esistente ma non in questa tabella millesimale")
                 self.lbl_exist.setVisible(True)
                 self.lbl_tipo_spesa_esistente.setVisible(True)

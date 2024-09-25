@@ -13,16 +13,15 @@ from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo impor
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizionePreventivo import VistaRipartizionePreventivo
 
 
-class VistaCalcolaBilancio:
-    pass
+"""class VistaCalcolaBilancio:
+    pass"""
 
 
 class VistaGestioneBilancio(QWidget):
 
     def __init__(self, bilancio, callback_lista_esercizi):
-        print("ciao")
-        print(bilancio.getInfoBilancio())
         super(VistaGestioneBilancio, self).__init__()
+
         self.immobile = Immobile.ricercaImmobileById(bilancio.immobile)
         self.bilancio = bilancio
         self.callback_lista_esercizi = callback_lista_esercizi
@@ -30,8 +29,10 @@ class VistaGestioneBilancio(QWidget):
         self.buttons = {}
         self.input_lines = {}
         self.input_errors = {}
+
         vertical_layout = QVBoxLayout()
         action_layout1 = QHBoxLayout()
+
         action_layout1.addWidget(self.new_label("Immobile", "denominazione"))
 
         action_layout3 = QHBoxLayout()
@@ -62,7 +63,6 @@ class VistaGestioneBilancio(QWidget):
 
         self.setLayout(vertical_layout)
         self.resize(600, 400)
-        print("ciao")
 
     def getButton(self, testo, sottotesto, on_click):
         button = QPushButton(testo)

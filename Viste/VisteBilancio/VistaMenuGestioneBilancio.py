@@ -64,7 +64,6 @@ class VistaMenuGestioneBilancio(QWidget):
         self.button_layout.addWidget(self.select_button1)
         self.searchbar.textChanged.connect(self.selectioning)
 
-        main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
 
         self.setLayout(main_layout)
@@ -113,18 +112,14 @@ class VistaMenuGestioneBilancio(QWidget):
             lista_completamento = [item.sigla for item in Immobile.getAllImmobili().values()]
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             lista_completamento = [str(item.codice) for item in Immobile.getAllImmobili().values()]
-        print("ciao1")
         print("Lista completamento", lista_completamento)
         self.immobili_completer.setModel(QStringListModel(lista_completamento))
-        print("ciao2")
         self.selectioning()
 
     def go_Gestione_TabelleMillesimali(self):
         search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
         immobile = 0
         if search_text:
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 immobile = Immobile.ricercaImmobileByDenominazione(search_text)
                 print("imm: ", immobile)
@@ -144,10 +139,8 @@ class VistaMenuGestioneBilancio(QWidget):
 
     def go_Gestione_Bilancio(self):
         search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
         immobile = 0
         if search_text:
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 immobile = Immobile.ricercaImmobileByDenominazione(search_text)
                 print("imm: ", immobile)
