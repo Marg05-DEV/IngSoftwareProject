@@ -42,12 +42,21 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout = QVBoxLayout()
 
         btn_aggiungiDividendi = self.create_button("Aggiungi Dividendo", self.addDividendo)
-        self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
+        self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
         btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         btn_aggiungiDividendi.setVisible(False)
         btn_aggiungiDividendi.setIcon(qtawesome.icon("fa.plus"))
 
+        btn_rimuoviDividendo = self.create_button("Rimuovi Dividendo", self.removeDividendo)
+        self.dividendi_layout.addWidget(btn_rimuoviDividendo, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignLeft)
+        btn_rimuoviDividendo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
+        btn_rimuoviDividendo.setVisible(False)
+        btn_rimuoviDividendo.setIcon(qtawesome.icon("fa.minus"))
+
         self.addDividendo()
+
+        self.removeDividendo()
+
         main_layout.addLayout(self.dividendi_layout)
 
         main_layout.addLayout(self.pairLabelInput("Descrizione", "descrizione"))
@@ -256,6 +265,8 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout.removeWidget(self.buttons["Aggiungi Dividendo"])
         self.dividendi_layout.insertWidget(self.numDividendi, self.buttons["Aggiungi Dividendo"])
 
+    def removeDividendo(self):
+        pass
 
     def reset(self):
         print("input lin pre reset", self.input_lines)
@@ -275,21 +286,22 @@ class VistaCreateSpesa(QWidget):
                 self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(i)])
                 self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(i)])
                 self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(i)])
+                self.required_fields.remove('tipoSpesa' + str(i))
+                self.required_fields.remove('dividendo' + str(i))
                 del self.input_lines['tipoSpesa' + str(i)]
                 del self.input_labels['tipoSpesa' + str(i)]
                 del self.input_lines['dividendo' + str(i)]
                 del self.input_labels['dividendo' + str(i)]
 
         self.buttons["Aggiungi Dividendo"].setVisible(False)
+        self.buttons["Rimuovi Dividendo"].setVisible(False)
         self.numDividendi = 1
-
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
         self.input_lines["dataPagamento"].setVisible(False)
         self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
         self.checkboxes["pagata"].setChecked(False)
         self.checkboxes["isRitenuta"].setChecked(False)
-
         self.sel_immobile = None
 
         self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
@@ -446,7 +458,6 @@ class VistaCreateSpesa(QWidget):
                 self.input_lines[f'tipoSpesa{i}'].setPlaceholderText("Seleziona la tipologia di spesa...")
                 for tipo in available_tipi_spesa:
                     self.input_lines[f'tipoSpesa{i}'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
-
         totale_dividendi = 100
         num_filled_dividendi_fields = 1
 
@@ -481,11 +492,10 @@ class VistaCreateSpesa(QWidget):
     def input_validation(self):
         num_writed_lines = 0
 
-        print("richiesto:", self.required_fields)
         combo_box_fields = ['immobile', 'tipoProfessione']
+        print(self.input_lines.keys())
         combo_box_fields.extend([item for item in self.input_lines.keys() if 'tipoSpesa' in item])
         print(combo_box_fields)
-
         for field in self.required_fields:
             if field in combo_box_fields:
                 if self.input_lines[field].currentText():
@@ -493,7 +503,6 @@ class VistaCreateSpesa(QWidget):
             else:
                 if self.input_lines[field].text():
                     num_writed_lines += 1
-
         if num_writed_lines < len(self.required_fields):
             self.buttons["Aggiungi Spesa"].setDisabled(True)
         else:
