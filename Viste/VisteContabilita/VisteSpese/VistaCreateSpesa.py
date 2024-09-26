@@ -42,20 +42,23 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout = QVBoxLayout()
 
         btn_aggiungiDividendi = self.create_button("Aggiungi Dividendo", self.addDividendo)
-        self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
-        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
+        #bottoni_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
+        #bottoni_layout.addWidget(btn_aggiungiDividendi)
+        #btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         btn_aggiungiDividendi.setVisible(False)
         btn_aggiungiDividendi.setIcon(qtawesome.icon("fa.plus"))
 
         btn_rimuoviDividendo = self.create_button("Rimuovi Dividendo", self.removeDividendo)
-        self.dividendi_layout.addWidget(btn_rimuoviDividendo, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignLeft)
-        btn_rimuoviDividendo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
+        #bottoni_layout.addWidget(btn_rimuoviDividendo, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
+        #bottoni_layout.addWidget(btn_rimuoviDividendo)
+        #btn_rimuoviDividendo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         btn_rimuoviDividendo.setVisible(False)
         btn_rimuoviDividendo.setIcon(qtawesome.icon("fa.minus"))
 
+        self.dividendi_layout.insertWidget(0, btn_aggiungiDividendi)
+        self.dividendi_layout.insertWidget(1, btn_rimuoviDividendo)
         self.addDividendo()
-
-        self.removeDividendo()
+        #self.removeDividendo()
 
         main_layout.addLayout(self.dividendi_layout)
 
@@ -226,6 +229,7 @@ class VistaCreateSpesa(QWidget):
         dividendo_layout.addLayout(self.pairLabelInput("%", "dividendo" + str(self.numDividendi)))
 
         if self.numDividendi > 0:
+            self.buttons['Rimuovi Dividendo'].setDisabled(False)
             if 'dividendo0' not in self.required_fields:
                 self.required_fields.append('dividendo0')
             self.buttons['Aggiungi Spesa'].setDisabled(True)
@@ -266,7 +270,29 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout.insertWidget(self.numDividendi, self.buttons["Aggiungi Dividendo"])
 
     def removeDividendo(self):
-        pass
+        print(self.numDividendi)
+
+        self.dividendi_layout.removeWidget(self.input_lines['tipoSpesa' + str(self.numDividendi-1)])
+        self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(self.numDividendi-1)])
+        self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(self.numDividendi-1)])
+        self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(self.numDividendi-1)])
+        self.required_fields.remove('tipoSpesa' + str(self.numDividendi-1))
+        self.required_fields.remove('dividendo' + str(self.numDividendi-1))
+        del self.input_lines['tipoSpesa' + str(self.numDividendi-1)]
+        del self.input_labels['tipoSpesa' + str(self.numDividendi-1)]
+        del self.input_lines['dividendo' + str(self.numDividendi-1)]
+        del self.input_labels['dividendo' + str(self.numDividendi-1)]
+        self.numDividendi -= 1
+
+        if self.numDividendi == 1:
+            self.buttons['Rimuovi Dividendo'].setDisabled(True)
+            self.buttons['Aggiungi Dividendo'].setVisible(False)
+            self.buttons['Rimuovi Dividendo'].setVisible(False)
+
+            self.input_lines['tipoSpesa0'].setVisible(False)
+            self.input_labels['tipoSpesa0'].setVisible(False)
+            self.input_lines['dividendo0'].setVisible(False)
+            self.input_labels['dividendo0'].setVisible(False)
 
     def reset(self):
         print("input lin pre reset", self.input_lines)
@@ -380,6 +406,9 @@ class VistaCreateSpesa(QWidget):
                 self.numDividendi = 1
 
                 self.buttons['Aggiungi Dividendo'].setVisible(True)
+                self.buttons['Rimuovi Dividendo'].setVisible(True)
+                self.buttons['Rimuovi Dividendo'].setDisabled(True)
+
                 self.sel_immobile = self.input_lines['immobile'].currentText()
 
                 self.tipi_spesa = []
