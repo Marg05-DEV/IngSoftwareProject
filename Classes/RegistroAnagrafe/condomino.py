@@ -32,7 +32,7 @@ class Condomino:
         self.provinciaDiNascita = provincia
         self.email = email
         self.telefono = telefono
-
+        print("")
         condomini = {}
 
         if os.path.isfile(nome_file):
