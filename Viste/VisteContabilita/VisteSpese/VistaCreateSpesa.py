@@ -544,6 +544,7 @@ class VistaCreateSpesa(QWidget):
             else:
                 if self.input_lines[field].text():
                     num_writed_lines += 1
+        print("num: ", num_writed_lines, " lunghezza campi richiesti: ", len(self.required_fields))
         if num_writed_lines < len(self.required_fields):
             self.buttons["Aggiungi Spesa"].setDisabled(True)
         else:
