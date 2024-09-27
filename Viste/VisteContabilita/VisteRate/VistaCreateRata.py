@@ -200,6 +200,9 @@ class VistaCreateRata(QWidget):
         self.input_labels['versante'].setVisible(False)
         self.input_lines['unitaImmobiliare'].setVisible(False)
         self.input_labels['unitaImmobiliare'].setVisible(False)
+        self.input_lines['numeroRicevuta'].clear()
+        self.input_lines['importo'].clear()
+        self.input_lines['descrizione'].clear()
 
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
 

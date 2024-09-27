@@ -224,7 +224,7 @@ class VistaCreateSpesa(QWidget):
         dividendo_layout.addLayout(self.pairLabelInput("%", "dividendo" + str(self.numDividendi)))
 
         if self.numDividendi > 0:
-            self.buttons['Rimuovi Dividendo'].setDisabled(False)
+            self.buttons['Reset Dividendi'].setDisabled(False)
             if 'dividendo0' not in self.required_fields:
                 self.required_fields.append('dividendo0')
             self.buttons['Aggiungi Spesa'].setDisabled(True)
@@ -332,7 +332,7 @@ class VistaCreateSpesa(QWidget):
                 del self.input_labels['dividendo' + str(i)]
 
         self.buttons["Aggiungi Dividendo"].setVisible(False)
-        self.buttons["Rimuovi Dividendo"].setVisible(False)
+        self.buttons["Reset Dividendi"].setVisible(False)
         self.numDividendi = 1
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
         self.input_lines["dataPagamento"].setVisible(False)
@@ -418,8 +418,8 @@ class VistaCreateSpesa(QWidget):
                 self.numDividendi = 1
 
                 self.buttons['Aggiungi Dividendo'].setVisible(True)
-                self.buttons['Rimuovi Dividendo'].setVisible(True)
-                self.buttons['Rimuovi Dividendo'].setDisabled(True)
+                self.buttons['Reset Dividendi'].setVisible(True)
+                self.buttons['Reset Dividendi'].setDisabled(True)
 
                 self.sel_immobile = self.input_lines['immobile'].currentText()
 
