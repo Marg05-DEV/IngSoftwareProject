@@ -178,11 +178,9 @@ class VistaCreateSpesa(QWidget):
         elif index == "dataPagamento":
             input_line = QDateEdit()
             if not self.checkboxes["pagata"].isChecked():
-                print("qui non voglio che enti")
                 input_line.setVisible(False)
                 label.setVisible(False)
             else:
-                print("qui voglio che entri")
                 input_line.setDate(datetime.date.today())
                 input_line.setVisible(True)
                 label.setVisible(True)
@@ -242,7 +240,6 @@ class VistaCreateSpesa(QWidget):
             for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                 self.tipi_spesa.extend(tabella.tipologieSpesa)
 
-            print("i")
             for cod_tipo in self.tipi_spesa:
                 tipo_just_selected = False
                 print(" --------- tipo: ", cod_tipo)
@@ -255,7 +252,6 @@ class VistaCreateSpesa(QWidget):
 
                 if not tipo_just_selected:
                     self.input_lines[f'tipoSpesa{self.numDividendi}'].addItem(tipo.nome, cod_tipo)
-            print("ii")
         self.numDividendi += 1
 
         if self.numDividendi >= len(self.tipi_spesa):
