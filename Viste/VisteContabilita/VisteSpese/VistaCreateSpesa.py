@@ -218,6 +218,7 @@ class VistaCreateSpesa(QWidget):
         print("iniziamo ad aggiungere il dividendo: ", self.numDividendi)
         dividendo_layout = QHBoxLayout()
 
+        print("aggiungendo ... tipoSpesa" + str(self.numDividendi))
         dividendo_layout.addLayout(self.pairLabelInput("Tipo Spesa", "tipoSpesa" + str(self.numDividendi)))
         dividendo_layout.addLayout(self.pairLabelInput("%", "dividendo" + str(self.numDividendi)))
 
@@ -327,20 +328,26 @@ class VistaCreateSpesa(QWidget):
                 del self.input_labels['tipoSpesa' + str(i)]
                 del self.input_lines['dividendo' + str(i)]
                 del self.input_labels['dividendo' + str(i)]
+        print("i")
+
+        self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
+                                'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
 
         self.buttons["Aggiungi Dividendo"].setVisible(False)
         self.buttons["Reset Dividendi"].setVisible(False)
         self.numDividendi = 1
+        print("i")
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
+        print("i")
         self.input_lines["dataPagamento"].setVisible(False)
         self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
+        print("settati valori default")
         self.checkboxes["pagata"].setChecked(False)
         self.checkboxes["isRitenuta"].setChecked(False)
         self.sel_immobile = None
 
-        self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
-                                'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
+
 
     def createSpesa(self):
         immobile = Immobile.ricercaImmobileByDenominazione(self.input_lines["immobile"].currentText()).id
