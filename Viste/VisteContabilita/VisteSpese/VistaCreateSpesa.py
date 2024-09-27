@@ -42,23 +42,17 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout = QVBoxLayout()
 
         btn_aggiungiDividendi = self.create_button("Aggiungi Dividendo", self.addDividendo)
-        #bottoni_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
-        #bottoni_layout.addWidget(btn_aggiungiDividendi)
-        #btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         btn_aggiungiDividendi.setVisible(False)
         btn_aggiungiDividendi.setIcon(qtawesome.icon("fa.plus"))
 
-        btn_rimuoviDividendo = self.create_button("Rimuovi Dividendo", self.removeDividendo)
-        #bottoni_layout.addWidget(btn_rimuoviDividendo, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignRight)
-        #bottoni_layout.addWidget(btn_rimuoviDividendo)
-        #btn_rimuoviDividendo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        btn_rimuoviDividendo.setVisible(False)
-        btn_rimuoviDividendo.setIcon(qtawesome.icon("fa.minus"))
+        btn_resetDividendi = self.create_button("Reset Dividendi", self.resetDividendi)
+        self.dividendi_layout.addWidget(btn_resetDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        btn_resetDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_resetDividendi.setVisible(False)
 
-        self.dividendi_layout.insertWidget(0, btn_aggiungiDividendi)
-        self.dividendi_layout.insertWidget(1, btn_rimuoviDividendo)
         self.addDividendo()
-        #self.removeDividendo()
 
         main_layout.addLayout(self.dividendi_layout)
 
@@ -223,6 +217,7 @@ class VistaCreateSpesa(QWidget):
         return input_layout
 
     def addDividendo(self):
+        print("iniziamo ad aggiungere il dividendo: ", self.numDividendi)
         dividendo_layout = QHBoxLayout()
 
         dividendo_layout.addLayout(self.pairLabelInput("Tipo Spesa", "tipoSpesa" + str(self.numDividendi)))
@@ -247,18 +242,20 @@ class VistaCreateSpesa(QWidget):
             for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                 self.tipi_spesa.extend(tabella.tipologieSpesa)
 
+            print("i")
             for cod_tipo in self.tipi_spesa:
                 tipo_just_selected = False
-
+                print(" --------- tipo: ", cod_tipo)
                 tipo = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo)
                 for i in range(self.numDividendi):
+                    print(" ----------------------- dividendo ", i)
                     if self.input_lines[f'tipoSpesa{i}'].currentText():
                         if self.input_lines[f'tipoSpesa{i}'].currentText() == tipo.nome:
                             tipo_just_selected = True
 
                 if not tipo_just_selected:
                     self.input_lines[f'tipoSpesa{self.numDividendi}'].addItem(tipo.nome, cod_tipo)
-
+            print("ii")
         self.numDividendi += 1
 
         if self.numDividendi >= len(self.tipi_spesa):
@@ -268,31 +265,48 @@ class VistaCreateSpesa(QWidget):
         self.dividendi_layout.insertLayout(self.numDividendi - 1, dividendo_layout)
         self.dividendi_layout.removeWidget(self.buttons["Aggiungi Dividendo"])
         self.dividendi_layout.insertWidget(self.numDividendi, self.buttons["Aggiungi Dividendo"])
+        print("finito ad aggiungere il dividendo: ", self.numDividendi)
 
-    def removeDividendo(self):
-        print(self.numDividendi)
+    def resetDividendi(self):
+        print("inizio reset div: ", self.numDividendi, self.required_fields)
 
-        self.dividendi_layout.removeWidget(self.input_lines['tipoSpesa' + str(self.numDividendi-1)])
-        self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(self.numDividendi-1)])
-        self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(self.numDividendi-1)])
-        self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(self.numDividendi-1)])
-        self.required_fields.remove('tipoSpesa' + str(self.numDividendi-1))
-        self.required_fields.remove('dividendo' + str(self.numDividendi-1))
-        del self.input_lines['tipoSpesa' + str(self.numDividendi-1)]
-        del self.input_labels['tipoSpesa' + str(self.numDividendi-1)]
-        del self.input_lines['dividendo' + str(self.numDividendi-1)]
-        del self.input_labels['dividendo' + str(self.numDividendi-1)]
-        self.numDividendi -= 1
+        if self.numDividendi > 1:
+            for i in range(1, self.numDividendi):
+                self.dividendi_layout.removeWidget(self.input_lines['tipoSpesa' + str(i)])
+                self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(i)])
+                self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(i)])
+                self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(i)])
+                self.required_fields.remove('tipoSpesa' + str(i))
+                self.required_fields.remove('dividendo' + str(i))
+                del self.input_lines['tipoSpesa' + str(i)]
+                del self.input_labels['tipoSpesa' + str(i)]
+                del self.input_lines['dividendo' + str(i)]
+                del self.input_labels['dividendo' + str(i)]
 
-        if self.numDividendi == 1:
-            self.buttons['Rimuovi Dividendo'].setDisabled(True)
-            self.buttons['Aggiungi Dividendo'].setVisible(False)
-            self.buttons['Rimuovi Dividendo'].setVisible(False)
+        self.input_lines['tipoSpesa0'].setVisible(True)
+        self.input_labels['tipoSpesa0'].setVisible(True)
+        self.input_lines['dividendo0'].setVisible(False)
+        self.input_labels['dividendo0'].setVisible(False)
+        if "dividendo0" in self.required_fields:
+            self.required_fields.remove('dividendo0')
 
-            self.input_lines['tipoSpesa0'].setVisible(False)
-            self.input_labels['tipoSpesa0'].setVisible(False)
-            self.input_lines['dividendo0'].setVisible(False)
-            self.input_labels['dividendo0'].setVisible(False)
+        self.input_lines['tipoSpesa0'].clear()
+        self.tipi_spesa = []
+
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+            self.tipi_spesa.extend(tabella.tipologieSpesa)
+
+        self.input_lines['tipoSpesa0'].setPlaceholderText("Seleziona la tipologia di spesa...")
+
+        for tipo in self.tipi_spesa:
+            self.input_lines['tipoSpesa0'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
+
+        print("fine reset div: ", self.numDividendi, self.required_fields)
+        self.numDividendi = 1
+        self.buttons["Reset Dividendi"].setDisabled(True)
+
+
+
 
     def reset(self):
         print("input lin pre reset", self.input_lines)
@@ -312,8 +326,6 @@ class VistaCreateSpesa(QWidget):
                 self.dividendi_layout.removeWidget(self.input_labels['tipoSpesa' + str(i)])
                 self.dividendi_layout.removeWidget(self.input_lines['dividendo' + str(i)])
                 self.dividendi_layout.removeWidget(self.input_labels['dividendo' + str(i)])
-                self.required_fields.remove('tipoSpesa' + str(i))
-                self.required_fields.remove('dividendo' + str(i))
                 del self.input_lines['tipoSpesa' + str(i)]
                 del self.input_labels['tipoSpesa' + str(i)]
                 del self.input_lines['dividendo' + str(i)]
