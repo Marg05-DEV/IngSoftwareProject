@@ -301,17 +301,18 @@ class VistaCreateSpesa(QWidget):
         for tipo in self.tipi_spesa:
             self.input_lines['tipoSpesa0'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
 
-        print("fine reset div: ", self.numDividendi, self.required_fields)
         self.numDividendi = 1
+
         self.buttons["Reset Dividendi"].setDisabled(True)
-
-
-
+        self.buttons["Aggiungi Dividendo"].setDisabled(False)
+        print("fine reset div: ", self.numDividendi, self.required_fields)
 
     def reset(self):
         print("input lin pre reset", self.input_lines)
-        for input_line in self.input_lines.values():
+        for testo, input_line in self.input_lines.items():
+            print(" inizio clear ", testo)
             input_line.clear()
+            print(" fine clear ", testo)
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
 
@@ -531,17 +532,21 @@ class VistaCreateSpesa(QWidget):
             self.input_lines["dataPagamento"].setVisible(True)
 
     def input_validation(self):
+        print(" ---- input validation: ", self.required_fields)
+        print(" ---- input line: ", self.input_lines.keys())
         num_writed_lines = 0
 
         combo_box_fields = ['immobile', 'tipoProfessione']
-        print(self.input_lines.keys())
         combo_box_fields.extend([item for item in self.input_lines.keys() if 'tipoSpesa' in item])
-        print(combo_box_fields)
+        print(" ---- combo field ", combo_box_fields)
         for field in self.required_fields:
+            print(" ------------ lettura required field: ", field)
             if field in combo_box_fields:
+                print(" ----------- è un combo")
                 if self.input_lines[field].currentText():
                     num_writed_lines += 1
             else:
+                print(" ----------- NON è un combo")
                 if self.input_lines[field].text():
                     num_writed_lines += 1
         print("num: ", num_writed_lines, " lunghezza campi richiesti: ", len(self.required_fields))
