@@ -73,6 +73,7 @@ class VistaMenuGestioneBilancio(QWidget):
         self.setWindowTitle("Menu Gestione Bilancio")
 
     def create_button(self, testo, action, disabled=False):
+        print()
         button = QPushButton(testo)
         button.setMaximumHeight(40)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
