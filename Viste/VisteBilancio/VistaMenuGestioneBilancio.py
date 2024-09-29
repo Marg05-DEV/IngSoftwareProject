@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt, QStringListModel
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QPushButton, QLabel, \
-    QCompleter
+    QCompleter, QSizePolicy
 
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneEsercizi import VistaGestioneEsercizi
@@ -23,6 +23,8 @@ class VistaMenuGestioneBilancio(QWidget):
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
+        self.lbl_search.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+        self.lbl_searchType.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         self.searchType = QComboBox()
         self.searchType.addItems(["Denominazione", "Sigla", "Codice"])
         self.searchType.activated.connect(self.sel_tipo_ricerca)
@@ -67,12 +69,13 @@ class VistaMenuGestioneBilancio(QWidget):
         main_layout.addLayout(self.button_layout)
 
         self.setLayout(main_layout)
-        self.resize(600, 400)
+        self.resize(500, 300)
         self.setWindowTitle("Menu Gestione Bilancio")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setFixedSize(275, 55)
+        button.setMaximumHeight(40)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         button.setCheckable(False)
         button.clicked.connect(action)
         button.setDisabled(disabled)

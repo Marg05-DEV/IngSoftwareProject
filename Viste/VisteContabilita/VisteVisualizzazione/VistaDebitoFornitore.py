@@ -89,10 +89,9 @@ class VistaDebitoFornitore(QWidget):
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
+        main_layout.addWidget(self.drawLine())
         main_layout.addWidget(self.tree_widget)
         main_layout.addWidget(self.spese_a_debito_non_presenti)
-
-        self.drawLine()
 
         self.spese_debito_totale_section = {}
         self.spese_totale = QLabel("")

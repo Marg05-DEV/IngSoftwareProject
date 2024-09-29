@@ -18,7 +18,7 @@ class VistaSaldoCassa(QWidget):
         self.saldo_assegni = 0.00
         main_layout = QVBoxLayout()
 
-        main_layout.addWidget(self.new_label("Saldo cassa del giorno"), alignment=Qt.AlignmentFlag.AlignHCenter)
+        main_layout.addWidget(self.new_label("Saldo cassa del giorno"), alignment=Qt.AlignmentFlag.AlignLeft)
         print("busso1")
         self.table_rate = QTableWidget()
         self.update_table()

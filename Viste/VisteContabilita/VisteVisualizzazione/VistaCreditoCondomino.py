@@ -86,6 +86,7 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar.textChanged.connect(self.selectioning)
         main_layout.addLayout(msg_layout)
         main_layout.addLayout(self.button_layout)
+        main_layout.addWidget(self.drawLine())
 
         """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
         """ ------------------------------ SEZIONE RATE ---------------------------- """
@@ -115,7 +116,6 @@ class VistaCreditoCondomino(QWidget):
         self.msg.hide()
 
         totale_credito_layout = QHBoxLayout()
-        self.drawLine()
         main_layout.addWidget(self.tree_widget)
         main_layout.addWidget(self.rate_a_credito_non_presenti)
         totale_credito_layout.addWidget(self.lbl_totale_credito_condomino)
@@ -147,7 +147,6 @@ class VistaCreditoCondomino(QWidget):
         print("att: ", record)
         if record is not None:
             self.condomino = Condomino.ricercaCondominoByCF(record[1])
-
         if self.condomino is not None:
             self.condomino_selezionato.setText(f"{self.condomino.cognome} {self.condomino.nome} - {self.condomino.codiceFiscale}")
             self.buttons["Seleziona"].setDisabled(False)
@@ -175,16 +174,19 @@ class VistaCreditoCondomino(QWidget):
             self.tree_widget.setVisible(True)
             self.update_list()
         else:
-            print("no")
             return None
 
     def update_list(self):
         self.credito_totale_condomino = 0.00
         self.unita_associate_al_condomino = []
         immobile_con_credito = {}
-
         for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
             self.unita_associate_al_condomino.append(cod_unita_immobiliare)
+        if not self.unita_associate_al_condomino:
+            self.tree_widget.setVisible(False)
+            self.condomino_section["frase"].setVisible(True)
+            self.credito_condomino_section["frase_credito_totale"].setVisible(False)
+            self.credito_condomino_section["credito_totale"].setVisible(False)
 
         for immobile in Immobile.getAllImmobili().values():
             for cod_unita in self.unita_associate_al_condomino:
@@ -220,6 +222,7 @@ class VistaCreditoCondomino(QWidget):
                         self.credito_totale += importo_totale_per_immobile
             print("prima di item")
             if last_bilancio:
+                print("bilancio ok: ", last_bilancio)
                 item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
             else:
                 item = QTreeWidgetItem([immobile.denominazione, "Nessun bilancio approvato per questo immobile"])
@@ -246,15 +249,18 @@ class VistaCreditoCondomino(QWidget):
         self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
         if immobile_con_credito:
+            print("ecc ")
             self.tree_widget.setVisible(True)
             self.condomino_section["frase"].setVisible(False)
-            if last_bilancio:
-                self.credito_condomino_section["frase_credito_totale"].setVisible(True)
-                self.credito_condomino_section["credito_totale"].setText("%.2f" % self.credito_totale)
-                self.credito_condomino_section["credito_totale"].setVisible(True)
-            else:
+            #if last_bilancio:
+            print("eccecc")
+            self.credito_condomino_section["frase_credito_totale"].setVisible(True)
+            self.credito_condomino_section["credito_totale"].setText("%.2f" % self.credito_totale)
+            self.credito_condomino_section["credito_totale"].setVisible(True)
+            """else:
+                print("ecceccecc")
                 self.credito_condomino_section["frase_credito_totale"].setVisible(False)
-                self.credito_condomino_section["credito_totale"].setVisible(False)
+                self.credito_condomino_section["credito_totale"].setVisible(False)"""
         else:
             self.tree_widget.setVisible(False)
             self.condomino_section["frase"].setVisible(True)

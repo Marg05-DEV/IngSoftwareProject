@@ -148,8 +148,9 @@ class VistaStatoPatrimoniale(QWidget):
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
+        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(spesa_layout)
-        self.drawLine()
+        main_layout.addWidget(self.drawLine())
         main_layout.addLayout(rata_layout)
         main_layout.addWidget(self.msg)
 
