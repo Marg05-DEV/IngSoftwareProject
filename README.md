@@ -41,8 +41,6 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 ### BILANCIO 
 
 - rivedere i totali delle quote in ripartizione preventivo che sono uguali a quelle di ripartizioen consuntivo ( forse scambio di variabili )
-- mettere la possibilità di modificare le rate preventivate con una funzione di adattamento
-- fatti i due punti(date rate fatto) precedenti modificare il pdf dei prospetti 
 - rivedere controlli bilancio, soprattutto le __date__ e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
 
 ## AREA DOCUMENTI
