@@ -35,6 +35,7 @@ class TestGestioneImmobile(TestCase):
         print("dentro test delete", immobili)
 
     def test_getAllImmobili(self):
+        print()
         pass
 
     def test_modifica_immobile(self):
