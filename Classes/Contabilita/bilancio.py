@@ -410,18 +410,14 @@ class Bilancio:
                     for n_rate in range(0, bilanci[self.codice].numeroRate):
                         print(" ----------- ciclo", n_rate)
                         data_da_aggiungere = datetime.date.today()
-                        print("a")
                         if n_rate > 0:
-                            print("a")
                             month = (data_da_aggiungere.month + months_periods[n_rate]) % 12
                             year = data_da_aggiungere.year
-                            print("a")
                             if month == 0:
                                 month = 12
                             print("new month", month)
                             print(data_da_aggiungere.month + months_periods[n_rate])
                             if data_da_aggiungere.month + months_periods[n_rate] > 12:
-                                print("abbiamo sbucato")
                                 year = data_da_aggiungere.year + 1
                             data_da_aggiungere = data_da_aggiungere.replace(year, month, 1)
                         print(" -----------", data_da_aggiungere)

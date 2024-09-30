@@ -104,8 +104,8 @@ class VistaReadTabellaMillesimale(QWidget):
         self.selectionModel.selectionChanged.connect(self.able_button)
 
     def nuovo_tipo_spesa(self):
-        print("dentro nuovo_tipo_spesa")
-        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, self.lista_tipi_spesa_callback, None)
+        print(Immobile.ricercaImmobileById(self.tabella_millesimale.immobile))
+        self.new_tipo_spesa = VistaCreateTipoSpesa(self.tabella_millesimale, Immobile.ricercaImmobileById(self.tabella_millesimale.immobile), self.lista_tipi_spesa_callback, None)
         print("sono qui ora")
         self.new_tipo_spesa.show()
 

@@ -206,7 +206,7 @@ class VistaCreateTabellaMillesimale(QWidget):
         self.input_validation()
 
     def nuovo_tipo_spesa(self):
-        self.nuovo_tipo_spesa = VistaCreateTipoSpesa(None, self.callback, self.append_nuovo_tipo_spesa)
+        self.nuovo_tipo_spesa = VistaCreateTipoSpesa(None, self.immobile, self.callback, self.append_nuovo_tipo_spesa)
         self.nuovo_tipo_spesa.show()
 
     def append_nuovo_tipo_spesa(self, tipo_spesa):
