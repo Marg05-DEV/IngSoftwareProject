@@ -34,3 +34,14 @@ class TestGestioneImmobile(TestCase):
         self.assertNotIn(10, immobili)
         print("dentro test delete", immobili)
 
+    def test_getAllImmobili(self):
+        pass
+
+    def test_modifica_immobile(self):
+        pass
+
+    def test_ricercaImmobileByDenominazione(self):
+        pass
+
+    def test_ordinaImmobileByDenominazione(self):
+        pass
