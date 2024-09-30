@@ -158,7 +158,7 @@ class Spesa:
         else:
             return {}
 
-    @staticmethod
+    """@staticmethod
     def ordinaCondominoByDataRegistrazione():
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -175,9 +175,9 @@ class Spesa:
                             break
                 return sorted_spese
         else:
-            return None
+            return None"""
 
-    @staticmethod
+    """@staticmethod
     def ordinaCondominoByTipoSpesa(isDecrescente):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -194,9 +194,9 @@ class Spesa:
                             break
                 return sorted_spese
         else:
-            return None
+            return None"""
 
-    @staticmethod
+    """@staticmethod
     def ordinaCondominoByImmobile(isDecrescente):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -213,9 +213,9 @@ class Spesa:
                             break
                 return sorted_spese
         else:
-            return None
+            return None"""
 
-    @staticmethod
+    """@staticmethod
     def ordinaCondominoByFornitore(isDecrescente):
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
@@ -232,12 +232,10 @@ class Spesa:
                             break
                 return sorted_spese
         else:
-            return None
-
+            return None"""
 
     def getInfoSpesa(self):
         return {
-        #"Numero spese Registrate" : Spesa.numSpeseRegistrate,
         "codice" : self.codice,
         "dataFattura" : self.dataFattura,
         "dataRegistrazione" : self.dataRegistrazione,

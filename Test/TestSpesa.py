@@ -34,3 +34,6 @@ class TestGestioneSpesa(TestCase):
         self.assertIsNotNone(spese)
         self.assertNotIn(10, spese)
         print("dentro test delete", spese)
+
+    def test_mettiABilancio(self):
+        pass

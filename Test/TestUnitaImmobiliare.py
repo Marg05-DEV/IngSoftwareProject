@@ -37,3 +37,12 @@ class TestGestioneUnitaImmobiliare(TestCase):
         self.assertNotIn(10, unitaImmobiliari)
         print("dentro test delete", unitaImmobiliari)
 
+    def test_addCondomino(self):
+        pass
+
+    def test_removeCondomino(self):
+        pass
+
+    def test_modificaTitoloCondomino(self):
+        pass
+

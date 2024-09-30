@@ -32,3 +32,6 @@ class TestGestioneTipoSpesa(TestCase):
         self.assertIsNotNone(tipiSpesa)
         self.assertNotIn(10, tipiSpesa)
         print("dentro test delete", tipiSpesa)
+
+    def test_getTabelleMillesimaleAssociate(self):
+        pass

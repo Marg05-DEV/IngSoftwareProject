@@ -37,3 +37,6 @@ class TestGestioneImmobile(TestCase):
         self.assertIsNotNone(condomini)
         self.assertNotIn(10, condomini)
         print("dentro test delete", condomini)
+
+    def test_getImmmobiliAssociati(self):
+        pass

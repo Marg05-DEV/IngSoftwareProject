@@ -138,8 +138,6 @@ class VistaGestioneCondomini(QWidget):
         item = None
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
-            print(item.text())
-            print(item.text().split(" - "))
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" - ")[1])
         print(sel_condomino)
         self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino, self.callback, False)

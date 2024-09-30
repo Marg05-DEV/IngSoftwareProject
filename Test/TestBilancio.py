@@ -19,5 +19,15 @@ class TestGestioneBilancio(TestCase):
         self.assertIn(10, bilanci)
         print("dentro a bilanci", bilanci)
 
+    def test_changeListaConsuntivo(self):
+        pass
 
+    def test_passaggioRaggiunto(self):
+        pass
+
+    def test_approvaBilancio(self):
+        pass
+
+    def test_calcolaImportiDaVersare(self):
+        pass
 

@@ -35,3 +35,6 @@ class TestGestioneRata(TestCase):
         self.assertIsNotNone(rate)
         self.assertNotIn(10, rate)
         print("dentro test delete", rate)
+
+    def test_lastNumeroRicevuta(self):
+        pass
