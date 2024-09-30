@@ -134,8 +134,7 @@ class VistaGestioneTabelleMillesimali(QWidget):
                 print("riga del totale", totale_millesimi_tabella)
 
                 self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
-                self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole,
-                                                                 [unita.codice, tabella.codice])
+                self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole,[unita.codice, tabella.codice])
                 j += 1
 
             i += 1

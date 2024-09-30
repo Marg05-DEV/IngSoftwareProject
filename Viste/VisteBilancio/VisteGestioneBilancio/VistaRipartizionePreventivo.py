@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QFont, QIntValidator
@@ -26,7 +27,10 @@ class VistaRipartizionePreventivo(QWidget):
 
         lbl_label = QLabel("Numero Rate")
         input_line = QLineEdit()
+
         input_line.setPlaceholderText("max 6")
+        if self.bilancio.numeroRate != 0:
+            input_line.setText(str(self.bilancio.numeroRate))
         input_line.setValidator(QIntValidator(0, 6))
         self.input_lines["numeroRate"] = input_line
         self.input_lines["numeroRate"].editingFinished.connect(self.update_numero_rate)
@@ -34,6 +38,7 @@ class VistaRipartizionePreventivo(QWidget):
         ricevuta_layout.addWidget(input_line)
 
         self.table_ripartizionePreventivo = QTableWidget()
+        self.table_ripartizionePreventivo.cellChanged.connect(self.editingRate)
         self.update_table()
 
         self.msg = QLabel("")
@@ -58,6 +63,13 @@ class VistaRipartizionePreventivo(QWidget):
             self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
             self.bilancio.initScadenzaRate()
             self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+
+            unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
+            tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
+            for i in range(2, len(unita_immobiliari) + 2):
+                cod_unita = self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).data(Qt.ItemDataRole.UserRole)
+                self.bilancio.ripartizioneRate(cod_unita)
+                self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
             self.update_table()
 
     def dataScadenzaChanged(self):
@@ -71,13 +83,16 @@ class VistaRipartizionePreventivo(QWidget):
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
 
     def update_table(self):
+        print("a")
+        self.table_ripartizionePreventivo.cellChanged.disconnect(self.editingRate)
+        print("aa")
         # prendo le list necessarie
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
 
         #setto row e colum della tabella
         self.table_ripartizionePreventivo.setRowCount(len(unita_immobiliari) + 3)
-        self.table_ripartizionePreventivo.setColumnCount((len(tabelle_millesimali))*2 + 4 + self.bilancio.numeroRate)
+        self.table_ripartizionePreventivo.setColumnCount((len(tabelle_millesimali)) * 2 + 4 + self.bilancio.numeroRate)
 
         bold_font = QFont()
         bold_font.setBold(True)
@@ -85,7 +100,9 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.horizontalHeader().setFont(bold_font)
 
         self.table_ripartizionePreventivo.setItem(0, 0, QTableWidgetItem("Tabelle Millesimali - Millesimi"))
+        print("i")
         self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali), QTableWidgetItem("Unita Immobilari"))
+        print("i")
         self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) + 1, QTableWidgetItem("Tab. Millesimali - Quote"))
         self.table_ripartizionePreventivo.setItem(0, 2 * len(tabelle_millesimali) + 1, QTableWidgetItem(f"RIPARTIZIONE PREVENTIVO ESERCIZIO {datetime.date.strftime(self.bilancio.inizioEsercizio, '%d/%m/%Y')} - {datetime.date.strftime(self.bilancio.fineEsercizio, '%d/%m/%Y')}"))
 
@@ -93,7 +110,12 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFont(bold_font)
-
+        print(" ---- RIGA 100")
+        self.table_ripartizionePreventivo.item(0, 0).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        print(" ---- RIGA 105")
         self.table_ripartizionePreventivo.setSpan(0, 0, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 3)
@@ -106,6 +128,8 @@ class VistaRipartizionePreventivo(QWidget):
             self.table_ripartizionePreventivo.item(1, j).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setFont(bold_font)
             self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.table_ripartizionePreventivo.item(1, j).setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
             j += 1
 
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali), QTableWidgetItem(f"Unità Immobiliari\nCondomino Proprietario"))
@@ -142,6 +166,7 @@ class VistaRipartizionePreventivo(QWidget):
                 widget.setLayout(layout)
                 self.table_ripartizionePreventivo.setCellWidget(1, len(tabelle_millesimali) * 2 + 3 + k + 1, widget)
 
+        print(" ---- RIGA 160")
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari)+2, len(tabelle_millesimali), QTableWidgetItem(f"TOTALE"))
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFont(bold_font)
 
@@ -152,6 +177,7 @@ class VistaRipartizionePreventivo(QWidget):
             i = 2
             totale_millesimi_tabella = 0.0
             totale_preventivo_tabella = 0.0
+            print(" ---- RIGA 173")
             for unita in unita_immobiliari:
                 if unita.condomini:
                     if unita.tipoUnitaImmobiliare == "Appartamento":
@@ -171,9 +197,9 @@ class VistaRipartizionePreventivo(QWidget):
                             else:
                                 self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 else:
-                    self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(
-                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                    self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
+                self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
                 print("prima del richiamo")
 
                 if unita.codice not in tabella.millesimi:
@@ -184,12 +210,15 @@ class VistaRipartizionePreventivo(QWidget):
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
 
                 self.table_ripartizionePreventivo.setItem(i, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]))
+                self.table_ripartizionePreventivo.item(i, j + 1 + len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
                 totale_preventivo_tabella += self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]
                 self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % totale_preventivo_tabella))
+                self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, j + 1 + len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
                 totale_millesimi_tabella += tabella.millesimi[unita.codice]
 
                 self.table_ripartizionePreventivo.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
+                self.table_ripartizionePreventivo.item(i, j).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
                 if unita.codice in totale_preventivo_attuale:
                     totale_preventivo_attuale[unita.codice] += self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]
@@ -197,6 +226,7 @@ class VistaRipartizionePreventivo(QWidget):
                     totale_preventivo_attuale[unita.codice] = self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]
                 i += 1
             self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, j, QTableWidgetItem("%.2f" % totale_millesimi_tabella))
+            self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, j).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
             j += 1
 
@@ -205,17 +235,29 @@ class VistaRipartizionePreventivo(QWidget):
 
         for i in range(2, len(unita_immobiliari) + 2):
             cod_unita = self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).data(Qt.ItemDataRole.UserRole)
-            self.bilancio.ripartizioneRate(cod_unita)
-            self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % totale_preventivo_attuale[cod_unita]))
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % self.bilancio.ripartizioneConguaglio[cod_unita]))
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % self.bilancio.importiDaVersare[cod_unita]))
+
+            self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 2).setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 3).setFlags(Qt.ItemFlag.ItemIsEnabled)
+
+            #QUI NO
             for r in range(0, self.bilancio.numeroRate):
                 self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % self.bilancio.ratePreventivate[cod_unita][r]))
+                self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 4 + r).setData(Qt.ItemDataRole.UserRole, [cod_unita, r])
+                if r == (self.bilancio.numeroRate - 1):
+                    self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 4 + r).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % sum(list(totale_preventivo_attuale.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % sum(list(self.bilancio.ripartizioneConguaglio.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % sum(list(self.bilancio.importiDaVersare.values()))))
+
+        self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 2).setFlags(Qt.ItemFlag.ItemIsEnabled)
+        self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 3).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
         for r in range(0, self.bilancio.numeroRate):
             somma = 0.0
@@ -223,7 +265,9 @@ class VistaRipartizionePreventivo(QWidget):
                 somma += self.bilancio.ratePreventivate[chiave][r]
 
             self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % somma))
+            self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4 + r).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
+        self.table_ripartizionePreventivo.cellChanged.connect(self.editingRate)
         self.table_ripartizionePreventivo.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.table_ripartizionePreventivo.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_ripartizionePreventivo.horizontalHeader().setSectionResizeMode(len(tabelle_millesimali), QHeaderView.ResizeMode.Stretch)
@@ -234,8 +278,6 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.horizontalHeader().setVisible(False)
         self.table_ripartizionePreventivo.verticalHeader().setVisible(False)
         self.table_ripartizionePreventivo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-        self.table_ripartizionePreventivo.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
     def hide_message(self):
         self.msg.hide()

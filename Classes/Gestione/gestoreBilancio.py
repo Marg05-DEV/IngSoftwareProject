@@ -67,13 +67,9 @@ class GestoreBilancio:
                     tabella_millesimale_row = table.row()
                     tabella_millesimale_row.cell(f"{tabella_millesimale.nome} - {tabella_millesimale.descrizione}",
                                                  align=Align.C)
-                    tabella_millesimale_row.cell(
-                        "%.2f" % sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())))
-                    tabella_millesimale_row.cell(
-                        "%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
-                    tabella_millesimale_row.cell("%.2f" % (
-                                sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())) - sum(
-                            list(bilancio.spesePreventivate[tabella_millesimale.codice].values()))))
+                    tabella_millesimale_row.cell("%.2f" % sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())))
+                    tabella_millesimale_row.cell("%.2f" % sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values())))
+                    tabella_millesimale_row.cell("%.2f" % (sum(list(bilancio.speseConsuntivate[tabella_millesimale.codice].values())) - sum(list(bilancio.spesePreventivate[tabella_millesimale.codice].values()))))
                     pdf.set_font("helvetica", "", 9)
                     for cod_tipo_spesa in tabella_millesimale.tipologieSpesa:
                         tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa)
@@ -275,10 +271,8 @@ class GestoreBilancio:
                     totale_prev_unita = 0.0
 
                     for tabella in tabelle_millesimali_immobile:
-                        unita_row.cell(
-                            "%.2f" % bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice])
-                        totale_prev_unita += bilancio.ripartizioneSpesePreventivate[tabella.codice][
-                            unita_immobiliare.codice]
+                        unita_row.cell("%.2f" % bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice])
+                        totale_prev_unita += bilancio.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice]
 
                     totale_preventivo += totale_prev_unita
 
@@ -304,7 +298,7 @@ class GestoreBilancio:
                 pdf.set_font("helvetica", "I", 7)
 
                 for tabella in tabelle_millesimali_immobile:
-                    totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneSpeseConsuntivate[tabella.codice].values())))
+                    totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneSpesePreventivate[tabella.codice].values())))
 
                 totale_row.cell("%.2f" % totale_preventivo)
                 totale_row.cell("%.2f" % sum(list(bilancio.ripartizioneConguaglio.values())))

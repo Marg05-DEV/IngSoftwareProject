@@ -31,6 +31,7 @@ class Bilancio:
         self.numeroRate = 0#
         self.ratePreventivate = {}# # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
         self.scadenzaRate = []
+        self.rateIsEdited = {} #{UnitaImmobiliare: [rata 1-esima, ..., rata n-esima],}
         self.isApprovata = False#
         self.dataApprovazione = datetime.date(year=1970, month=1, day=1)#
         self.isLastEsercizio = False#
@@ -70,6 +71,7 @@ class Bilancio:
                 self.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice] = 0.0
                 self.ripartizioneSpesePreventivate[tabella.codice][unita_immobiliare.codice] = 0.0
                 self.ripartizioneConguaglio[unita_immobiliare.codice] = 0.0
+                self.rateIsEdited[unita_immobiliare.codice] = []
 
 
         listaSpeseNonABilancio = [item.codice for item in Spesa.getAllSpeseByImmobile(immobile).values() if not item.aBilancio]
@@ -113,6 +115,7 @@ class Bilancio:
             "numeroRate": self.numeroRate,
             "ratePreventivate": self.ratePreventivate,
             "scadenzaRate": self.scadenzaRate,
+            "rateIsEdited": self.rateIsEdited,
             "isApprovata": self.isApprovata,
             "dataApprovazione": self.dataApprovazione,
             "isLastEsercizio": self.isLastEsercizio
@@ -364,7 +367,11 @@ class Bilancio:
                 bilanci = dict(pickle.load(f))
                 print("prima del change", bilanci[self.codice].numeroRate)
                 bilanci[self.codice].numeroRate = numeroRate
-                print("dopo il change",bilanci[self.codice].numeroRate)
+                unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
+                for unita in unita_immobiliari:
+                    bilanci[self.codice].rateIsEdited[unita.codice] = [False] * numeroRate
+                print("dopo il change", bilanci[self.codice].numeroRate)
+                print("bilancio", bilanci[self.codice].getInfoBilancio())
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
@@ -431,3 +438,37 @@ class Bilancio:
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
+    def editRataPreventivata(self, unita_immobiliare, numero_rata, valore):
+        print("dentro editingRataPreve")
+        print("unita: ", unita_immobiliare.codice)
+        print("numero rata: ", numero_rata)
+        print("valore: ", valore)
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                bilanci[self.codice].rateIsEdited[unita_immobiliare.codice][numero_rata] = True
+                numRateNotEdited = bilanci[self.codice].rateIsEdited[unita_immobiliare.codice].count(False)
+                restanteDaVersare = bilanci[self.codice].importiDaVersare[unita_immobiliare.codice]
+
+                for i in range(0, bilanci[self.codice].numeroRate):
+                    if bilanci[self.codice].rateIsEdited[unita_immobiliare.codice][i] and i != numero_rata:
+                        restanteDaVersare = restanteDaVersare - bilanci[self.codice].ratePreventivate[unita_immobiliare.codice][i]
+
+                if valore > restanteDaVersare:
+                    valore = restanteDaVersare
+
+                bilanci[self.codice].ratePreventivate[unita_immobiliare.codice][numero_rata] = valore
+                restanteDaVersare = bilanci[self.codice].importiDaVersare[unita_immobiliare.codice]
+
+                for i in range(0, bilanci[self.codice].numeroRate):
+                    if bilanci[self.codice].rateIsEdited[unita_immobiliare.codice][i]:
+                        restanteDaVersare = restanteDaVersare - bilanci[self.codice].ratePreventivate[unita_immobiliare.codice][i]
+
+                quotaDaRipartire = float(restanteDaVersare)/numRateNotEdited
+
+                for i in range(0, bilanci[self.codice].numeroRate):
+                    if not bilanci[self.codice].rateIsEdited[unita_immobiliare.codice][i]:
+                        bilanci[self.codice].ratePreventivate[unita_immobiliare.codice][i] = quotaDaRipartire
+
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
