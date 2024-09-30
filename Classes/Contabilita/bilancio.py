@@ -360,6 +360,7 @@ class Bilancio:
                     Spesa.ricercaSpesaByCodice(cod_spesa).mettiABilancio()
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+
     def addNumeroRate(self, numeroRate):
         print("sono nell'aggiunta numero rate")
         if os.path.isfile(nome_file):

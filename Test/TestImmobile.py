@@ -53,7 +53,17 @@ class TestGestioneImmobile(TestCase):
         self.assertNotEqual(self.immobile.cap, old_cap)
 
     def test_ricercaImmobileByDenominazione(self):
-        pass
+        immobili = Immobile.getAllImmobili()
+        self.assertIsNotNone(immobili)
+        print(immobili)
+        self.immobile = Immobile.ricercaImmobileByDenominazione("Immobile10")
+        print(self.immobile)
+        self.assertIsNotNone(self.immobile)
+        self.assertIn(self.immobile.id, immobili)
 
-    def test_ordinaImmobileByDenominazione(self):
-        pass
+
+
+
+            
+            
+

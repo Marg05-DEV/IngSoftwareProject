@@ -35,3 +35,12 @@ class TestGestioneTabellaMillesimale(TestCase):
         self.assertIsNotNone(tabelleMillesimali)
         self.assertNotIn(10, tabelleMillesimali)
         print("dentro test delete", tabelleMillesimali)
+
+    def test_addMillesimo(self):
+        pass
+
+    def test_removeTipoSpesa(self):
+        pass
+
+    def test_addTipoSpesa(self):
+        pass
