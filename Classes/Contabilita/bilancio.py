@@ -14,29 +14,29 @@ nome_file = 'Dati/Bilanci.pickle'
 class Bilancio:
 
     def __init__(self):
-        self.codice = 1#
-        self.immobile = None#
-        self.inizioEsercizio = datetime.date(year=1970, month=1, day=1)#
-        self.fineEsercizio = datetime.date(year=1970, month=1, day=1)#
-        self.spesePreventivate = {} ## {TabMillesimale: {TipoSpesa: valore inserito da noi}, ...}
-        self.listaSpeseAConsuntivo = []#
-        self.listaSpeseNonAConsuntivo = []#
-        self.speseConsuntivate = {}# # {TabMillesimale: {TipoSpesa: valore calcolato dalle spese inserite}, ...}
-        self.ripartizioneSpesePreventivate = {} ## {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict spesePreventivate e tabelle millesimali}, ...}
-        self.ripartizioneSpeseConsuntivate = {}# # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict speseConsuntivate e tabelle millesimali}, ...}
-        self.ripartizioneConguaglio = {}# # {UnitaImmobiliare: differenza ripartizioneSpesePrev - ripartizioneSpeseCons }
-        self.conguaglioPrecedente = {}
-        self.rateVersate = {}
-        self.importiDaVersare = {} ## {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
-        self.numeroRate = 0#
-        self.ratePreventivate = {}# # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
-        self.scadenzaRate = []
-        self.rateIsEdited = {} #{UnitaImmobiliare: [rata 1-esima, ..., rata n-esima],}
-        self.isApprovata = False#
-        self.dataApprovazione = datetime.date(year=1970, month=1, day=1)#
-        self.isLastEsercizio = False#
-        self.passaggi = {"spesePreventivate": False, "speseConsuntivate": False, "ripartizioneSpesePreventivate": False, "ripartizioneSpeseConsuntivate": False}#
-        
+        self.codice = 1##
+        self.immobile = 0##
+        self.inizioEsercizio = datetime.date(year=1970, month=1, day=1)##
+        self.fineEsercizio = datetime.date(year=1970, month=1, day=1)##
+        self.spesePreventivate = {} ## # {TabMillesimale: {TipoSpesa: valore inserito da noi}, ...}
+        self.listaSpeseAConsuntivo = []##
+        self.listaSpeseNonAConsuntivo = []##
+        self.speseConsuntivate = {}## # {TabMillesimale: {TipoSpesa: valore calcolato dalle spese inserite}, ...}
+        self.ripartizioneSpesePreventivate = {}## # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict spesePreventivate e tabelle millesimali}, ...}
+        self.ripartizioneSpeseConsuntivate = {}## # {TabMillesimale: {UnitaImmobiliare: valore calcolato tra dict speseConsuntivate e tabelle millesimali}, ...}
+        self.ripartizioneConguaglio = {}## # {UnitaImmobiliare: differenza ripartizioneSpesePrev - ripartizioneSpeseCons }
+        self.conguaglioPrecedente = {}##
+        self.rateVersate = {}##
+        self.importiDaVersare = {}## # {UnitaImmobiliare: somma spese prev - conguaglio}, ...}
+        self.numeroRate = 0##
+        self.ratePreventivate = {}## # {UnitaImmobiliare: [rata 1-esima, ..., rata n-esima], ...}
+        self.scadenzaRate = []##
+        self.rateIsEdited = {}## #{UnitaImmobiliare: [rata 1-esima, ..., rata n-esima],}
+        self.isApprovata = False##
+        self.dataApprovazione = datetime.date(year=1970, month=1, day=1)##
+        self.isLastEsercizio = False##
+        self.passaggi = {"spesePreventivate": False, "speseConsuntivate": False, "ripartizioneSpesePreventivate": False, "ripartizioneSpeseConsuntivate": False}##
+
     def aggiungiBilancio(self, inizioEsercizio, fineEsercizio, immobile):
         self.inizioEsercizio = inizioEsercizio
         self.fineEsercizio = fineEsercizio
