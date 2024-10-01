@@ -26,7 +26,3 @@ class GestorePDF:
             return
 
         file_pdf.sort()  #ordina in oldine alfabetico la lista dei PDF
-
-        #visualizza la lista pdf
-        for file in file_pdf:
-            print(file)

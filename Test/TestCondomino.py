@@ -1,10 +1,7 @@
 import datetime
-import os.path
-import pickle
 from unittest import TestCase
 
 from Classes.RegistroAnagrafe.condomino import Condomino
-from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 
@@ -16,41 +13,48 @@ class TestGestioneImmobile(TestCase):
                                              "Ascoli Piceno", "AP", "franco.pucci@email.it", "3451234567")
 
         condomini = Condomino.getAllCondomini()
+
         self.assertIsNotNone(condomini)
         print("Dentro a condomini")
 
     def test_delete_condomino(self):
-        condomini =Condomino.getAllCondomini()
+        condomini = Condomino.getAllCondomini()
+
+        self.condomino = Condomino.ricercaCondominoByCF("FRNPCC75M12C023P")
         self.assertIsNotNone(condomini)
-        self.assertIn(10, condomini)
-        self.condomino = Condomino.ricercaCondominoByCF("GRN45HK785LM")
+
         self.condomino.rimuoviCondomino()
+
         condomini = Condomino.getAllCondomini()
         self.assertIsNotNone(condomini)
         self.assertNotIn(10, condomini)
         print("dentro test delete", condomini)
 
-    def test_getImmmobiliAssociati(self):
-        condomini = Condomino.getAllCondomini()
-        self.assertIsNotNone(condomini)
+    def test_getImmobiliAssociati(self):
         condomino = Condomino.ricercaCondominoByCF("BNCGIO80T03H123Q")
         self.assertIsNotNone(condomino)
+
         immobili_associati = condomino.getImmobiliAssociati()
-        print("prima: ", immobili_associati)
         self.assertIsNotNone(immobili_associati)
 
-        for immo in immobili_associati:
-            print(immo.getInfoImmobile())
-
+        esiste = False
         unita_da_associare = None
         for unita in UnitaImmobiliare.getAllUnitaImmobiliari().values():
-            if Immobile.ricercaImmobileById(unita.immobile) not in immobili_associati:
+            esiste = False
+            for immobile in immobili_associati:
+                if unita.immobile == immobile.codice:
+                    esiste = True
+                    break
+            if not esiste:
                 unita_da_associare = unita
                 break
 
         self.assertIsNotNone(unita_da_associare)
+
         unita_da_associare.addCondomino(condomino, "Inquilino")
+        unita_da_associare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita_da_associare.codice)
         self.assertIn(condomino.codiceFiscale, unita_da_associare.condomini)
-        immobili_associati1 = condomino.getImmobiliAssociati()
-        print("dopo: ", immobili_associati1)
-        self.assertNotEqual(immobili_associati, immobili_associati1)
+
+        immobili_associati_dopo = condomino.getImmobiliAssociati()
+
+        self.assertNotEqual(immobili_associati, immobili_associati_dopo)

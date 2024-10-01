@@ -4,8 +4,6 @@ import shutil
 
 file_name = 'Dati/Immobili.pickle'
 directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Classes\RegistroAnagrafe", "Dati\\pdf\\")
-#file_name = '../../Dati/Immobile.pickle'
-
 class Immobile:
     def __init__(self):
         self.id = 1
@@ -31,16 +29,13 @@ class Immobile:
 
         os.makedirs(directory_files + sigla +"\\")
         self.files_path = directory_files + sigla + "\\"
-        print(self.files_path)
 
         immobili = {}
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = pickle.load(f)
                 if immobili.keys():
-                    print(max(immobili.keys()))
                     self.id = max(immobili.keys()) + 1
-        print(immobili.keys())
         for immobile in immobili.values():
             if immobile.codice == codice:
                 return "L'immobile è già esistente"
@@ -66,7 +61,6 @@ class Immobile:
                 immobili[self.id].provincia = provincia
                 immobili[self.id].cap = cap
                 immobili[self.id].via = via
-                print(immobili)
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
 
@@ -109,7 +103,6 @@ class Immobile:
 
     @staticmethod
     def ricercaImmobileBySigla(sigla):
-        print("sigla: " + sigla)
         if os.path.isfile(file_name):
             with open(file_name, 'rb') as f:
                 immobili = dict(pickle.load(f))
@@ -207,11 +200,8 @@ class Immobile:
                 del immobili[self.id]
             with open(file_name, "wb") as f:
                 pickle.dump(immobili, f, pickle.HIGHEST_PROTOCOL)
-            print("os", self.files_path)
             shutil.rmtree(self.files_path)
-            print("os")
             self.codice = -1
-            print("os")
             self.id = -1
             self.sigla = ""
             self.denominazione = ""
@@ -220,9 +210,7 @@ class Immobile:
             self.provincia = ""
             self.cap = ""
             self.via = ""
-            print("os")
             del self
-            print("os")
             return "L'immobile " + nome_immobile + " è stato rimosso"
 
 

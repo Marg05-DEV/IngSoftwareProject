@@ -75,7 +75,9 @@ class Bilancio:
 
 
         listaSpeseNonABilancio = [item.codice for item in Spesa.getAllSpeseByImmobile(immobile).values() if not item.aBilancio]
+        print("in aggiungiBilancio -> listaSpesaNonABilancio: ", listaSpeseNonABilancio)
         self.listaSpeseAConsuntivo = [item for item in listaSpeseNonABilancio if Spesa.ricercaSpesaByCodice(item).dataRegistrazione >= inizioEsercizio and Spesa.ricercaSpesaByCodice(item).dataRegistrazione <= fineEsercizio]
+        print("in aggiungiBilancio -> listaSpesaAConsuntivo: ", self.listaSpeseAConsuntivo)
         self.listaSpeseNonAConsuntivo = [item for item in listaSpeseNonABilancio if item not in self.listaSpeseAConsuntivo]
 
 
@@ -104,7 +106,7 @@ class Bilancio:
             "passaggi": self.passaggi,
             "spesePreventivate": self.spesePreventivate,
             "listaSpeseAConsuntivo": self.listaSpeseAConsuntivo,
-            "listaSpeseNonAConsuntivo": self.listaSpeseAConsuntivo,
+            "listaSpeseNonAConsuntivo": self.listaSpeseNonAConsuntivo,
             "speseConsuntivate": self.speseConsuntivate,
             "ripartizioneSpesePreventivate": self.ripartizioneSpesePreventivate,
             "ripartizioneSpeseConsuntivate": self.ripartizioneSpeseConsuntivate,

@@ -1,6 +1,4 @@
 import datetime
-import os.path
-import pickle
 from unittest import TestCase
 
 from Classes.Contabilita.bilancio import Bilancio
@@ -9,25 +7,49 @@ nome_file = 'Dati/Bilanci.pickle'
 class TestGestioneBilancio(TestCase):
     def test_add_bilancio(self):
         self.bilancio = Bilancio()
-        self.bilancio.aggiungiBilancio(datetime.date(2024,3,4), datetime.date(2024,5,5), 2)
+        self.bilancio.aggiungiBilancio(datetime.date(2024,9,1), datetime.date(2025,1,1), Immobile.ricercaImmobileByCodice(2))
 
-        bilanci = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
-                bilanci = dict(pickle.load(f))
+        bilanci = Bilancio.getAllBilanci()
         self.assertIsNotNone(bilanci)
-        self.assertIn(10, bilanci)
-        print("dentro a bilanci", bilanci)
+        self.assertIn(self.bilancio.codice, bilanci)
+        print(self.bilancio.codice)
 
     def test_changeListaConsuntivo(self):
-        pass
+        immobile = Immobile.ricercaImmobileById(2)
+        spese_immobile = Spesa.getAllSpeseByImmobile(immobile)
+
+        self.bilancio = Bilancio.ricercaBilancioByCodice(1)
+        print(self.bilancio.getInfoBilancio())
+        spesa_scelta = None
+        for spesa in spese_immobile.values():
+            if not spesa.aBilancio:
+                spesa_scelta = Spesa.ricercaSpesaByCodice(spesa.codice)
+                break
+
+        print(spesa_scelta.getInfoSpesa())
+        if spesa_scelta.codice in self.bilancio.listaSpeseAConsuntivo:
+            print("a cons")
+            self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseNonAConsuntivo)
+            self.bilancio.changeListaConsuntivo(spesa_scelta.codice)
+            self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+            self.assertIn(spesa_scelta.codice, self.bilancio.listaSpeseNonAConsuntivo)
+            self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseAConsuntivo)
+        elif spesa_scelta.codice in self.bilancio.listaSpeseNonAConsuntivo:
+            print("NON a cons")
+            self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseAConsuntivo)
+            self.bilancio.changeListaConsuntivo(spesa_scelta.codice)
+            self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+            self.assertIn(spesa_scelta.codice, self.bilancio.listaSpeseAConsuntivo)
+            self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseNonAConsuntivo)
+
 
     def test_passaggioRaggiunto(self):
         pass
 
     def test_approvaBilancio(self):
-        pass
-
-    def test_calcolaImportiDaVersare(self):
-        pass
+        self.bilancio = Bilancio.ricercaBilancioByCodice(1)
+        self.bilancio.approvaBilancio()
+        self.bilancio = Bilancio.ricercaBilancioByCodice(1)
+        self.assertTrue(self.bilancio.isApprovata)
+        self.assertTrue(self.bilancio.isLastEsercizio)
 

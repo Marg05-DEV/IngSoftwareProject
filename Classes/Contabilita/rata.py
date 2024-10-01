@@ -83,6 +83,7 @@ class Rata:
         self.versante = ""
         del self
         return "Rata rimossa"
+
     def getInfoRata(self):
         return {
             "codice": self.codice,
@@ -135,8 +136,6 @@ class Rata:
     @staticmethod
     def getAllRateByImmobile(immobile):
         rate = Rata.getAllRate()
-        print(rate)
-        print("immobile selezionato", immobile)
         rateByImmobile = {}
         if rate:
             for cod_rata, rata in rate.items():
@@ -150,17 +149,13 @@ class Rata:
 
     @staticmethod
     def getAllRateByUnitaImmobiliare(unita_immobiliare):
-        print("in getAllrateUnita")
         rate = Rata.getAllRate()
         rateByUnitaImmobiliare = {}
         if rate:
             for cod_rata, rata in rate.items():
-                print("------------scorrendo rate", rata)
                 if rata.unitaImmobiliare > 0:
                     if unita_immobiliare.codice == rata.unitaImmobiliare:
-                        print("rata approvata", rata.getInfoRata())
                         rateByUnitaImmobiliare[cod_rata] = rata
-            print(rateByUnitaImmobiliare)
             return rateByUnitaImmobiliare
         else:
             return {}
@@ -169,7 +164,6 @@ class Rata:
         #{1: cardinalità di 1, 2: cardinalità di 2, ..., n: cardinalità di n}
         print(immobile)
         rate_immobile = Rata.getAllRateByImmobile(immobile)
-        print("dai dai")
         if not rate_immobile:
             return 0
         for rata in rate_immobile.values():

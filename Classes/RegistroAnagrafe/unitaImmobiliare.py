@@ -39,7 +39,6 @@ class UnitaImmobiliare:
         self.ZC = ZC
 
         unitaImmobiliari = {}
-        print(nome_file)
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
@@ -52,7 +51,6 @@ class UnitaImmobiliare:
 
     def modificaUnitaImmobiliare(self, foglio, subalterno, condomini, particella, interno, tipoUnitaImmobiliare,
                                  categoria, classe, immobile, scala, ZC):
-        print(immobile)
         msg = "L'unità immobiliare dell'immobile " + immobile.denominazione + " è stato modificata"
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
@@ -127,9 +125,7 @@ class UnitaImmobiliare:
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
                 for cod_ui in unitaImmobiliari.keys():
-                    print("cod che scorre:", cod_ui, " - codice inserito", codice)
                     if cod_ui == codice:
-                        print("corrispondenza dell'unità", unitaImmobiliari[cod_ui].getInfoUnitaImmobiliare())
                         return unitaImmobiliari[cod_ui]
                 return None
         else:
@@ -155,30 +151,21 @@ class UnitaImmobiliare:
             for key, value in unitaImmobiliari.items():
                 if value.immobile == immobile.id:
                     unitaImmobiliariByImmobile[key] = value
-            print("unita imm per immobile", unitaImmobiliariByImmobile)
             return unitaImmobiliariByImmobile
         else:
             return {}
 
     @staticmethod
     def getAllUnitaImmobiliariByCondomino(condomino):
-        print("sono in getAllUnitaImmobiliariByCondomino")
-        print("codice fiscale", condomino.codiceFiscale)
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
         if unitaImmobiliari:
-            print("si ci sono unita per questo condomino")
             unitaImmobiliariByCondomino = []
             for key, value in unitaImmobiliari.items():
-                print(value.condomini)
                 for codice_fiscale_condomino in value.condomini.keys():
-                    print("cod fisc nel for", codice_fiscale_condomino)
                     if codice_fiscale_condomino == condomino.codiceFiscale:
-                        print("nell'if")
                         unitaImmobiliariByCondomino.append(key)
-            print(unitaImmobiliariByCondomino)
             return unitaImmobiliariByCondomino
         else:
-            print("non ci sono unita per questo condomino")
             return []
 
     def addCondomino(self, condomino, titolo):
@@ -207,8 +194,6 @@ class UnitaImmobiliare:
                         if unitaImmobiliari[self.codice].condomini[condomino_assoc] == "Comproprietario":
                             unitaImmobiliari[self.codice].condomini[condomino_assoc] = "Proprietario"
                             break
-                else:
-                    print("nessun condomino da rimuovere")
             with open(nome_file, "wb") as f:
                 pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
