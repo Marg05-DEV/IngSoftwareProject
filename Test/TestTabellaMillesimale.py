@@ -1,7 +1,9 @@
 from unittest import TestCase
 
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
+from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
+from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 nome_file = 'Dati/TabelleMillesimali.pickle'
 class TestGestioneTabellaMillesimale(TestCase):
@@ -26,10 +28,26 @@ class TestGestioneTabellaMillesimale(TestCase):
         self.assertNotIn(12, tabelleMillesimali)
 
     def test_addMillesimo(self):
-        pass
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(12)
+        tabellaMillesimale.addMillesimo(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(1), 100.56)
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabellaMillesimale.codice)
 
-    def test_removeTipoSpesa(self):
-        pass
+        self.assertEqual(100.56, tabellaMillesimale.millesimi[1])
 
     def test_addTipoSpesa(self):
-        pass
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(12)
+        tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(2)
+
+        self.assertNotIn(tipoSpesa.codice, tabellaMillesimale.tipologieSpesa)
+        tabellaMillesimale.addTipoSpesa(tipoSpesa)
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabellaMillesimale.codice)
+        self.assertIn(tipoSpesa.codice, tabellaMillesimale.tipologieSpesa)
+
+
+    def test_removeTipoSpesa(self):
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(12)
+        tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(2)
+        self.assertIn(tipoSpesa.codice, tabellaMillesimale.tipologieSpesa)
+        tabellaMillesimale.removeTipoSpesa(tipoSpesa)
+        tabellaMillesimale = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabellaMillesimale.codice)
+        self.assertNotIn(tipoSpesa.codice, tabellaMillesimale.tipologieSpesa)

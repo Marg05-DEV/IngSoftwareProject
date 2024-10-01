@@ -30,11 +30,26 @@ class TestGestioneUnitaImmobiliare(TestCase):
         print("dentro test delete", unitaImmobiliari)
 
     def test_addCondomino(self):
-        pass
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(7)
+        condomino = Condomino.ricercaCondominoByCF("GLRLRA95N17T654R")
+        self.assertNotIn(condomino.codiceFiscale, unitaImmobiliare.condomini)
+        unitaImmobiliare.addCondomino(condomino, "Inquilino")
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unitaImmobiliare.codice)
+        self.assertIn(condomino.codiceFiscale, unitaImmobiliare.condomini)
 
     def test_removeCondomino(self):
-        pass
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(7)
+        condomino = Condomino.ricercaCondominoByCF("GLRLRA95N17T654R")
+        self.assertIn(condomino.codiceFiscale, unitaImmobiliare.condomini)
+        unitaImmobiliare.removeCondomino(condomino)
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unitaImmobiliare.codice)
+        self.assertNotIn(condomino.codiceFiscale, unitaImmobiliare.condomini)
 
     def test_modificaTitoloCondomino(self):
-        pass
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(7)
+        condomino = Condomino.ricercaCondominoByCF("GLRLRA95N17T654R")
+        self.assertIn(condomino.codiceFiscale, unitaImmobiliare.condomini)
+        unitaImmobiliare.modificaTitoloCondomino(condomino, "Comproprietario")
+        unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unitaImmobiliare.codice)
+        self.assertEqual("Comproprietario", unitaImmobiliare.condomini["GLRLRA95N17T654R"])
 
