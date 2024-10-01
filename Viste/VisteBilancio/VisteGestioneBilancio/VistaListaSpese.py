@@ -106,7 +106,6 @@ class VistaListaSpese(QWidget):
             checkbox_pagata = QCheckBox()
             self.checkboxes_pagata[spesa.codice] = checkbox_pagata
             checkbox_pagata.stateChanged.connect(self.reset_pagata)
-            print("b")
             if spesa.pagata:
                 checkbox_pagata.setCheckState(Qt.CheckState.Checked)
             else:

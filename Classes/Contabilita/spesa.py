@@ -25,7 +25,6 @@ class Spesa:
         self.aBilancio = False
 
     def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
-        #Spesa.numSpeseRegistrate += 1
         self.dataFattura = dataFattura
         self.dataRegistrazione = dataRegistrazione
         self.dataPagamento = dataPagamento

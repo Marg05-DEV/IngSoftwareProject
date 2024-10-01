@@ -15,7 +15,8 @@ class TestGestioneImmobile(TestCase):
         condomini = Condomino.getAllCondomini()
 
         self.assertIsNotNone(condomini)
-        print("Dentro a condomini")
+        self.assertIn(self.condomino.codice, condomini)
+        print(self.condomino.codice)
 
     def test_delete_condomino(self):
         condomini = Condomino.getAllCondomini()
@@ -27,8 +28,7 @@ class TestGestioneImmobile(TestCase):
 
         condomini = Condomino.getAllCondomini()
         self.assertIsNotNone(condomini)
-        self.assertNotIn(10, condomini)
-        print("dentro test delete", condomini)
+        self.assertNotIn(self.condomino.codice, condomini)
 
     def test_getImmobiliAssociati(self):
         condomino = Condomino.ricercaCondominoByCF("BNCGIO80T03H123Q")

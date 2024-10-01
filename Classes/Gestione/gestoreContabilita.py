@@ -57,15 +57,9 @@ class GestoreContabilita:
             pdf.set_x(3 * pdf.w / 5)
             pdf.cell(0, 12, "L'AMMINISTRATORE", new_x=XPos.RMARGIN, new_y=YPos.NEXT)
 
-
-
-        print('hi')
         pdf = FPDF('portrait', 'mm', 'A5')
-        print('hi')
         pdf.add_page()
-        print('hi')
         pdf.set_font("helvetica", "", 11)
-        print('hi')
 
         pdf.cell(0, pdf.eph/2 - 10, "", 1, new_x=XPos.START)
         print_dati_rata()

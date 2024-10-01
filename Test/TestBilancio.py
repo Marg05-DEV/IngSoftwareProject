@@ -2,6 +2,8 @@ import datetime
 from unittest import TestCase
 
 from Classes.Contabilita.bilancio import Bilancio
+from Classes.Contabilita.spesa import Spesa
+from Classes.RegistroAnagrafe.immobile import Immobile
 
 nome_file = 'Dati/Bilanci.pickle'
 class TestGestioneBilancio(TestCase):
@@ -44,7 +46,13 @@ class TestGestioneBilancio(TestCase):
 
 
     def test_passaggioRaggiunto(self):
-        pass
+        self.bilancio = Bilancio.ricercaBilancioByCodice(1)
+        self.bilancio.passaggioRaggiunto("SpesePreventivate")
+        self.bilancio = Bilancio.ricercaBilancioByCodice(1)
+        self.assertTrue(self.bilancio.passaggi["SpesePreventivate"])
+        self.assertFalse(self.bilancio.passaggi["speseConsuntivate"])
+        self.assertFalse(self.bilancio.passaggi["ripartizioneSpesePreventivate"])
+        self.assertFalse(self.bilancio.passaggi["ripartizioneSpeseConsuntivate"])
 
     def test_approvaBilancio(self):
         self.bilancio = Bilancio.ricercaBilancioByCodice(1)

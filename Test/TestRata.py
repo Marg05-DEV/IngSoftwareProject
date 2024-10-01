@@ -19,8 +19,8 @@ class TestGestioneRata(TestCase):
         rate = Rata.getAllRate()
 
         self.assertIsNotNone(rate)
-        self.assertIn(10, rate)
-        self.rata = Rata.ricercaRataByCodice(1)
+        self.assertIn(5, rate)
+        self.rata = Rata.ricercaRataByCodice(5)
         self.rata.rimuoviRata()
 
         rate = Rata.getAllRate()
@@ -28,4 +28,11 @@ class TestGestioneRata(TestCase):
         self.assertNotIn(5, rate)
 
     def test_lastNumeroRicevuta(self):
-        pass
+        immobile = Immobile.ricercaImmobileById(1)
+
+        last_ricevuta = Rata.lastNumeroRicevuta(immobile)
+        self.assertIsInstance(last_ricevuta, int)
+
+        rate_immobile = Rata.getAllRateByImmobile(immobile)
+        for rate in rate_immobile.values():
+            self.assertGreaterEqual(last_ricevuta, rate.numeroRicevuta)

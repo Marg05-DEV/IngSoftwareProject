@@ -60,7 +60,6 @@ class TabellaMillesimale:
         tabelleMillesimali = TabellaMillesimale.getAllTabelleMillesimali()
         if tabelleMillesimali:
             tabellaMillesimaleByImmobile = {}
-            print(tabelleMillesimali)
             for key, value in tabelleMillesimali.items():
                 if value.immobile == immobile.id:
                     tabellaMillesimaleByImmobile[key] = value
@@ -125,7 +124,6 @@ class TabellaMillesimale:
             return None
 
     def addTipoSpesa(self, tipo_spesa):
-        print("bha")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
@@ -142,12 +140,10 @@ class TabellaMillesimale:
                 pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
 
     def addMillesimo(self, unita, valore):
-        print("dentro addMillesimo")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 tabelleMillesimali = dict(pickle.load(f))
                 tabelleMillesimali[self.codice].millesimi[unita.codice] = valore
-                print(tabelleMillesimali[self.codice].millesimi)
         with open(nome_file, "wb") as f:
             pickle.dump(tabelleMillesimali, f, pickle.HIGHEST_PROTOCOL)
 

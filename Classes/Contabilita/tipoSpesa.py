@@ -43,7 +43,6 @@ class TipoSpesa:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 tipiSpesa = pickle.load(f)
-                print(type(tipiSpesa))
                 for tipoSpesa in tipiSpesa.values():
                     if tipoSpesa.nome == nome:
                         return tipoSpesa

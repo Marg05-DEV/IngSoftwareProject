@@ -33,15 +33,11 @@ class Rata:
                 rate = dict(pickle.load(f))
                 if rate.keys():
                     self.codice = max(rate.keys()) + 1
-        print(rate)
         if numeroRicevuta > 0:
             for rata in rate.values():
-                print("------------------------ALTrO CICLO in rate.py-----------------------")
-                print("codice unità immobiliare", self.unitaImmobiliare, " - codice unità immobilare che scorre delle rate", rata.unitaImmobiliare)
                 if rata.unitaImmobiliare > 0:
                     if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(rata.unitaImmobiliare).immobile == UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare).immobile:
                         rata.isLast = False
-                    print("fuori if")
             self.isLast = True
         rate[self.codice] = self
         with open(nome_file, 'wb') as f:
@@ -49,7 +45,6 @@ class Rata:
         return "Rata aggiunta", self
 
     def modificaRata(self, dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante):
-        # cancello la proprietà pagata nei parametri
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 rate = dict(pickle.load(f))
@@ -77,7 +72,6 @@ class Rata:
         self.descrizione = ""
         self.importo = 0.0
         self.numeroRicevuta = 0
-        #self.pagata = False
         self.tipoPagamento = ""
         self.unitaImmobiliare = 0
         self.versante = ""
@@ -91,7 +85,6 @@ class Rata:
             "descrizione": self.descrizione,
             "importo": self.importo,
             "numeroRicevuta": self.numeroRicevuta,
-            #"pagata": self.pagata,
             "tipoPagamento": self.tipoPagamento,
             "unitaImmobiliare": self.unitaImmobiliare,
             "versante": self.versante,
@@ -159,14 +152,10 @@ class Rata:
             return rateByUnitaImmobiliare
         else:
             return {}
+
     @staticmethod
     def lastNumeroRicevuta(immobile):
-        #{1: cardinalità di 1, 2: cardinalità di 2, ..., n: cardinalità di n}
-        print(immobile)
         rate_immobile = Rata.getAllRateByImmobile(immobile)
         if not rate_immobile:
             return 0
-        for rata in rate_immobile.values():
-            print(rata.getInfoRata())
-
         return [item for item in rate_immobile.values() if item.isLast][0].numeroRicevuta

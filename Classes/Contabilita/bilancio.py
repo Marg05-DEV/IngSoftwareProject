@@ -38,7 +38,6 @@ class Bilancio:
         self.passaggi = {"spesePreventivate": False, "speseConsuntivate": False, "ripartizioneSpesePreventivate": False, "ripartizioneSpeseConsuntivate": False}#
         
     def aggiungiBilancio(self, inizioEsercizio, fineEsercizio, immobile):
-        print("dentro aggiungiBilancio, immobile", immobile)
         self.inizioEsercizio = inizioEsercizio
         self.fineEsercizio = fineEsercizio
         self.immobile = immobile.id
@@ -51,9 +50,7 @@ class Bilancio:
             self.speseConsuntivate[tabella.codice] = {}
             self.ripartizioneSpeseConsuntivate[tabella.codice] = {}
             self.ripartizioneSpesePreventivate[tabella.codice] = {}
-            print("tabella", tabella)
             for cod_tipo_spesa in tabella.tipologieSpesa:
-                print("------------- tipo spese", cod_tipo_spesa)
                 self.speseConsuntivate[tabella.codice][cod_tipo_spesa] = 0.0
                 if ultimo_bilancio:
                     self.conguaglioPrecedente = ultimo_bilancio.ripartizioneConguaglio
@@ -79,12 +76,7 @@ class Bilancio:
         self.listaSpeseAConsuntivo = [item for item in listaSpeseNonABilancio if Spesa.ricercaSpesaByCodice(item).dataRegistrazione >= inizioEsercizio and Spesa.ricercaSpesaByCodice(item).dataRegistrazione <= fineEsercizio]
         print("in aggiungiBilancio -> listaSpesaAConsuntivo: ", self.listaSpeseAConsuntivo)
         self.listaSpeseNonAConsuntivo = [item for item in listaSpeseNonABilancio if item not in self.listaSpeseAConsuntivo]
-
-
-        print("spese prev ", self.spesePreventivate)
-        print("spese cons ", self.speseConsuntivate)
-        print("spese a consuntivo: ", self.listaSpeseAConsuntivo)
-        print("spese NON a cons: ", self.listaSpeseNonAConsuntivo)
+        print("in aggiungiBilancio -> listaSpesaNonAConsuntivo: ", self.listaSpeseNonAConsuntivo)
 
         bilanci = {}
         if os.path.isfile(nome_file):
@@ -149,16 +141,12 @@ class Bilancio:
 
     @staticmethod
     def getLastBilancio(immobile):
-        print("dentro get ultimo bilancio. immobile", immobile)
         bilanci_immobile = Bilancio.getAllBilanciByImmobile(immobile)
-        print("bilanci dell'immobile", bilanci_immobile)
         ultimo_bilancio = 0
 
         for bilancio in bilanci_immobile.values():
-            print(bilancio.getInfoBilancio())
             if bilancio.isLastEsercizio:
                 ultimo_bilancio = bilancio
-        print(ultimo_bilancio)
         return ultimo_bilancio
 
     @staticmethod
@@ -205,7 +193,6 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def aggiornaListaSpeseAConsuntivo(self):
-        print("dentro aggiornaListaSpeseAConsuntivo")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
@@ -235,7 +222,6 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def calcolaSpeseConsuntivo(self):
-        print("dentro calcola spese consuntivo")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
@@ -262,16 +248,11 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def calcolaQuotaConsuntivo(self, unita_immobiliare, tabella_millesimale):
-        print("sono in calcola Quota cons", unita_immobiliare, tabella_millesimale)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
                 totale_millesimi_tabella = sum(list(tabella_millesimale.millesimi.values()))
                 totale_consuntivo_tabella = sum(list(bilanci[self.codice].speseConsuntivate[tabella_millesimale.codice].values()))
-                print("Totale cons: ", totale_consuntivo_tabella, "totale mill: ", totale_millesimi_tabella)
-                print(bilanci[self.codice].ripartizioneSpeseConsuntivate)
-                print("dati utilizzati tabella millesimale ", tabella_millesimale.getInfoTabellaMillesimale())
-                print("unita immobiliare", unita_immobiliare.getInfoUnitaImmobiliare())
                 if totale_millesimi_tabella:
                     bilanci[self.codice].ripartizioneSpeseConsuntivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_consuntivo_tabella) / totale_millesimi_tabella
                 else:
@@ -280,13 +261,11 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def calcolaQuotaPreventivo(self, unita_immobiliare, tabella_millesimale):
-        print("sono in calcola Quota prev", unita_immobiliare, tabella_millesimale)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
                 totale_millesimi_tabella = sum(list(tabella_millesimale.millesimi.values()))
                 totale_preventivo_tabella = sum(list(bilanci[self.codice].spesePreventivate[tabella_millesimale.codice].values()))
-                print("Totale cons: ", totale_preventivo_tabella, "totale mill: ", totale_millesimi_tabella)
                 if totale_millesimi_tabella:
                     bilanci[self.codice].ripartizioneSpesePreventivate[tabella_millesimale.codice][unita_immobiliare.codice] = (tabella_millesimale.millesimi[unita_immobiliare.codice] * totale_preventivo_tabella) / totale_millesimi_tabella
                 else:
@@ -330,7 +309,6 @@ class Bilancio:
 
     def calcolaConguaglio(self, totale_consuntivo_attuale):
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
-        print("trovate le unità")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
@@ -364,35 +342,27 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def addNumeroRate(self, numeroRate):
-        print("sono nell'aggiunta numero rate")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
-                print("prima del change", bilanci[self.codice].numeroRate)
                 bilanci[self.codice].numeroRate = numeroRate
                 unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(self.immobile)).values())
                 for unita in unita_immobiliari:
                     bilanci[self.codice].rateIsEdited[unita.codice] = [False] * numeroRate
-                print("dopo il change", bilanci[self.codice].numeroRate)
-                print("bilancio", bilanci[self.codice].getInfoBilancio())
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def ripartizioneRate(self, cod_unita):
-        print("sono nella ripartizione")
         list_rate = []
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))
-                print("numero rate", bilanci[self.codice].numeroRate)
-                print("prima", bilanci[self.codice].ratePreventivate)
                 if bilanci[self.codice].numeroRate:
                     for rate in range(0, bilanci[self.codice].numeroRate):
                         list_rate.append(bilanci[self.codice].importiDaVersare[cod_unita] / bilanci[self.codice].numeroRate)
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
                 else:
                     bilanci[self.codice].ratePreventivate[cod_unita] = list_rate
-                print("dopo", bilanci[self.codice].ratePreventivate)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
@@ -406,26 +376,19 @@ class Bilancio:
                         months_periods = [0, 2, 5, 7, 9]
                     else:
                         months_periods = [int(12 / bilanci[self.codice].numeroRate) * i for i in range(0, bilanci[self.codice].numeroRate)]
-                    print("initScadenzaRate")
-                    print(bilanci[self.codice].numeroRate, " ----> ", months_periods)
 
                     bilanci[self.codice].scadenzaRate = []
                     for n_rate in range(0, bilanci[self.codice].numeroRate):
-                        print(" ----------- ciclo", n_rate)
                         data_da_aggiungere = datetime.date.today()
                         if n_rate > 0:
                             month = (data_da_aggiungere.month + months_periods[n_rate]) % 12
                             year = data_da_aggiungere.year
                             if month == 0:
                                 month = 12
-                            print("new month", month)
-                            print(data_da_aggiungere.month + months_periods[n_rate])
                             if data_da_aggiungere.month + months_periods[n_rate] > 12:
                                 year = data_da_aggiungere.year + 1
                             data_da_aggiungere = data_da_aggiungere.replace(year, month, 1)
-                        print(" -----------", data_da_aggiungere)
                         bilanci[self.codice].scadenzaRate.append(data_da_aggiungere)
-                        print("date scadenza", bilanci[self.codice].scadenzaRate)
         with open(nome_file, "wb") as f:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
@@ -438,10 +401,6 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
 
     def editRataPreventivata(self, unita_immobiliare, numero_rata, valore):
-        print("dentro editingRataPreve")
-        print("unita: ", unita_immobiliare.codice)
-        print("numero rata: ", numero_rata)
-        print("valore: ", valore)
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 bilanci = dict(pickle.load(f))

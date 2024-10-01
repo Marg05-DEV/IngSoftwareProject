@@ -11,7 +11,6 @@ class GestoreRegistroAnagrafe:
     @staticmethod
     def ricercaUnitaImmobiliareByInterno(interno):
         nome_file = 'Dati/UnitaImmobiliari.pickle'
-        print("dentro la ricerca")
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 unitaImmobiliari = dict(pickle.load(f))
