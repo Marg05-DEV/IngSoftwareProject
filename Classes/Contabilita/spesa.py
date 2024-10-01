@@ -25,7 +25,6 @@ class Spesa:
         self.aBilancio = False
 
     def aggiungiSpesa(self, descrizione, fornitore, importo, tipoSpesa, immobile, pagata, dataPagamento, dataFattura, dataRegistrazione, isRitenuta, numeroFattura):
-        #Spesa.numSpeseRegistrate += 1
         self.dataFattura = dataFattura
         self.dataRegistrazione = dataRegistrazione
         self.dataPagamento = dataPagamento
@@ -72,7 +71,7 @@ class Spesa:
 
     def rimuoviSpesa(self):
         if os.path.isfile(nome_file):
-            with (open(nome_file, 'rb') as f):
+            with open(nome_file, 'rb') as f:
                spese = dict(pickle.load(f))
                del spese[self.codice]
             with open(nome_file,'wb') as f:
@@ -103,6 +102,7 @@ class Spesa:
                         return spesa
                 return None
         return None
+
     @staticmethod
     def ricercaSpesaByDataPagamento(dataPagamento):
         if os.path.isfile(nome_file):
@@ -135,6 +135,7 @@ class Spesa:
                         return spesa
                 return None
         return None
+
     @staticmethod
     def ricercaSpesaByFornitore(fornitore):
         if os.path.isfile(nome_file):

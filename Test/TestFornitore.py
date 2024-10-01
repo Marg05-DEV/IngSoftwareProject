@@ -1,5 +1,3 @@
-import os.path
-import pickle
 from unittest import TestCase
 
 from Classes.Contabilita.fornitore import Fornitore
@@ -10,26 +8,19 @@ class TestGestioneFornitori(TestCase):
         self.fornitore = Fornitore()
         self.fornitore.aggiungiFornitore("Ascoli Piceno", "Energas", "Via del lavoro", "4751155555", "Ditta")
 
-        fornitori = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
-                fornitori = dict(pickle.load(f))
+        fornitori = Fornitore.getAllFornitore()
         self.assertIsNotNone(fornitori)
-        self.assertIn(10, fornitori)
-        print("dentro a fornitori", fornitori)
+        self.assertIn(self.fornitore.codice, fornitori)
+        print()
 
     def test_delete_fornitore(self):
-        fornitori = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                fornitori = pickle.load(f)
-        self.assertIsNotNone(fornitori)
-        self.assertIn(10, fornitori)
+        fornitori = Fornitore.getAllFornitore()
         self.fornitore = Fornitore.ricercaFornitoreByDenominazione("Energas")
-        self.fornitore.rimuoviFornitore()
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                fornitori = pickle.load(f)
+
         self.assertIsNotNone(fornitori)
-        self.assertNotIn(10, fornitori)
-        print("dentro test delete", fornitori)
+        self.assertIn(self.fornitore.codice, fornitori)
+        self.fornitore.rimuoviFornitore()
+
+        fornitori = Fornitore.getAllFornitore()
+        self.assertIsNotNone(fornitori)
+        self.assertNotIn(self.fornitore.codice, fornitori)

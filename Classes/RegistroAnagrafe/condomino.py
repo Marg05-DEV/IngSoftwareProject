@@ -35,11 +35,9 @@ class Condomino:
         condomini = {}
 
         if os.path.isfile(nome_file):
-            print("il file è esistente")
             with open(nome_file, 'rb') as f:
                 condomini = pickle.load(f)
                 if condomini.keys():
-                    print(max(condomini.keys()))
                     self.codice = max(condomini.keys()) + 1
         condomini[self.codice] = self
         with open(nome_file, 'wb') as f:
@@ -47,11 +45,9 @@ class Condomino:
         return "Il condomino è stato aggiunto", self
 
     def modificaCondomino(self, nome, cognome, residenza, dataDiNascita, codiceFiscale, luogoDiNascita, provincia, email, telefono):
-        print("ciao")
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 condomini = dict(pickle.load(f))
-                print(condomini)
                 condomini[self.codice].nome = nome
                 condomini[self.codice].cognome = cognome
                 condomini[self.codice].residenza = residenza
@@ -63,7 +59,6 @@ class Condomino:
                 condomini[self.codice].telefono = telefono
             with open(nome_file, "wb") as f:
                 pickle.dump(condomini, f, pickle.HIGHEST_PROTOCOL)
-                print("b", condomini)
             return "Il condomino " + cognome + " " + nome + " è stato modificato"
 
     def rimuoviCondomino(self):

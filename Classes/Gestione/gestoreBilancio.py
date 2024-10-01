@@ -207,7 +207,6 @@ class GestoreBilancio:
                 tabelle_millesimali_immobile) + ["RIGHT"] * 3 + ["RIGHT"] * bilancio.numeroRate
             totale_preventivo = 0.0
             totale_rate = [0.0] * bilancio.numeroRate
-            print(totale_rate)
             with pdf.table(width=pdf.epw, num_heading_rows=2, col_widths=tuple(column_width),
                            text_align=tuple(column_alignment)) as table:
                 pdf.set_font("helvetica", "B", 7)
@@ -232,10 +231,8 @@ class GestoreBilancio:
                 for tabella in tabelle_millesimali_immobile:
                     heading.cell(tabella.nome.upper(), align=Align.C)
 
-                print(bilancio.scadenzaRate)
                 pdf.set_font("helvetica", "B", 6)
                 for i in range(bilancio.numeroRate):
-                    print(bilancio.scadenzaRate[i].strftime("%d/%m/%Y"))
                     heading.cell(f"SCADE IL {bilancio.scadenzaRate[i].strftime('%d/%m/%Y')}", align=Align.C)
 
                 pdf.set_font("helvetica", "", 7)
@@ -307,24 +304,18 @@ class GestoreBilancio:
                 for i in range(bilancio.numeroRate):
                     totale_row.cell("%.2f" % totale_rate[i])
 
-        print("dentro visProspetti")
         pdf = FPDF()
         bilancio = Bilancio.ricercaBilancioByCodice(bilancio.codice)
         pdf.add_page()
-        print("dentro visProspetti")
         printSpesePreventivate(pdf, bilancio)
 
         pdf.add_page()
-        print("dentro visProspetti")
         printSpeseConsuntivate(pdf, bilancio)
 
         pdf.add_page("L")
-        print("dentro visProspetti")
         printRipartizioneConsuntivo(pdf, bilancio)
-        print("fatto")
 
         pdf.add_page("L")
-        print("dentro visProspetti")
         printRipartizionePreventivo(pdf, bilancio)
 
         return pdf

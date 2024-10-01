@@ -1,6 +1,3 @@
-import os
-import pickle
-
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
@@ -9,53 +6,33 @@ from fpdf import FPDF, Align, YPos, XPos
 
 class GestoreRegistroAnagrafe:
     @staticmethod
-    def ricercaUnitaImmobiliareByInterno(interno):
-        nome_file = 'Dati/UnitaImmobiliari.pickle'
-        print("dentro la ricerca")
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                unitaImmobiliari = dict(pickle.load(f))
-                for unitaImmobiliare in unitaImmobiliari.values():
-                    if unitaImmobiliare.interno == interno:
-                        return unitaImmobiliare
-                return None
-        else:
-            return None
-
-    @staticmethod
     def ordinaUnitaImmobiliariByScala(list_unitaImmobiliari, isDecrescente=False):
-        print("----------------------------------------------")
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
-        print("----------------------------------------------")
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.interno)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
-        print("----------------------------------------------")
+
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.scala)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
-        print("----------------------------------------------")
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.tipoUnitaImmobiliare)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
     @staticmethod
     def ordinaUnitaImmobiliariByInterno(list_unitaImmobiliari, isDecrescente=False):
-        print("----------------------------------------------")
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.scala)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
-        print("----------------------------------------------")
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.interno)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
 
-        print("----------------------------------------------")
         list_unitaImmobiliari.sort(key=lambda immobile: immobile.tipoUnitaImmobiliare)
         for item in list_unitaImmobiliari:
             print(item.getInfoUnitaImmobiliare())
@@ -66,10 +43,7 @@ class GestoreRegistroAnagrafe:
         senza_proprietario = []
         senza_condomini = []
         for item in list_unitaImmobiliari:
-            print("------------------------------------------------------------------------------------------")
-            print(item.getInfoUnitaImmobiliare())
             proprietario_cf = [key for key, value in item.condomini.items() if value == 'Proprietario']
-            print(proprietario_cf)
             if len(proprietario_cf) < 1:
                 if len(item.condomini) < 1:
                     senza_condomini.append(item)
@@ -101,19 +75,6 @@ class GestoreRegistroAnagrafe:
 
         for i in range(len(list_unitaImmobiliari)):
             list_unitaImmobiliari[i] = sorted_unitaImmobiliari[i]
-
-    @staticmethod
-    def ricercaCondominoByNome(nome):
-        nome_file = 'Dati/Condomini.pickle'
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                condomini = pickle.load(f)
-                for condomino in condomini.values():
-                    if condomino.nome == nome:
-                        return condomino
-                return None
-        else:
-            return None
 
     @staticmethod
     def ordinaCondominoByNominativo(list_condomini, isDecrescente):
@@ -185,9 +146,7 @@ class GestoreRegistroAnagrafe:
         pdf.cell(0, 10, immobile.denominazione, align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
 
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile)
-        print("unita_immobiliari prese", unitaImmobiliari)
         for unitaImmobiliare in unitaImmobiliari.values():
-            print("---------------------- ", unitaImmobiliare, "-------------------------")
 
             proprietario = None
             proprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Proprietario']
@@ -196,15 +155,12 @@ class GestoreRegistroAnagrafe:
             comproprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Comproprietario']
             inquilini = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Inquilino']
 
-            print("PROPRIETARIO")
             if proprietari:
                 print(proprietario.getDatiAnagraficiCondomino())
 
-            print("\nCOMPROPRIETARI")
             for comproprietario in comproprietari:
                 print(comproprietario.getDatiAnagraficiCondomino())
 
-            print("\nINQUILINI")
             for inquilino in inquilini:
                 print(inquilino.getDatiAnagraficiCondomino())
 
@@ -216,8 +172,6 @@ class GestoreRegistroAnagrafe:
             else:
                 pdf.set_font("helvetica", "I", 14)
                 pdf.cell(0, 10, "Nessun proprietario presente", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
-            print("fine anagrafica")
 
             pdf.set_font("helvetica", "B", 12)
             pdf.cell(0, 10, "Tipo di unità immobiliare:", new_x=XPos.END)

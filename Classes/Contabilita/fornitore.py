@@ -47,7 +47,7 @@ class Fornitore:
         if os.path.isfile(nome_file):
             with open(nome_file, 'rb') as f:
                 fornitori = dict(pickle.load(f))
-                del fornitori[self.partitaIva]
+                del fornitori[self.codice]
             with open(nome_file, 'wb') as f:
                 pickle.dump(fornitori, f, pickle.HIGHEST_PROTOCOL)
         self.codice = -1

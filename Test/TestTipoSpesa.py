@@ -1,7 +1,6 @@
-import os.path
-import pickle
 from unittest import TestCase
 
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 
 nome_file = 'Dati/TipiSpesa.pickle'
@@ -9,29 +8,37 @@ class TestGestioneTipoSpesa(TestCase):
     def test_add_tipoSpesa(self):
         self.tipoSpesa = TipoSpesa()
         self.tipoSpesa.aggiungiTipoSpesa("Spese per la manutenzione della caldaia", "Manutenzione Caldaia")
-        tipiSpesa = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, "rb") as f:
-                tipiSpesa = dict(pickle.load(f))
+
+        tipiSpesa = TipoSpesa.getAllTipoSpesa()
         self.assertIsNotNone(tipiSpesa)
-        self.assertIn(10, tipiSpesa)
-        print("dentro ad tipiSpesa", tipiSpesa)
+        self.assertIn(6, tipiSpesa)
 
     def test_delete_tipoSpesa(self):
-        tipiSpesa = None
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                tipiSpesa = pickle.load(f)
+        tipiSpesa = TipoSpesa.getAllTipoSpesa()
+
         self.assertIsNotNone(tipiSpesa)
-        self.assertIn(10, tipiSpesa)
-        self.tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(1)
+        self.assertIn(6, tipiSpesa)
+        self.tipoSpesa = TipoSpesa.ricercaTipoSpesaByCodice(6)
         self.tipoSpesa.rimuoviTipoSpesa()
-        if os.path.isfile(nome_file):
-            with open(nome_file, 'rb') as f:
-                tipiSpesa = pickle.load(f)
+        tipiSpesa = TipoSpesa.getAllTipoSpesa()
+
         self.assertIsNotNone(tipiSpesa)
-        self.assertNotIn(10, tipiSpesa)
-        print("dentro test delete", tipiSpesa)
+        self.assertNotIn(6, tipiSpesa)
 
     def test_getTabelleMillesimaleAssociate(self):
-        pass
+        tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(6)
+        tabelle_associate = tipo_spesa.getTabelleMillesimaliAssociate()
+
+        tabella_da_associare = None
+        for tabella in TabellaMillesimale.getAllTabelleMillesimali().values():
+            if tipo_spesa.codice not in tabella.tipologieSpesa:
+                tabella_da_associare = tabella
+                break
+
+        tabella_da_associare.addTipoSpesa(tipo_spesa)
+        tabella_da_associare = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella_da_associare.codice)
+
+        self.assertIn(tipo_spesa.codice, tabella_da_associare.tipologieSpesa)
+        tabelle_associate_dopo = tipo_spesa.getTabelleMillesimaliAssociate()
+        self.assertNotEqual(tabelle_associate, tabelle_associate_dopo)
+
