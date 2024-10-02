@@ -1,12 +1,9 @@
-from PyQt6.QtCore import Qt, QStringListModel, QTimer
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
+from PyQt6.QtCore import Qt, QStringListModel
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
+    QPushButton, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
 
 from Classes.Contabilita.fornitore import Fornitore
-from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
-from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
@@ -17,6 +14,7 @@ class VistaDebitoFornitore(QWidget):
         self.buttons = {}
         self.immobile = None
         self.debito_totale = 0.00
+        self.lines = []
         main_layout = QVBoxLayout()
 
 
@@ -66,16 +64,11 @@ class VistaDebitoFornitore(QWidget):
             self.fornitore_selezionato.setVisible(False)
 
         self.button_layout = QHBoxLayout()
-        print("u")
 
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_debito_fornitore))
         self.buttons["Seleziona"].setEnabled(False)
         self.searchbar.textChanged.connect(self.selectioning)
-        print("c")
 
-        """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
-        print("d")
-        self.drawLine()
         self.tree_widget = QTreeWidget()
         self.tree_widget.setColumnCount(2)
         self.tree_widget.setHeaderLabels(["Denominazione Immobile", "Importo"])
@@ -89,7 +82,9 @@ class VistaDebitoFornitore(QWidget):
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
-        main_layout.addWidget(self.drawLine())
+        self.lines.append(self.drawLine())
+        self.lines[0].setVisible(False)
+        main_layout.addWidget(self.lines[0])
         main_layout.addWidget(self.tree_widget)
         main_layout.addWidget(self.spese_a_debito_non_presenti)
 
@@ -175,6 +170,8 @@ class VistaDebitoFornitore(QWidget):
 
         if self.fornitore != None:
             self.tree_widget.setVisible(True)
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
             print("no")

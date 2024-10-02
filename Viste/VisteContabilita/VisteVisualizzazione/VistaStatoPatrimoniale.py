@@ -21,6 +21,7 @@ class VistaStatoPatrimoniale(QWidget):
         super(VistaStatoPatrimoniale, self).__init__()
         self.buttons = {}
         self.immobile = None
+        self.lines = []
         main_layout = QVBoxLayout()
 
         completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -82,13 +83,10 @@ class VistaStatoPatrimoniale(QWidget):
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
-        #self.list_view_spese = QListView()
-        #self.list_view_spese.setAlternatingRowColors(True)
         self.table_spese = QTableWidget()
         self.error_no_spese = QLabel("")
         self.error_no_spese.setStyleSheet("font-weight: bold;")
         self.spese_section["frase"] = self.lbl_frase
-        #self.spese_section["lista_spese"] = self.list_view_spese
         self.spese_section["lista_spese"] = self.table_spese
         self.spese_section["no_spese"] = self.error_no_spese
         self.spese_section["no_spese"].setVisible(False)
@@ -113,18 +111,14 @@ class VistaStatoPatrimoniale(QWidget):
         rata_layout = QVBoxLayout()
         self.lbl_frase1 = QLabel("Rate:")
         self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
-        #self.list_view_rate = QListView()
-        #self.list_view_rate.setAlternatingRowColors(True)
         self.table_rate = QTableWidget()
         self.error_no_rate = QLabel("")
         self.error_no_rate.setStyleSheet("font-weight: bold;")
         self.rate_section["frase"] = self.lbl_frase1
-        #self.rate_section["lista_rate"] = self.list_view_rate
         self.rate_section["lista_rate"] = self.table_rate
         self.rate_section["no_rate"] = self.error_no_rate
         self.rate_section["no_rate"].setVisible(False)
         rata_layout.addWidget(self.lbl_frase1)
-        #rata_layout.addWidget(self.list_view_rate)
         rata_layout.addWidget(self.table_rate)
         rata_layout.addWidget(self.error_no_rate)
 
@@ -148,9 +142,14 @@ class VistaStatoPatrimoniale(QWidget):
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
-        main_layout.addWidget(self.drawLine())
+        self.lines.append(self.drawLine())
+        self.lines.append(self.drawLine())
+
+        for line in self.lines:
+            line.setVisible(False)
+        main_layout.addWidget(self.lines[0])
         main_layout.addLayout(spesa_layout)
-        main_layout.addWidget(self.drawLine())
+        main_layout.addWidget(self.lines[1])
         main_layout.addLayout(rata_layout)
         main_layout.addWidget(self.msg)
 
@@ -220,6 +219,8 @@ class VistaStatoPatrimoniale(QWidget):
                 self.immobile = Immobile.ricercaImmobileByCodice(search_text)
                 print("imm: ", self.immobile)
         if self.immobile != None:
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
             return None

@@ -1,8 +1,7 @@
 import datetime
 
 from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtGui import QStandardItemModel
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy, QCheckBox
 
 from Classes.Contabilita.fornitore import Fornitore

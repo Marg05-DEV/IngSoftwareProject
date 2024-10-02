@@ -29,11 +29,20 @@ class VistaGestioneEsercizi(QWidget):
         action_layout.addWidget(self.list_view_bilanci)
         action_layout.addLayout(button_layout)
 
-        action_data = QHBoxLayout()
+        new_esercizio_layout = QVBoxLayout()
+        date_esercizio_layout = QHBoxLayout()
+        button_new_esercizio_layout = QHBoxLayout()
 
-        action_data.addLayout(self.pairLabelInput("Data inizio Esercizio", "inizioEsercizio"))
-        action_data.addLayout(self.pairLabelInput("Data fine Esercizio", "fineEsercizio"))
-        action_data.addWidget(self.create_button("Nuovo Esercizio", self.goNuovoEsercizio, False))
+        date_esercizio_layout.addLayout(self.pairLabelInput("Data inizio Esercizio", "inizioEsercizio"))
+        date_esercizio_layout.addLayout(self.pairLabelInput("Data fine Esercizio", "fineEsercizio"))
+
+        button_new_esercizio_layout.addWidget(self.create_button("Nuovo Esercizio", self.goNuovoEsercizio, False), Qt.AlignmentFlag.AlignLeft)
+
+        self.button_list["Nuovo Esercizio"].setMaximumSize(150, 50)
+        self.button_list["Nuovo Esercizio"].setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+
+        new_esercizio_layout.addLayout(date_esercizio_layout)
+        new_esercizio_layout.addLayout(button_new_esercizio_layout)
         print("prima richiamo")
 
 
@@ -42,9 +51,8 @@ class VistaGestioneEsercizi(QWidget):
         self.input_errors["error"] = self.lbl_bilancio_exists
         self.input_errors["error"].setVisible(False)
         self.input_validation()
-        print("dopo richiamo")
 
-        self.msg = QLabel("Non ci sono Esercizi")
+        self.msg = QLabel("Non ci sono esercizi")
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
@@ -53,7 +61,7 @@ class VistaGestioneEsercizi(QWidget):
         self.timer.timeout.connect(self.hide_message)
 
         main_layout.addLayout(action_layout)
-        main_layout.addLayout(action_data)
+        main_layout.addLayout(new_esercizio_layout)
         main_layout.addWidget(self.lbl_bilancio_exists)
         main_layout.addWidget(self.msg)
 
@@ -65,7 +73,7 @@ class VistaGestioneEsercizi(QWidget):
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
-        button.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        button.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button.clicked.connect(action)
         button.setDisabled(disabled)
         self.button_list[testo] = button

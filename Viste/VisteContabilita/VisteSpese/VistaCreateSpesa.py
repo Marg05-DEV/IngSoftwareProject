@@ -43,13 +43,15 @@ class VistaCreateSpesa(QWidget):
 
         btn_aggiungiDividendi = self.create_button("Aggiungi Dividendo", self.addDividendo)
         self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_aggiungiDividendi.setMaximumSize(175, 60)
+        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         btn_aggiungiDividendi.setVisible(False)
         btn_aggiungiDividendi.setIcon(qtawesome.icon("fa.plus"))
 
         btn_resetDividendi = self.create_button("Reset Dividendi", self.resetDividendi)
         self.dividendi_layout.addWidget(btn_resetDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        btn_resetDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_resetDividendi.setMaximumSize(175, 60)
+        btn_resetDividendi.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         btn_resetDividendi.setVisible(False)
 
         self.addDividendo()

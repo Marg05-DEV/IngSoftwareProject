@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QSizePolicy, QHBoxLayout, QLabel, QVBoxLayout, QListView
 
@@ -25,8 +25,8 @@ class VistaReadTabellaMillesimale(QWidget):
         main_layout = QVBoxLayout()
         action_layout1 = QVBoxLayout()
         print("a")
-        action_layout1.addWidget(self.new_label("Nome", "nome"))
-        action_layout1.addWidget(self.new_label("Descrizione", "Descrizione"))
+        action_layout1.addWidget(self.new_label("NOME TABELLA", "nome"))
+        action_layout1.addWidget(self.new_label("DESCRIZIONE", "descrizione"))
         print("b2")
         action_layout2 = QHBoxLayout()
 
@@ -58,9 +58,9 @@ class VistaReadTabellaMillesimale(QWidget):
         print("g")
         self.setLayout(main_layout)
         self.resize(600, 400)
-        self.setWindowTitle("Dettaglio Tabella millesimale")
+        self.setWindowTitle("Dettaglio Tabella Millesimale")
 
-    def create_button(self, testo, action, disabled = False):
+    def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)
         button.setCheckable(False)
         button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -70,9 +70,7 @@ class VistaReadTabellaMillesimale(QWidget):
         return button
 
     def new_label(self, testo, index):
-        print("dentro label: ", testo, " ", index)
         label = QLabel(testo + ": " + str(self.tabella_millesimale.getInfoTabellaMillesimale()[index]))
-        print(label)
         return label
 
     def update_list(self):
@@ -82,15 +80,13 @@ class VistaReadTabellaMillesimale(QWidget):
         else:
             self.msg.hide()
 
-        print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_tipi_spesa)
 
         for tipo_spesa_codice in self.tabella_millesimale.tipologieSpesa:
             item = QStandardItem()
-            print(tipo_spesa_codice)
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(tipo_spesa_codice)
-            print(tipo_spesa.codice)
-            item_text = f"Nome:{tipo_spesa.nome}\nDescrizione:{tipo_spesa.descrizione}"
+            item.setData(tipo_spesa_codice, Qt.ItemDataRole.UserRole)
+            item_text = f"NOME: {tipo_spesa.nome}\nDESC: {tipo_spesa.descrizione}"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -110,16 +106,17 @@ class VistaReadTabellaMillesimale(QWidget):
         self.new_tipo_spesa.show()
 
     def delete_tipo_spesa(self):
-        print("dentro alla funzione delete_tipo_spesa")
         print(self.list_view_tipi_spesa.selectedIndexes())
         item = None
         for index in self.list_view_tipi_spesa.selectedIndexes():
             item = self.list_view_tipi_spesa.model().itemFromIndex(index)
-        print(item.text().split("\n")[0].split(":")[1])
-        sel_tipo_spesa = TipoSpesa.ricercaTipoSpesaByNome(item.text().split("\n")[0].split(":")[1])
-        print(sel_tipo_spesa.codice)
-        self.remuve_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.lista_tipi_spesa_callback)
-        self.remuve_tipo_spesa.show()
+            print("item: ", item)
+        print("item: ", item)
+
+        print("cacca: ", item.data(Qt.ItemDataRole.UserRole))
+        sel_tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(item.data(Qt.ItemDataRole.UserRole))
+        self.remove_tipo_spesa = VistaDeleteTipoSpesa(sel_tipo_spesa, self.tabella_millesimale, self.lista_tipi_spesa_callback)
+        self.remove_tipo_spesa.show()
 
     def delete_tabella_millesimale(self):
         print(self.tabella_millesimale)

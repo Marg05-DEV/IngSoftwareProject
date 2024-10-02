@@ -18,6 +18,7 @@ class VistaCreditoCondomino(QWidget):
         self.condomino_section = {}
         self.immobile = None
         self.credito_totale = 0.0
+        self.lines = []
         main_layout = QVBoxLayout()
 
         self.completer_table = QTableWidget()
@@ -50,6 +51,8 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
 
+        self.lbl_search = QLabel("Ricerca condomino da selezionare:")
+
         self.condomini_completer.setModel(self.completer_table.model())
         self.searchbar.setCompleter(self.condomini_completer)
         self.condomini_completer.activated[QModelIndex].connect(self.selectioning_by_completer)
@@ -60,14 +63,15 @@ class VistaCreditoCondomino(QWidget):
         self.lbl_frase_condomino.setStyleSheet("font-weight: bold;")
         self.condomino_section["frase"] = self.lbl_frase_condomino
         self.condomino_section["frase"].setVisible(False)
-        find_layout = QHBoxLayout()
         search_layout = QVBoxLayout()
 
+        self.lbl_search.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+
+        search_layout.addWidget(self.lbl_search)
         search_layout.addWidget(self.searchbar)
 
         search_layout.addWidget(self.lbl_frase_condomino)
-        find_layout.addLayout(search_layout)
-        main_layout.addLayout(find_layout)
+        main_layout.addLayout(search_layout)
         msg_layout = QHBoxLayout()
         frase_lbl = QLabel("Stai selezionando: ")
         self.condomino_selezionato = QLabel("Nessun Condomino selezionato")
@@ -86,11 +90,11 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar.textChanged.connect(self.selectioning)
         main_layout.addLayout(msg_layout)
         main_layout.addLayout(self.button_layout)
-        main_layout.addWidget(self.drawLine())
 
-        """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
-        """ ------------------------------ SEZIONE RATE ---------------------------- """
-        self.drawLine()
+        self.lines.append(self.drawLine())
+        self.lines[0].setVisible(True)
+        main_layout.addWidget(self.lines[0])
+
         self.tree_widget = QTreeWidget()
         self.tree_widget.setColumnCount(2)
         self.tree_widget.setHeaderLabels(["Denominazione Immobile", "Importo a Credito"])
@@ -172,6 +176,8 @@ class VistaCreditoCondomino(QWidget):
     def view_credito_condomino(self):
         if self.condomino is not None:
             self.tree_widget.setVisible(True)
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
             return None
@@ -200,7 +206,6 @@ class VistaCreditoCondomino(QWidget):
         self.credito_totale = 0.00
         self.tree_widget.clear()
         for immobile in immobile_con_credito:
-            print("we", immobile_con_credito)
             importo_totale_per_immobile = 0.00
             importo_per_unita = {}
             last_bilancio = Bilancio.getLastBilancio(immobile)
