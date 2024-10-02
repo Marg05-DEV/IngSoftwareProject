@@ -15,11 +15,11 @@ class Spesa:
         self.dataRegistrazione = datetime.date(year=1970, month=1, day=1)#
         self.dataPagamento = datetime.date(year=1970, month=1, day=1)#
         self.descrizione = ""#
-        self.fornitore = None#
+        self.fornitore = 0#
         self.importo = 0.0#
-        self.immobile = None#
+        self.immobile = 0#
         self.isRitenuta = False#
-        self.tipoSpesa = None#
+        self.tipoSpesa = 0#
         self.pagata = False#
         self.numeroFattura = 0#
         self.aBilancio = False
