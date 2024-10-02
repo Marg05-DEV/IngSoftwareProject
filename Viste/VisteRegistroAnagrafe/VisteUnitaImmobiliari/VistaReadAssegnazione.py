@@ -104,6 +104,7 @@ class VistaReadAssegnazione(QWidget):
         button.setDisabled(disabled)
         self.button_list[testo] = button
         return button
+
     def drawLine(self):
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
@@ -156,9 +157,7 @@ class VistaReadAssegnazione(QWidget):
         else:
             self.msg.hide()
 
-        print("dentro a update 3")
         listview_model = QStandardItemModel(self.list_view_condomini)
-        print(self.sel_unitaImmobiliare.condomini.items())
         for condomino_cf, titolo in self.sel_unitaImmobiliare.condomini.items():
             item = QStandardItem()
             condomino = Condomino.ricercaCondominoByCF(condomino_cf)
@@ -193,7 +192,6 @@ class VistaReadAssegnazione(QWidget):
 
     def updateCondomino(self):
         item = None
-        print(self.list_view_condomini.selectedIndexes())
         for index in self.list_view_condomini.selectedIndexes():
             item = self.list_view_condomini.model().itemFromIndex(index)
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" (")[0].split(" - ")[1])

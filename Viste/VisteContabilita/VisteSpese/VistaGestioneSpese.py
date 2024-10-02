@@ -16,7 +16,6 @@ from Viste.VisteContabilita.VisteSpese.VistaUpdateSpesa import VistaUpdateSpesa
 class VistaGestioneSpese(QWidget):
     def __init__(self):
         super(VistaGestioneSpese, self).__init__()
-        print("soono nelle spese")
         main_layout = QVBoxLayout()
 
         find_layout = QHBoxLayout()
@@ -193,7 +192,6 @@ class VistaGestioneSpese(QWidget):
             checkbox.setCheckState(Qt.CheckState.Unchecked)
 
     def goCreateSpesa(self):
-        print("creazione rata")
         self.vista_nuova_spesa = VistaCreateSpesa(callback=self.callback)
         self.vista_nuova_spesa.show()
 

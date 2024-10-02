@@ -41,7 +41,6 @@ class VistaCreateRata(QWidget):
         self.lbl_frase.setVisible(False)
 
         main_layout.addWidget(self.lbl_frase)
-        print("create rata, ci siamo dentro")
 
         main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
         main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
@@ -208,10 +207,8 @@ class VistaCreateRata(QWidget):
 
         self.sel_immobile = None
         self.sel_unita = None
-        print("fine reset")
 
     def createRata(self):
-        print("create rata")
         importo = float((self.input_lines["importo"].text()).replace(",", "."))
 
         if self.combo_box_operazione.currentText() == "Prelievo":
@@ -224,7 +221,6 @@ class VistaCreateRata(QWidget):
             tipoPagamento = "Contanti"
 
         elif self.combo_box_operazione.currentText() == "Versamento":
-            print("si versa")
             unitaImmobiliare = self.input_lines["unitaImmobiliare"].currentData()
             tipoPagamento = self.input_lines["tipoPagamento"].currentText()
             numeroRicevuta = int(self.input_lines["numeroRicevuta"].text())
@@ -237,7 +233,6 @@ class VistaCreateRata(QWidget):
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
 
 
-        print("rata in creazione", dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento, unitaImmobiliare, versante)
         temp_rata = Rata()
         msg, rata = temp_rata.aggiungiRata(dataPagamento, descrizione, importo, numeroRicevuta, tipoPagamento,
                                            unitaImmobiliare, versante)
@@ -247,11 +242,8 @@ class VistaCreateRata(QWidget):
         self.close()
 
     def immobile_field_dynamic(self):
-        print("inizio validation")
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
-            print("dentro immobile cambiato")
             if self.input_lines['immobile'].currentText():
-                print("dentro immobile cambiato non vuoto")
                 self.input_lines['versante'].clear()
                 self.input_lines['unitaImmobiliare'].clear()
                 self.input_lines['unitaImmobiliare'].setVisible(True)
@@ -260,12 +252,10 @@ class VistaCreateRata(QWidget):
                 self.input_labels['versante'].setVisible(False)
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 ultima_ricevuta = Rata.lastNumeroRicevuta(Immobile.ricercaImmobileByDenominazione(self.sel_immobile))
-                print("dai")
                 if ultima_ricevuta > 0:
                     self.input_lines['numeroRicevuta'].setPlaceholderText("L'ultima ricevuta inserita è la n° " + str(ultima_ricevuta))
                 else:
                     self.input_lines['numeroRicevuta'].setPlaceholderText("Non ci sono ricevute precedenti")
-                print("ciao")
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
                         Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
@@ -281,7 +271,6 @@ class VistaCreateRata(QWidget):
                             f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
-                print("fien validation immobile sel")
 
     def unita_immobiliare_field_dynamic(self):
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:

@@ -89,7 +89,6 @@ class VistaCreateImmobile(QWidget):
         temp_tabellaMillesimale = TabellaMillesimale()
         m, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale('Tab A', [], 'Spese generali', immobile.id)
 
-        print(msg)
         self.callback(msg)
         self.close()
 
@@ -110,7 +109,6 @@ class VistaCreateImmobile(QWidget):
                 num_writed_lines += 1
                 if field in unique_fields:
                     there_is_unique_error[field] = False
-                    print(field)
                     for immobile in immobili.values():
                         if self.input_lines[field].text().upper() == str(immobile.getInfoImmobile()[field]).upper():
                             num_errors += 1

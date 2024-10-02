@@ -139,6 +139,7 @@ class VistaReadTabellaMillesimale(QWidget):
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
+
     def hide_message(self):
         self.msg.hide()
         self.timer.stop()

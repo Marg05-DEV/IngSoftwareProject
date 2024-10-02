@@ -21,7 +21,6 @@ class VistaUpdateCondomino(QWidget):
         self.onlyAnagrafica = onlyAnagrafica
 
         main_layout = QVBoxLayout()
-        print("ye")
         lbl_frase = QLabel("Inserisci i nuovi dati del condomino da modificare:")
         lbl_frase.setStyleSheet("font-weight: bold;")
         lbl_frase.setFixedSize(lbl_frase.sizeHint())
@@ -104,24 +103,16 @@ class VistaUpdateCondomino(QWidget):
         return input_layout
 
     def updateCondomino(self):
-        print("inizio update condomino")
         temp_condomino = {}
-        print(self.sel_condomino.getDatiAnagraficiCondomino().keys())
         for attributo in self.sel_condomino.getDatiAnagraficiCondomino().keys():
-            print(attributo)
             if attributo == "codice" or self.input_lines[attributo].text() == "":
                 temp_condomino[attributo] = self.sel_condomino.getDatiAnagraficiCondomino()[attributo]
             else:
                 temp_condomino[attributo] = self.input_lines[attributo].text()
 
-        print(temp_condomino)
-
         dataDiNascita = temp_condomino["dataDiNascita"].split('/')
-        print("data", dataDiNascita)
 
         dataDiNascita = datetime.date(int(dataDiNascita[2]), int(dataDiNascita[1]), int(dataDiNascita[0]))
-        print("data", dataDiNascita)
-        print(self.sel_condomino)
 
         msg = self.sel_condomino.modificaCondomino(temp_condomino["nome"],
                                                    temp_condomino["cognome"],
@@ -153,14 +144,12 @@ class VistaUpdateCondomino(QWidget):
         self.input_lines["dataDiNascita"].setDate(self.sel_condomino.dataDiNascita)
 
     def input_validation(self):
-        print("scrivendo ...")
         condomini = Condomino.getAllCondomini()
         num_errors = 0
         unique_fields = ['codiceFiscale']
         there_is_unique_error = {}
 
         for field in unique_fields:
-            print(field)
             there_is_unique_error[field] = False
             for condomino in condomini.values():
                 if str(condomino.getDatiAnagraficiCondomino()[field]).upper() != str(self.sel_condomino.getDatiAnagraficiCondomino()[field]).upper():

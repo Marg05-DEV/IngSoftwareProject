@@ -46,7 +46,6 @@ class VistaUpdateRata(QWidget):
 
         main_layout.addWidget(lbl_frase)
         if self.rata_selezionata.importo < 0:
-            print("------------------creando form per modifica PRELIEVO----------------")
             main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
             main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
             main_layout.addLayout(self.pairLabelInput("Prelevante", "versante"))
@@ -54,7 +53,6 @@ class VistaUpdateRata(QWidget):
             main_layout.addLayout(self.pairLabelInput("Importo", "importo"))
             main_layout.addLayout(self.pairLabelInput("Data Prelievo", "dataPagamento"))
         elif self.rata_selezionata.importo > 0:
-            print("------------------creando form per modifica VERSAMENTO----------------")
             main_layout.addLayout(self.pairLabelInput("Immobile", "immobile"))
             main_layout.addLayout(self.pairLabelInput("Unita Immobiliare", "unitaImmobiliare"))
             main_layout.addLayout(self.pairLabelInput("Versante", "versante"))
@@ -66,7 +64,6 @@ class VistaUpdateRata(QWidget):
 
         main_layout.addWidget(self.create_button("Svuota i campi", self.reset))
         main_layout.addWidget(self.create_button("Modifica Rata", self.updateRata))
-        print("iii")
         self.setLayout(main_layout)
 
         self.resize(600, 400)
@@ -175,7 +172,6 @@ class VistaUpdateRata(QWidget):
 
     def reset(self):
         for key in self.input_lines.keys():
-            print("si", key, self.input_lines[key])
             self.input_lines[key].clear()
 
         if self.rata_selezionata.unitaImmobiliare > 0:
@@ -221,13 +217,10 @@ class VistaUpdateRata(QWidget):
     def updateRata(self):
         temp_rata = {}
 
-        print("si modifica")
         if self.rata_selezionata.getInfoRata()['importo'] < 0:
             for attributo in self.rata_selezionata.getInfoRata().keys():
-                print("si modifica", attributo)
                 if attributo == "unitaImmobiliare":
                     if self.input_lines[attributo].currentIndex() >= 0:
-                        print(self.input_lines[attributo].currentData())
                         temp_rata[attributo] = self.input_lines[attributo].currentData()
                     else:
                         temp_rata[attributo] = 0
@@ -240,7 +233,6 @@ class VistaUpdateRata(QWidget):
 
         else:
             for attributo in self.rata_selezionata.getInfoRata().keys():
-                print("si modifica", attributo)
                 if attributo == "unitaImmobiliare":
                     temp_rata[attributo] = self.input_lines[attributo].currentData()
                 elif attributo == "tipoPagamento":
@@ -251,8 +243,6 @@ class VistaUpdateRata(QWidget):
                     temp_rata['importo'] = abs(float((self.input_lines["importo"].text()).replace(",", ".")))
                 else:
                     temp_rata[attributo] = self.input_lines[attributo].text()
-
-        print(temp_rata)
 
         dataPagamento = temp_rata["dataPagamento"].split('/')
         dataPagamento = datetime.date(int(dataPagamento[2]), int(dataPagamento[1]), int(dataPagamento[0]))
@@ -270,7 +260,6 @@ class VistaUpdateRata(QWidget):
     def immobile_field_dynamic(self):
         num_errors = 0
         there_is_unique_error = {}
-        print('validation')
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
                 self.input_lines['unitaImmobiliare'].clear()
@@ -308,7 +297,6 @@ class VistaUpdateRata(QWidget):
                 self.input_labels['versante'].setVisible(True)
 
     def input_validation(self):
-        print("in vlarugerug")
         num_writed_lines = 0
 
         for field in self.required_fields:
@@ -318,7 +306,6 @@ class VistaUpdateRata(QWidget):
             else:
                 if self.input_lines[field].text():
                     num_writed_lines += 1
-        print(num_writed_lines)
         if num_writed_lines < len(self.required_fields):
             self.buttons["Modifica Rata"].setDisabled(True)
         else:

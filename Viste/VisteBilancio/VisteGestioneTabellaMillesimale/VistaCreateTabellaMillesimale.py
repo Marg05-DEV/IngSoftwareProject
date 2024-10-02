@@ -71,13 +71,11 @@ class VistaCreateTabellaMillesimale(QWidget):
 
         for tipo_spesa in tipi_spesa_list:
             self.searchbar.addItem(tipo_spesa.nome, tipo_spesa.codice)
-        print("ciao nuova finestravwrijern")
         nuovo_tipo_layout = QHBoxLayout()
         lbl_frase2 = QLabel("Crea un nuovo tipo di spesa e assegnalo alla tabella millesimale corrente:")
 
         nuovo_tipo_layout.addWidget(lbl_frase2)
         nuovo_tipo_layout.addWidget(self.create_button("Nuovo Tipo di spesa", self.nuovo_tipo_spesa))
-        print("ciao nuova finestravwrijern")
         self.list_view_tipi_spesa = QListWidget()
         self.list_view_tipi_spesa.setAlternatingRowColors(True)
 
@@ -159,25 +157,21 @@ class VistaCreateTabellaMillesimale(QWidget):
         return input_layout
 
     def update_list(self):
-        print("update tipi spesa lista 1")
         if not self.tipi_spesa:
             self.msg.setText("Non ci sono tipi di spesa assegnati alla tabella millesimale")
             self.buttons["Aggiungi Tabella Millesimale"].setDisabled(True)
             self.msg.show()
         else:
             self.msg.hide()
-        print("update tipi spesa lista 2", self.tipi_spesa)
         self.list_view_tipi_spesa.clear()
         for cod_tipo_spesa in self.tipi_spesa:
             tipo_spesa = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa)
             item = QListWidgetItem(f"{tipo_spesa.nome} - {tipo_spesa.descrizione}")
             item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            print("update tipi spesa lista 5")
             font = item.font()
             font.setPointSize(12)
             item.setFont(font)
             self.list_view_tipi_spesa.addItem(item)
-        print("update tipi spesa lista 3")
 
     def aggiungiTabellaMillesimale(self):
         nome = self.input_lines["nome"].text()
@@ -188,19 +182,14 @@ class VistaCreateTabellaMillesimale(QWidget):
         temp_tabellaMillesimale = TabellaMillesimale()
         msg, tm = temp_tabellaMillesimale.aggiungiTabellaMillesimale(nome, tipologieSpesa, descrizione, immobile)
 
-        print(msg, tm)
         self.callback(msg)
         self.close()
 
     def seleziona_tipo_spesa(self):
-        print("selezionato un tipo di spesa", self.searchbar.currentText())
         if self.searchbar.currentText():
             self.tipi_spesa.append(self.searchbar.currentData())
-            print("i", self.searchbar.currentData())
             self.searchbar.removeItem(self.searchbar.currentIndex())
             self.searchbar.setCurrentIndex(-1)
-
-        print("i", self.searchbar.currentData())
 
         self.update_list()
         self.input_validation()

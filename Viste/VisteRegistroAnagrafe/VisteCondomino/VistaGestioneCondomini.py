@@ -139,7 +139,6 @@ class VistaGestioneCondomini(QWidget):
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" - ")[1])
-        print(sel_condomino)
         self.vista_dettaglio_condomino = VistaReadCondomino(sel_condomino, self.callback, False)
         self.vista_dettaglio_condomino.show()
 
@@ -147,14 +146,12 @@ class VistaGestioneCondomini(QWidget):
         item = None
         for index in self.list_view_condomino.selectedIndexes():
             item = self.list_view_condomino.model().itemFromIndex(index)
-            print(item.text())
         sel_condomino = Condomino.ricercaCondominoByCF(item.text().split(" - ")[1])
         self.vista_modifica_condomino = VistaUpdateCondomino(sel_condomino, callback=self.callback, onlyAnagrafica=True)
         self.vista_modifica_condomino.show()
 
 
     def able_button(self):
-        print("selezione cambiata")
         if not self.list_view_condomino.selectedIndexes():
             self.button_list["Visualizza Condomino"].setDisabled(True)
             self.button_list["Modifica Condomino"].setDisabled(True)
