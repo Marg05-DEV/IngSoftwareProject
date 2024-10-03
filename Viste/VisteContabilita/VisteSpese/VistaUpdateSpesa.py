@@ -247,8 +247,7 @@ class VistaUpdateSpesa(QWidget):
         self.sel_immobile = self.input_lines['immobile'].currentText()
 
         tipi_spesa = []
-        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
-                Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
             tipi_spesa.extend(tabella.tipologieSpesa)
         for tipo in tipi_spesa:
             self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
@@ -299,7 +298,6 @@ class VistaUpdateSpesa(QWidget):
                     fornitore_esistente = True
                     codice_fornitore = fornitore.codice
                     for attributo in fornitore.getInfoFornitore().keys():
-                        print("attributo: ", attributo)
                         if attributo == "tipoProfessione":
                             temp_fornitore[attributo] = self.input_lines[attributo].currentText()
                         elif attributo == "codice" or self.input_lines[attributo].text() == "":

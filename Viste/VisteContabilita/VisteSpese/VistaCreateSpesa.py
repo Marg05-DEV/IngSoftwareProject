@@ -500,7 +500,7 @@ class VistaCreateSpesa(QWidget):
                     totale_dividendi += int(self.input_lines[f'dividendo{i}'].text())
 
         if totale_dividendi != 100 and num_filled_dividendi_fields == self.numDividendi:
-            self.input_errors['dividendo0'].setText('La somma dei dividendi deve essero 100')
+            self.input_errors['dividendo0'].setText('La somma dei dividendi deve essere 100')
             self.input_errors['tipoSpesa0'].setText('')
             self.input_errors['dividendo0'].setVisible(True)
             self.input_errors['tipoSpesa0'].setVisible(True)

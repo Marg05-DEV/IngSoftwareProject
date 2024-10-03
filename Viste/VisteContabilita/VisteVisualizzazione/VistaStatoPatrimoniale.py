@@ -268,11 +268,37 @@ class VistaStatoPatrimoniale(QWidget):
         self.table_spese.setHorizontalHeaderItem(0, QTableWidgetItem("Importo"))
         self.table_spese.setHorizontalHeaderItem(1, QTableWidgetItem("Fornitore"))
 
+        print("kondo")
+        fornitori = []
+        for spese in self.spese:
+            fornitori = spese.fornitore
+        print("a")
+        print("lista fornitori: ", fornitori)
+        fornitore_esistente = 0
+        count = 0
+        for i in fornitori:
+            count += 1
+            if not count == len(fornitori):
+                if i == i+1:
+                    fornitore_esistente = i
+            else:
+                fornitore_esistente = i
+        print("b")
         i = 0
+        spesa_totale_fornitore = 0.0
         for spesa in self.spese:
             j = 0
-            self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
-            self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+            if spesa.fornitore == fornitore_esistente:
+                print("bucc")
+                for spesa_fornitore_uguale in spesa:
+                    if spesa_fornitore_uguale.fornitore == fornitore_esistente:
+                        spesa_totale_fornitore += spesa.importo
+                self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa_totale_fornitore)))
+                self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+            else:
+                print("no bucc")
+                self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
+                self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
             i += 1
 
         if self.spese:
