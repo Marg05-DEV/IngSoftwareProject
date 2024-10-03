@@ -225,10 +225,15 @@ class VistaStatoPatrimoniale(QWidget):
             self.rate_versate[unita_immobiliare.codice] = totale_versato
 
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
+        spese_uniche_per_fornitore = []
+        for spese in self.spese:
+            if spese.fornitore not in spese_uniche_per_fornitore:
+                spese_uniche_per_fornitore.append(spese.fornitore)
+
         importi_tutti_nulli = False
         importi_da_non_rappresentare = []
         self.table_spese.setColumnCount(2)
-        self.table_spese.setRowCount(len(self.spese))
+        self.table_spese.setRowCount(len(spese_uniche_per_fornitore))
 
         if self.rate_da_versare:
             for r in self.rate_da_versare.values():
@@ -273,14 +278,12 @@ class VistaStatoPatrimoniale(QWidget):
             fornitori.append(spese.fornitore)
 
         count = 0
-        print(fornitori)
         i = 0
-
         cod_fornitore_analizzato = []
         for spesa in self.spese:
             spesa_totale_fornitore = 0.0
-            j = 0
             if spesa.fornitore not in cod_fornitore_analizzato:
+                j = 0
                 cod_fornitore_analizzato.append(spesa.fornitore)
                 for cod_fornitore in fornitori:
                     if cod_fornitore == spesa.fornitore:
@@ -291,11 +294,10 @@ class VistaStatoPatrimoniale(QWidget):
                             spesa_totale_fornitore += spese.importo
                     self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa_totale_fornitore)))
                     self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-                    i += 1
                 else:
                     self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
                     self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-                    i += 1
+                i += 1
 
         if self.spese:
             for spesa in self.spese:
