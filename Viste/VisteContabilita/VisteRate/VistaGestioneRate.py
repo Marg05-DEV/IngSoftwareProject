@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import shutil
 import webbrowser
 
@@ -116,9 +117,20 @@ class VistaGestioneRate(QWidget):
 
         if searchActivated and self.searchbar.text():
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per denominazione
-                day, month, year = [int(x) for x in self.searchbar.text().split("/")]
-                data = datetime.date(year, month, day)
-                self.rate = [item for item in self.rate if data == item.dataPagamento]
+                str_data = self.searchbar.text()
+                data_is_ok = False
+                if re.match(r"[0-3][0-9]/[0-1][0-9]/[0-9]{4}", str_data):
+                    day, month, year = [int(x) for x in str_data.split("/")]
+                    data_is_ok = True
+                elif re.match(r"[0-9]{4}/[0-1][0-9]/[0-3][0-9]", str_data):
+                    year, month, day = [int(x) for x in str_data.split("/")]
+                    data_is_ok = True
+
+                if data_is_ok:
+                    data = datetime.date(year, month, day)
+                    self.rate = [item for item in self.rate if data == item.dataPagamento]
+                else:
+                    self.rate = []
             elif self.searchType.currentIndex() == 1:  # ricerca per immobile
                 self.rate = [item for item in self.rate if self.searchbar.text().upper() in (Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item.unitaImmobiliare).immobile)).denominazione.upper()]
             elif self.searchType.currentIndex() == 2:  # ricerca per nome versante

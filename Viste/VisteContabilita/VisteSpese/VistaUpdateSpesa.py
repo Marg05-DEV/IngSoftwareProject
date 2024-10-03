@@ -247,8 +247,7 @@ class VistaUpdateSpesa(QWidget):
         self.sel_immobile = self.input_lines['immobile'].currentText()
 
         tipi_spesa = []
-        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
-                Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
             tipi_spesa.extend(tabella.tipologieSpesa)
         for tipo in tipi_spesa:
             self.input_lines['tipoSpesa'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
@@ -270,6 +269,7 @@ class VistaUpdateSpesa(QWidget):
         self.buttons["Modifica Spesa"].setDisabled(False)
 
         if self.spesa.pagata:
+            self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Checked)
         else:
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Unchecked)
@@ -279,7 +279,6 @@ class VistaUpdateSpesa(QWidget):
         else:
             self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Unchecked)
 
-        self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
         self.input_lines['dataFattura'].setDate(self.spesa.dataFattura)
         self.input_lines["denominazione"].setCompleter(None)
 
@@ -299,7 +298,6 @@ class VistaUpdateSpesa(QWidget):
                     fornitore_esistente = True
                     codice_fornitore = fornitore.codice
                     for attributo in fornitore.getInfoFornitore().keys():
-                        print("attributo: ", attributo)
                         if attributo == "tipoProfessione":
                             temp_fornitore[attributo] = self.input_lines[attributo].currentText()
                         elif attributo == "codice" or self.input_lines[attributo].text() == "":
@@ -377,7 +375,6 @@ class VistaUpdateSpesa(QWidget):
         self.close()
 
     def immobile_field_dynamic(self):
-
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
                 self.required_fields.append('tipoSpesa')
