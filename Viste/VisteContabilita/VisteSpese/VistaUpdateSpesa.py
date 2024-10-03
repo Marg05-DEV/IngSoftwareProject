@@ -270,6 +270,7 @@ class VistaUpdateSpesa(QWidget):
         self.buttons["Modifica Spesa"].setDisabled(False)
 
         if self.spesa.pagata:
+            self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Checked)
         else:
             self.checkboxes['pagata'].setCheckState(Qt.CheckState.Unchecked)
@@ -279,7 +280,6 @@ class VistaUpdateSpesa(QWidget):
         else:
             self.checkboxes['isRitenuta'].setCheckState(Qt.CheckState.Unchecked)
 
-        self.input_lines['dataPagamento'].setDate(self.spesa.dataPagamento)
         self.input_lines['dataFattura'].setDate(self.spesa.dataFattura)
         self.input_lines["denominazione"].setCompleter(None)
 
@@ -377,7 +377,6 @@ class VistaUpdateSpesa(QWidget):
         self.close()
 
     def immobile_field_dynamic(self):
-
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
             if self.input_lines['immobile'].currentText():
                 self.required_fields.append('tipoSpesa')

@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QComboBox, QHBoxLayout, QListView, QLabel, \
@@ -112,9 +113,20 @@ class VistaGestioneSpese(QWidget):
 
         if searchActivated and self.searchbar.text():
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per data Pagamento
-                day, month, year = [int(x) for x in self.searchbar.text().split("/")]
-                data = datetime.date(year, month, day)
-                self.spese = [item for item in self.spese if data == item.dataPagamento and item.pagata]
+                str_data = self.searchbar.text()
+                data_is_ok = False
+                if re.match(r"[0-3][0-9]/[0-1][0-9]/[0-9]{4}", str_data):
+                    day, month, year = [int(x) for x in str_data.split("/")]
+                    data_is_ok = True
+                elif re.match(r"[0-9]{4}/[0-1][0-9]/[0-3][0-9]", str_data):
+                    year, month, day = [int(x) for x in str_data.split("/")]
+                    data_is_ok = True
+
+                if data_is_ok:
+                    data = datetime.date(year, month, day)
+                    self.spese = [item for item in self.spese if data == item.dataPagamento and item.pagata]
+                else:
+                    self.spese = []
             elif self.searchType.currentIndex() == 1:  # ricerca per tipo Spesa
                 self.spese = [item for item in self.spese if self.searchbar.text().upper() in (TipoSpesa.ricercaTipoSpesaByCodice(item.tipoSpesa)).nome.upper()]
             elif self.searchType.currentIndex() == 2:  # ricerca per Immobile

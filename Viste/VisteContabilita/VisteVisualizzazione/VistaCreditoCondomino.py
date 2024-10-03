@@ -87,7 +87,7 @@ class VistaCreditoCondomino(QWidget):
         main_layout.addLayout(self.button_layout)
 
         self.lines.append(self.drawLine())
-        self.lines[0].setVisible(True)
+        self.lines[0].setVisible(False)
         main_layout.addWidget(self.lines[0])
 
         self.tree_widget = QTreeWidget()
@@ -174,56 +174,50 @@ class VistaCreditoCondomino(QWidget):
             return None
 
     def update_list(self):
-        self.credito_totale_condomino = 0.00
-        self.unita_associate_al_condomino = []
-        immobile_con_credito = {}
-        for cod_unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino):
-            self.unita_associate_al_condomino.append(cod_unita_immobiliare)
-        if not self.unita_associate_al_condomino:
+        unita_associate_al_condomino = UnitaImmobiliare.getAllUnitaImmobiliariByCondomino(self.condomino)
+        immobile_con_credito = self.condomino.getImmobiliAssociati()
+
+        # {immobile: {unita: valore, unita: valore}, immobile:
+        if not unita_associate_al_condomino:
             self.tree_widget.setVisible(False)
             self.condomino_section["frase"].setVisible(True)
             self.credito_condomino_section["frase_credito_totale"].setVisible(False)
             self.credito_condomino_section["credito_totale"].setVisible(False)
 
-        for immobile in Immobile.getAllImmobili().values():
-            for cod_unita in self.unita_associate_al_condomino:
-                unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
-                if immobile.id == unita.immobile:
-                    if immobile.id not in immobile_con_credito:
-                        immobile_con_credito[immobile.id] = immobile
+        print(immobile_con_credito, unita_associate_al_condomino)
 
-        immobile_con_credito = list(immobile_con_credito.values())
+        crediti_condomino = {}
+        for immobile in immobile_con_credito:
+            crediti_condomino[immobile.id] = {}
+            for unita in unita_associate_al_condomino:
+                if UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita).immobile == immobile.id:
+                    crediti_condomino[immobile.id][unita] = 0.0
 
-        self.credito_totale = 0.00
         self.tree_widget.clear()
         for immobile in immobile_con_credito:
-            importo_totale_per_immobile = 0.00
-            importo_per_unita = {}
             last_bilancio = Bilancio.getLastBilancio(immobile)
-            for unita_immobile in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(immobile).values():
-                if unita_immobile.codice in self.unita_associate_al_condomino:
-                    totale_rate_versate_per_unita = 0.0
-                    importo_per_unita[unita_immobile.codice] = 0.0
-                    if last_bilancio:
-                        for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita_immobile).values():
+            for cod_unita in crediti_condomino[immobile.id].keys():
+                unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
+                totale_rate_versate_per_unita = 0.0
+                if last_bilancio:
+                    for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita).values():
+                        if rate_versate.dataPagamento >= last_bilancio.dataApprovazione:
                             totale_rate_versate_per_unita += rate_versate.importo
-                        if last_bilancio.importiDaVersare[unita_immobile.codice] < 0:
-                            importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] + totale_rate_versate_per_unita
-                        else:
-                            importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] - totale_rate_versate_per_unita
-                        importo_totale_per_immobile += importo_per_unita[unita_immobile.codice]
-                        self.credito_totale += importo_totale_per_immobile
+
+                    crediti_condomino[immobile.id][cod_unita] = last_bilancio.importiDaVersare[cod_unita] - totale_rate_versate_per_unita
+
             if last_bilancio:
-                item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
+                item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % sum(crediti_condomino[immobile.id].values()))])
             else:
                 item = QTreeWidgetItem([immobile.denominazione, "Nessun bilancio approvato per questo immobile"])
 
-            for key, value in importo_per_unita.items():
+            for key, value in crediti_condomino[immobile.id].items():
                 unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(key)
                 if unita.tipoUnitaImmobiliare == "Appartamento":
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno}"
                 else:
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare}"
+
                 if last_bilancio:
                     child = QTreeWidgetItem([unita_immobiliare, str("%.2f" % value)])
                 else:
@@ -235,11 +229,12 @@ class VistaCreditoCondomino(QWidget):
         self.tree_widget.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
+        print(crediti_condomino)
         if immobile_con_credito:
             self.tree_widget.setVisible(True)
             self.condomino_section["frase"].setVisible(False)
             self.credito_condomino_section["frase_credito_totale"].setVisible(True)
-            self.credito_condomino_section["credito_totale"].setText("%.2f" % self.credito_totale)
+            self.credito_condomino_section["credito_totale"].setText("%.2f" % sum([sum(item.values()) for item in crediti_condomino.values()]))
             self.credito_condomino_section["credito_totale"].setVisible(True)
         else:
             self.tree_widget.setVisible(False)

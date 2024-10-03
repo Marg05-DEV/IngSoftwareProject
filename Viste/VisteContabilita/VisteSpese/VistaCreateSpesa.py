@@ -28,6 +28,7 @@ class VistaCreateSpesa(QWidget):
         self.isFornitoreTrovatoNow = False
         self.numDividendi = 0
         self.tipi_spesa = []
+        self.dividendo_layout_list = []
 
         self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
                                 'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
@@ -124,8 +125,8 @@ class VistaCreateSpesa(QWidget):
     def create_button(self, testo, action):
         button = QPushButton(testo)
         button.setCheckable(False)
-        button.setMaximumHeight(40)
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        button.setMinimumHeight(35)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         button.clicked.connect(action)
         self.buttons[testo] = button
         return button
@@ -272,8 +273,11 @@ class VistaCreateSpesa(QWidget):
                 del self.input_lines['dividendo' + str(i)]
                 del self.input_labels['dividendo' + str(i)]
 
+        self.numDividendi = 1
+
         self.input_lines['tipoSpesa0'].setVisible(True)
         self.input_labels['tipoSpesa0'].setVisible(True)
+        self.input_lines['dividendo0'].clear()
         self.input_lines['dividendo0'].setVisible(False)
         self.input_labels['dividendo0'].setVisible(False)
         if "dividendo0" in self.required_fields:
@@ -289,8 +293,6 @@ class VistaCreateSpesa(QWidget):
 
         for tipo in self.tipi_spesa:
             self.input_lines['tipoSpesa0'].addItem(TipoSpesa.ricercaTipoSpesaByCodice(tipo).nome, tipo)
-
-        self.numDividendi = 1
 
         self.buttons["Reset Dividendi"].setDisabled(True)
         self.buttons["Aggiungi Dividendo"].setDisabled(False)
