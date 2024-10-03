@@ -271,29 +271,31 @@ class VistaStatoPatrimoniale(QWidget):
         fornitori = []
         for spese in self.spese:
             fornitori.append(spese.fornitore)
-        fornitore_esistente = 0
+
         count = 0
-        for i in fornitori:
-            count += 1
-            if count != len(fornitori):
-                if i == i+1:
-                    fornitore_esistente = i
-            else:
-                fornitore_esistente = i
+        print(fornitori)
         i = 0
-        spesa_totale_fornitore = 0.0
+
+        cod_fornitore_analizzato = []
         for spesa in self.spese:
+            spesa_totale_fornitore = 0.0
             j = 0
-            if spesa.fornitore == fornitore_esistente:
-                for spesa_fornitore_uguale in self.spese:
-                    if spesa_fornitore_uguale.fornitore == fornitore_esistente:
-                        spesa_totale_fornitore += spesa.importo
-                self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa_totale_fornitore)))
-                self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-            else:
-                self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
-                self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-            i += 1
+            if spesa.fornitore not in cod_fornitore_analizzato:
+                cod_fornitore_analizzato.append(spesa.fornitore)
+                for cod_fornitore in fornitori:
+                    if cod_fornitore == spesa.fornitore:
+                        count += 1
+                if count > 1:
+                    for spese in self.spese:
+                        if spese.fornitore == spesa.fornitore:
+                            spesa_totale_fornitore += spese.importo
+                    self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa_totale_fornitore)))
+                    self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+                    i += 1
+                else:
+                    self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
+                    self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
+                    i += 1
 
         if self.spese:
             for spesa in self.spese:

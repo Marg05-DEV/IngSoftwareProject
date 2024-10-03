@@ -115,6 +115,7 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         return input_layout
 
     def updateUnitaImmobiliare(self):
+        print("sono in updateUnitaImmobiliare")
         temp_unitaImmobiliare = {}
         for attributo in self.sel_unitaImmobiliare.getInfoUnitaImmobiliare().keys():
             if attributo == "tipoUnitaImmobiliare":
@@ -138,6 +139,7 @@ class VistaUpdateUnitaImmobiliare(QWidget):
                                                    Immobile.ricercaImmobileById(self.sel_unitaImmobiliare.immobile),
                                                    int(temp_unitaImmobiliare["scala"]),
                                                    temp_unitaImmobiliare["ZC"])
+        print("fine updateUnitaImmobiliare")
         self.callback(msg)
         self.close()
 
@@ -163,11 +165,9 @@ class VistaUpdateUnitaImmobiliare(QWidget):
     def input_validation(self):
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByCodice(self.sel_unitaImmobiliare.immobile))
         there_is_unique_pair_error = False
-
         required_fields = []
         interno = self.sel_unitaImmobiliare.interno
         scala = self.sel_unitaImmobiliare.scala
-
         if self.input_lines['tipoUnitaImmobiliare'].currentText() == "Appartamento":
             self.input_lines["interno"].setVisible(True)
             self.input_lines["scala"].setVisible(True)
@@ -216,7 +216,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
                 num_writed_lines += 1
             else:
                 self.input_errors[field].setVisible(False)
-
         if there_is_unique_pair_error:
             self.input_errors['scala'].setText("interno già esistente nella scala inserita")
             self.input_errors['interno'].setText("")

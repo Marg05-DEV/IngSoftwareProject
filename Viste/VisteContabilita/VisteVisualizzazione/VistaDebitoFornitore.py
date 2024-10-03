@@ -9,7 +9,6 @@ from Classes.RegistroAnagrafe.immobile import Immobile
 
 class VistaDebitoFornitore(QWidget):
     def __init__(self):
-
         super(VistaDebitoFornitore, self).__init__()
         self.buttons = {}
         self.immobile = None
