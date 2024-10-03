@@ -165,3 +165,4 @@ if __name__ == "__main__":
     if risposta == "y":
         print(directory + "\\Dati")
         shutil.rmtree(directory + "\\Dati")
+        os.makedirs(directory + "\\Dati\\pdf")

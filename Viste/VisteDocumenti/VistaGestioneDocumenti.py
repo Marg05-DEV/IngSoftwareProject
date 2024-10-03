@@ -44,16 +44,12 @@ class VistaGestioneDocumenti(QWidget):
     def activate_button(self):
         if self.tree.selectionModel().selectedIndexes():
             path_selezionato = self.tree.model().filePath(self.tree.selectionModel().selectedIndexes()[0])
-            print(path_selezionato)
             if os.path.isdir(path_selezionato):
                 self.button_open_file.setDisabled(True)
-                print("è una cartella")
             elif os.path.isfile(path_selezionato):
                 self.button_open_file.setDisabled(False)
-                print("è un file")
         else:
             self.button_open_file.setDisabled(True)
-            print("Tolta Selezione")
 
     def open_file(self):
         if self.tree.selectionModel().selectedIndexes():

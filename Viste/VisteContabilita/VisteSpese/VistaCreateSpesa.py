@@ -43,13 +43,15 @@ class VistaCreateSpesa(QWidget):
 
         btn_aggiungiDividendi = self.create_button("Aggiungi Dividendo", self.addDividendo)
         self.dividendi_layout.addWidget(btn_aggiungiDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_aggiungiDividendi.setMaximumSize(175, 60)
+        btn_aggiungiDividendi.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         btn_aggiungiDividendi.setVisible(False)
         btn_aggiungiDividendi.setIcon(qtawesome.icon("fa.plus"))
 
         btn_resetDividendi = self.create_button("Reset Dividendi", self.resetDividendi)
         self.dividendi_layout.addWidget(btn_resetDividendi, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        btn_resetDividendi.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        btn_resetDividendi.setMaximumSize(175, 60)
+        btn_resetDividendi.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         btn_resetDividendi.setVisible(False)
 
         self.addDividendo()
@@ -155,7 +157,6 @@ class VistaCreateSpesa(QWidget):
             input_line.setVisible(False)
             label.setVisible(False)
         elif "dividendo" in index:
-            print("inizio dividendo in pair", testo)
             input_line = QLineEdit()
             input_line.setPlaceholderText("in percentuale")
             input_line.setValidator(QIntValidator(0, 99))
@@ -163,7 +164,6 @@ class VistaCreateSpesa(QWidget):
             input_line.textChanged.connect(self.input_validation)
             input_line.setVisible(False)
             label.setVisible(False)
-            print("fine dividendo in pair")
         elif index == "numeroFattura":
             input_line = QLineEdit()
             input_line.setValidator(QIntValidator())
@@ -215,10 +215,8 @@ class VistaCreateSpesa(QWidget):
         return input_layout
 
     def addDividendo(self):
-        print("iniziamo ad aggiungere il dividendo: ", self.numDividendi)
         dividendo_layout = QHBoxLayout()
 
-        print("aggiungendo ... tipoSpesa" + str(self.numDividendi))
         dividendo_layout.addLayout(self.pairLabelInput("Tipo Spesa", "tipoSpesa" + str(self.numDividendi)))
         dividendo_layout.addLayout(self.pairLabelInput("%", "dividendo" + str(self.numDividendi)))
 
@@ -243,10 +241,8 @@ class VistaCreateSpesa(QWidget):
 
             for cod_tipo in self.tipi_spesa:
                 tipo_just_selected = False
-                print(" --------- tipo: ", cod_tipo)
                 tipo = TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo)
                 for i in range(self.numDividendi):
-                    print(" ----------------------- dividendo ", i)
                     if self.input_lines[f'tipoSpesa{i}'].currentText():
                         if self.input_lines[f'tipoSpesa{i}'].currentText() == tipo.nome:
                             tipo_just_selected = True
@@ -258,15 +254,11 @@ class VistaCreateSpesa(QWidget):
         if self.numDividendi >= len(self.tipi_spesa):
             self.buttons["Aggiungi Dividendo"].setDisabled(True)
 
-        print("fatto, num dividendi attuale", self.numDividendi)
         self.dividendi_layout.insertLayout(self.numDividendi - 1, dividendo_layout)
         self.dividendi_layout.removeWidget(self.buttons["Aggiungi Dividendo"])
         self.dividendi_layout.insertWidget(self.numDividendi, self.buttons["Aggiungi Dividendo"])
-        print("finito ad aggiungere il dividendo: ", self.numDividendi)
 
     def resetDividendi(self):
-        print("inizio reset div: ", self.numDividendi, self.required_fields)
-
         if self.numDividendi > 1:
             for i in range(1, self.numDividendi):
                 self.dividendi_layout.removeWidget(self.input_lines['tipoSpesa' + str(i)])
@@ -302,14 +294,10 @@ class VistaCreateSpesa(QWidget):
 
         self.buttons["Reset Dividendi"].setDisabled(True)
         self.buttons["Aggiungi Dividendo"].setDisabled(False)
-        print("fine reset div: ", self.numDividendi, self.required_fields)
 
     def reset(self):
-        print("input lin pre reset", self.input_lines)
         for testo, input_line in self.input_lines.items():
-            print(" inizio clear ", testo)
             input_line.clear()
-            print(" fine clear ", testo)
 
         self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
 
@@ -328,7 +316,6 @@ class VistaCreateSpesa(QWidget):
                 del self.input_labels['tipoSpesa' + str(i)]
                 del self.input_lines['dividendo' + str(i)]
                 del self.input_labels['dividendo' + str(i)]
-        print("i")
 
         self.required_fields = ['immobile', 'tipoSpesa0', 'descrizione', 'denominazione', 'cittaSede', 'indirizzoSede',
                                 'partitaIva', 'tipoProfessione', 'numeroFattura', 'importo']
@@ -336,13 +323,10 @@ class VistaCreateSpesa(QWidget):
         self.buttons["Aggiungi Dividendo"].setVisible(False)
         self.buttons["Reset Dividendi"].setVisible(False)
         self.numDividendi = 1
-        print("i")
         self.input_lines["dataPagamento"].setDate(datetime.date.today())
-        print("i")
         self.input_lines["dataPagamento"].setVisible(False)
         self.input_lines["dataFattura"].setDate(datetime.date(2000, 1, 1))
         self.input_lines['tipoProfessione'].addItems(['Ditta', 'Professionista', 'AC'])
-        print("settati valori default")
         self.checkboxes["pagata"].setChecked(False)
         self.checkboxes["isRitenuta"].setChecked(False)
         self.sel_immobile = None
@@ -463,7 +447,6 @@ class VistaCreateSpesa(QWidget):
                 self.isFornitoreTrovatoNow = True
 
             elif (not (self.input_lines['denominazione'].text().upper() in denominazioni_fornitori)) and self.isFornitoreTrovatoNow:
-                print("denn non trovata dopo che era trovata")
                 self.input_lines['cittaSede'].setText("")
                 self.input_lines['indirizzoSede'].setText("")
                 self.input_lines['partitaIva'].setText("")
@@ -535,24 +518,17 @@ class VistaCreateSpesa(QWidget):
             self.input_lines["dataPagamento"].setVisible(True)
 
     def input_validation(self):
-        print(" ---- input validation: ", self.required_fields)
-        print(" ---- input line: ", self.input_lines.keys())
         num_writed_lines = 0
 
         combo_box_fields = ['immobile', 'tipoProfessione']
         combo_box_fields.extend([item for item in self.input_lines.keys() if 'tipoSpesa' in item])
-        print(" ---- combo field ", combo_box_fields)
         for field in self.required_fields:
-            print(" ------------ lettura required field: ", field)
             if field in combo_box_fields:
-                print(" ----------- è un combo")
                 if self.input_lines[field].currentText():
                     num_writed_lines += 1
             else:
-                print(" ----------- NON è un combo")
                 if self.input_lines[field].text():
                     num_writed_lines += 1
-        print("num: ", num_writed_lines, " lunghezza campi richiesti: ", len(self.required_fields))
         if num_writed_lines < len(self.required_fields):
             self.buttons["Aggiungi Spesa"].setDisabled(True)
         else:

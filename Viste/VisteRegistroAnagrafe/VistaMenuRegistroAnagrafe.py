@@ -8,20 +8,16 @@ from Viste.VisteRegistroAnagrafe.VisteUnitaImmobiliari.VistaGestioneRegistroAnag
 
 class VistaMenuRegistroAnagrafe(QWidget):
     def __init__(self, parent=None):
-        print("class VistaMenuRegistroAnagrafe - __init__ inizio")
-        print(Immobile.getAllImmobili())
 
         super(VistaMenuRegistroAnagrafe, self).__init__(parent)
 
         main_layout = QVBoxLayout()
 
         completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
-        print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
         self.immobili_completer = QCompleter(completer_list)
         self.immobili_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print(self.immobili_completer.completionModel())
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
@@ -88,23 +84,22 @@ class VistaMenuRegistroAnagrafe(QWidget):
         button.clicked.connect(action)
         button.setDisabled(disabled)
         return button
+
     def drawLine(self):
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
         line.setFrameShadow(QFrame.Shadow.Sunken)
         return line
+
     def selectioning(self):
         immobile = None
 
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             immobile = Immobile.ricercaImmobileByDenominazione(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 1:  # ricerca per sigla
             immobile = Immobile.ricercaImmobileBySigla(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             immobile = Immobile.ricercaImmobileByCodice(self.searchbar.text())
-            print("imm: ", immobile)
 
         if immobile != None:
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
@@ -115,7 +110,6 @@ class VistaMenuRegistroAnagrafe(QWidget):
 
 
     def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             lista_completamento = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -128,25 +122,18 @@ class VistaMenuRegistroAnagrafe(QWidget):
 
     def go_Gestione_UnitaImmobiliare(self):
         search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
         immobile = 0
         if search_text:
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
                 immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
                 immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", immobile)
         if immobile != None:
-            print("si")
             self.vista_Gestione_UnitaImmobiliare = VistaGestioneRegistroAnagrafe(immobile)
             self.vista_Gestione_UnitaImmobiliare.show()
         else:
-            print("no")
             return None
 
     def go_Gestione_Condomino(self):

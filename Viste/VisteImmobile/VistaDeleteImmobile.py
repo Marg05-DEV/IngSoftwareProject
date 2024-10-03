@@ -58,10 +58,8 @@ class VistaDeleteImmobile(QWidget):
 
     def deleteImmobile(self):
         msg = ""
-        print("in deleteImmobile ---------------")
         for unitaImmobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.sel_immobile).values():
             for cf_condominoAssociato in unitaImmobiliare.condomini.keys():
-                print("sto per eliminare il condomino con cf", cf_condominoAssociato)
                 condomino = Condomino.ricercaCondominoByCF(cf_condominoAssociato)
                 msg = unitaImmobiliare.removeCondomino(condomino)
                 if not condomino.getImmobiliAssociati():

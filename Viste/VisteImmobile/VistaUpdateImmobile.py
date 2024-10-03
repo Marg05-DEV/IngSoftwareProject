@@ -78,16 +78,13 @@ class VistaUpdateImmobile(QWidget):
         return input_layout
 
     def updateImmobile(self):
-        print("si aggiorna")
         temp_immobile = {}
         for attributo in self.input_lines:
-            print("----------------" + attributo + "----------------")
             if self.input_lines[attributo].text() == "":
                 temp_immobile[attributo] = self.sel_immobile.getInfoImmobile()[attributo]
             else:
                 temp_immobile[attributo] = self.input_lines[attributo].text()
 
-        print(temp_immobile)
         msg = self.sel_immobile.modificaImmobile(int(temp_immobile["codice"]),
                                                  temp_immobile["sigla"],
                                                  temp_immobile["denominazione"],
@@ -104,14 +101,12 @@ class VistaUpdateImmobile(QWidget):
             input_line.clear()
 
     def input_validation(self):
-        print("scrivendo ...")
         immobili = Immobile.getAllImmobili()
         num_errors = 0
         unique_fields = ['denominazione', 'sigla', 'codice', 'codiceFiscale']
         there_is_unique_error = {}
 
         for field in unique_fields:
-            print(field)
             there_is_unique_error[field] = False
             for immobile in immobili.values():
                 if str(immobile.getInfoImmobile()[field]).upper() != str(self.sel_immobile.getInfoImmobile()[field]).upper():

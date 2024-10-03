@@ -65,6 +65,7 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         self.buttons[testo] = button
         button.clicked.connect(action)
         return button
+
     def drawLine(self):
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
@@ -72,21 +73,16 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         return line
 
     def pairLabelInput(self, testo, index):
-        print("---------------------- creazione "+ index + " --------------------------")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
         integer_lines = ['scala', 'interno', 'foglio', 'particella', 'subalterno', 'classe']
-        print("fine inizializzazione")
 
         error = QLabel("placeholder")
         error.setStyleSheet("color: red; font-style: italic;")
         error.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         error.setVisible(False)
-        print("fine errori")
-
 
         label = QLabel(testo + ": ")
-        print("fine label")
 
         if index == "tipoUnitaImmobiliare":
             input_line = QComboBox()
@@ -97,8 +93,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText(str(self.sel_unitaImmobiliare.getInfoUnitaImmobiliare()[index]))
             input_line.textChanged.connect(self.input_validation)
-        print("fine input")
-
 
         if index in ['interno', 'scala'] and self.sel_unitaImmobiliare.tipoUnitaImmobiliare != "Appartamento":
             label.setVisible(False)
@@ -110,18 +104,14 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         self.input_lines[index] = input_line
         self.labels[index] = label
         self.input_errors[index] = error
-        print("fine aggiunta array")
 
         pair_layout.addWidget(label)
         pair_layout.addWidget(input_line)
-        print("fine aggiunta layout")
 
 
         input_layout.addWidget(error)
         input_layout.addLayout(pair_layout)
-        print(input_line)
-        print(self.input_lines)
-        print("---------------------- fine creazione " + index + " --------------------------")
+
         return input_layout
 
     def updateUnitaImmobiliare(self):
@@ -136,7 +126,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         if temp_unitaImmobiliare['tipoUnitaImmobiliare'] != "Appartamento":
             temp_unitaImmobiliare['scala'] = "0"
             temp_unitaImmobiliare['interno'] = "0"
-        print(temp_unitaImmobiliare)
 
         msg = self.sel_unitaImmobiliare.modificaUnitaImmobiliare(int(temp_unitaImmobiliare["foglio"]),
                                                    int(temp_unitaImmobiliare["subalterno"]),
@@ -172,7 +161,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
         self.input_errors['interno'].setVisible(False)
 
     def input_validation(self):
-        print("scrivendo ...")
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByCodice(self.sel_unitaImmobiliare.immobile))
         there_is_unique_pair_error = False
 
@@ -188,7 +176,6 @@ class VistaUpdateUnitaImmobiliare(QWidget):
             if self.sel_unitaImmobiliare.tipoUnitaImmobiliare == "Appartamento":
                 required_fields = []
             else:
-                print("interno - scala", self.sel_unitaImmobiliare.interno, self.sel_unitaImmobiliare.scala)
                 self.input_lines['scala'].setPlaceholderText("")
                 self.input_lines['interno'].setPlaceholderText("")
                 self.labels['scala'].setText("Scala*: ")

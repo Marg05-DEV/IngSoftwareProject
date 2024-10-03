@@ -13,7 +13,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
 
     def __init__(self, immobile, callback):
         super(VistaCreateUnitaImmobiliare, self).__init__()
-        print("eu estou")
         self.immobile = immobile
         self.callback = callback
         main_layout = QVBoxLayout()
@@ -68,6 +67,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.buttons[testo] = button
         button.clicked.connect(action)
         return button
+
     def drawLine(self):
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
@@ -133,7 +133,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
             if not ("interno" in self.required_fields and "scala" in self.required_fields):
                 self.required_fields.append("interno")
                 self.required_fields.append("scala")
-        print(self.required_fields)
 
     def createUnitaImmobiliare(self):
         foglio = self.input_lines["foglio"].text()
@@ -168,7 +167,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
         self.input_validation()
 
     def unita_immobiliare_field_dynamic(self):
-        print("scrivendo ...", self.immobile)
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile)
 
         self.there_is_unique_pair_error = False
@@ -189,7 +187,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
 
     def input_validation(self):
         num_writed_lines = 0
-        print(self.required_fields)
         for field in self.required_fields:
             if field == 'tipoUnitaImmobiliare':
                 if self.input_lines[field].currentIndex() != -1:
@@ -201,7 +198,6 @@ class VistaCreateUnitaImmobiliare(QWidget):
                     num_writed_lines += 1
                 else:
                     self.input_errors[field].setVisible(False)
-        print("numero linee riempite", num_writed_lines)
 
         if num_writed_lines < len(self.required_fields) or self.there_is_unique_pair_error:
             self.buttons["Assegna Condomini"].setDisabled(True)

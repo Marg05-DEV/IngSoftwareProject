@@ -14,7 +14,6 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 class VistaCreateCondomino(QWidget):
     def __init__(self, immobile, ui, callback, isIterable):
         super(VistaCreateCondomino, self).__init__()
-        print("------------------------------------------------- create condomino --------------------------------")
         self.immobile = immobile
         self.unitaImmobiliare = ui
         self.callback = callback
@@ -144,7 +143,6 @@ class VistaCreateCondomino(QWidget):
         self.callback("")
 
     def aggiungiCondomino(self):
-        print("stiamo per aggiungere")
         nome = self.input_lines["nome"].text()
         cognome = self.input_lines["cognome"].text()
         residenza = self.input_lines["residenza"].text()
@@ -166,14 +164,10 @@ class VistaCreateCondomino(QWidget):
 
         self.unitaImmobiliare.addCondomino(condomino, titolo)
 
-        print("aggiunta in corso...")
-
         return msg
 
     def terminaAssegnazione(self):
         msg = self.aggiungiCondomino()
-        print("stiamo per uscire", msg)
-        print("f di callback", self.callback)
         self.callback(msg)
         self.close()
 
@@ -219,7 +213,6 @@ class VistaCreateCondomino(QWidget):
             self.button_exist_continue.setVisible(False)
 
     def input_validation(self):
-        print("--------------validazione-------------")
         condomini = Condomino.getAllCondomini()
         num_errors = 0
         num_writed_lines = 0
@@ -231,28 +224,22 @@ class VistaCreateCondomino(QWidget):
         same_ui = False
 
         for field in required_fields:
-            print("campo:", field)
             pieno = False
             if field != 'titolo':
                 if self.input_lines[field].text():
-                    print("PIENO")
                     pieno = True
                 else:
                     self.input_errors[field].setVisible(False)
             else:
-                print("è proprio titolo")
                 if self.input_lines[field].currentIndex() > -1:
-                    print("PIENO")
                     pieno = True
                 else:
                     self.input_errors[field].setVisible(False)
 
             if pieno:
                 num_writed_lines += 1
-                print("num writed", num_writed_lines)
                 if field in unique_fields:
                     there_is_unique_error[field] = False
-                    print("campo unique", field)
                     for condomino in condomini.values():
                         if self.input_lines[field].text().upper() == str(condomino.getDatiAnagraficiCondomino()[field]).upper():
                             num_errors += 1
@@ -294,7 +281,6 @@ class VistaCreateCondomino(QWidget):
                 else:
                     self.input_errors[field].setVisible(False)
 
-        print("fine for")
         if num_errors > 0 or num_writed_lines < len(required_fields):
             if self.isIterable:
                 self.buttons["Termina Assegnazione"].setDisabled(True)

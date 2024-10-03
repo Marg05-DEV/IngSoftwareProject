@@ -90,16 +90,12 @@ class VistaReadCondomino(QWidget):
         return pair_layout
 
     def update_list(self):
-        print("dentro a update 1")
         self.list_immobili = self.sel_condomino.getImmobiliAssociati()
-        print("dentro a update 1", self.list_immobili)
         if not self.list_immobili:
-            print("ciao")
             self.msg.setText("Non ci sono immobili assegnati al condomino selezionato")
             self.msg.show()
         else:
             self.msg.hide()
-        print("dentro a update 2")
         listview_model = QStandardItemModel(self.list_view_immobili)
 
         for immobile in self.list_immobili:

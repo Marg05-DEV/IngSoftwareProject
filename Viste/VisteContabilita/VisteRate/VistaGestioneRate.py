@@ -115,7 +115,6 @@ class VistaGestioneRate(QWidget):
         self.rate = list(Rata.getAllRate().values())
 
         if searchActivated and self.searchbar.text():
-            print("in ricerca")
             if self.searchType.currentIndex() == 0 and len(self.searchbar.text()) == 10:  # ricerca per denominazione
                 day, month, year = [int(x) for x in self.searchbar.text().split("/")]
                 data = datetime.date(year, month, day)
@@ -141,7 +140,6 @@ class VistaGestioneRate(QWidget):
 
         i = 0
         for rata in self.rate:
-            print(rata, rata.getInfoRata())
             self.table_rate.setItem(i, 0, QTableWidgetItem())
             self.table_rate.item(i, 0).setData(Qt.ItemDataRole.DisplayRole, rata.codice)
             self.table_rate.item(i, 0).setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -150,10 +148,7 @@ class VistaGestioneRate(QWidget):
             else:
                 self.table_rate.setItem(i, 1, QTableWidgetItem(""))
             self.table_rate.setItem(i, 2, QTableWidgetItem(rata.versante))
-            #if rata.pagata:
             self.table_rate.setItem(i, 3, QTableWidgetItem(rata.dataPagamento.strftime("%Y/%m/%d")))
-            """else:
-                self.table_rate.setItem(i, 3, QTableWidgetItem())"""
             self.table_rate.setItem(i, 4, QTableWidgetItem(rata.descrizione))
             if rata.numeroRicevuta > 0:
                 self.table_rate.setItem(i, 5, QTableWidgetItem(str(rata.numeroRicevuta)))
@@ -174,7 +169,6 @@ class VistaGestioneRate(QWidget):
         self.table_rate.selectionModel().selectionChanged.connect(self.able_button)
 
     def goCreateRata(self):
-        print("creazione rata")
         self.vista_nuova_rata = VistaCreateRata(callback=self.callback)
         self.vista_nuova_rata.show()
 
@@ -182,7 +176,6 @@ class VistaGestioneRate(QWidget):
         rata_selezionata = None
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
-        print(codice_rata, ": ", rata_selezionata.getInfoRata())
         self.vista_dettaglio_rata = VistaReadRata(rata_selezionata, callback=self.callback)
         self.vista_dettaglio_rata.show()
 
@@ -205,7 +198,6 @@ class VistaGestioneRate(QWidget):
         codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
         rata_selezionata = Rata.ricercaRataByCodice(int(codice_rata))
         directory_file = os.path.dirname(os.path.abspath(__file__)).replace("\\Viste\\VisteContabilita\\VisteRate", "\\Dati\\pdf\\")
-        print(directory_file, directory_file + 'temp')
         if os.path.isdir(directory_file + "temp\\"):
             shutil.rmtree(directory_file + "temp\\")
         if not os.path.isdir(directory_file + "temp\\"):
@@ -241,10 +233,8 @@ class VistaGestioneRate(QWidget):
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()
-        print("table aggio")
 
     def hide_message(self):
-        print("ora di nascondere")
         self.msg.hide()
         self.timer.stop()
         if not self.rate:

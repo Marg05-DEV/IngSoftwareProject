@@ -19,7 +19,6 @@ class VistaSaldoCassa(QWidget):
         main_layout = QVBoxLayout()
 
         main_layout.addWidget(self.new_label("Saldo cassa del giorno"), alignment=Qt.AlignmentFlag.AlignLeft)
-        print("busso1")
         self.table_rate = QTableWidget()
         self.update_table()
         main_layout.addWidget(self.table_rate)
@@ -40,10 +39,8 @@ class VistaSaldoCassa(QWidget):
         self.setWindowTitle("Saldo cassa del " + datetime.date.today().strftime("%d-%m-%Y"))
 
     def update_table(self):
-        print("crazione tabella")
         all_rate = [item for item in Rata.getAllRate().values()]
         rate_pagate_oggi = [item for item in all_rate if item.dataPagamento == datetime.date.today()]
-        print(all_rate)
 
         self.table_rate.setRowCount(len(rate_pagate_oggi)+1)
         self.table_rate.setColumnCount(3)
@@ -59,7 +56,6 @@ class VistaSaldoCassa(QWidget):
                     rimanenza += rata.importo
 
         for n in range(len(rate_pagate_oggi)+1):
-            print("n =", n)
             if n == 0:
                 self.table_rate.setItem(0, 0, QTableWidgetItem(f"Rimanenze fino al giorno {yesterday}"))
                 self.table_rate.setItem(0, 1, QTableWidgetItem("%.2f" % rimanenza))
@@ -68,8 +64,6 @@ class VistaSaldoCassa(QWidget):
                 self.saldo_contanti += rimanenza
 
             if n > 0:
-                print(rate_pagate_oggi[n-1].getInfoRata())
-
                 self.table_rate.setItem(n, 0, QTableWidgetItem(f"{rate_pagate_oggi[n-1].descrizione} di {rate_pagate_oggi[n-1].versante}"))
                 self.table_rate.setItem(n, 1, QTableWidgetItem("%.2f" % rate_pagate_oggi[n-1].importo))
                 self.table_rate.setItem(n, 2, QTableWidgetItem(rate_pagate_oggi[n-1].tipoPagamento))
@@ -100,7 +94,6 @@ class VistaSaldoCassa(QWidget):
         return label
 
     def callback(self, msg, tab):
-        print("callback chiamata", msg)
         self.update_table()
         if msg:
             self.msg.setText(msg)

@@ -12,12 +12,10 @@ class VistaReadRata(QWidget):
 
     def __init__(self, rata, callback):
         super(VistaReadRata, self).__init__()
-        print("dentro a read condomino 1")
         self.rata = rata
         self.callback = callback
 
         main_layout = QVBoxLayout()
-        print("ciaociao")
         main_layout.addLayout(self.pair_label("Codice", "codice"))
 
         if rata.unitaImmobiliare > 0:
@@ -31,7 +29,6 @@ class VistaReadRata(QWidget):
         main_layout.addLayout(self.pair_label("Descrizione", "descrizione"))
         main_layout.addLayout(self.pair_label("Importo", "importo"))
 
-        #if rata.pagata:
         if rata.importo > 0:
             main_layout.addWidget(QLabel("La rata è stata versata"))
             main_layout.addLayout(self.pair_label("Numero Ricevuta", "numeroRicevuta"))
@@ -41,8 +38,6 @@ class VistaReadRata(QWidget):
             main_layout.addWidget(QLabel("Il prelievo è stato effettuato"))
             main_layout.addLayout(self.pair_label("Data prelievo", "dataPagamento"))
             main_layout.addLayout(self.pair_label("Tipologia prelievo", "tipoPagamento"))
-        """else:
-            main_layout.addWidget(QLabel("La rata non è stata versata"))"""
 
         main_layout.addWidget(self.create_button("Modifica Rata", self.updateRata))
         main_layout.addWidget(self.create_button("Rimuovi Rata", self.deleteRata))
@@ -62,7 +57,6 @@ class VistaReadRata(QWidget):
         return button
 
     def pair_label(self, testo, index):
-        print("top")
         pair_layout = QHBoxLayout()
         lbl_content = ""
         condomino = None

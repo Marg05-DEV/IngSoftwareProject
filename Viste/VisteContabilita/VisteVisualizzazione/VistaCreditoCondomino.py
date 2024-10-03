@@ -18,6 +18,7 @@ class VistaCreditoCondomino(QWidget):
         self.condomino_section = {}
         self.immobile = None
         self.credito_totale = 0.0
+        self.lines = []
         main_layout = QVBoxLayout()
 
         self.completer_table = QTableWidget()
@@ -29,7 +30,6 @@ class VistaCreditoCondomino(QWidget):
         popup_type.verticalHeader().hide()
 
         condomini_table = [[(item.cognome + " " + item.nome), item.codiceFiscale] for item in Condomino.getAllCondomini().values()]
-        print(condomini_table)
 
         self.condomini_completer.setCompletionColumn(0)
         self.completer_table.setRowCount(len(condomini_table))
@@ -38,11 +38,8 @@ class VistaCreditoCondomino(QWidget):
         i = 0
         for data in condomini_table:
             j = 0
-            print(data)
             for value in data:
-                print(value)
                 self.completer_table.setItem(i, j, QTableWidgetItem(str(value)))
-                print(data)
                 self.completer_table.item(i, j).setData(Qt.ItemDataRole.UserRole, data)
                 j += 1
             i += 1
@@ -50,24 +47,26 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Condomino")
 
+        self.lbl_search = QLabel("Ricerca condomino da selezionare:")
+
         self.condomini_completer.setModel(self.completer_table.model())
         self.searchbar.setCompleter(self.condomini_completer)
         self.condomini_completer.activated[QModelIndex].connect(self.selectioning_by_completer)
         self.condomini_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print("ciao")
 
         self.lbl_frase_condomino = QLabel("Il condomino non ha nessuna unità immobiliare assegnata")
         self.lbl_frase_condomino.setStyleSheet("font-weight: bold;")
         self.condomino_section["frase"] = self.lbl_frase_condomino
         self.condomino_section["frase"].setVisible(False)
-        find_layout = QHBoxLayout()
         search_layout = QVBoxLayout()
 
+        self.lbl_search.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+
+        search_layout.addWidget(self.lbl_search)
         search_layout.addWidget(self.searchbar)
 
         search_layout.addWidget(self.lbl_frase_condomino)
-        find_layout.addLayout(search_layout)
-        main_layout.addLayout(find_layout)
+        main_layout.addLayout(search_layout)
         msg_layout = QHBoxLayout()
         frase_lbl = QLabel("Stai selezionando: ")
         self.condomino_selezionato = QLabel("Nessun Condomino selezionato")
@@ -86,11 +85,11 @@ class VistaCreditoCondomino(QWidget):
         self.searchbar.textChanged.connect(self.selectioning)
         main_layout.addLayout(msg_layout)
         main_layout.addLayout(self.button_layout)
-        main_layout.addWidget(self.drawLine())
 
-        """ ------------------------- FINE SELEZIONE CONDOMINO ----------------------- """
-        """ ------------------------------ SEZIONE RATE ---------------------------- """
-        self.drawLine()
+        self.lines.append(self.drawLine())
+        self.lines[0].setVisible(True)
+        main_layout.addWidget(self.lines[0])
+
         self.tree_widget = QTreeWidget()
         self.tree_widget.setColumnCount(2)
         self.tree_widget.setHeaderLabels(["Denominazione Immobile", "Importo a Credito"])
@@ -142,9 +141,7 @@ class VistaCreditoCondomino(QWidget):
         return button
 
     def selectioning_by_completer(self, index):
-        print("att", index)
         record = self.condomini_completer.model().data(self.condomini_completer.completionModel().mapToSource(index), Qt.ItemDataRole.UserRole)
-        print("att: ", record)
         if record is not None:
             self.condomino = Condomino.ricercaCondominoByCF(record[1])
         if self.condomino is not None:
@@ -156,11 +153,9 @@ class VistaCreditoCondomino(QWidget):
 
     def selectioning(self):
         record = self.condomini_completer.model().data(self.condomini_completer.completionModel().mapToSource(self.condomini_completer.currentIndex()), Qt.ItemDataRole.UserRole)
-        print("changed: ", record)
         if record is not None:
             if record[0] == self.searchbar.text():
                 self.condomino = Condomino.ricercaCondominoByCF(record[1])
-        print("cond: ", self.condomino)
 
         if self.condomino is not None:
             self.condomino_selezionato.setText(f"{self.condomino.cognome} {self.condomino.nome} - {self.condomino.codiceFiscale}")
@@ -172,6 +167,8 @@ class VistaCreditoCondomino(QWidget):
     def view_credito_condomino(self):
         if self.condomino is not None:
             self.tree_widget.setVisible(True)
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
             return None
@@ -200,7 +197,6 @@ class VistaCreditoCondomino(QWidget):
         self.credito_totale = 0.00
         self.tree_widget.clear()
         for immobile in immobile_con_credito:
-            print("we", immobile_con_credito)
             importo_totale_per_immobile = 0.00
             importo_per_unita = {}
             last_bilancio = Bilancio.getLastBilancio(immobile)
@@ -211,32 +207,23 @@ class VistaCreditoCondomino(QWidget):
                     if last_bilancio:
                         for rate_versate in Rata.getAllRateByUnitaImmobiliare(unita_immobile).values():
                             totale_rate_versate_per_unita += rate_versate.importo
-                        print("totale rate versate per unita", totale_rate_versate_per_unita)
                         if last_bilancio.importiDaVersare[unita_immobile.codice] < 0:
                             importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] + totale_rate_versate_per_unita
                         else:
                             importo_per_unita[unita_immobile.codice] = last_bilancio.importiDaVersare[unita_immobile.codice] - totale_rate_versate_per_unita
-                        print("importo da versare dell'unita", unita_immobile.codice, " :", last_bilancio.importiDaVersare[unita_immobile.codice])
-                        print("importo per unita", importo_per_unita)
                         importo_totale_per_immobile += importo_per_unita[unita_immobile.codice]
                         self.credito_totale += importo_totale_per_immobile
-            print("prima di item")
             if last_bilancio:
-                print("bilancio ok: ", last_bilancio)
                 item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_totale_per_immobile)])
             else:
                 item = QTreeWidgetItem([immobile.denominazione, "Nessun bilancio approvato per questo immobile"])
 
-            print("dopo item")
             for key, value in importo_per_unita.items():
-                print("key", key)
                 unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(key)
-                print("f")
                 if unita.tipoUnitaImmobiliare == "Appartamento":
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno}"
                 else:
                     unita_immobiliare = f"{unita.tipoUnitaImmobiliare}"
-                print(unita_immobiliare, value)
                 if last_bilancio:
                     child = QTreeWidgetItem([unita_immobiliare, str("%.2f" % value)])
                 else:
@@ -249,18 +236,11 @@ class VistaCreditoCondomino(QWidget):
         self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
         if immobile_con_credito:
-            print("ecc ")
             self.tree_widget.setVisible(True)
             self.condomino_section["frase"].setVisible(False)
-            #if last_bilancio:
-            print("eccecc")
             self.credito_condomino_section["frase_credito_totale"].setVisible(True)
             self.credito_condomino_section["credito_totale"].setText("%.2f" % self.credito_totale)
             self.credito_condomino_section["credito_totale"].setVisible(True)
-            """else:
-                print("ecceccecc")
-                self.credito_condomino_section["frase_credito_totale"].setVisible(False)
-                self.credito_condomino_section["credito_totale"].setVisible(False)"""
         else:
             self.tree_widget.setVisible(False)
             self.condomino_section["frase"].setVisible(True)

@@ -133,8 +133,6 @@ class VistaGestioneImmobile(QWidget):
 
     def update_list(self, sorting_function=Immobile.ordinaImmobileByDenominazione, decr=False, searchActivated=False):
         self.lista_immobili = list(Immobile.getAllImmobili().values())
-        print(Immobile.getAllImmobili().values())
-        print(self.lista_immobili)
         if searchActivated and self.searchbar.text():
             if self.searchType.currentIndex() == 0: # ricerca per denominazione
                 self.lista_immobili = [item for item in self.lista_immobili if self.searchbar.text().upper() in item.denominazione.upper()]
@@ -170,7 +168,6 @@ class VistaGestioneImmobile(QWidget):
 
         self.selectionModel = self.list_view_immobili.selectionModel()
         self.selectionModel.selectionChanged.connect(self.able_button)
-        print(type(self.selectionModel))
 
 
     def go_Create_immobile(self):
@@ -181,7 +178,6 @@ class VistaGestioneImmobile(QWidget):
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         self.vista_dettaglio_immobile = VistaReadImmobile(sel_immobile, callback=self.callback)
         self.vista_dettaglio_immobile.show()
@@ -190,11 +186,7 @@ class VistaGestioneImmobile(QWidget):
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
-            print("ciao")
-            print(int(item.text().split(" ")[0]))
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
-        print(sel_immobile, ": ", sel_immobile.getInfoImmobile())
         self.vista_modifica_immobile = VistaUpdateImmobile(sel_immobile, callback=self.callback)
         self.vista_modifica_immobile.show()
 
@@ -226,9 +218,7 @@ class VistaGestioneImmobile(QWidget):
         self.searchType.clear()
         self.searchType.addItems(["Ricerca per denominazione", "Ricerca per sigla", "Ricerca per codice"])
         sort, desc = self.ordina_lista(True)
-        print("prima di richiamare update_list in callback")
         self.update_list(sort, desc)
-        print("dopo averla richiamta")
         self.msg.setText(msg)
         self.msg.show()
         self.timer.start()

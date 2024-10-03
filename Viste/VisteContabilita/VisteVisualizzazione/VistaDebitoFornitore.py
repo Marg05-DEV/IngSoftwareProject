@@ -1,12 +1,9 @@
-from PyQt6.QtCore import Qt, QStringListModel, QTimer
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
+from PyQt6.QtCore import Qt, QStringListModel
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
+    QPushButton, QFrame, QTreeWidget, QTreeWidgetItem, QHeaderView
 
 from Classes.Contabilita.fornitore import Fornitore
-from Classes.Contabilita.rata import Rata
 from Classes.Contabilita.spesa import Spesa
-from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
@@ -17,16 +14,15 @@ class VistaDebitoFornitore(QWidget):
         self.buttons = {}
         self.immobile = None
         self.debito_totale = 0.00
+        self.lines = []
         main_layout = QVBoxLayout()
 
 
         completer_list = sorted([item.denominazione for item in Fornitore.getAllFornitore().values()])
-        print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Fornitore")
         self.fornitori_completer = QCompleter(completer_list)
         self.fornitori_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print(self.fornitori_completer.completionModel())
         self.searchbar.setCompleter(self.fornitori_completer)
         self.lbl_search = QLabel("Ricerca fornitore da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
@@ -66,16 +62,11 @@ class VistaDebitoFornitore(QWidget):
             self.fornitore_selezionato.setVisible(False)
 
         self.button_layout = QHBoxLayout()
-        print("u")
 
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_debito_fornitore))
         self.buttons["Seleziona"].setEnabled(False)
         self.searchbar.textChanged.connect(self.selectioning)
-        print("c")
 
-        """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
-        print("d")
-        self.drawLine()
         self.tree_widget = QTreeWidget()
         self.tree_widget.setColumnCount(2)
         self.tree_widget.setHeaderLabels(["Denominazione Immobile", "Importo"])
@@ -89,7 +80,9 @@ class VistaDebitoFornitore(QWidget):
 
         main_layout.addLayout(find_layout)
         main_layout.addLayout(self.button_layout)
-        main_layout.addWidget(self.drawLine())
+        self.lines.append(self.drawLine())
+        self.lines[0].setVisible(False)
+        main_layout.addWidget(self.lines[0])
         main_layout.addWidget(self.tree_widget)
         main_layout.addWidget(self.spese_a_debito_non_presenti)
 
@@ -136,10 +129,8 @@ class VistaDebitoFornitore(QWidget):
 
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             fornitore = Fornitore.ricercaFornitoreByDenominazione(self.searchbar.text())
-            print("imm: ", fornitore)
         elif self.searchType.currentIndex() == 1:  # ricerca per partita iva
             fornitore = Fornitore.ricercaFornitoreByPartitaIVA(self.searchbar.text())
-            print("imm: ", fornitore)
 
         if fornitore != None:
             self.fornitore_selezionato.setText(f"{fornitore.denominazione} - {fornitore.partitaIva}")
@@ -149,8 +140,6 @@ class VistaDebitoFornitore(QWidget):
             self.buttons["Seleziona"].setEnabled(False)
 
     def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(
-            self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             lista_completamento = sorted([item.denominazione for item in Fornitore.getAllFornitore().values()])
@@ -162,22 +151,19 @@ class VistaDebitoFornitore(QWidget):
 
     def view_debito_fornitore(self):
         search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
         self.fornitore = 0
         if search_text:
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 self.fornitore = Fornitore.ricercaFornitoreByDenominazione(search_text)
-                print("imm: ", self.fornitore)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
                 self.fornitore = Fornitore.ricercaFornitoreByPartitaIVA(search_text)
-                print("imm: ", self.fornitore)
 
         if self.fornitore != None:
             self.tree_widget.setVisible(True)
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
-            print("no")
             return None
 
     def update_list(self):
@@ -188,8 +174,6 @@ class VistaDebitoFornitore(QWidget):
             if not spesa.pagata:
                 self.spese_non_pagate.append(spesa)
                 self.debito_totale += spesa.importo
-
-        print(self.spese_non_pagate)
 
         if not self.spese_non_pagate:
             self.tree_widget.setVisible(False)
@@ -202,12 +186,10 @@ class VistaDebitoFornitore(QWidget):
         list_immobili_con_debito = []
         for immobile in Immobile.getAllImmobili().values():
             for spese in self.spese_non_pagate:
-                print("if degli immobili: ", immobile.id == spese.immobile)
                 if immobile.id == spese.immobile:
                     if immobile not in list_immobili_con_debito:
                         list_immobili_con_debito.append(immobile)
 
-        print("immobili: ", list_immobili_con_debito)
         for immobile in list_immobili_con_debito:
             importo_debito_immobile = 0.00
             for spesa in self.spese_non_pagate:
@@ -215,7 +197,6 @@ class VistaDebitoFornitore(QWidget):
                     importo_debito_immobile += spesa.importo
             item = QTreeWidgetItem([immobile.denominazione, str("%.2f" % importo_debito_immobile)])
             for spese_debito in self.spese_non_pagate:
-                print(immobile.id)
                 if spese_debito.immobile == immobile.id:
                     child = QTreeWidgetItem([spese_debito.descrizione, str("%.2f" % spese_debito.importo)])
                     item.addChild(child)

@@ -39,8 +39,8 @@ class TabellaMillesimale:
         return {
             "nome": self.nome,
             "tipologieSpesa": self.tipologieSpesa,
-            "Descrizione": self.descrizione,
-            "Millesimi": self.millesimi
+            "descrizione": self.descrizione,
+            "millesimi": self.millesimi
         }
 
     @staticmethod
@@ -136,8 +136,8 @@ class TabellaMillesimale:
             with open(nome_file, "rb") as f:
                 tabelle_millesimali = dict(pickle.load(f))
                 tabelle_millesimali[self.codice].tipologieSpesa.remove(tipo_spesa.codice)
-            with open(nome_file, "wb") as f:
-                pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
+        with open(nome_file, "wb") as f:
+            pickle.dump(tabelle_millesimali, f, pickle.HIGHEST_PROTOCOL)
 
     def addMillesimo(self, unita, valore):
         if os.path.isfile(nome_file):

@@ -125,7 +125,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         self.lista_unitaImmobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
 
         if searchActivated and self.searchbar.text():
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per scala
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in str(item.scala).upper()]
             if self.searchType.currentIndex() == 1:  # ricerca per interno
@@ -150,7 +149,6 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
-            print(unitaImmobiliare.condomini)
             proprietario = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
             if not proprietario:
                 proprietario_text = "Nessun proprietario"

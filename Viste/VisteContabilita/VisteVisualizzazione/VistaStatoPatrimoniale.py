@@ -15,21 +15,17 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
 class VistaStatoPatrimoniale(QWidget):
     def __init__(self):
-        print("class VistaMenuRegistroAnagrafe - __init__ inizio")
-        print(Immobile.getAllImmobili())
-
         super(VistaStatoPatrimoniale, self).__init__()
         self.buttons = {}
         self.immobile = None
+        self.lines = []
         main_layout = QVBoxLayout()
 
         completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
-        print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
         self.immobili_completer = QCompleter(completer_list)
         self.immobili_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print(self.immobili_completer.completionModel())
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
@@ -75,20 +71,14 @@ class VistaStatoPatrimoniale(QWidget):
         self.searchbar.textChanged.connect(self.selectioning)
         main_layout.addLayout(self.button_layout)
 
-        """ ------------------------- FINE SELEZIONE IMMOBILE ----------------------- """
-        """ ------------------------------ SEZIONE SPESE ---------------------------- """
-
         self.spese_section = {}
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
-        #self.list_view_spese = QListView()
-        #self.list_view_spese.setAlternatingRowColors(True)
         self.table_spese = QTableWidget()
         self.error_no_spese = QLabel("")
         self.error_no_spese.setStyleSheet("font-weight: bold;")
         self.spese_section["frase"] = self.lbl_frase
-        #self.spese_section["lista_spese"] = self.list_view_spese
         self.spese_section["lista_spese"] = self.table_spese
         self.spese_section["no_spese"] = self.error_no_spese
         self.spese_section["no_spese"].setVisible(False)
@@ -106,25 +96,19 @@ class VistaStatoPatrimoniale(QWidget):
         totale_spese_layout.addWidget(lbl_totale_spese)
         spesa_layout.addLayout(totale_spese_layout)
 
-        """ ------------------------------ SEZIONE RATE ---------------------------- """
-
         self.rate_section = {}
 
         rata_layout = QVBoxLayout()
         self.lbl_frase1 = QLabel("Rate:")
         self.lbl_frase1.setFixedSize(self.lbl_frase1.sizeHint())
-        #self.list_view_rate = QListView()
-        #self.list_view_rate.setAlternatingRowColors(True)
         self.table_rate = QTableWidget()
         self.error_no_rate = QLabel("")
         self.error_no_rate.setStyleSheet("font-weight: bold;")
         self.rate_section["frase"] = self.lbl_frase1
-        #self.rate_section["lista_rate"] = self.list_view_rate
         self.rate_section["lista_rate"] = self.table_rate
         self.rate_section["no_rate"] = self.error_no_rate
         self.rate_section["no_rate"].setVisible(False)
         rata_layout.addWidget(self.lbl_frase1)
-        #rata_layout.addWidget(self.list_view_rate)
         rata_layout.addWidget(self.table_rate)
         rata_layout.addWidget(self.error_no_rate)
 
@@ -148,9 +132,14 @@ class VistaStatoPatrimoniale(QWidget):
         self.msg.setStyleSheet("color: red; font-weight: bold;")
         self.msg.hide()
 
-        main_layout.addWidget(self.drawLine())
+        self.lines.append(self.drawLine())
+        self.lines.append(self.drawLine())
+
+        for line in self.lines:
+            line.setVisible(False)
+        main_layout.addWidget(self.lines[0])
         main_layout.addLayout(spesa_layout)
-        main_layout.addWidget(self.drawLine())
+        main_layout.addWidget(self.lines[1])
         main_layout.addLayout(rata_layout)
         main_layout.addWidget(self.msg)
 
@@ -177,13 +166,10 @@ class VistaStatoPatrimoniale(QWidget):
 
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             immobile = Immobile.ricercaImmobileByDenominazione(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 1:  # ricerca per sigla
             immobile = Immobile.ricercaImmobileBySigla(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             immobile = Immobile.ricercaImmobileByCodice(self.searchbar.text())
-            print("imm: ", immobile)
 
         if immobile != None:
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
@@ -193,7 +179,6 @@ class VistaStatoPatrimoniale(QWidget):
             self.buttons["Seleziona"].setDisabled(True)
 
     def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             lista_completamento = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
@@ -206,20 +191,17 @@ class VistaStatoPatrimoniale(QWidget):
 
     def view_stato_patrimoniale(self):
         search_text = self.searchbar.text()
-        print(f"Testo della barra di ricerca: {search_text}")
         self.immobile = 0
         if search_text:
-            print("sto cercando...")
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 self.immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", self.immobile)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
                 self.immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", self.immobile)
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
                 self.immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", self.immobile)
         if self.immobile != None:
+            for line in self.lines:
+                line.setVisible(True)
             self.update_list()
         else:
             return None
@@ -245,10 +227,8 @@ class VistaStatoPatrimoniale(QWidget):
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
         importi_tutti_nulli = False
         importi_da_non_rappresentare = []
-        print("Lunghezza spese: ", len(self.spese))
         self.table_spese.setColumnCount(2)
         self.table_spese.setRowCount(len(self.spese))
-        #self.table_spese.setRowCount(len(self.spese) + 1)
 
         if self.rate_da_versare:
             for r in self.rate_da_versare.values():
@@ -285,21 +265,6 @@ class VistaStatoPatrimoniale(QWidget):
             self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
             self.spese_section["no_spese"].setVisible(True)
 
-        """listview_model = QStandardItemModel(self.list_view_spese)
-        for spesa in self.spese:
-            item = QStandardItem()
-            if not spesa.pagata:
-                importo = str("%.2f" % spesa.importo)
-                item_text = f"{importo} verso {Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione}"
-                item.setText(item_text)
-                item.setEditable(False)
-                font = item.font()
-                font.setPointSize(12)
-                item.setFont(font)
-                listview_model.appendRow(item)
-
-        self.list_view_spese.setModel(listview_model)"""
-
         self.table_spese.setHorizontalHeaderItem(0, QTableWidgetItem("Importo"))
         self.table_spese.setHorizontalHeaderItem(1, QTableWidgetItem("Fornitore"))
 
@@ -315,8 +280,6 @@ class VistaStatoPatrimoniale(QWidget):
                 if not spesa.pagata:
                     importo_totale += spesa.importo
             self.spese_section["totale"].setText(str("%.2f" % importo_totale))
-            """self.table_spese.setItem(len(self.spese) + 1, 0, QTableWidgetItem("Debito verso fornitori dell'immobile"))
-            self.table_spese.setItem(len(self.spese) + 1, 1, QTableWidgetItem(str("%.2f" % importo_totale)))"""
             for spese in self.spese_section.values():
                 spese.setVisible(True)
             self.spese_section["no_spese"].setVisible(False)
@@ -326,7 +289,6 @@ class VistaStatoPatrimoniale(QWidget):
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_spese.verticalHeader().setVisible(False)
 
-        #listview_model1 = QStandardItemModel(self.list_view_rate)
         self.table_rate.setColumnCount(2)
 
         count = 0
@@ -342,7 +304,6 @@ class VistaStatoPatrimoniale(QWidget):
             j = 0
             unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
             if self.rate_da_versare[unita] > 0:
-                print("Questo che roba è: ", self.rate_da_versare[unita])
                 if unita in self.rate_da_versare.keys():
                     item = QStandardItem()
                     importo = self.rate_da_versare[unita] - self.rate_versate[unita]
@@ -381,20 +342,11 @@ class VistaStatoPatrimoniale(QWidget):
                             item_text = f"{unita_immo.tipoUnitaImmobiliare} di Nessun proprietario"
                             self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
                             self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
-                    """item.setText(item_text)
-                    item.setEditable(False)
-                    font = item.font()
-                    font.setPointSize(12)
-                    item.setFont(font)
-                    listview_model1.appendRow(item)"""
             i += 1
 
         importo_totale = 0.00
-        print("qui finisce")
-        #self.list_view_rate.setModel(listview_model1)
 
         if self.rate_da_versare and not importi_tutti_nulli:
-            print("nell'if")
             for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
                 if self.rate_da_versare[unita] > 0:
                     if unita in self.rate_da_versare.keys():
