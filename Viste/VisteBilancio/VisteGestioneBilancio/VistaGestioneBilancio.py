@@ -73,9 +73,7 @@ class VistaGestioneBilancio(QWidget):
         return button
 
     def new_label(self, testo, index):
-        print("dentro label: ", testo, " ", index)
         label = QLabel(testo + ": " + str(self.immobile.getInfoImmobile()[index]))
-        print(label)
         return label
 
     def gestisciBottoni(self):
@@ -126,14 +124,12 @@ class VistaGestioneBilancio(QWidget):
         self.ripartizione_consuntivo.show()
 
     def goProspettiEsercizio(self):
-        print("prospetti esercizio")
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
         pdf = GestoreBilancio.visualizzaProspettiEsercizio(self.bilancio)
 
         directory_files = os.path.dirname(os.path.abspath(__file__)).replace("Viste\\VisteBilancio\\VisteGestioneBilancio", "Dati\\pdf\\")
 
         nome_file = f"Esercizio{self.bilancio.inizioEsercizio.year}-{self.bilancio.fineEsercizio.year}"
-        print(nome_file)
 
         pdf.output(f"{directory_files}{self.immobile.sigla}\\{nome_file}.pdf")
         webbrowser.open(f"{directory_files}{self.immobile.sigla}\\{nome_file}.pdf")
@@ -146,8 +142,6 @@ class VistaGestioneBilancio(QWidget):
 
     def callback(self):
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-        print(" -------------- dentro la callback per aggiornare i bottoni -----------------")
-        print(self.bilancio.getInfoBilancio())
         self.gestisciBottoni()
 
     def avvisoConfermato(self):

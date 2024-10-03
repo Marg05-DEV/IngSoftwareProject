@@ -26,7 +26,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
         self.table_tabellaMillesimale = QTableWidget()
         self.table_tabellaMillesimale.cellChanged.connect(self.saveMatrix)
         self.update_table()
-        print("-------------------------------------PRIMA CHIAMATA - collegamento signal _________________")
 
         action_layout.addWidget(self.table_tabellaMillesimale)
 
@@ -82,13 +81,10 @@ class VistaGestioneTabelleMillesimali(QWidget):
             self.table_tabellaMillesimale.horizontalHeaderItem(i).setData(Qt.ItemDataRole.UserRole, tabella.codice)
             i += 1
 
-        print("prima del for")
         totale_millesimi_tabella = {}
         i = 0
         for unita in unita_immobiliari:
-            print(unita.getInfoUnitaImmobiliare())
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                print(unita.condomini)
                 if unita.condomini:
                     for condomini in unita.condomini.keys():
                         if unita.condomini[condomini] == "Proprietario":
@@ -120,26 +116,20 @@ class VistaGestioneTabelleMillesimali(QWidget):
                         f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
             j = 0
             for tabella in tabelle_millesimali:
-                print(tabella.millesimi)
                 if unita.codice not in tabella.millesimi:
-                    print("prima della chiamata addMillesimo")
                     tabella.addMillesimo(unita, 0.00)
                     tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
-                    print("dopo la chiamata addMillesimo")
 
                 if j in totale_millesimi_tabella:
                     totale_millesimi_tabella[j] += tabella.millesimi[unita.codice]
                 else:
                     totale_millesimi_tabella[j] = tabella.millesimi[unita.codice]
-                print("riga del totale", totale_millesimi_tabella)
 
                 self.table_tabellaMillesimale.setItem(i, j, QTableWidgetItem("%.2f" % tabella.millesimi[unita.codice]))
                 self.table_tabellaMillesimale.item(i, j).setData(Qt.ItemDataRole.UserRole,[unita.codice, tabella.codice])
                 j += 1
 
             i += 1
-            print("fine ciclo ", i)
-        print("fine for")
 
         self.table_tabellaMillesimale.setVerticalHeaderItem(len(unita_immobiliari),
                                                             QTableWidgetItem("TOTALE MILLESIMI"))
@@ -201,7 +191,6 @@ class VistaGestioneTabelleMillesimali(QWidget):
             self.button_list["Rimuovi Tabella Millesimale"].setDisabled(False)
 
     def callback(self, msg):
-        print(" callback chiamata", msg)
         self.button_list["Visualizza Tabella Millesimale"].setDisabled(True)
         self.button_list["Rimuovi Tabella Millesimale"].setDisabled(True)
         self.update_table()

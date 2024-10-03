@@ -20,7 +20,6 @@ class VistaGestioneEsercizi(QWidget):
         main_layout = QVBoxLayout()
         action_layout = QHBoxLayout()
 
-        print("print lista bilanci")
         self.list_view_bilanci = QListWidget()
 
         button_layout = QVBoxLayout()
@@ -43,7 +42,6 @@ class VistaGestioneEsercizi(QWidget):
 
         new_esercizio_layout.addLayout(date_esercizio_layout)
         new_esercizio_layout.addLayout(button_new_esercizio_layout)
-        print("prima richiamo")
 
 
         self.lbl_bilancio_exists = QLabel("Il bilancio è esistente")
@@ -80,7 +78,6 @@ class VistaGestioneEsercizi(QWidget):
         return button
 
     def pairLabelInput(self, testo, index):
-        print("da subito")
         input_layout = QVBoxLayout()
         pair_layout = QHBoxLayout()
 
@@ -92,7 +89,6 @@ class VistaGestioneEsercizi(QWidget):
         label = QLabel(testo + "*: ")
         input_line = QDateEdit()
         if index == "inizioEsercizio":
-            print("primo controllo")
             input_line.setDate(datetime.date.today())
             input_line.dateChanged.connect(self.autoset_data_fine)
             input_line.dateChanged.connect(self.input_validation)
@@ -127,7 +123,6 @@ class VistaGestioneEsercizi(QWidget):
         self.list_view_bilanci.clear()
 
         for bilancio in bilanci_immobile:
-            print("printando", bilancio.getInfoBilancio())
             item = QListWidgetItem()
             if bilancio.isApprovata:
                 item_text = f"Bilancio: {bilancio.inizioEsercizio} - {bilancio.fineEsercizio} -> Approvato il {bilancio.dataApprovazione}"
@@ -179,16 +174,13 @@ class VistaGestioneEsercizi(QWidget):
         self.input_lines["fineEsercizio"].setDate(data_fine)
 
     def input_validation(self):
-        print("a")
         data_inizio = self.input_lines["inizioEsercizio"].text()
         data_inizio = data_inizio.split("/")
         data_inizio = datetime.date(int(data_inizio[2]), int(data_inizio[1]), int(data_inizio[0]))
-        print("b")
 
         data_fine = self.input_lines["fineEsercizio"].text()
         data_fine = data_fine.split("/")
         data_fine = datetime.date(int(data_fine[2]), int(data_fine[1]), int(data_fine[0]))
-        print("c")
         bilancio_esistente = False
         for bilancio in Bilancio.getAllBilanciByImmobile(self.immobile).values():
             if (data_inizio >= bilancio.inizioEsercizio and data_inizio <= bilancio.fineEsercizio) or (data_fine >= bilancio.inizioEsercizio and data_fine <= bilancio.fineEsercizio):
@@ -198,12 +190,9 @@ class VistaGestioneEsercizi(QWidget):
             self.input_errors["error"].setVisible(True)
         else:
             self.input_errors["error"].setVisible(False)
-        print(self.input_errors["error"].isVisible())
         if data_inizio > data_fine or self.input_errors["error"].isVisible():
-            print("e")
             self.button_list["Nuovo Esercizio"].setDisabled(True)
         else:
-            print("f")
             self.button_list["Nuovo Esercizio"].setDisabled(False)
 
     def callback(self, msg=""):

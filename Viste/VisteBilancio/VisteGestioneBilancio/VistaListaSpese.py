@@ -63,12 +63,9 @@ class VistaListaSpese(QWidget):
         return button
 
     def update_table(self):
-        print("dentro update")
         self.bilancio.aggiornaListaSpeseAConsuntivo()
 
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-        print(self.bilancio.listaSpeseAConsuntivo)
-        print(self.bilancio.listaSpeseNonAConsuntivo)
 
         if not self.bilancio.listaSpeseAConsuntivo and not self.bilancio.listaSpeseNonAConsuntivo:
             self.msg.setText("Non sono presenti spese in questo esercizio")
@@ -76,13 +73,10 @@ class VistaListaSpese(QWidget):
         elif not self.timer.isActive():
             self.msg.hide()
 
-        print("sorpasso. controllo liste vuote")
         self.table_spese.setRowCount(len(self.bilancio.listaSpeseAConsuntivo) + len(self.bilancio.listaSpeseNonAConsuntivo))
         self.table_spese.setColumnCount(9)
-        print("sorpasso. set dimensioni tabella")
         self.table_spese.setHorizontalHeaderLabels(["Cod.", "Immobile", "Data di pagamento", "Descrizione", "Tipologia di spesa", "Fornitore", "Importo", "Pagata", "A Consuntivo"])
         self.table_spese.verticalHeader().setVisible(False)
-        print("sorpasso. prima di stampare le spese")
 
         i = 0
         for cod_spesa in self.bilancio.listaSpeseAConsuntivo:
@@ -99,7 +93,6 @@ class VistaListaSpese(QWidget):
             self.table_spese.setItem(i, 4, QTableWidgetItem(TipoSpesa.ricercaTipoSpesaByCodice(spesa.tipoSpesa).nome))
             self.table_spese.setItem(i, 5, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
             self.table_spese.setItem(i, 6, QTableWidgetItem(str("%.2f" % spesa.importo)))
-            print("prima di allineare l'importo")
             self.table_spese.item(i, 6).setTextAlignment(Qt.AlignmentFlag.AlignRight)
 
             cell_widget = QWidget()
@@ -120,7 +113,6 @@ class VistaListaSpese(QWidget):
             cell_widget.setLayout(checkbox_layout)
 
             self.table_spese.setCellWidget(i, 7, cell_widget)
-            print(" ----------- sorpasso. appena prima di mettere un checkbox")
             cell_widget_scelta = QWidget()
             checkbox = QCheckBox()
             checkbox.setChecked(True)
@@ -134,9 +126,7 @@ class VistaListaSpese(QWidget):
             checkbox_scelta_layout.setContentsMargins(0, 0, 0, 0)
             cell_widget_scelta.setLayout(checkbox_scelta_layout)
             self.table_spese.setCellWidget(i, 8, cell_widget_scelta)
-            print("------------ appena dope")
             i += 1
-        print("sorpasso. printed lista a cons")
 
         for cod_spesa in self.bilancio.listaSpeseNonAConsuntivo:
             spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
@@ -157,7 +147,6 @@ class VistaListaSpese(QWidget):
             checkbox_pagata = QCheckBox()
             self.checkboxes_pagata[spesa.codice] = checkbox_pagata
             checkbox_pagata.stateChanged.connect(self.reset_pagata)
-            print("b")
             if spesa.pagata:
                 checkbox_pagata.setCheckState(Qt.CheckState.Checked)
             else:
@@ -172,7 +161,6 @@ class VistaListaSpese(QWidget):
             cell_widget.setLayout(checkbox_layout)
 
             self.table_spese.setCellWidget(i, 7, cell_widget)
-            print(" ----------- sorpasso. appena prima di mettere un checkbox")
             cell_widget_scelta = QWidget()
             checkbox = QCheckBox()
             checkbox.setChecked(False)
@@ -186,9 +174,7 @@ class VistaListaSpese(QWidget):
             checkbox_scelta_layout.setContentsMargins(0, 0, 0, 0)
             cell_widget_scelta.setLayout(checkbox_scelta_layout)
             self.table_spese.setCellWidget(i, 8, cell_widget_scelta)
-            print("------------ appena dope")
             i += 1
-        print("sorpasso. printed lista a non cons")
         self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table_spese.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         self.table_spese.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
@@ -208,19 +194,16 @@ class VistaListaSpese(QWidget):
             checkbox.setCheckState(Qt.CheckState.Unchecked)
 
     def goCalcolaConsuntivo(self):
-        print('dentro consuntivo si va')
         self.bilancio.passaggioRaggiunto("speseConsuntivate")
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
         self.bilancio.calcolaSpeseConsuntivo()
         self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-        print("si va al consuntivo", self.bilancio.getInfoBilancio)
         self.close()
         self.calcolo_consuntivo = VistaCalcoloConsuntivo(self.bilancio, self.callback)
         self.calcolo_consuntivo.show()
 
     def changeList(self):
         for cod_spesa, checkbox in self.checkboxes.items():
-            print("checkbox chiamante", self.sender(), "checkbox che cicla", checkbox)
             if checkbox is self.sender():
                 self.bilancio.changeListaConsuntivo(cod_spesa)
         self.update_table()

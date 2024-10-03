@@ -3,7 +3,6 @@ from unittest import TestCase
 
 from Classes.Contabilita.spesa import Spesa
 
-nome_file = 'Dati/Spesa.pickle'
 class TestGestioneSpesa(TestCase):
     def test_add_spesa(self):
         self.spesa = Spesa()
@@ -11,7 +10,6 @@ class TestGestioneSpesa(TestCase):
         spese = Spesa.getAllSpese()
         self.assertIsNotNone(spese)
         self.assertIn(self.spesa.codice, spese)
-        print("dentro add spese", self.spesa.codice)
 
     def test_delete_spesa(self):
         spese = Spesa.getAllSpese()

@@ -3,7 +3,6 @@ from unittest import TestCase
 from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.Contabilita.tipoSpesa import TipoSpesa
 
-nome_file = 'Dati/TipiSpesa.pickle'
 class TestGestioneTipoSpesa(TestCase):
     def test_add_tipoSpesa(self):
         self.tipoSpesa = TipoSpesa()

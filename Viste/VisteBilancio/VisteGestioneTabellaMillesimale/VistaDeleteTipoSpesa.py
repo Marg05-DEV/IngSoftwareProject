@@ -14,7 +14,6 @@ class VistaDeleteTipoSpesa(QWidget):
         self.callback = callback
         self.tabella_millesimale = tabella_millesimale
         self.tipo_spesa = tipo_spesa
-        print("dentro delete", self.tipo_spesa)
         main_layout = QVBoxLayout()
 
         lbl_frase = QLabel("Sei sicuro di voler rimuovere il tipo di spesa?")
@@ -60,9 +59,7 @@ class VistaDeleteTipoSpesa(QWidget):
         return warning_msg_layout
 
     def delete_tipo_spesa(self):
-        print("pronto per l'eliminazione", self.tabella_millesimale, self.tipo_spesa)
         self.tabella_millesimale.removeTipoSpesa(self.tipo_spesa)
-        print("e")
         msg = "Il tipo di spesa è stato dissociato"
         self.callback(msg)
         self.close()

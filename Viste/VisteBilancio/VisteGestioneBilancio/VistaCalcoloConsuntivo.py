@@ -18,8 +18,6 @@ class VistaCalcoloConsuntivo(QWidget):
         self.bilancio = bilancio
         self.callback = callback
 
-        print(self.bilancio.listaSpeseAConsuntivo)
-
         main_layout = QVBoxLayout()
 
         self.table_calcolo_consuntivo = QTableWidget()

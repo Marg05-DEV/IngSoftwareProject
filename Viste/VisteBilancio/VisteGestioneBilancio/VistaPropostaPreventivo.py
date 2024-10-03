@@ -113,13 +113,10 @@ class VistaPropostaPreventivo(QWidget):
         self.table_proposta_preventivo.cellChanged.connect(self.saveMatrix)
 
     def saveMatrix(self, row, column):
-        print("edit effettuato", row, column)
         match = re.fullmatch("[0-9]*|[0-9]*[.,][0-9]{0,2}", self.table_proposta_preventivo.item(row, column).text())
-        print("matcha?", match)
         coordinate = self.table_proposta_preventivo.item(row, column).data(Qt.ItemDataRole.UserRole)
         if coordinate is not None:
             if match is not None:
-                print(match, coordinate)
                 importo = float(self.table_proposta_preventivo.item(row, column).text().replace(",", "."))
                 self.bilancio.addImportoPreventivato(coordinate[0], coordinate[1], importo)
             else:

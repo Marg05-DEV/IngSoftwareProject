@@ -14,12 +14,10 @@ class VistaMenuGestioneBilancio(QWidget):
         main_layout = QVBoxLayout()
 
         completer_list = [item.denominazione for item in Immobile.getAllImmobili().values()]
-        print(completer_list)
         self.searchbar = QLineEdit()
         self.searchbar.setPlaceholderText("Ricerca Immobile")
         self.immobili_completer = QCompleter(completer_list)
         self.immobili_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        print(self.immobili_completer.completionModel())
         self.searchbar.setCompleter(self.immobili_completer)
         self.lbl_search = QLabel("Ricerca l'immobile da selezionare:")
         self.lbl_searchType = QLabel("Ricerca per:")
@@ -86,28 +84,22 @@ class VistaMenuGestioneBilancio(QWidget):
 
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             immobile = Immobile.ricercaImmobileByDenominazione(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 1:  # ricerca per sigla
             immobile = Immobile.ricercaImmobileBySigla(self.searchbar.text())
-            print("imm: ", immobile)
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             immobile = Immobile.ricercaImmobileByCodice(self.searchbar.text())
-            print("imm: ", immobile)
 
         if immobile != None:
-            print("immobile trovato")
             self.immobile_selezionato.setText(f"{immobile.codice} - {immobile.sigla} - {immobile.denominazione}")
             self.select_button.setEnabled(True)
             self.select_button1.setEnabled(True)
         else:
-            print("Nessun immobile trovato")
             self.immobile_selezionato.setText("Nessun immobile selezionato")
             self.select_button.setEnabled(False)
             self.select_button1.setEnabled(False)
 
 
     def sel_tipo_ricerca(self):
-        print("selected index SEARCHING: " + str(self.searchType.currentIndex()) + " -> " + str(self.searchType.currentText()))
         lista_completamento = []
         if self.searchType.currentIndex() == 0:  # ricerca per denominazione
             lista_completamento = [item.denominazione for item in Immobile.getAllImmobili().values()]
@@ -115,7 +107,6 @@ class VistaMenuGestioneBilancio(QWidget):
             lista_completamento = [item.sigla for item in Immobile.getAllImmobili().values()]
         elif self.searchType.currentIndex() == 2:  # ricerca per codice
             lista_completamento = [str(item.codice) for item in Immobile.getAllImmobili().values()]
-        print("Lista completamento", lista_completamento)
         self.immobili_completer.setModel(QStringListModel(lista_completamento))
         self.selectioning()
 
@@ -125,19 +116,14 @@ class VistaMenuGestioneBilancio(QWidget):
         if search_text:
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
                 immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
                 immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", immobile)
         if immobile != None:
-            print("si")
             self.vista_gestione_tabellaMillesimale = VistaGestioneTabelleMillesimali(immobile)
             self.vista_gestione_tabellaMillesimale.show()
         else:
-            print("no")
             return None
 
     def go_Gestione_Bilancio(self):
@@ -146,17 +132,12 @@ class VistaMenuGestioneBilancio(QWidget):
         if search_text:
             if self.searchType.currentIndex() == 0:  # ricerca per denominazione
                 immobile = Immobile.ricercaImmobileByDenominazione(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 1:  # ricerca per sigla
                 immobile = Immobile.ricercaImmobileBySigla(search_text)
-                print("imm: ", immobile)
             elif self.searchType.currentIndex() == 2:  # ricerca per codice
                 immobile = Immobile.ricercaImmobileByCodice(search_text)
-                print("imm: ", immobile)
         if immobile != None:
-            print("si")
             self.vista_gestione_bilancio = VistaGestioneEsercizi(immobile)
             self.vista_gestione_bilancio.show()
         else:
-            print("no")
             return None

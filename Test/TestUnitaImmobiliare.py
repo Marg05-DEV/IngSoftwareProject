@@ -5,7 +5,6 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 
-nome_file = 'Dati/UnitaImmobiliari.pickle'
 class TestGestioneUnitaImmobiliare(TestCase):
     def test_add_unitaImmobiliare(self):
         self.unitaImmobiliare = UnitaImmobiliare()
@@ -15,7 +14,6 @@ class TestGestioneUnitaImmobiliare(TestCase):
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
         self.assertIsNotNone(unitaImmobiliari)
         self.assertIn(self.unitaImmobiliare.codice, unitaImmobiliari)
-        print("dentro add unitaImmobiliare", self.unitaImmobiliare.codice)
 
     def test_delete_unitaImmobiliare(self):
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
@@ -27,7 +25,6 @@ class TestGestioneUnitaImmobiliare(TestCase):
         unitaImmobiliari = UnitaImmobiliare.getAllUnitaImmobiliari()
         self.assertIsNotNone(unitaImmobiliari)
         self.assertNotIn(7, unitaImmobiliari)
-        print("dentro test delete", unitaImmobiliari)
 
     def test_addCondomino(self):
         unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(7)

@@ -73,7 +73,6 @@ class VistaRipartizionePreventivo(QWidget):
             self.update_table()
 
     def dataScadenzaChanged(self):
-        print("fine cambiamento")
 
         for key, data in self.date_lines_rate.items():
             if data is self.sender():
@@ -83,14 +82,10 @@ class VistaRipartizionePreventivo(QWidget):
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
 
     def update_table(self):
-        print("a")
         self.table_ripartizionePreventivo.cellChanged.disconnect(self.editingRate)
-        print("aa")
-        # prendo le list necessarie
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())
 
-        #setto row e colum della tabella
         self.table_ripartizionePreventivo.setRowCount(len(unita_immobiliari) + 3)
         self.table_ripartizionePreventivo.setColumnCount((len(tabelle_millesimali)) * 2 + 4 + self.bilancio.numeroRate)
 
@@ -99,25 +94,18 @@ class VistaRipartizionePreventivo(QWidget):
 
         self.table_ripartizionePreventivo.horizontalHeader().setFont(bold_font)
 
-        print(" ---- RIGA 90")
         self.table_ripartizionePreventivo.setItem(0, 0, QTableWidgetItem("Tabelle Millesimali - Millesimi"))
-        print("i")
         self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali), QTableWidgetItem("Unita Immobilari"))
-        print("i")
         self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) + 1, QTableWidgetItem("Tab. Millesimali - Quote"))
-        print("i")
         self.table_ripartizionePreventivo.setItem(0, 2 * len(tabelle_millesimali) + 1, QTableWidgetItem(f"RIPARTIZIONE PREVENTIVO ESERCIZIO {datetime.date.strftime(self.bilancio.inizioEsercizio, '%d/%m/%Y')} - {datetime.date.strftime(self.bilancio.fineEsercizio, '%d/%m/%Y')}"))
-        print(" ---- RIGA 95")
         self.table_ripartizionePreventivo.item(0, 0).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFont(bold_font)
         self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFont(bold_font)
-        print(" ---- RIGA 100")
         self.table_ripartizionePreventivo.item(0, 0).setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.table_ripartizionePreventivo.item(0, len(tabelle_millesimali) + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.table_ripartizionePreventivo.item(0, 2 * len(tabelle_millesimali) + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
-        print(" ---- RIGA 105")
         self.table_ripartizionePreventivo.setSpan(0, 0, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 3)
@@ -173,7 +161,6 @@ class VistaRipartizionePreventivo(QWidget):
                 widget.setLayout(layout)
                 self.table_ripartizionePreventivo.setCellWidget(1, len(tabelle_millesimali) * 2 + 3 + k + 1, widget)
 
-        print(" ---- RIGA 160")
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari)+2, len(tabelle_millesimali), QTableWidgetItem(f"TOTALE"))
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
@@ -185,7 +172,6 @@ class VistaRipartizionePreventivo(QWidget):
             i = 2
             totale_millesimi_tabella = 0.0
             totale_preventivo_tabella = 0.0
-            print(" ---- RIGA 173")
             for unita in unita_immobiliari:
                 if unita.condomini:
                     if unita.tipoUnitaImmobiliare == "Appartamento":
@@ -208,7 +194,6 @@ class VistaRipartizionePreventivo(QWidget):
                     self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
-                print("prima del richiamo")
 
                 if unita.codice not in tabella.millesimi:
                     tabella.addMillesimo(unita, 0.00)
@@ -252,7 +237,6 @@ class VistaRipartizionePreventivo(QWidget):
             self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 2).setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 3).setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-            #QUI NO
             for r in range(0, self.bilancio.numeroRate):
                 self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % self.bilancio.ratePreventivate[cod_unita][r]))
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 4 + r).setData(Qt.ItemDataRole.UserRole, [cod_unita, r])
@@ -288,16 +272,11 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     def editingRate(self, row, column):
-        print("dentro editing")
         match = re.fullmatch("[0-9]*|[0-9]*[.,][0-9]{0,2}", self.table_ripartizionePreventivo.item(row, column).text())
-        print("matcha? ", match)
         coordinate = self.table_ripartizionePreventivo.item(row, column).data(Qt.ItemDataRole.UserRole)
-        print(coordinate)
         if coordinate is not None:
             if match is not None:
-                print("dentro if -> matcha")
                 rata = float(self.table_ripartizionePreventivo.item(row, column).text().replace(",", "."))
-                print(rata, type(rata))
                 self.bilancio.editRataPreventivata(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(coordinate[0]), coordinate[1], rata)
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
             else:

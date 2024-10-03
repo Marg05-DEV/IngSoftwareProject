@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from Classes.Contabilita.fornitore import Fornitore
 
-nome_file = 'Dati/Fornitori.pickle'
 class TestGestioneFornitori(TestCase):
     def test_add_Fornitore(self):
         self.fornitore = Fornitore()
@@ -11,7 +10,6 @@ class TestGestioneFornitori(TestCase):
         fornitori = Fornitore.getAllFornitore()
         self.assertIsNotNone(fornitori)
         self.assertIn(self.fornitore.codice, fornitori)
-        print()
 
     def test_delete_fornitore(self):
         fornitori = Fornitore.getAllFornitore()

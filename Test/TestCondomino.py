@@ -16,7 +16,6 @@ class TestGestioneImmobile(TestCase):
 
         self.assertIsNotNone(condomini)
         self.assertIn(self.condomino.codice, condomini)
-        print(self.condomino.codice)
 
     def test_delete_condomino(self):
         condomini = Condomino.getAllCondomini()

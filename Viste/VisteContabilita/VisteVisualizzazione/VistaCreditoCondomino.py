@@ -184,7 +184,6 @@ class VistaCreditoCondomino(QWidget):
             self.credito_condomino_section["frase_credito_totale"].setVisible(False)
             self.credito_condomino_section["credito_totale"].setVisible(False)
 
-        print(immobile_con_credito, unita_associate_al_condomino)
 
         crediti_condomino = {}
         for immobile in immobile_con_credito:
@@ -229,7 +228,6 @@ class VistaCreditoCondomino(QWidget):
         self.tree_widget.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.tree_widget.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
-        print(crediti_condomino)
         if immobile_con_credito:
             self.tree_widget.setVisible(True)
             self.condomino_section["frase"].setVisible(False)

@@ -5,7 +5,6 @@ from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.spesa import Spesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 
-nome_file = 'Dati/Bilanci.pickle'
 class TestGestioneBilancio(TestCase):
     def test_add_bilancio(self):
         self.bilancio = Bilancio()
@@ -14,30 +13,25 @@ class TestGestioneBilancio(TestCase):
         bilanci = Bilancio.getAllBilanci()
         self.assertIsNotNone(bilanci)
         self.assertIn(self.bilancio.codice, bilanci)
-        print(self.bilancio.codice)
 
     def test_changeListaConsuntivo(self):
         immobile = Immobile.ricercaImmobileById(2)
         spese_immobile = Spesa.getAllSpeseByImmobile(immobile)
 
         self.bilancio = Bilancio.ricercaBilancioByCodice(1)
-        print(self.bilancio.getInfoBilancio())
         spesa_scelta = None
         for spesa in spese_immobile.values():
             if not spesa.aBilancio:
                 spesa_scelta = Spesa.ricercaSpesaByCodice(spesa.codice)
                 break
 
-        print(spesa_scelta.getInfoSpesa())
         if spesa_scelta.codice in self.bilancio.listaSpeseAConsuntivo:
-            print("a cons")
             self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseNonAConsuntivo)
             self.bilancio.changeListaConsuntivo(spesa_scelta.codice)
             self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
             self.assertIn(spesa_scelta.codice, self.bilancio.listaSpeseNonAConsuntivo)
             self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseAConsuntivo)
         elif spesa_scelta.codice in self.bilancio.listaSpeseNonAConsuntivo:
-            print("NON a cons")
             self.assertNotIn(spesa_scelta.codice, self.bilancio.listaSpeseAConsuntivo)
             self.bilancio.changeListaConsuntivo(spesa_scelta.codice)
             self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)

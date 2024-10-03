@@ -4,7 +4,6 @@ from unittest import TestCase
 from Classes.Contabilita.rata import Rata
 from Classes.RegistroAnagrafe.immobile import Immobile
 
-nome_file = 'Dati/Rate.pickle'
 class TestGestioneRata(TestCase):
     def test_add_rata(self):
         self.rata = Rata()
@@ -13,7 +12,6 @@ class TestGestioneRata(TestCase):
         rate = Rata.getAllRate()
         self.assertIsNotNone(rate)
         self.assertIn(self.rata.codice, rate)
-        print(self.rata.codice)
 
     def test_delete_rata(self):
         rate = Rata.getAllRate()

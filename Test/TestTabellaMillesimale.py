@@ -5,7 +5,6 @@ from Classes.Contabilita.tipoSpesa import TipoSpesa
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
-nome_file = 'Dati/TabelleMillesimali.pickle'
 class TestGestioneTabellaMillesimale(TestCase):
     def test_add_tabellaMillesimale(self):
         self.tabellaMillesimale = TabellaMillesimale()
@@ -14,7 +13,6 @@ class TestGestioneTabellaMillesimale(TestCase):
 
         self.assertIsNotNone(tabelleMillesimali)
         self.assertIn(self.tabellaMillesimale.codice, tabelleMillesimali)
-        print("dentro add tabMill", self.tabellaMillesimale.codice)
 
     def test_delete_tabellaMillesimale(self):
         tabelleMillesimali = TabellaMillesimale.getAllTabelleMillesimali()
