@@ -13,10 +13,6 @@ from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizioneConsuntivo impor
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaRipartizionePreventivo import VistaRipartizionePreventivo
 
 
-"""class VistaCalcolaBilancio:
-    pass"""
-
-
 class VistaGestioneBilancio(QWidget):
 
     def __init__(self, bilancio, callback_lista_esercizi):

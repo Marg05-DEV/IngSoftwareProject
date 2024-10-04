@@ -285,10 +285,7 @@ class VistaCreateRata(QWidget):
             if self.input_lines['unitaImmobiliare'].currentText():
                 self.input_lines['versante'].clear()
                 self.sel_unita = self.input_lines['unitaImmobiliare'].currentText()
-                advisable_versanti_list = [
-                    (Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for
-                    item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
-                        self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
+                advisable_versanti_list = [(Condomino.ricercaCondominoByCodice(item).cognome + " " + Condomino.ricercaCondominoByCodice(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
                 completer = QCompleter(advisable_versanti_list)
                 completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
                 completer.setFilterMode(Qt.MatchFlag.MatchContains)

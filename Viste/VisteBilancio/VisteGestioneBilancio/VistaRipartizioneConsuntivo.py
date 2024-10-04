@@ -39,6 +39,7 @@ class VistaRipartizioneConsuntivo(QWidget):
         self.setLayout(main_layout)
         self.resize(1200, 650)
         self.setWindowTitle("Ripartizione Consuntivo")
+
     def update_table(self):
         unita_immobiliari = list(UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values())
         tabelle_millesimali = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.immobile).values())

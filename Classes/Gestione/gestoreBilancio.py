@@ -131,9 +131,10 @@ class GestoreBilancio:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
                     pdf.set_font("helvetica", "BI", 7)
-                    if unita_immobiliare.condomini:
-                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
-                        if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+
+                    proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
+                    if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                        if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")

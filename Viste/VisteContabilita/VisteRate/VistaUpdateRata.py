@@ -25,12 +25,23 @@ class VistaUpdateRata(QWidget):
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
             proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                    else:
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario"
+                else:
+                    self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun condomino"
             else:
-                proprietario = Condomino.ricercaCondominoByCF(
-                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                    else:
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario"
+                else:
+                    self.sel_unita = f"{unita.tipoUnitaImmobiliare} con Nessun Condomino"
         else:
             self.sel_immobile = None
             self.sel_unita = None
@@ -105,12 +116,25 @@ class VistaUpdateRata(QWidget):
             input_line = QComboBox()
             if self.rata_selezionata.unitaImmobiliare > 0:
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).values():
+                    proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
                     if unita.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                            else:
+                                item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario"
+                        else:
+                            item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino"
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                            else:
+                                item = f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario"
+                        else:
+                            item = f"{unita.tipoUnitaImmobiliare} con Nessun Condomino"
 
                     input_line.addItem(item, unita.codice)
                     if unita.codice == self.rata_selezionata.unitaImmobiliare:
@@ -127,7 +151,7 @@ class VistaUpdateRata(QWidget):
             input_line = QLineEdit()
             input_line.setPlaceholderText(self.rata_selezionata.versante)
             if self.rata_selezionata.unitaImmobiliare > 0:
-                advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).condomini.keys()]
+                advisable_versanti_list = [(Condomino.ricercaCondominoByCodice(item).cognome + " " + Condomino.ricercaCondominoByCodice(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).condomini.keys()]
             else:
                 advisable_versanti_list = []
             completer = QCompleter(advisable_versanti_list)
@@ -177,15 +201,26 @@ class VistaUpdateRata(QWidget):
         if self.rata_selezionata.unitaImmobiliare > 0:
             self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
             self.input_lines['immobile'].setCurrentText((Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).denominazione)
-            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(
-                    UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
-                            self.rata_selezionata.unitaImmobiliare).immobile)).values():
+            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile)).values():
+                proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
                 if unita.tipoUnitaImmobiliare == "Appartamento":
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                    if unita.condomini:
+                        if proprietario:
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                            item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                        else:
+                            item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario"
+                    else:
+                        item = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino"
                 else:
-                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                    item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                    if unita.condomini:
+                        if proprietario:
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                            item = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                        else:
+                            item = f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario"
+                    else:
+                        item = f"{unita.tipoUnitaImmobiliare} con Nessun Condomino"
 
                 self.input_lines['unitaImmobiliare'].addItem(item, unita.codice)
                 if unita.codice == self.rata_selezionata.unitaImmobiliare:
@@ -195,9 +230,9 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['tipoPagamento'].addItems(["Contanti", "Assegno Bancario", "Bonifico Bancario"])
                 self.input_lines['tipoPagamento'].setCurrentText(self.rata_selezionata.tipoPagamento)
 
-            self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(
-                self.rata_selezionata.unitaImmobiliare).immobile).denominazione
+            self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
+            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0]
             if unita.tipoUnitaImmobiliare == "Appartamento":
                 if unita.condomini:
                     if proprietario:
@@ -208,9 +243,14 @@ class VistaUpdateRata(QWidget):
                 else:
                     self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino"
             else:
-                proprietario = Condomino.ricercaCondominoByCF(
-                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+                    else:
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario"
+                else:
+                    self.sel_unita = f"{unita.tipoUnitaImmobiliare} con Nessun Condomino"
         else:
             self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
             self.input_lines['unitaImmobiliare'].setVisible(False)
@@ -278,6 +318,7 @@ class VistaUpdateRata(QWidget):
                 self.input_labels['versante'].setVisible(False)
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+                    proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0]
                     if unita.tipoUnitaImmobiliare == "Appartamento":
                         if unita.condomini:
                             if proprietario:
@@ -288,8 +329,17 @@ class VistaUpdateRata(QWidget):
                         else:
                             self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino", unita.codice)
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                self.input_lines['unitaImmobiliare'].addItem(
+                                    f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                            else:
+                                self.input_lines['unitaImmobiliare'].addItem(
+                                    f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario", unita.codice)
+                        else:
+                            self.input_lines['unitaImmobiliare'].addItem(
+                                f"{unita.tipoUnitaImmobiliare} con Nessun Condomino", unita.codice)
 
     def unita_immobiliare_field_dynamic(self):
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:
@@ -299,7 +349,7 @@ class VistaUpdateRata(QWidget):
                 if 'versante' not in self.required_fields:
                     self.required_fields.append('versante')
                 self.sel_unita = self.input_lines['unitaImmobiliare'].currentText()
-                advisable_versanti_list = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
+                advisable_versanti_list = [(Condomino.ricercaCondominoByCodice(item).cognome + " " + Condomino.ricercaCondominoByCodice(item).nome) for item in UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.input_lines['unitaImmobiliare'].currentData()).condomini.keys()]
                 completer = QCompleter(advisable_versanti_list)
                 completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
                 completer.setFilterMode(Qt.MatchFlag.MatchContains)

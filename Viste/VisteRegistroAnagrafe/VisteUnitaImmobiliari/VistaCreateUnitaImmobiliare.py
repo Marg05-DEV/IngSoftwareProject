@@ -157,7 +157,7 @@ class VistaCreateUnitaImmobiliare(QWidget):
                                                              self.immobile, scala, zc)
 
         self.close()
-        self.vista_nuovo_Condomino = VistaCreateCondomino(self.immobile, ui, self.callback, True, None)
+        self.vista_nuovo_Condomino = VistaCreateCondomino(self.immobile, ui, self.callback, True)
         self.vista_nuovo_Condomino.show()
 
     def reset(self):

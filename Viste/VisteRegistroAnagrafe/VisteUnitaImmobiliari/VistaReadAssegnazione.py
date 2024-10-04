@@ -150,7 +150,6 @@ class VistaReadAssegnazione(QWidget):
         return label
 
     def update_list(self):
-
         if not self.sel_unitaImmobiliare.condomini:
             self.msg.setText("Non ci sono condomini assegnati all'unità immobiliare")
             self.msg.show()
@@ -160,8 +159,8 @@ class VistaReadAssegnazione(QWidget):
         listview_model = QStandardItemModel(self.list_view_condomini)
         for cod_condomino, titolo in self.sel_unitaImmobiliare.condomini.items():
             item = QStandardItem()
-            condomino = Condomino.ricercaCondominoByCF(condomino_cf)
-            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino_cf} ({titolo.upper()})"
+            condomino = Condomino.ricercaCondominoByCodice(cod_condomino)
+            item_text = f"{condomino.nome}  {condomino.cognome} - {condomino.codiceFiscale} ({titolo.upper()})"
             item.setText(item_text)
             item.setEditable(False)
             font = item.font()
@@ -187,7 +186,7 @@ class VistaReadAssegnazione(QWidget):
         self.rimuovi_unitaImmobiliare.show()
 
     def addCondomino(self):
-        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.sel_unitaImmobiliare, self.lista_condomini_callback,  False, None)
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.sel_unitaImmobiliare, self.lista_condomini_callback,  False)
         self.vista_nuovo_condomino.show()
 
     def updateCondomino(self):

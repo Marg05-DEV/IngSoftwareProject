@@ -148,7 +148,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
         listview_model = QStandardItemModel(self.list_view_unitaImmobiliare)
         for unitaImmobiliare in self.lista_unitaImmobiliari:
             item = QStandardItem()
-            proprietario = [(Condomino.ricercaCondominoByCF(item).cognome + " " + Condomino.ricercaCondominoByCF(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
+            proprietario = [(Condomino.ricercaCondominoByCodice(item).cognome + " " + Condomino.ricercaCondominoByCodice(item).nome) for item in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[item] == "Proprietario"]
             if not proprietario:
                 proprietario_text = "Nessun proprietario"
                 if not unitaImmobiliare.condomini:

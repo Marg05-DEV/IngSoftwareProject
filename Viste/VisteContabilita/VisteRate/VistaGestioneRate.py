@@ -218,8 +218,6 @@ class VistaGestioneRate(QWidget):
         pdf.output(directory_file + "temp\\ricevuta.pdf")
         webbrowser.open(directory_file + "temp\\ricevuta.pdf")
 
-
-
     def able_button(self):
         if not self.table_rate.verticalHeader().selectionModel().selectedRows():
             self.button_list["Visualizza Rata"].setDisabled(True)

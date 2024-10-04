@@ -57,10 +57,7 @@ class VistaPropostaPreventivo(QWidget):
         bold_font.setBold(True)
 
         self.table_proposta_preventivo.setHorizontalHeaderLabels(["DESCRIZIONE TIPOLOGIA DI SPESA", "IMPORTO PREVENTIVATO"])
-        """
-        self.table_proposta_preventivo.setHorizontalHeaderItem(0, QTableWidgetItem("DESCRIZIONE TIPOLOGIA DI SPESA"))
-        self.table_proposta_preventivo.setHorizontalHeaderItem(1, QTableWidgetItem("IMPORTO PREVENTIVATO"))
-        """
+
         self.table_proposta_preventivo.horizontalHeader().setFont(bold_font)
 
         row = 0

@@ -42,7 +42,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 ### TABELLE MILLESIMALI
 - da fare test per il suo completo funzionamento (dovrebbe funzionare tutto)
 - non dare possibilità di assegnare tipi di spesa già assegnati ad altre tabelle millesimali dello stesso immobile(fare ulteriori controlli su aggiungi tipo spesa, rimuovi tipo spesa)
-
+- Controllo tipi di spesa quando si fa nuovo tipo spesa ma non si è creata ancora la tabella millesimale.(Non dobbiamo permettere l'inserimento dello stesso tipo spesa)
 ### BILANCIO 
 
 - vedere prospetti esercizio che non riportano -> mancano delle righe

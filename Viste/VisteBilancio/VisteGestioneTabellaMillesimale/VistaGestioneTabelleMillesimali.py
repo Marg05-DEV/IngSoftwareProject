@@ -96,19 +96,14 @@ class VistaGestioneTabelleMillesimali(QWidget):
                     self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con\nNessun Condomino"))
             else:
                 if unita.condomini:
-                    for condomini in unita.condomini.keys():
-                        if unita.condomini[condomini] == "Proprietario":
-                            proprietario = Condomino.ricercaCondominoByCF(
-                                [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                                f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
-                            break
-                        else:
-                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                                f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                    else:
+                        self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
                 else:
-                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} con\nNessun Condomino"))
+
             j = 0
             for tabella in tabelle_millesimali:
                 if unita.codice not in tabella.millesimi:

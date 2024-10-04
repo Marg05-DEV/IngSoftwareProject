@@ -77,8 +77,8 @@ class VistaDeleteImmobile(QWidget):
             msg = bilancio.rimuoviBilancio()
 
         for unitaImmobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.sel_immobile).values():
-            for cf_condominoAssociato in unitaImmobiliare.condomini.keys():
-                condomino = Condomino.ricercaCondominoByCF(cf_condominoAssociato)
+            for cod_condominoAssociato in unitaImmobiliare.condomini.keys():
+                condomino = Condomino.ricercaCondominoByCodice(cod_condominoAssociato)
                 msg = unitaImmobiliare.removeCondomino(condomino)
                 if not condomino.getImmobiliAssociati():
                     msg = condomino.rimuoviCondomino()
