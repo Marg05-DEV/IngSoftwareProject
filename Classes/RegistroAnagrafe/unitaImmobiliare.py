@@ -161,9 +161,8 @@ class UnitaImmobiliare:
         if unitaImmobiliari:
             unitaImmobiliariByCondomino = []
             for key, value in unitaImmobiliari.items():
-                for codice_fiscale_condomino in value.condomini.keys():
-                    if codice_fiscale_condomino == condomino.codiceFiscale:
-                        unitaImmobiliariByCondomino.append(key)
+                if condomino.codice in value.condomini:
+                    unitaImmobiliariByCondomino.append(key)
             return unitaImmobiliariByCondomino
         else:
             return []
@@ -172,7 +171,7 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                unitaImmobiliari[self.codice].condomini[condomino.codiceFiscale] = titolo
+                unitaImmobiliari[self.codice].condomini[condomino.codice] = titolo
         with open(nome_file, "wb") as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
@@ -180,7 +179,7 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                unitaImmobiliari[self.codice].condomini[condomino.codiceFiscale] = titolo
+                unitaImmobiliari[self.codice].condomini[condomino.codice] = titolo
         with open(nome_file, "wb") as f:
             pickle.dump(unitaImmobiliari, f, pickle.HIGHEST_PROTOCOL)
 
@@ -188,7 +187,7 @@ class UnitaImmobiliare:
         if os.path.isfile(nome_file):
             with open(nome_file, "rb") as f:
                 unitaImmobiliari = dict(pickle.load(f))
-                removed = unitaImmobiliari[self.codice].condomini.pop(condomino.codiceFiscale)
+                removed = unitaImmobiliari[self.codice].condomini.pop(condomino.codice)
                 if removed == "Proprietario" and len(unitaImmobiliari[self.codice].condomini) > 0:
                     for condomino_assoc in unitaImmobiliari[self.codice].condomini.keys():
                         if unitaImmobiliari[self.codice].condomini[condomino_assoc] == "Comproprietario":

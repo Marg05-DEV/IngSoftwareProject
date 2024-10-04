@@ -1,7 +1,8 @@
 from PyQt6.QtCore import Qt, QStringListModel, QTimer
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit, QCompleter, QLabel, QComboBox, QHBoxLayout, \
-    QPushButton, QListView, QFrame, QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView
+    QPushButton, QListView, QFrame, QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QTreeWidget, \
+    QTreeWidgetItem
 
 from Classes.Contabilita.bilancio import Bilancio
 from Classes.Contabilita.fornitore import Fornitore
@@ -20,6 +21,7 @@ class VistaStatoPatrimoniale(QWidget):
         self.immobile = None
         self.lines = []
         main_layout = QVBoxLayout()
+        cont = 0
 
         completer_list = sorted([item.denominazione for item in Immobile.getAllImmobili().values()])
         self.searchbar = QLineEdit()
@@ -65,7 +67,8 @@ class VistaStatoPatrimoniale(QWidget):
             self.immobile_selezionato.setVisible(False)
 
         self.button_layout = QHBoxLayout()
-
+        cont += 1
+        print(str(cont))
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_stato_patrimoniale))
         self.buttons["Seleziona"].setDisabled(True)
         self.searchbar.textChanged.connect(self.selectioning)
@@ -75,17 +78,21 @@ class VistaStatoPatrimoniale(QWidget):
         spesa_layout = QVBoxLayout()
         self.lbl_frase = QLabel("Spese:")
         self.lbl_frase.setFixedSize(self.lbl_frase.sizeHint())
-        self.table_spese = QTableWidget()
+        self.tree_spese = QTreeWidget()
+        self.tree_spese.setColumnCount(2)
+        self.tree_spese.setHeaderLabels(["Fornitore/Spesa", "Importo"])
+        self.tree_spese.setVisible(False)
         self.error_no_spese = QLabel("")
         self.error_no_spese.setStyleSheet("font-weight: bold;")
         self.spese_section["frase"] = self.lbl_frase
-        self.spese_section["lista_spese"] = self.table_spese
+        self.spese_section["lista_spese"] = self.tree_spese
         self.spese_section["no_spese"] = self.error_no_spese
         self.spese_section["no_spese"].setVisible(False)
         spesa_layout.addWidget(self.lbl_frase)
-        spesa_layout.addWidget(self.table_spese)
+        spesa_layout.addWidget(self.tree_spese)
         spesa_layout.addWidget(self.error_no_spese)
-
+        cont += 1
+        print(str(cont))
         totale_spese_layout = QHBoxLayout()
         lbl_frase_totale_spese = QLabel("Debito verso fornitori dell'immobile")
         lbl_totale_spese = QLabel("0.00")
@@ -207,173 +214,86 @@ class VistaStatoPatrimoniale(QWidget):
             return None
 
     def update_list(self):
-        importo_totale = 0.00
-        self.rate_da_versare = {}
-        if Bilancio.getLastBilancio(self.immobile):
-            self.rate_da_versare = Bilancio.getLastBilancio(self.immobile).importiDaVersare
-
-        self.rate_versate = {}
-        for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
-            totale_versato = 0.0
-            if unita_immobiliare.codice not in self.rate_da_versare:
-                self.rate_da_versare[unita_immobiliare.codice] = 0.00
-            for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
-                if Bilancio.getLastBilancio(self.immobile):
-                    if rata.dataPagamento >= Bilancio.getLastBilancio(self.immobile).dataApprovazione and rata.importo >= 0.0:
-                        totale_versato += rata.importo
-            self.rate_versate[unita_immobiliare.codice] = totale_versato
-
+        print("dentro update")
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
-        spese_uniche_per_fornitore = []
-        for spese in self.spese:
-            if spese.fornitore not in spese_uniche_per_fornitore:
-                spese_uniche_per_fornitore.append(spese.fornitore)
+        spese_per_fornitore = {}
 
-        importi_tutti_nulli = False
-        importi_da_non_rappresentare = []
-        self.table_spese.setColumnCount(2)
-        self.table_spese.setRowCount(len(spese_uniche_per_fornitore))
-
-        if self.rate_da_versare:
-            for r in self.rate_da_versare.values():
-                if r <= 0:
-                    importi_da_non_rappresentare.append(r)
-            if len(importi_da_non_rappresentare) == len(self.rate_da_versare.values()):
-                importi_tutti_nulli = True
-
-        if (not self.spese and not self.rate_da_versare) or (not self.spese and importi_tutti_nulli):
-            self.rate_section["lista_rate"].setVisible(False)
-            self.rate_section["totale"].setVisible(False)
-            self.rate_section["frase_totale"].setVisible(False)
-            self.rate_section["no_rate"].setText("Non ci sono rate da versare per questo immobile")
-            self.rate_section["no_rate"].setVisible(True)
-
-            self.spese_section["lista_spese"].setVisible(False)
-            self.spese_section["totale"].setVisible(False)
-            self.spese_section["frase_totale"].setVisible(False)
-            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
-            self.spese_section["no_spese"].setVisible(True)
-
-        elif not self.rate_da_versare or importi_tutti_nulli:
-            self.rate_section["lista_rate"].setVisible(False)
-            self.rate_section["totale"].setVisible(False)
-            self.rate_section["frase_totale"].setVisible(False)
-
-            self.rate_section["no_rate"].setText("Non ci sono rate da versare per questo immobile")
-            self.rate_section["no_rate"].setVisible(True)
-        elif not self.spese:
-            self.spese_section["lista_spese"].setVisible(False)
-            self.spese_section["totale"].setVisible(False)
-            self.spese_section["frase_totale"].setVisible(False)
-
-            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
-            self.spese_section["no_spese"].setVisible(True)
-
-        self.table_spese.setHorizontalHeaderItem(0, QTableWidgetItem("Importo"))
-        self.table_spese.setHorizontalHeaderItem(1, QTableWidgetItem("Fornitore"))
-
-        fornitori = []
-        for spese in self.spese:
-            fornitori.append(spese.fornitore)
-
-        count = 0
-        i = 0
-        cod_fornitore_analizzato = []
         for spesa in self.spese:
-            spesa_totale_fornitore = 0.0
-            if spesa.fornitore not in cod_fornitore_analizzato:
-                j = 0
-                cod_fornitore_analizzato.append(spesa.fornitore)
-                for cod_fornitore in fornitori:
-                    if cod_fornitore == spesa.fornitore:
-                        count += 1
-                if count > 1:
-                    for spese in self.spese:
-                        if spese.fornitore == spesa.fornitore:
-                            spesa_totale_fornitore += spese.importo
-                    self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa_totale_fornitore)))
-                    self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-                else:
-                    self.table_spese.setItem(i, j, QTableWidgetItem(str("%.2f" % spesa.importo)))
-                    self.table_spese.setItem(i, j + 1, QTableWidgetItem(Fornitore.ricercaFornitoreByCodice(spesa.fornitore).denominazione))
-                i += 1
+            if spesa.fornitore not in spese_per_fornitore:
+                spese_per_fornitore[spesa.fornitore] = {}
+            spese_per_fornitore[spesa.fornitore][spesa.codice] = spesa.importo
+
+        for cod_fornitore in spese_per_fornitore.keys():
+            fornitore = Fornitore.ricercaFornitoreByCodice(cod_fornitore)
+            item = QTreeWidgetItem([fornitore.denominazione, str("%.2f" % sum(spese_per_fornitore[cod_fornitore].values()))])
+            for cod_spesa, importo in spese_per_fornitore[cod_fornitore].items():
+                spesa = Spesa.ricercaSpesaByCodice(cod_spesa)
+                child = child = QTreeWidgetItem([spesa.descrizione, str("%.2f" % importo)])
+                item.addChild(child)
+            self.tree_spese.addTopLevelItem(item)
+
+        self.tree_spese.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.tree_spese.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
         if self.spese:
-            for spesa in self.spese:
-                if not spesa.pagata:
-                    importo_totale += spesa.importo
-            self.spese_section["totale"].setText(str("%.2f" % importo_totale))
+            self.spese_section["totale"].setText(str("%.2f" % sum([sum(item.values()) for item in spese_per_fornitore.values()])))
+            print(self.spese_section)
             for spese in self.spese_section.values():
                 spese.setVisible(True)
             self.spese_section["no_spese"].setVisible(False)
 
-        self.table_spese.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.table_spese.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
-        self.table_spese.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table_spese.verticalHeader().setVisible(False)
+        rate_da_versare_per_unita = {}
+        last_bilancio = Bilancio.getLastBilancio(self.immobile)
+
+        for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
+            totale_versato = 0.0
+            if last_bilancio:
+                for rata in Rata.getAllRateByUnitaImmobiliare(unita_immobiliare).values():
+                    if rata.dataPagamento >= last_bilancio.dataApprovazione and rata.importo >= 0.0:
+                        totale_versato += rata.importo
+                rate_da_versare_per_unita[unita_immobiliare.codice] = last_bilancio.importiDaVersare[unita_immobiliare.codice] - totale_versato
+            else:
+                rate_da_versare_per_unita[unita_immobiliare.codice] = 0.0
 
         self.table_rate.setColumnCount(2)
+        self.table_rate.setRowCount(len(rate_da_versare_per_unita))
 
-        count = 0
-        for rate_da_visualizzare in self.rate_da_versare.values():
-            if rate_da_visualizzare > 0:
-                count += 1
-
-        self.table_rate.setRowCount(count)
         self.table_rate.setHorizontalHeaderItem(0, QTableWidgetItem("Unità Immobiliare"))
         self.table_rate.setHorizontalHeaderItem(1, QTableWidgetItem("Importo"))
+
         i = 0
-        for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
-            j = 0
-            unita_immo = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita)
-            if self.rate_da_versare[unita] > 0:
-                if unita in self.rate_da_versare.keys():
-                    item = QStandardItem()
-                    importo = self.rate_da_versare[unita] - self.rate_versate[unita]
-                    importo = str("%.2f" % importo)
-                    if unita_immo.tipoUnitaImmobiliare == "Appartamento":
-                        if unita_immo.condomini:
-                            for condomini in unita_immo.condomini.keys():
-                                if unita_immo.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
-                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di {proprietario.cognome} {proprietario.nome}"
-                                    self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                                    self.table_rate.setItem(i, j+1, QTableWidgetItem(importo))
-                                    break
-                                else:
-                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di Nessun proprietario"
-                                    self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                                    self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
+        for cod_unita, importo in rate_da_versare_per_unita.items():
+            unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
+            if importo > 0.0:
+                if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                    if unita_immobiliare.condomini:
+                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
+                        if proprietario:
+                            proprietario = proprietario[0]
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}"
                         else:
-                            item_text = f"{unita_immo.tipoUnitaImmobiliare} Scala {unita_immo.scala} Int.{unita_immo.interno} di Nessun proprietario"
-                            self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                            self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun proprietario"
                     else:
-                        if unita_immo.condomini:
-                            for condomini in unita_immo.condomini.keys():
-                                if unita_immo.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immo.condomini.keys() if unita_immo.condomini[item] == "Proprietario"][0])
-                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
-                                    self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                                    self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
-                                    break
-                                else:
-                                    item_text = f"{unita_immo.tipoUnitaImmobiliare} di Nessun proprietario"
-                                    self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                                    self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
+                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun condomino"
+                else:
+                    if unita_immobiliare.condomini:
+                        proprietario = [item for item in unita_immobiliare.condomini.keys() if  unita_immobiliare.condomini[item] == "Proprietario"]
+                        if proprietario:
+                            proprietario = proprietario[0]
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
+
                         else:
-                            item_text = f"{unita_immo.tipoUnitaImmobiliare} di Nessun proprietario"
-                            self.table_rate.setItem(i, j, QTableWidgetItem(item_text))
-                            self.table_rate.setItem(i, j + 1, QTableWidgetItem(importo))
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun proprietario"
+                    else:
+                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun condomino"
+
+                self.table_rate.setItem(i, 0, QTableWidgetItem(item_text))
+                self.table_rate.setItem(i, 1, QTableWidgetItem(importo))
             i += 1
 
-        importo_totale = 0.00
+        importo_totale = sum(rate_da_versare_per_unita.values())
 
-        if self.rate_da_versare and not importi_tutti_nulli:
-            for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).keys():
-                if self.rate_da_versare[unita] > 0:
-                    if unita in self.rate_da_versare.keys():
-                        importo_totale += self.rate_da_versare[unita]
+        if rate_da_versare_per_unita and importo_totale:
             self.rate_section["totale"].setText(str("%.2f" % importo_totale))
             for rate in self.rate_section.values():
                 rate.setVisible(True)
@@ -383,3 +303,17 @@ class VistaStatoPatrimoniale(QWidget):
         self.table_rate.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
         self.table_rate.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_rate.verticalHeader().setVisible(False)
+
+        if not self.spese:
+            self.spese_section["lista_spese"].setVisible(False)
+            self.spese_section["totale"].setVisible(False)
+            self.spese_section["frase_totale"].setVisible(False)
+            self.spese_section["no_spese"].setText("Non ci sono spese per questo immobile")
+            self.spese_section["no_spese"].setVisible(True)
+
+        if not rate_da_versare_per_unita or not importo_totale:
+            self.rate_section["lista_rate"].setVisible(False)
+            self.rate_section["totale"].setVisible(False)
+            self.rate_section["frase_totale"].setVisible(False)
+            self.rate_section["no_rate"].setText("Non ci sono rate da versare per questo immobile")
+            self.rate_section["no_rate"].setVisible(True)

@@ -125,37 +125,28 @@ class GestoreBilancio:
                     heading.cell(tabella.nome.upper(), align=Align.C)
 
                 pdf.set_font("helvetica", "", 8)
-                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
-                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
                     for tabella in tabelle_millesimali_immobile:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
                     pdf.set_font("helvetica", "BI", 7)
                     if unita_immobiliare.condomini:
+                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
                         if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
-                            for condomini in unita_immobiliare.condomini.keys():
-                                if unita_immobiliare.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF(
-                                        [item for item in unita_immobiliare.condomini.keys() if
-                                         unita_immobiliare.condomini[item] == "Proprietario"][0])
-                                    unita_row.cell(
-                                        f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
-                                    break
-                                else:
-                                    unita_row.cell(
-                                        f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                                break
+                            else:
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
                         else:
-                            for condomini in unita_immobiliare.condomini.keys():
-                                if unita_immobiliare.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF(
-                                        [item for item in unita_immobiliare.condomini.keys() if
-                                         unita_immobiliare.condomini[item] == "Proprietario"][0])
-                                    unita_row.cell(
-                                        f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
-                                    break
-                                else:
-                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                                break
+                            else:
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                     else:
                         unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
 
@@ -163,8 +154,7 @@ class GestoreBilancio:
                     totale_cons_unita = 0.0
 
                     for tabella in tabelle_millesimali_immobile:
-                        unita_row.cell(
-                            "%.2f" % bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice])
+                        unita_row.cell("%.2f" % bilancio.ripartizioneSpeseConsuntivate[tabella.codice][unita_immobiliare.codice])
                         totale_cons_unita += bilancio.ripartizioneSpeseConsuntivate[tabella.codice][
                             unita_immobiliare.codice]
 
@@ -198,8 +188,7 @@ class GestoreBilancio:
             pdf.set_font("helvetica", "B", 10)
             pdf.cell(0, 10, "Ripartizione spese preventivate", align=Align.C, new_x=XPos.LEFT, new_y=YPos.NEXT)
 
-            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(
-                Immobile.ricercaImmobileById(bilancio.immobile)).values())
+            tabelle_millesimali_immobile = list(TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values())
 
             column_width = [1] * len(tabelle_millesimali_immobile) + [4] + [1] * len(tabelle_millesimali_immobile) + [
                 2] * 3 + [1.5] * bilancio.numeroRate
@@ -244,23 +233,23 @@ class GestoreBilancio:
                         unita_row.cell("%.2f" % tabella.millesimi[unita_immobiliare.codice])
 
                     pdf.set_font("helvetica", "BI", 8)
+
                     if unita_immobiliare.condomini:
+                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
                         if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
-                            for condomini in unita_immobiliare.condomini.keys():
-                                if unita_immobiliare.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
-                                    break
-                                else:
-                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                                break
+                            else:
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
                         else:
-                            for condomini in unita_immobiliare.condomini.keys():
-                                if unita_immobiliare.condomini[condomini] == "Proprietario":
-                                    proprietario = Condomino.ricercaCondominoByCF([item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"][0])
-                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
-                                    break
-                                else:
-                                    unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                                break
+                            else:
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                     else:
                         unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
 

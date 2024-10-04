@@ -52,7 +52,7 @@ class TestGestioneImmobile(TestCase):
 
         unita_da_associare.addCondomino(condomino, "Inquilino")
         unita_da_associare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(unita_da_associare.codice)
-        self.assertIn(condomino.codiceFiscale, unita_da_associare.condomini)
+        self.assertIn(condomino.codice, unita_da_associare.condomini)
 
         immobili_associati_dopo = condomino.getImmobiliAssociati()
 

@@ -152,17 +152,8 @@ class GestoreRegistroAnagrafe:
             proprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Proprietario']
             if len(proprietari) > 0:
                 proprietario = proprietari[0]
-            comproprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Comproprietario']
-            inquilini = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Inquilino']
-
-            if proprietari:
-                print(proprietario.getDatiAnagraficiCondomino())
-
-            for comproprietario in comproprietari:
-                print(comproprietario.getDatiAnagraficiCondomino())
-
-            for inquilino in inquilini:
-                print(inquilino.getDatiAnagraficiCondomino())
+            comproprietari = [Condomino.ricercaCondominoByCodice(codice) for codice in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[codice] == 'Comproprietario']
+            inquilini = [Condomino.ricercaCondominoByCodice(codice) for codice in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[codice] == 'Inquilino']
 
             pdf.add_page()
             pdf.set_font("helvetica", "B", 14)

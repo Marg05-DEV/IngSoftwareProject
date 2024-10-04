@@ -7,8 +7,13 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Migliorare i layout delle viste seguendo i mockup;
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
 - ~~Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio~~
-- Controllare ogni volta che si fa una qualsiasi ricerca, che i bottoni si disattivino (basta mettere le disabilitazioni nelle funzioni collegate al signal) (per i tablewidget non dovrebbe servire)
-- eliminazione a cascata delle spese, rate, ecc. per immobili (dovrebbe esser finito con rimuoviBilancio) e unità immobiliari
+- ~~Controllare ogni volta che si fa una qualsiasi ricerca, che i bottoni si disattivino (basta mettere le disabilitazioni nelle funzioni collegate al signal) (per i tablewidget non dovrebbe servire)~~
+- modificare tutto quello dove compare l'attributo condomini delle unità immobiliari cosi da avere come key il codice invece del CF:
+    - Unità Immobiliari/Condomino
+    - Rate nel attributo versante (completion list)
+    - Tabelle Millesimlai per l'header verticale
+    - Bilancio per la colonna delle unità immobiliari
+    - Nella zona contabilità -> visteVisuliazzazione ( probabilmente stato patrimoniale)
 
 ## AREA IMMOBILI
 

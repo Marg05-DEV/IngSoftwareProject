@@ -19,8 +19,7 @@ class GestoreContabilita:
                         saldo_cassa_contanti += rata.importo
                     if rata.tipoPagamento == "Assegno Bancario":
                         saldo_cassa_A_B += rata.importo
-                return {saldo_cassa_contanti,
-                        saldo_cassa_A_B}
+                return {saldo_cassa_contanti, saldo_cassa_A_B}
     @staticmethod
     def generaRicevuta(rata):
 

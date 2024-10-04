@@ -129,9 +129,8 @@ class Condomino:
                 if immobileAssociato.id == unitaImmobiliare.immobile:
                     flag = True
             if not flag:
-                for condomino in unitaImmobiliare.condomini.keys():
-                    if Condomino.ricercaCondominoByCF(condomino).codice == self.codice:
-                        immobili_associati.append(Immobile.ricercaImmobileById(unitaImmobiliare.immobile))
+                if self.codice in unitaImmobiliare.condomini:
+                    immobili_associati.append(Immobile.ricercaImmobileById(unitaImmobiliare.immobile))
             else:
                 flag = False
 
