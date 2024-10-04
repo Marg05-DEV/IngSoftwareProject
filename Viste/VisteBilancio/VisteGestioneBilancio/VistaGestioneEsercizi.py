@@ -165,6 +165,9 @@ class VistaGestioneEsercizi(QWidget):
             self.button_list["Vai al bilancio"].setDisabled(True)
         else:
             self.button_list["Vai al bilancio"].setDisabled(False)
+            bilancio = Bilancio.ricercaBilancioByCodice(self.list_view_bilanci.selectedItems()[0].data(Qt.ItemDataRole.UserRole))
+            if not bilancio.isApprovata:
+                self.button_list["Rimuovi Bilancio"].setDisabled(False)
 
     def autoset_data_fine(self):
         data_inizio = self.input_lines["inizioEsercizio"].text()

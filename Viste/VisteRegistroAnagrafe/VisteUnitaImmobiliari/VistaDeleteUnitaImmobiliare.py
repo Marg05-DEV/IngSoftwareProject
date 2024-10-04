@@ -61,6 +61,7 @@ class VistaDeleteUnitaImmobiliare(QWidget):
             self.sel_unitaImmobiliare.removeCondomino(condomino)
             if not condomino.getImmobiliAssociati():
                 msg = condomino.rimuoviCondomino()
+                
         msg = self.sel_unitaImmobiliare.rimuoviUnitaImmobiliare()
         self.callback(msg)
         self.close()

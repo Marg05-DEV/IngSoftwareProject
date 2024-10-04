@@ -8,6 +8,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
 - ~~Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio~~
 - Controllare ogni volta che si fa una qualsiasi ricerca, che i bottoni si disattivino (basta mettere le disabilitazioni nelle funzioni collegate al signal) (per i tablewidget non dovrebbe servire)
+- eliminazione a cascata delle spese, rate, ecc. per immobili (dovrebbe esser finito con rimuoviBilancio) e unità immobiliari
 
 ## AREA IMMOBILI
 
@@ -40,7 +41,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 ### BILANCIO 
 
-- rivedere i totali delle quote in ripartizione preventivo che sono uguali a quelle di ripartizioen consuntivo ( forse scambio di variabili )
+- stiamo aggiungendo rimuovi bilancio
 - rivedere controlli bilancio, soprattutto le __date__ e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
 
 ## AREA DOCUMENTI

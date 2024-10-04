@@ -208,11 +208,10 @@ class VistaStatoPatrimoniale(QWidget):
 
     def update_list(self):
         importo_totale = 0.00
-        self.rate_da_versare = Bilancio.getLastBilancio(self.immobile)
+        self.rate_da_versare = {}
         if Bilancio.getLastBilancio(self.immobile):
             self.rate_da_versare = Bilancio.getLastBilancio(self.immobile).importiDaVersare
-        else:
-            self.rate_da_versare = {}
+
         self.rate_versate = {}
         for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.immobile).values():
             totale_versato = 0.0

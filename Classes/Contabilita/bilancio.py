@@ -89,6 +89,39 @@ class Bilancio:
             pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
         return "Il bilancio è stato creato", self
 
+    def rimuoviBilancio(self):
+        bilanci = {}
+        if os.path.isfile(nome_file):
+            with open(nome_file, "rb") as f:
+                bilanci = dict(pickle.load(f))
+                del bilanci[self.codice]
+        with open(nome_file, "wb") as f:
+            pickle.dump(bilanci, f, pickle.HIGHEST_PROTOCOL)
+        self.codice = -1
+        self.immobile = -1
+        self.inizioEsercizio = datetime.date(year=1970, month=1, day=1)
+        self.fineEsercizio = datetime.date(year=1970, month=1, day=1)
+        self.spesePreventivate = {}
+        self.listaSpeseAConsuntivo = []
+        self.listaSpeseNonAConsuntivo = []
+        self.speseConsuntivate = {}
+        self.ripartizioneSpesePreventivate = {}
+        self.ripartizioneSpeseConsuntivate = {}
+        self.ripartizioneConguaglio = {}
+        self.conguaglioPrecedente = {}
+        self.rateVersate = {}
+        self.importiDaVersare = {}
+        self.numeroRate = -1
+        self.ratePreventivate = {}
+        self.scadenzaRate = []
+        self.rateIsEdited = {}
+        self.isApprovata = False
+        self.dataApprovazione = datetime.date(year=1970, month=1, day=1)
+        self.isLastEsercizio = False
+        self.passaggi = {}
+        del self
+        return "Il bilancio è stato rimosso"
+
     def getInfoBilancio(self):
         return {
             "codice": self.codice,

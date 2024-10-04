@@ -2,6 +2,10 @@ import qtawesome
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QWidget, QLabel, QSizePolicy, QPushButton, QHBoxLayout, QVBoxLayout
 
+from Classes.Contabilita.bilancio import Bilancio
+from Classes.Contabilita.rata import Rata
+from Classes.Contabilita.spesa import Spesa
+from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 from Classes.RegistroAnagrafe.condomino import Condomino
 from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 
@@ -58,6 +62,20 @@ class VistaDeleteImmobile(QWidget):
 
     def deleteImmobile(self):
         msg = ""
+
+        for spesa in Spesa.getAllSpeseByImmobile(self.sel_immobile).values():
+            msg = spesa.rimuoviSpesa()
+
+        for rata in Rata.getAllRateByImmobile(self.sel_immobile).values():
+
+            msg = rata.rimuoviRata()
+
+        for tabella in TabellaMillesimale.getAllTabelleMillesimaliByImmobile(self.sel_immobile).values():
+            msg = tabella.rimuoviTabellaMillesimale()
+
+        for bilancio in Bilancio.getAllBilanciByImmobile(self.sel_immobile).values():
+            msg = bilancio.rimuoviBilancio()
+
         for unitaImmobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(self.sel_immobile).values():
             for cf_condominoAssociato in unitaImmobiliare.condomini.keys():
                 condomino = Condomino.ricercaCondominoByCF(cf_condominoAssociato)
