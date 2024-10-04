@@ -11,7 +11,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - modificare tutto quello dove compare l'attributo condomini delle unità immobiliari cosi da avere come key il codice invece del CF:
     - Unità Immobiliari/Condomino
     - Rate nel attributo versante (completion list)
-    - Tabelle Millesimlai per l'header verticale
+    - Tabelle Millesimali per l'header verticale
     - Bilancio per la colonna delle unità immobiliari
     - Nella zona contabilità -> visteVisuliazzazione ( probabilmente stato patrimoniale)
 
