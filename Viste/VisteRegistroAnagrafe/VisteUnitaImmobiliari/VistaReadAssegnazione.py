@@ -187,7 +187,7 @@ class VistaReadAssegnazione(QWidget):
         self.rimuovi_unitaImmobiliare.show()
 
     def addCondomino(self):
-        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.sel_unitaImmobiliare, self.lista_condomini_callback,  False)
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.sel_unitaImmobiliare, self.lista_condomini_callback,  False, None)
         self.vista_nuovo_condomino.show()
 
     def updateCondomino(self):

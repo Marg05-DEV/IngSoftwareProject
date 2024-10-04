@@ -155,6 +155,7 @@ class VistaGestioneEsercizi(QWidget):
         self.msg.setText("Il bilancio selezionato è stato rimosso")
         self.msg.show()
         self.timer.start()
+        self.update_list()
 
     def goNuovoEsercizio(self):
         data_inizio = self.input_lines["inizioEsercizio"].text()

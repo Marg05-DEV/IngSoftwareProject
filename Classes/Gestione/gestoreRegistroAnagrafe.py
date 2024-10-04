@@ -43,14 +43,14 @@ class GestoreRegistroAnagrafe:
         senza_proprietario = []
         senza_condomini = []
         for item in list_unitaImmobiliari:
-            proprietario_cf = [key for key, value in item.condomini.items() if value == 'Proprietario']
-            if len(proprietario_cf) < 1:
+            proprietario_codice = [key for key, value in item.condomini.items() if value == 'Proprietario']
+            if len(proprietario_codice) < 1:
                 if len(item.condomini) < 1:
                     senza_condomini.append(item)
                 else:
                     senza_proprietario.append(item)
             else:
-                proprietario = Condomino.ricercaCondominoByCF(proprietario_cf[0])
+                proprietario = Condomino.ricercaCondominoByCodice(proprietario_codice[0])
                 proprietari_unita_immobiliari.append([item.codice, proprietario.cognome.upper(), proprietario.nome.upper()])
 
         if len(senza_proprietario) > 0:
@@ -149,7 +149,7 @@ class GestoreRegistroAnagrafe:
         for unitaImmobiliare in unitaImmobiliari.values():
 
             proprietario = None
-            proprietari = [Condomino.ricercaCondominoByCF(cf) for cf in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[cf] == 'Proprietario']
+            proprietari = [Condomino.ricercaCondominoByCodice(codice) for codice in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[codice] == 'Proprietario']
             if len(proprietari) > 0:
                 proprietario = proprietari[0]
             comproprietari = [Condomino.ricercaCondominoByCodice(codice) for codice in unitaImmobiliare.condomini.keys() if unitaImmobiliare.condomini[codice] == 'Comproprietario']

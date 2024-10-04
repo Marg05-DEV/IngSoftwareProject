@@ -12,12 +12,16 @@ from Classes.RegistroAnagrafe.condomino import Condomino
 
 
 class VistaCreateCondomino(QWidget):
-    def __init__(self, immobile, ui, callback, isIterable):
+    def __init__(self, immobile, ui, callback, isIterable, titoli_assegnati):
         super(VistaCreateCondomino, self).__init__()
         self.immobile = immobile
         self.unitaImmobiliare = ui
         self.callback = callback
         self.isIterable = isIterable
+        if not titoli_assegnati:
+            self.titoli_assegnati = []
+        else:
+            self.titoli_assegnati = titoli_assegnati
         main_layout = QVBoxLayout()
         self.input_lines = {}
         self.input_errors = {}
@@ -119,7 +123,9 @@ class VistaCreateCondomino(QWidget):
         elif index == "titolo":
             input_line = QComboBox()
             input_line.setPlaceholderText("Scegli un titolo per il condomino...")
-            if 'Proprietario' in self.unitaImmobiliare.condomini.values():
+            if 'Proprietario' in self.titoli_assegnati:
+                input_line.addItems(["Comproprietario", "Inquilino"])
+            elif 'Proprietario' in self.unitaImmobiliare.condomini.values():
                 input_line.addItems(["Comproprietario", "Inquilino"])
             else:
                 input_line.addItems(["Proprietario", "Comproprietario", "Inquilino"])
@@ -161,7 +167,6 @@ class VistaCreateCondomino(QWidget):
                                                           email, telefono)
 
         titolo = self.input_lines["titolo"].currentText()
-
         self.unitaImmobiliare.addCondomino(condomino, titolo)
 
         return msg
@@ -172,9 +177,10 @@ class VistaCreateCondomino(QWidget):
         self.close()
 
     def altroCondomino(self):
+        self.titoli_assegnati.append(self.input_lines["titolo"].currentText())
         msg = self.aggiungiCondomino()
         self.close()
-        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True)
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, self.unitaImmobiliare, self.callback, True, self.titoli_assegnati)
         self.vista_nuovo_condomino.show()
 
     def add_condomino_esistente_stop(self):
@@ -183,9 +189,10 @@ class VistaCreateCondomino(QWidget):
         self.close()
 
     def add_condomino_esistente_continue(self):
+        self.titoli_assegnati.append(self.input_lines["titolo"].currentText())
         self.add_condomino_esistente()
         self.close()
-        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare.codice), self.callback, True)
+        self.vista_nuovo_condomino = VistaCreateCondomino(self.immobile, UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.unitaImmobiliare.codice), self.callback, True, self.titoli_assegnati)
         self.vista_nuovo_condomino.show()
 
     def add_condomino_esistente(self):

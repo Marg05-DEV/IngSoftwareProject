@@ -21,7 +21,6 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 ### UNITA IMMOBILIARI (ASSEGNAZIONI)
 
-- ~~Vedere se mettere la dataContratto per gli inquilini come richiesto dal form del registro anagrafe~~
 
 ### CONDOMINI
 *dovrebbe essere tutto corretto*

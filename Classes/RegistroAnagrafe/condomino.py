@@ -108,6 +108,18 @@ class Condomino:
             return {}
 
     @staticmethod
+    def ricercaCondominoByCodice(codice):
+        if os.path.isfile(nome_file):
+            with open(nome_file, 'rb') as f:
+                condomini = dict(pickle.load(f))
+                for cod_condomino in condomini.keys():
+                    if cod_condomino == codice:
+                        return condomini[cod_condomino]
+                return None
+        else:
+            return None
+
+    @staticmethod
     def ricercaCondominoByCF(CF):
         nome_file = 'Dati/Condomini.pickle'
         if os.path.isfile(nome_file):
