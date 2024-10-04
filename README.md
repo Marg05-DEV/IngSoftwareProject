@@ -13,7 +13,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
     - Rate nel attributo versante (completion list)
     - Tabelle Millesimali per l'header verticale
     - Bilancio per la colonna delle unità immobiliari
-    - Nella zona contabilità -> visteVisuliazzazione ( probabilmente stato patrimoniale)
+    - Nella zona contabilità -> visteVisualiazzazione ( probabilmente stato patrimoniale)
 
 ## AREA IMMOBILI
 
@@ -45,7 +45,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 ### BILANCIO 
 
-- stiamo aggiungendo rimuovi bilancio
+- vedere prospetti esercizio che non riportano -> mancano delle righe
 - rivedere controlli bilancio, soprattutto le __date__ e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
 
 ## AREA DOCUMENTI

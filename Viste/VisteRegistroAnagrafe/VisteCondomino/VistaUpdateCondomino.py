@@ -84,7 +84,7 @@ class VistaUpdateCondomino(QWidget):
                 input_line.addItems(["Comproprietario", "Inquilino"])
             else:
                 input_line.addItems(["Proprietario", "Comproprietario", "Inquilino"])
-            input_line.setCurrentText(str(self.ui.condomini[self.sel_condomino.codiceFiscale]))
+            input_line.setCurrentText(str(self.ui.condomini[self.sel_condomino.codice]))
             input_line.activated.connect(self.input_validation)
         else:
             input_line = QLineEdit()
@@ -139,7 +139,7 @@ class VistaUpdateCondomino(QWidget):
                 self.input_lines['titolo'].addItems(["Comproprietario", "Inquilino"])
             else:
                 self.input_lines['titolo'].addItems(["Proprietario", "Comproprietario", "Inquilino"])
-            self.input_lines['titolo'].setCurrentText(self.ui.condomini[self.sel_condomino.codiceFiscale])
+            self.input_lines['titolo'].setCurrentText(self.ui.condomini[self.sel_condomino.codice])
 
         self.input_lines["dataDiNascita"].setDate(self.sel_condomino.dataDiNascita)
 

@@ -158,7 +158,7 @@ class VistaReadAssegnazione(QWidget):
             self.msg.hide()
 
         listview_model = QStandardItemModel(self.list_view_condomini)
-        for condomino_cf, titolo in self.sel_unitaImmobiliare.condomini.items():
+        for cod_condomino, titolo in self.sel_unitaImmobiliare.condomini.items():
             item = QStandardItem()
             condomino = Condomino.ricercaCondominoByCF(condomino_cf)
             item_text = f"{condomino.nome}  {condomino.cognome} - {condomino_cf} ({titolo.upper()})"

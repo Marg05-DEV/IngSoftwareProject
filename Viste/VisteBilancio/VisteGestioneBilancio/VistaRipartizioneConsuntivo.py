@@ -101,26 +101,26 @@ class VistaRipartizioneConsuntivo(QWidget):
             totale_millesimi_tabella = 0.0
             totale_consuntivo_tabella = 0.0
             for unita in unita_immobiliari:
-                if unita.condomini:
-                    if unita.tipoUnitaImmobiliare == "Appartamento":
-                        for condomini in unita.condomini.keys():
-                            if unita.condomini[condomini] == "Proprietario":
-                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
-                                break
-                            else:
-                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
+                if unita.tipoUnitaImmobiliare == "Appartamento":
+                    if unita.condomini:
+                        if proprietario:
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                        else:
+                            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
                     else:
-                        for condomini in unita.condomini.keys():
-                            if unita.condomini[condomini] == "Proprietario":
-                                proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
-                                break
-                            else:
-                                self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                        self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con\nNessun Condomino"))
                 else:
-                    self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(
-                        f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                    if unita.condomini:
+                        if proprietario:
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\n{proprietario.cognome} {proprietario.nome}"))
+                        else:
+                            self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} di\nNessun Proprietario"))
+                    else:
+                        self.table_ripartizioneConsuntivo.setItem(i, len(tabelle_millesimali), QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} con\nNessun Condomino"))
+
                 self.table_ripartizioneConsuntivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
 
                 if unita.codice not in tabella.millesimi:

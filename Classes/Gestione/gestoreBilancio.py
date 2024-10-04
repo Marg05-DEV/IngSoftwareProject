@@ -141,14 +141,17 @@ class GestoreBilancio:
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
                         else:
+                            unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} con Nessun Condomino")
+                    else:
+                        if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
                                 break
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
-                    else:
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
+                        else:
+                            unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} con Nessun Condomino")
 
                     pdf.set_font("helvetica", "", 8)
                     totale_cons_unita = 0.0
@@ -225,8 +228,7 @@ class GestoreBilancio:
                     heading.cell(f"SCADE IL {bilancio.scadenzaRate[i].strftime('%d/%m/%Y')}", align=Align.C)
 
                 pdf.set_font("helvetica", "", 7)
-                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
-                        Immobile.ricercaImmobileById(bilancio.immobile)).values():
+                for unita_immobiliare in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileById(bilancio.immobile)).values():
                     unita_row = table.row()
 
                     for tabella in tabelle_millesimali_immobile:
@@ -234,24 +236,32 @@ class GestoreBilancio:
 
                     pdf.set_font("helvetica", "BI", 8)
 
-                    if unita_immobiliare.condomini:
-                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
-                        if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                    proprietario = [item for item in unita_immobiliare.condomini.keys() if
+                                    unita_immobiliare.condomini[item] == "Proprietario"]
+                    if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
+                        if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
-                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
+                                unita_row.cell(
+                                    f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
                                 break
                             else:
-                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
+                                unita_row.cell(
+                                    f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
                         else:
+                            unita_row.cell(
+                                f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} con Nessun Condomino")
+                    else:
+                        if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
-                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
+                                unita_row.cell(
+                                    f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
                                 break
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
-                    else:
-                        unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
+                        else:
+                            unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} con Nessun Condomino")
 
                     pdf.set_font("helvetica", "", 7)
                     totale_prev_unita = 0.0

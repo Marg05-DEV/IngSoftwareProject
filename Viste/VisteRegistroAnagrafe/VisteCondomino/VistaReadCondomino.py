@@ -35,7 +35,7 @@ class VistaReadCondomino(QWidget):
             button_layout = QVBoxLayout()
 
             lbl_desc = QLabel("Titolo nell'unità immobiliare: ")
-            lbl_content = QLabel(str(self.unita_immobiliare.condomini[self.sel_condomino.codiceFiscale]))
+            lbl_content = QLabel(str(self.unita_immobiliare.condomini[self.sel_condomino.codice]))
 
             titolo_layout.addWidget(lbl_desc)
             titolo_layout.addWidget(lbl_content)

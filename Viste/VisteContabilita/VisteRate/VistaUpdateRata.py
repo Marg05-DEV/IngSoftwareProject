@@ -23,7 +23,7 @@ class VistaUpdateRata(QWidget):
         if self.rata_selezionata.unitaImmobiliare > 0:
             self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
-
+            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
             if unita.tipoUnitaImmobiliare == "Appartamento":
                 proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
                 self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
@@ -199,9 +199,14 @@ class VistaUpdateRata(QWidget):
                 self.rata_selezionata.unitaImmobiliare).immobile).denominazione
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                proprietario = Condomino.ricercaCondominoByCF(
-                    [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}"
+                    else:
+                        self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario"
+                else:
+                    self.sel_unita = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino"
             else:
                 proprietario = Condomino.ricercaCondominoByCF(
                     [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
@@ -274,8 +279,14 @@ class VistaUpdateRata(QWidget):
                 self.sel_immobile = self.input_lines['immobile'].currentText()
                 for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
                     if unita.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                            else:
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario", unita.codice)
+                        else:
+                            self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino", unita.codice)
                     else:
                         proprietario = Condomino.ricercaCondominoByCF([item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
                         self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)

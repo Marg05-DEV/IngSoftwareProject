@@ -59,19 +59,31 @@ class VistaReadRata(QWidget):
     def pair_label(self, testo, index):
         pair_layout = QHBoxLayout()
         lbl_content = ""
-        condomino = None
         lbl_desc = QLabel(testo + ": ")
         if index == "unitaImmobiliare":
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata.unitaImmobiliare)
-            for item in unita.condomini.keys():
-                if unita.condomini[item] == "Proprietario":
-                    condomino = Condomino.ricercaCondominoByCF(item)
+            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
             if unita.tipoUnitaImmobiliare == "Appartamento":
-                item_text = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Interno {unita.interno} di {condomino.nome} {condomino.cognome}"
-                lbl_content = QLabel(item_text)
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        item_text = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Interno {unita.interno} di {proprietario.nome} {proprietario.cognome}"
+                    else:
+                        item_text = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Interno {unita.interno} di Nessun Proprietario"
+                else:
+                    item_text = f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Interno {unita.interno} con Nessun Condomino"
+
             else:
-                item_text = f"{unita.tipoUnitaImmobiliare} di {condomino.nome} {condomino.cognome}"
-                lbl_content = QLabel(item_text)
+                if unita.condomini:
+                    if proprietario:
+                        proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                        item_text = f"{unita.tipoUnitaImmobiliare} di {proprietario.nome} {proprietario.cognome}"
+                    else:
+                        item_text = f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario"
+                else:
+                    item_text = f"{unita.tipoUnitaImmobiliare} di Nessun Condomino"
+
+            lbl_content = QLabel(item_text)
 
         elif index == "immobile":
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata.unitaImmobiliare)

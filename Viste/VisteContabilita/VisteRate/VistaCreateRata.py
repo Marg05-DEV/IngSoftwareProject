@@ -256,19 +256,27 @@ class VistaCreateRata(QWidget):
                     self.input_lines['numeroRicevuta'].setPlaceholderText("L'ultima ricevuta inserita è la n° " + str(ultima_ricevuta))
                 else:
                     self.input_lines['numeroRicevuta'].setPlaceholderText("Non ci sono ricevute precedenti")
-                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(
-                        Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+
+                for unita in UnitaImmobiliare.getAllUnitaImmobiliariByImmobile(Immobile.ricercaImmobileByDenominazione(self.sel_immobile)).values():
+                    proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
                     if unita.tipoUnitaImmobiliare == "Appartamento":
-                        proprietario = Condomino.ricercaCondominoByCF(
-                            [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(
-                            f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}",
-                            unita.codice)
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                            else:
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di Nessun Proprietario", unita.codice)
+                        else:
+                            self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con Nessun Condomino", unita.codice)
                     else:
-                        proprietario = Condomino.ricercaCondominoByCF(
-                            [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                        self.input_lines['unitaImmobiliare'].addItem(
-                            f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                        if unita.condomini:
+                            if proprietario:
+                                proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}", unita.codice)
+                            else:
+                                self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} di Nessun Proprietario", unita.codice)
+                        else:
+                            self.input_lines['unitaImmobiliare'].addItem(f"{unita.tipoUnitaImmobiliare} con Nessun Condomino", unita.codice)
                 self.input_lines['unitaImmobiliare'].setVisible(True)
                 self.input_labels['unitaImmobiliare'].setVisible(True)
 

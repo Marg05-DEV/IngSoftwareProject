@@ -9,13 +9,11 @@ from Classes.RegistroAnagrafe.unitaImmobiliare import UnitaImmobiliare
 from Classes.RegistroAnagrafe.immobile import Immobile
 from Classes.RegistroAnagrafe.condomino import Condomino
 
-
-
 class VistaCreateCondomino(QWidget):
     def __init__(self, immobile, ui, callback, isIterable, titoli_assegnati):
         super(VistaCreateCondomino, self).__init__()
         self.immobile = immobile
-        self.unitaImmobiliare = ui
+        self.unitaImmobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(ui.codice)
         self.callback = callback
         self.isIterable = isIterable
         if not titoli_assegnati:
@@ -123,9 +121,7 @@ class VistaCreateCondomino(QWidget):
         elif index == "titolo":
             input_line = QComboBox()
             input_line.setPlaceholderText("Scegli un titolo per il condomino...")
-            if 'Proprietario' in self.titoli_assegnati:
-                input_line.addItems(["Comproprietario", "Inquilino"])
-            elif 'Proprietario' in self.unitaImmobiliare.condomini.values():
+            if 'Proprietario' in self.unitaImmobiliare.condomini.values():
                 input_line.addItems(["Comproprietario", "Inquilino"])
             else:
                 input_line.addItems(["Proprietario", "Comproprietario", "Inquilino"])
@@ -251,7 +247,7 @@ class VistaCreateCondomino(QWidget):
                         if self.input_lines[field].text().upper() == str(condomino.getDatiAnagraficiCondomino()[field]).upper():
                             num_errors += 1
                             there_is_unique_error[field] = True
-                            if condomino.codiceFiscale in self.unitaImmobiliare.condomini.keys():
+                            if condomino.codice in self.unitaImmobiliare.condomini.keys():
                                 same_ui = True
                             if not same_ui:
                                 if self.input_lines['titolo'].currentIndex() > -1:

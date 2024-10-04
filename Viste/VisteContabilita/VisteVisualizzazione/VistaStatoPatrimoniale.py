@@ -265,27 +265,25 @@ class VistaStatoPatrimoniale(QWidget):
         for cod_unita, importo in rate_da_versare_per_unita.items():
             unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
             if importo > 0.0:
+                proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
                 if unita_immobiliare.tipoUnitaImmobiliare == "Appartamento":
                     if unita_immobiliare.condomini:
-                        proprietario = [item for item in unita_immobiliare.condomini.keys() if unita_immobiliare.condomini[item] == "Proprietario"]
                         if proprietario:
-                            proprietario = proprietario[0]
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                             item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}"
                         else:
-                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun proprietario"
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario"
                     else:
-                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun condomino"
+                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} Scala {unita_immobiliare.scala} Int.{unita_immobiliare.interno} con Nessun Condomino"
                 else:
                     if unita_immobiliare.condomini:
-                        proprietario = [item for item in unita_immobiliare.condomini.keys() if  unita_immobiliare.condomini[item] == "Proprietario"]
                         if proprietario:
-                            proprietario = proprietario[0]
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                             item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}"
-
                         else:
-                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun proprietario"
+                            item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario"
                     else:
-                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun condomino"
+                        item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} con Nessun Condomino"
 
                 self.table_rate.setItem(i, 0, QTableWidgetItem(item_text))
                 self.table_rate.setItem(i, 1, QTableWidgetItem(importo))

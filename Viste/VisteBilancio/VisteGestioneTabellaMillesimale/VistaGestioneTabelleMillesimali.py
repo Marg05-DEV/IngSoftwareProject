@@ -84,21 +84,16 @@ class VistaGestioneTabelleMillesimali(QWidget):
         totale_millesimi_tabella = {}
         i = 0
         for unita in unita_immobiliari:
+            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
             if unita.tipoUnitaImmobiliare == "Appartamento":
                 if unita.condomini:
-                    for condomini in unita.condomini.keys():
-                        if unita.condomini[condomini] == "Proprietario":
-                            proprietario = Condomino.ricercaCondominoByCF(
-                                [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0])
-                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                                f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
-                            break
-                        else:
-                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                                f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                    if proprietario:
+                            proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
+                            self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\n{proprietario.cognome} {proprietario.nome}"))
+                    else:
+                        self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
                 else:
-                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(
-                        f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} di\nNessun Proprietario"))
+                    self.table_tabellaMillesimale.setVerticalHeaderItem(i, QTableWidgetItem(f"{unita.tipoUnitaImmobiliare} Scala {unita.scala} Int.{unita.interno} con\nNessun Condomino"))
             else:
                 if unita.condomini:
                     for condomini in unita.condomini.keys():

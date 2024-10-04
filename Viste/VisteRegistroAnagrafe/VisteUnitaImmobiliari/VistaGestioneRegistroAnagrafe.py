@@ -130,8 +130,7 @@ class VistaGestioneRegistroAnagrafe(QWidget):
             if self.searchType.currentIndex() == 1:  # ricerca per interno
                 self.lista_unitaImmobiliari = [item for item in self.lista_unitaImmobiliari if self.searchbar.text().upper() in str(item.interno).upper()]
             elif self.searchType.currentIndex() == 2:  # ricerca per nominativo condomino
-                condomini = {item.codice: '    '.join([Condomino.ricercaCondominoByCF(cf).cognome + " " + Condomino.ricercaCondominoByCF(cf).nome for cf in item.condomini.keys()])
-                             for item in self.lista_unitaImmobiliari}
+                condomini = {item.codice: '    '.join([Condomino.ricercaCondominoByCodice(cod).cognome + " " + Condomino.ricercaCondominoByCodice(cod).nome for cod in item.condomini.keys()]) for item in self.lista_unitaImmobiliari}
 
                 self.lista_unitaImmobiliari = [UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(item) for item in condomini.keys() if self.searchbar.text().upper() in condomini[item].upper()]
         sorting_function(self.lista_unitaImmobiliari, decr)

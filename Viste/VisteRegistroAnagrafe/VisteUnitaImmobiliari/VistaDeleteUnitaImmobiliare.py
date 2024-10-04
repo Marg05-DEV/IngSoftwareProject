@@ -56,8 +56,8 @@ class VistaDeleteUnitaImmobiliare(QWidget):
         return warning_msg_layout
 
     def deleteUnitaImmobiliare(self):
-        for cf_condominoAssociato in self.sel_unitaImmobiliare.condomini.keys():
-            condomino = Condomino.ricercaCondominoByCF(cf_condominoAssociato)
+        for cod_condominoAssociato in self.sel_unitaImmobiliare.condomini.keys():
+            condomino = Condomino.ricercaCondominoByCodice(cod_condominoAssociato)
             self.sel_unitaImmobiliare.removeCondomino(condomino)
             if not condomino.getImmobiliAssociati():
                 msg = condomino.rimuoviCondomino()
