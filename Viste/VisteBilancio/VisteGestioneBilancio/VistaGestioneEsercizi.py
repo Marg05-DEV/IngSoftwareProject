@@ -8,7 +8,9 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButt
     QListWidgetItem
 
 from Classes.Contabilita.bilancio import Bilancio
+from Viste.VisteBilancio.VisteGestioneBilancio.VistaAvvisoBilancio import VistaAvvisoBilancio
 from Viste.VisteBilancio.VisteGestioneBilancio.VistaGestioneBilancio import VistaGestioneBilancio
+
 
 class VistaGestioneEsercizi(QWidget):
 
@@ -25,6 +27,7 @@ class VistaGestioneEsercizi(QWidget):
         button_layout = QVBoxLayout()
         self.button_list = {}
         button_layout.addWidget(self.create_button("Vai al bilancio", self.goBilancio, True))
+        button_layout.addWidget(self.create_button("Rimuovi Bilancio", self.removeBilancio, True))
         action_layout.addWidget(self.list_view_bilanci)
         action_layout.addLayout(button_layout)
 
@@ -143,6 +146,17 @@ class VistaGestioneEsercizi(QWidget):
         self.choose_bilancio = VistaGestioneBilancio(bilancio, self.callback)
         self.choose_bilancio.show()
 
+    def removeBilancio(self):
+        bilancio = Bilancio.ricercaBilancioByCodice(self.list_view_bilanci.selectedItems()[0].data(Qt.ItemDataRole.UserRole))
+        self.remove_bilancio = VistaAvvisoBilancio(self, bilancio.rimuoviBilancio, "Stai rimuovendo il bilancio.\nSei sicuro di voler procedere?",
+                                                    "Procedi")
+        self.remove_bilancio.show()
+
+    def avvisoConfermato(self):
+        self.msg.setText("Il bilancio selezionato è stato rimosso")
+        self.msg.show()
+        self.timer.start()
+
     def goNuovoEsercizio(self):
         data_inizio = self.input_lines["inizioEsercizio"].text()
         data_inizio = data_inizio.split("/")
@@ -163,6 +177,7 @@ class VistaGestioneEsercizi(QWidget):
     def able_button(self):
         if not self.list_view_bilanci.selectedItems():
             self.button_list["Vai al bilancio"].setDisabled(True)
+            self.button_list["Rimuovi Bilancio"].setDisabled(True)
         else:
             self.button_list["Vai al bilancio"].setDisabled(False)
             bilancio = Bilancio.ricercaBilancioByCodice(self.list_view_bilanci.selectedItems()[0].data(Qt.ItemDataRole.UserRole))

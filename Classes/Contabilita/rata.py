@@ -52,7 +52,6 @@ class Rata:
                 rate[self.codice].descrizione = descrizione
                 rate[self.codice].importo = importo
                 rate[self.codice].numeroRicevuta = numeroRicevuta
-                #rate[self.codice].pagata = pagata
                 rate[self.codice].tipoPagamento = tipoPagamento
                 rate[self.codice].unitaImmobiliare = unitaImmobiliare
                 rate[self.codice].versante = versante
