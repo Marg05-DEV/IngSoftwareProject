@@ -255,7 +255,6 @@ class VistaUpdateRata(QWidget):
             self.input_lines['immobile'].addItems([item.denominazione for item in Immobile.getAllImmobili().values()])
             self.input_lines['unitaImmobiliare'].setVisible(False)
             self.input_labels['unitaImmobiliare'].setVisible(False)
-
         self.input_lines['dataPagamento'].setDate(self.rata_selezionata.dataPagamento)
         self.input_lines['versante'].setPlaceholderText(self.rata_selezionata.versante)
 

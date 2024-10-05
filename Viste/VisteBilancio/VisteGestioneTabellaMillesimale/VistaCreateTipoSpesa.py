@@ -145,8 +145,9 @@ class VistaCreateTipoSpesa(QWidget):
         for field in required_fields:
             if self.input_lines[field].text():
                 num_writed_lines += 1
-                for all_tipi in all_tipo_spesa:
-                    if self.input_lines['nome'].text().upper() == all_tipi.nome.upper():
+
+                for tipo_spesa in all_tipi_spesa:
+                    if self.input_lines['nome'].text().upper() == tipo_spesa.nome.upper():
                         num_errors += 1
                         there_is_unique_pair_error = True
                         same_tipo_spesa = tipo_spesa

@@ -21,8 +21,6 @@ class VistaDeleteTipoSpesa(QWidget):
 
         main_layout.addWidget(lbl_frase)
 
-        main_layout.addLayout(self.create_warning_msg("Se il tipo di spesa non è assegnato a nessun altra tabella millesimale, \nquesto verrà definitivamente rimosso"))
-
         button_layout = QHBoxLayout()
 
         button_layout.addWidget(self.create_button("Procedi", self.delete_tipo_spesa))

@@ -68,7 +68,6 @@ class VistaStatoPatrimoniale(QWidget):
 
         self.button_layout = QHBoxLayout()
         cont += 1
-        print(str(cont))
         self.button_layout.addWidget(self.create_button("Seleziona", self.view_stato_patrimoniale))
         self.buttons["Seleziona"].setDisabled(True)
         self.searchbar.textChanged.connect(self.selectioning)
@@ -92,7 +91,6 @@ class VistaStatoPatrimoniale(QWidget):
         spesa_layout.addWidget(self.tree_spese)
         spesa_layout.addWidget(self.error_no_spese)
         cont += 1
-        print(str(cont))
         totale_spese_layout = QHBoxLayout()
         lbl_frase_totale_spese = QLabel("Debito verso fornitori dell'immobile")
         lbl_totale_spese = QLabel("0.00")

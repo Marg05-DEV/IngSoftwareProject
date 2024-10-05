@@ -73,7 +73,7 @@ def up():
     unitaImmobiliare.aggiungiUnitaImmobiliare(2, 2, {9: "Proprietario"}, 2, 2, "Appartamento", "A/2",
                                                 2, Immobile.ricercaImmobileByCodice(2), 2, "B")
 
-    unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {"GLRLRA95N17T654R": "Proprietario"}, 3, 0, "Box", "B/1",
+    unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {3: "Proprietario"}, 3, 0, "Box", "B/1",
                                                 3, Immobile.ricercaImmobileByCodice(1), 0, "C")
 
     unitaImmobiliare.aggiungiUnitaImmobiliare(3, 3, {8: "Proprietario", 7: "Comproprietario"}, 3, 0, "Negozio", "B/1",
