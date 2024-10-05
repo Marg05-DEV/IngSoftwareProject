@@ -260,7 +260,7 @@ class VistaStatoPatrimoniale(QWidget):
 
         self.table_rate.setHorizontalHeaderItem(0, QTableWidgetItem("Unità Immobiliare"))
         self.table_rate.setHorizontalHeaderItem(1, QTableWidgetItem("Importo"))
-
+        print("prima if del proprietario, ecc")
         i = 0
         for cod_unita, importo in rate_da_versare_per_unita.items():
             unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
@@ -286,7 +286,9 @@ class VistaStatoPatrimoniale(QWidget):
                         item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} con Nessun Condomino"
 
                 self.table_rate.setItem(i, 0, QTableWidgetItem(item_text))
-                self.table_rate.setItem(i, 1, QTableWidgetItem(importo))
+                print("quasi fine if del proprietario, ecc")
+                self.table_rate.setItem(i, 1, QTableWidgetItem(str("%.2f" % importo)))
+            print("fine if del proprietario, ecc")
             i += 1
 
         importo_totale = sum(rate_da_versare_per_unita.values())

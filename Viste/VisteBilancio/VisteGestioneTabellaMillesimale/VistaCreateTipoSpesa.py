@@ -12,8 +12,9 @@ from Classes.Contabilita.tabellaMillesimale import TabellaMillesimale
 
 
 class VistaCreateTipoSpesa(QWidget):
-    def __init__(self, tabella_millesimale, immobile, callback, callback_append_tipo_spesa):
+    def __init__(self, tabella_millesimale, immobile, callback, callback_append_tipo_spesa, tipi_spesa_aggiunti=[]):
         super(VistaCreateTipoSpesa, self).__init__()
+        self.tipi_spesa_aggiunti = tipi_spesa_aggiunti
         self.tabella_millesimale = tabella_millesimale
         self.immobile = immobile
         self.callback = callback
@@ -123,13 +124,15 @@ class VistaCreateTipoSpesa(QWidget):
         self.button_exist.setVisible(False)
 
     def input_validation(self):
-        all_tipo_spesa = list(TipoSpesa.getAllTipoSpesa().values())
+        all_tipi_spesa = list(TipoSpesa.getAllTipoSpesa().values())
 
-        tipo_spesa = []
-        if self.tabella_millesimale != None:
+        tipi_spesa_tabella_millesimale = []
+        if self.tabella_millesimale is not None:
             for tipo in self.tabella_millesimale.tipologieSpesa:
-                value = TipoSpesa.ricercaTipoSpesaByCodice(tipo)
-                tipo_spesa.append(value)
+                tipi_spesa_tabella_millesimale.append(TipoSpesa.ricercaTipoSpesaByCodice(tipo))
+        else:
+            for cod_tipo_spesa in self.tipi_spesa_aggiunti:
+                tipi_spesa_tabella_millesimale.append(TipoSpesa.ricercaTipoSpesaByCodice(cod_tipo_spesa))
 
         num_errors = 0
         num_writed_lines = 0
@@ -137,8 +140,8 @@ class VistaCreateTipoSpesa(QWidget):
         there_is_unique_pair_error = False
         same_tb = False
         same_immo = False
+        same_tipo_spesa = None
 
-        tabelle_dell_immobile = []
         for field in required_fields:
             if self.input_lines[field].text():
                 num_writed_lines += 1
@@ -146,39 +149,36 @@ class VistaCreateTipoSpesa(QWidget):
                     if self.input_lines['nome'].text().upper() == all_tipi.nome.upper():
                         num_errors += 1
                         there_is_unique_pair_error = True
-                        if tipo_spesa:
-                            for tipo in tipo_spesa:
-                                if self.input_lines['nome'].text().upper() == tipo.nome.upper():
-                                    same_tb = True
-                                tabelle_dell_immobile = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.tabella_millesimale.immobile)).values()
-                                for tabelle in tabelle_dell_immobile:
-                                    for tipologia in tabelle.tipologieSpesa:
-                                        tipo_assegnato = TipoSpesa.ricercaTipoSpesaByCodice(tipologia)
-                                        if self.input_lines['nome'].text().upper() == tipo_assegnato.nome.upper():
-                                            same_immo = True
-                        if self.tabella_millesimale == None or not tipo_spesa:
-                            tabelle_dell_immobile = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.immobile.id)).values()
-                            for tabelle in tabelle_dell_immobile:
-                                for tipologia in tabelle.tipologieSpesa:
-                                    tipo_assegnato = TipoSpesa.ricercaTipoSpesaByCodice(tipologia)
-                                    if self.input_lines['nome'].text().upper() == tipo_assegnato.nome.upper():
-                                        same_immo = True
+                        same_tipo_spesa = tipo_spesa
+                if tipi_spesa_tabella_millesimale:
+                    for tipo in tipi_spesa_tabella_millesimale:
+                        if self.input_lines['nome'].text().upper() == tipo.nome.upper():
+                            same_tb = True
+                            break
+                tabelle_dell_immobile = TabellaMillesimale.getAllTabelleMillesimaliByImmobile(Immobile.ricercaImmobileById(self.immobile.id)).values()
+                for tabelle in tabelle_dell_immobile:
+                    for tipologia in tabelle.tipologieSpesa:
+                        tipo_assegnato = TipoSpesa.ricercaTipoSpesaByCodice(tipologia)
+                        if self.input_lines['nome'].text().upper() == tipo_assegnato.nome.upper():
+                            same_immo = True
+                        """    
                         if not same_tb:
                             self.lbl_tipo_spesa_esistente.setText(f"Nome:{all_tipi.nome}\nDescrizione:{all_tipi.descrizione}")
                             self.button_exist.setDisabled(False)
+                        """
                         break
         if there_is_unique_pair_error:
             self.input_errors['nome'].setVisible(True)
-            if not same_tb and same_immo:
+            if same_immo and not same_tb:
                 self.input_errors['nome'].setText(f"Nome del tipo spesa già stato inserito per questo immobile")
             elif not same_tb:
-                self.input_errors['nome'].setText(f"Nome del tipo è esistente ma non in questa tabella millesimale")
+                self.lbl_tipo_spesa_esistente.setText(f"Nome:{same_tipo_spesa.nome}\nDescrizione:{same_tipo_spesa.descrizione}")
+                self.input_errors['nome'].setText(f"Nome del tipo esistente ma non per tabelle millesimali di questo immobile")
                 self.lbl_exist.setVisible(True)
                 self.lbl_tipo_spesa_esistente.setVisible(True)
                 self.button_exist.setVisible(True)
             else:
-                self.input_errors['nome'].setText(f"Nome del tipo spesa già esistente nella tabella millesimale")
-
+                self.input_errors['nome'].setText(f"Nome del tipo spesa già esistente in questa tabella millesimale")
         else:
             self.input_errors['nome'].setVisible(False)
             self.lbl_exist.setVisible(False)

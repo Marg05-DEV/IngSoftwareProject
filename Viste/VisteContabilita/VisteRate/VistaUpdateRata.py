@@ -232,7 +232,7 @@ class VistaUpdateRata(QWidget):
 
             self.sel_immobile = Immobile.ricercaImmobileById(UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare).immobile).denominazione
             unita = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(self.rata_selezionata.unitaImmobiliare)
-            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"][0]
+            proprietario = [item for item in unita.condomini.keys() if unita.condomini[item] == "Proprietario"]
             if unita.tipoUnitaImmobiliare == "Appartamento":
                 if unita.condomini:
                     if proprietario:
@@ -303,6 +303,7 @@ class VistaUpdateRata(QWidget):
         self.close()
 
     def immobile_field_dynamic(self):
+        print(" --------- dinamica imm")
         num_errors = 0
         there_is_unique_error = {}
         if self.input_lines['immobile'].currentText() != self.sel_immobile:
@@ -340,8 +341,10 @@ class VistaUpdateRata(QWidget):
                         else:
                             self.input_lines['unitaImmobiliare'].addItem(
                                 f"{unita.tipoUnitaImmobiliare} con Nessun Condomino", unita.codice)
+        print(" --------- fine dinamica imm ")
 
     def unita_immobiliare_field_dynamic(self):
+        print(" ------ dinamica ui")
         if self.input_lines['unitaImmobiliare'].currentText() != self.sel_unita:
             if self.input_lines['unitaImmobiliare'].currentText():
                 self.input_lines['versante'].clear()
@@ -356,6 +359,7 @@ class VistaUpdateRata(QWidget):
                 self.input_lines['versante'].setCompleter(completer)
                 self.input_lines['versante'].setVisible(True)
                 self.input_labels['versante'].setVisible(True)
+        print(" ------ fine dinamica ui")
 
     def input_validation(self):
         num_writed_lines = 0

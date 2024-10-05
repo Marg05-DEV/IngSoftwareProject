@@ -138,7 +138,6 @@ class GestoreBilancio:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
-                                break
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
                         else:
@@ -148,7 +147,6 @@ class GestoreBilancio:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
-                                break
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                         else:
@@ -243,9 +241,7 @@ class GestoreBilancio:
                         if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
-                                unita_row.cell(
-                                    f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
-                                break
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di {proprietario.cognome} {proprietario.nome}")
                             else:
                                 unita_row.cell(
                                     f"{unita_immobiliare.tipoUnitaImmobiliare} Sc. {unita_immobiliare.scala} Int.{unita_immobiliare.interno} di Nessun Proprietario")
@@ -256,9 +252,7 @@ class GestoreBilancio:
                         if unita_immobiliare.condomini:
                             if proprietario:
                                 proprietario = Condomino.ricercaCondominoByCodice(proprietario[0])
-                                unita_row.cell(
-                                    f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
-                                break
+                                unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di {proprietario.cognome} {proprietario.nome}")
                             else:
                                 unita_row.cell(f"{unita_immobiliare.tipoUnitaImmobiliare} di Nessun Proprietario")
                         else:

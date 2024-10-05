@@ -43,21 +43,6 @@ class VistaDeleteTipoSpesa(QWidget):
         button.clicked.connect(action)
         return button
 
-    def create_warning_msg(self, testo):
-        warning_msg_layout = QHBoxLayout()
-        icon = QLabel()
-        icon.setPixmap(qtawesome.icon('fa.warning').pixmap(QSize(16, 16)))
-        icon.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-
-        label = QLabel(testo)
-        label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        label.setStyleSheet("font-size: 10px;")
-
-        warning_msg_layout.addWidget(icon)
-        warning_msg_layout.addWidget(label)
-
-        return warning_msg_layout
-
     def delete_tipo_spesa(self):
         self.tabella_millesimale.removeTipoSpesa(self.tipo_spesa)
         msg = "Il tipo di spesa è stato dissociato"
