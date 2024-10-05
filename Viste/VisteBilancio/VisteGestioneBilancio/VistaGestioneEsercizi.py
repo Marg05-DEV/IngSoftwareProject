@@ -153,6 +153,7 @@ class VistaGestioneEsercizi(QWidget):
 
     def avvisoConfermato(self):
         self.msg.setText("Il bilancio selezionato è stato rimosso")
+        self.input_validation()
         self.msg.show()
         self.timer.start()
         self.update_list()

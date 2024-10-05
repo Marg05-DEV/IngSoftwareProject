@@ -90,7 +90,6 @@ class VistaRipartizionePreventivo(QWidget):
 
         bold_font = QFont()
         bold_font.setBold(True)
-
         self.table_ripartizionePreventivo.horizontalHeader().setFont(bold_font)
 
         self.table_ripartizionePreventivo.setItem(0, 0, QTableWidgetItem("Tabelle Millesimali - Millesimi"))
@@ -108,7 +107,6 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.setSpan(0, 0, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, len(tabelle_millesimali) + 1, 1, len(tabelle_millesimali))
         self.table_ripartizionePreventivo.setSpan(0, 2 * len(tabelle_millesimali) + 1, 1, 3)
-
         j = 0
         for tabella in tabelle_millesimali:
             self.table_ripartizionePreventivo.setItem(1, j, QTableWidgetItem(f"{tabella.nome}"))
@@ -120,7 +118,6 @@ class VistaRipartizionePreventivo(QWidget):
             self.table_ripartizionePreventivo.item(1, j).setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.table_ripartizionePreventivo.item(1, j + 1 + len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
             j += 1
-
         self.table_ripartizionePreventivo.setItem(1, len(tabelle_millesimali), QTableWidgetItem(f"Unità Immobiliari\nCondomino Proprietario"))
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -140,7 +137,6 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 3).setFont(bold_font)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali)*2 + 3).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.table_ripartizionePreventivo.item(1, len(tabelle_millesimali) * 2 + 3).setFlags(Qt.ItemFlag.ItemIsEnabled)
-
         if self.bilancio.numeroRate > 0:
             for k in range(0, self.bilancio.numeroRate):
                 self.table_ripartizionePreventivo.setItem(0, len(tabelle_millesimali) * 2 + 3 + k + 1, QTableWidgetItem(f"Rata {k + 1}"))
@@ -163,7 +159,6 @@ class VistaRipartizionePreventivo(QWidget):
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari)+2, len(tabelle_millesimali), QTableWidgetItem(f"TOTALE"))
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFont(bold_font)
         self.table_ripartizionePreventivo.item(len(unita_immobiliari)+2, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
-
         j = 0
         totale_preventivo_attuale = {}
 
@@ -246,7 +241,6 @@ class VistaRipartizionePreventivo(QWidget):
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 4 + r).setData(Qt.ItemDataRole.UserRole, [cod_unita, r])
                 if r == (self.bilancio.numeroRate - 1):
                     self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 4 + r).setFlags(Qt.ItemFlag.ItemIsEnabled)
-
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % sum(list(totale_preventivo_attuale.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % sum(list(self.bilancio.ripartizioneConguaglio.values()))))
         self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % sum(list(self.bilancio.importiDaVersare.values()))))
@@ -262,7 +256,6 @@ class VistaRipartizionePreventivo(QWidget):
 
             self.table_ripartizionePreventivo.setItem(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % somma))
             self.table_ripartizionePreventivo.item(len(unita_immobiliari) + 2, len(tabelle_millesimali) * 2 + 4 + r).setFlags(Qt.ItemFlag.ItemIsEnabled)
-
         self.table_ripartizionePreventivo.cellChanged.connect(self.editingRate)
         self.table_ripartizionePreventivo.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.table_ripartizionePreventivo.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)

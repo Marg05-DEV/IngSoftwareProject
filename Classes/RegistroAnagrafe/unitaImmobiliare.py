@@ -96,6 +96,7 @@ class UnitaImmobiliare:
 
     def getInfoUnitaImmobiliare(self):
         return{
+            "scala": self.scala,
             "interno": self.interno,
             "foglio": self.foglio,
             "subalterno": self.subalterno,
@@ -105,7 +106,6 @@ class UnitaImmobiliare:
             "categoria": self.categoria,
             "classe": self.classe,
             "immobile": self.immobile,
-            "scala": self.scala,
             "ZC": self.ZC
         }
 
