@@ -9,8 +9,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 - Rivedere le dimensioni di Widget e altre cose;
 - Migliorare i layout delle viste seguendo i mockup;
 - Rivedere le scritte delle finestre (sopratutto i WindowTitle e i label dei campi di input)
-- ~~Fare controlli quando si ricercano i proprietari e non sono presenti. Guarda il bilancio~~
-- ~~Controllare ogni volta che si fa una qualsiasi ricerca, che i bottoni si disattivino (basta mettere le disabilitazioni nelle funzioni collegate al signal) (per i tablewidget non dovrebbe servire)~~
+- Vedere se il saldo casso delle rimanenze è 2.88 e che il bilancio in Immobile2 che scade il 6/10 sia approvabile
 
 ## AREA IMMOBILI
 
@@ -23,7 +22,7 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 *dovrebbe essere tutto corretto*
 
 ## AREA CONTABILITA
-- Controlla cosa succede quando si visualizza una ricevuta per prelievo!!
+*dovrebbe esser fatto*
 
 ### SPESE
 *dovrebbe esser fatto*
@@ -37,18 +36,14 @@ sviluppo di un software per la gestione del registro anagrafe condominiale e del
 ## AREA BILANCIO
 
 ### TABELLE MILLESIMALI
-- da fare test per il suo completo funzionamento (dovrebbe funzionare tutto)
-- ~~non dare possibilità di assegnare tipi di spesa già assegnati ad altre tabelle millesimali dello stesso immobile(fare ulteriori controlli su aggiungi tipo spesa, rimuovi tipo spesa)~~
+*dovrebbe esser fatto*
 
 ### BILANCIO
-- vedere come aggiornare rate se cambia il preventivo o altri dati utili che cambierebbero l'importo da versare (importiDaVersare si modifica nel modo giusto)
-- Vedere utilità colonne a confronto di preventivo e consuntivo sia prima dell'approvazioen che succesivamente in prospetti
-- rivedere controlli bilancio, soprattutto le __date__ e rendere possibile l'approvazione del bilancio con dataApprovazione > di data fineEsercizio
+- Vedere utilità colonne a confronto di preventivo e consuntivo sia prima dell'approvazione che succesivamente in prospetti
 
 ## AREA DOCUMENTI
 
 # FARE GLI UNIT TEST
-- fatti per immobile. Fare per altre classi in modo analogo. FUNZIONANO
 
 *attenzione a lanciarli partendo dalla cartella di progetto IngSoftProject e non da quella dei test*
 

@@ -194,14 +194,12 @@ class VistaRipartizionePreventivo(QWidget):
 
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setData(Qt.ItemDataRole.UserRole, unita.codice)
                 self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
-
                 if unita.codice not in tabella.millesimi:
                     tabella.addMillesimo(unita, 0.00)
                     tabella = TabellaMillesimale.ricercaTabelleMillesimaliByCodice(tabella.codice)
 
                 self.bilancio.calcolaQuotaPreventivo(unita, tabella)
                 self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
-
                 self.table_ripartizionePreventivo.setItem(i, j + 1 + len(tabelle_millesimali), QTableWidgetItem("%.2f" % self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]))
                 self.table_ripartizionePreventivo.item(i, j + 1 + len(tabelle_millesimali)).setFlags(Qt.ItemFlag.ItemIsEnabled)
                 totale_preventivo_tabella += self.bilancio.ripartizioneSpesePreventivate[tabella.codice][unita.codice]
@@ -228,7 +226,6 @@ class VistaRipartizionePreventivo(QWidget):
 
         for i in range(2, len(unita_immobiliari) + 2):
             cod_unita = self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali)).data(Qt.ItemDataRole.UserRole)
-
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 1, QTableWidgetItem("%.2f" % totale_preventivo_attuale[cod_unita]))
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 2, QTableWidgetItem("%.2f" % self.bilancio.ripartizioneConguaglio[cod_unita]))
             self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 3, QTableWidgetItem("%.2f" % self.bilancio.importiDaVersare[cod_unita]))
@@ -236,6 +233,13 @@ class VistaRipartizionePreventivo(QWidget):
             self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 1).setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 2).setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.table_ripartizionePreventivo.item(i, len(tabelle_millesimali) * 2 + 3).setFlags(Qt.ItemFlag.ItemIsEnabled)
+            if self.bilancio.numeroRate > 0:
+                if cod_unita not in self.bilancio.ratePreventivate:
+                    self.bilancio.ripartizioneRate(cod_unita)
+                    self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
+                if abs(self.bilancio.importiDaVersare[cod_unita] - sum(self.bilancio.ratePreventivate[cod_unita])) > 0.001:
+                    self.bilancio.ripartizioneRate(cod_unita)
+                    self.bilancio = Bilancio.ricercaBilancioByCodice(self.bilancio.codice)
 
             for r in range(0, self.bilancio.numeroRate):
                 self.table_ripartizionePreventivo.setItem(i, len(tabelle_millesimali) * 2 + 4 + r, QTableWidgetItem("%.2f" % self.bilancio.ratePreventivate[cod_unita][r]))

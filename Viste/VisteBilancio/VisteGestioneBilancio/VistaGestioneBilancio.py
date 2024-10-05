@@ -1,3 +1,4 @@
+import datetime
 import os
 import webbrowser
 
@@ -89,7 +90,8 @@ class VistaGestioneBilancio(QWidget):
             self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(True)
 
             if self.bilancio.passaggi["ripartizioneSpesePreventivate"]:
-                self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(False)
+                if datetime.date.today() >= self.bilancio.fineEsercizio:
+                    self.buttons["Calcola Bilancio dell'esercizio"].setDisabled(False)
 
             if self.bilancio.passaggi["ripartizioneSpeseConsuntivate"] and self.bilancio.passaggi["spesePreventivate"]:
                 self.buttons["Ripartizione Preventivo"].setDisabled(False)

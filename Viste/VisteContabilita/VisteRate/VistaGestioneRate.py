@@ -225,10 +225,15 @@ class VistaGestioneRate(QWidget):
             self.button_list["Elimina Rata"].setDisabled(True)
             self.button_list["Visualizza Ricevuta"].setDisabled(True)
         else:
+            codice_rata = [item.data(0) for item in self.table_rate.verticalHeader().selectionModel().selectedRows()][0]
+            rata = Rata.ricercaRataByCodice(codice_rata)
             self.button_list["Visualizza Rata"].setDisabled(False)
             self.button_list["Modifica Rata"].setDisabled(False)
             self.button_list["Elimina Rata"].setDisabled(False)
-            self.button_list["Visualizza Ricevuta"].setDisabled(False)
+            if rata.unitaImmobiliare > 0:
+                self.button_list["Visualizza Ricevuta"].setDisabled(False)
+            else:
+                self.button_list["Visualizza Ricevuta"].setDisabled(True)
 
 
     def callback(self, msg):
