@@ -3,6 +3,7 @@ from unittest import TestCase
 from Classes.RegistroAnagrafe.immobile import Immobile
 
 class TestGestioneImmobile(TestCase):
+
     def test_add_immobile(self):
         self.immobile = Immobile()
         self.immobile.aggiungiImmobile(10, "IM10", "Immobile10", "98765432110", "Offida", "AP", "63073", "Via Roma 10")
