@@ -194,7 +194,6 @@ class VistaGestioneImmobile(QWidget):
         item = None
         for index in self.list_view_immobili.selectedIndexes():
             item = self.list_view_immobili.model().itemFromIndex(index)
-            print(item.text())
         sel_immobile = Immobile.ricercaImmobileByCodice(int(item.text().split(" ")[0]))
         self.vista_elimina_immobile = VistaDeleteImmobile(sel_immobile, callback=self.callback)
         self.vista_elimina_immobile.show()

@@ -212,7 +212,6 @@ class VistaStatoPatrimoniale(QWidget):
             return None
 
     def update_list(self):
-        print("dentro update")
         self.spese = [item for item in Spesa.getAllSpeseByImmobile(self.immobile).values() if not item.pagata]
         spese_per_fornitore = {}
 
@@ -235,7 +234,6 @@ class VistaStatoPatrimoniale(QWidget):
 
         if self.spese:
             self.spese_section["totale"].setText(str("%.2f" % sum([sum(item.values()) for item in spese_per_fornitore.values()])))
-            print(self.spese_section)
             for spese in self.spese_section.values():
                 spese.setVisible(True)
             self.spese_section["no_spese"].setVisible(False)
@@ -258,7 +256,6 @@ class VistaStatoPatrimoniale(QWidget):
 
         self.table_rate.setHorizontalHeaderItem(0, QTableWidgetItem("Unità Immobiliare"))
         self.table_rate.setHorizontalHeaderItem(1, QTableWidgetItem("Importo"))
-        print("prima if del proprietario, ecc")
         i = 0
         for cod_unita, importo in rate_da_versare_per_unita.items():
             unita_immobiliare = UnitaImmobiliare.ricercaUnitaImmobiliareByCodice(cod_unita)
@@ -284,9 +281,7 @@ class VistaStatoPatrimoniale(QWidget):
                         item_text = f"{unita_immobiliare.tipoUnitaImmobiliare} con Nessun Condomino"
 
                 self.table_rate.setItem(i, 0, QTableWidgetItem(item_text))
-                print("quasi fine if del proprietario, ecc")
                 self.table_rate.setItem(i, 1, QTableWidgetItem(str("%.2f" % importo)))
-            print("fine if del proprietario, ecc")
             i += 1
 
         importo_totale = sum(rate_da_versare_per_unita.values())

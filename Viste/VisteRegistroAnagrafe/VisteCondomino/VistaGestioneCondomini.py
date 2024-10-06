@@ -68,7 +68,6 @@ class VistaGestioneCondomini(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 400)
         self.setWindowTitle("Gestione Condomino")
-        print("fine classe VistaGestioneCondomini")
 
     def create_button(self, testo, action, disabled=False):
         button = QPushButton(testo)

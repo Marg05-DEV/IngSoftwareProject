@@ -127,7 +127,6 @@ class Rata:
 
     @staticmethod
     def getAllRateByImmobile(immobile):
-        print(immobile)
         rate = Rata.getAllRate()
         rateByImmobile = {}
         if rate:
