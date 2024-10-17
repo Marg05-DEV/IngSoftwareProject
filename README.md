@@ -3,11 +3,11 @@ Sviluppo di un software per la gestione del registro anagrafe condominiale e del
 
 # Librerie utilizzate:
 - **PyQt6** per l'interfaccia grafica:
-        pip install PyQt6
+-                 pip install PyQt6
 - **QtAwesome** per le icone:
-        pip install QtAwesome
+-                 pip install QtAwesome
 - **FPDF2** per la gestione dei PDF:
-        pip install fpdf2
+-                 pip install fpdf2
 
 
 
